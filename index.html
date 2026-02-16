@@ -3,277 +3,939 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEautiful Merima Beric | Kosmetikstudio Stuttgart</title>
-    
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- AOS Animation -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+    <title>Beautiful Merima Beric - Kosmetiksalon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #e8b923;
-            --dark: #1a1a1a;
-            --light: #ffffff;
-            --gray: #f8f8f8;
+            --primary: #D4AF37;
+            --primary-dark: #B8942A;
+            --secondary: #2C2C2C;
+            --accent: #F5E6D3;
+            --bg-light: #FAFAFA;
+            --text-dark: #1A1A1A;
+            --text-light: #666666;
+            --white: #FFFFFF;
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark);
-            background: var(--light);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
             overflow-x: hidden;
+            background: var(--bg-light);
         }
-        h1, h2, h3, h5 { font-family: 'Playfair Display', serif; }
-        .navbar-brand {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gold) !important;
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
-        .nav-link {
-            font-weight: 500;
-            color: var(--dark) !important;
-            margin: 0 10px;
-            transition: color 0.3s;
-        }
-        .nav-link:hover { color: var(--gold) !important; }
-        
-        /* Hero */
+
+        /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('hero.jpg') center/cover no-repeat;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            color: white;
-            text-align: center;
-        }
-        .hero h1 {
-            font-size: 4.5rem;
-            font-weight: 700;
-        }
-        .hero p.lead {
-            font-size: 1.4rem;
-            max-width: 700px;
-            margin: 20px auto;
-        }
-        
-        /* Sections */
-        .section-title {
-            font-size: 3rem;
-            color: var(--gold);
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .service-card {
-            background: white;
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            transition: all 0.4s ease;
-        }
-        .service-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        .service-card img {
-            height: 250px;
-            object-fit: cover;
-        }
-        
-        /* Galerie */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .gallery img {
-            width: 100%;
-            height: 350px;
-            object-fit: cover;
-            border-radius: 12px;
-            transition: all 0.4s;
-        }
-        .gallery img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-        }
-        
-        /* WhatsApp Float */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #25D366;
-            color: white;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--bg-light) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            z-index: 1000;
-            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.1;
+            top: -200px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.15;
+            bottom: -100px;
+            left: -100px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out;
+            padding: 2rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 300;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        .hero .tagline {
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            color: var(--text-light);
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--secondary);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 4rem;
+            font-weight: 300;
+        }
+
+        /* Services Section */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: var(--white);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* About Section */
+        #about {
+            background: var(--white);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-image::before {
+            content: 'Ihr Foto hier';
+            font-size: 1.2rem;
+            font-family: 'Montserrat', sans-serif;
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .about-text h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        .about-text p {
+            color: var(--text-light);
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        /* Pricing Section */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .price-item {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .price-info h4 {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .price-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .price-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Contact Section */
+        #contact {
+            background: linear-gradient(135deg, var(--secondary) 0%, #1a1a1a 100%);
+            color: var(--white);
+            padding: 6rem 5%;
+        }
+
+        #contact .section-title {
+            color: var(--white);
+        }
+
+        #contact .section-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .contact-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .contact-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .contact-card p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .contact-card a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-card a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse 2s infinite;
+        }
+
         .whatsapp-float:hover {
+            background-color: #128c7e;
             transform: scale(1.1);
         }
-        
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 30px rgba(37, 211, 102, 0.7);
+            }
+        }
+
+        /* Footer */
         footer {
-            background: var(--dark);
-            color: white;
-            padding: 40px 0;
+            background: var(--secondary);
+            color: var(--white);
             text-align: center;
+            padding: 2rem;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .about-image {
+                height: 350px;
+            }
+
+            section {
+                padding: 4rem 5%;
+            }
+
+            .whatsapp-float {
+                width: 50px;
+                height: 50px;
+                font-size: 25px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        /* Gallery placeholder */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .gallery-item {
+            height: 300px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--white);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item::before {
+            content: 'Foto';
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body data-bs-spy="scroll" data-bs-target="#navbar">
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="#">BEautiful Merima Beric</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#about">Über uns</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#services">Leistungen</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#gallery">Galerie</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">Kontakt</a></li>
-                </ul>
-            </div>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Beautiful</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Leistungen</a></li>
+                <li><a href="#about">Über uns</a></li>
+                <li><a href="#pricing">Preise</a></li>
+                <li><a href="#gallery">Galerie</a></li>
+                <li><a href="#contact">Kontakt</a></li>
+            </ul>
+            <button class="mobile-menu-btn">☰</button>
         </div>
     </nav>
 
-    <!-- Hero -->
+    <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="container" data-aos="fade-up">
-            <h1>BEautiful Merima Beric</h1>
-            <p class="lead">Dein modernes Kosmetikstudio in Stuttgart – für dauerhafte Haarentfernung, strahlende Haut und pure Entspannung.</p>
-            <a href="#contact" class="btn btn-outline-light btn-lg mt-4">Termin buchen</a>
-        </div>
-    </section>
-
-    <!-- About -->
-    <section id="about" class="py-5">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Über uns</h2>
-            <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
-                    <img src="about.jpg" alt="Studio" class="img-fluid rounded shadow">
-                </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <p class="lead">In unserem stilvollen Studio in Stuttgart-Ost verwöhnen wir dich mit modernster Technologie und höchster Professionalität.</p>
-                    <p>Ob schmerzfrei dauerhafte Haarentfernung mit Diodenlaser, intensives Aqua Facial oder entspannende Lymphdrainage – hier entsteht dein natürlicher Glow.</p>
-                    <p><strong>Gablenberger Hauptstraße 92, 70186 Stuttgart</strong></p>
-                </div>
+        <div class="hero-content">
+            <h1>Beautiful Merima Beric</h1>
+            <p class="tagline">Ihr Kosmetiksalon für natürliche Schönheit</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary" id="bookingBtn">
+                    📅 Termin buchen
+                </a>
+                <a href="#contact" class="btn btn-secondary">
+                    ✉️ Kontakt
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Services -->
-    <section id="services" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Leistungen</h2>
-            <div class="row g-5">
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-card h-100 text-center">
-                        <img src="service1.jpg" alt="Diodenlaser">
-                        <div class="card-body p-4">
-                            <h5>Dauerhafte Haarentfernung</h5>
-                            <p>Mit modernstem Diodenlaser – schnell, effektiv und nahezu schmerzfrei.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-card h-100 text-center">
-                        <img src="service2.jpg" alt="Aqua Facial">
-                        <div class="card-body p-4">
-                            <h5>Aqua Facial & Hydrafacial</h5>
-                            <p>Tiefenreinigung und intensiver Feuchtigkeitsboost für strahlende Haut.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="service-card h-100 text-center">
-                        <img src="service3.jpg" alt="Lymphdrainage">
-                        <div class="card-body p-4">
-                            <h5>Lymphdrainage & Maderotherapie</h5>
-                            <p>Entspannung, Straffung und Wohlbefinden für Körper und Gesicht.</p>
-                        </div>
-                    </div>
-                </div>
+    <!-- Services Section -->
+    <section id="services">
+        <h2 class="section-title">Unsere Leistungen</h2>
+        <p class="section-subtitle">Professionelle Schönheitsbehandlungen für Ihr Wohlbefinden</p>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">💆‍♀️</div>
+                <h3>Gesichtsbehandlungen</h3>
+                <p>Verwöhnende Gesichtspflege für strahlende und gesunde Haut mit hochwertigen Produkten.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">💅</div>
+                <h3>Maniküre & Pediküre</h3>
+                <p>Perfekt gepflegte Hände und Füße mit professioneller Nagelpflege und Lackierung.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">👁️</div>
+                <h3>Wimpern & Augenbrauen</h3>
+                <p>Wimpernverlängerung, Lifting und professionelles Augenbrauen-Styling für den perfekten Blick.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">✨</div>
+                <h3>Permanent Make-up</h3>
+                <p>Dauerhafte Schönheit durch professionelles Permanent Make-up für Augenbrauen und Lippen.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🧖‍♀️</div>
+                <h3>Waxing & Enthaarung</h3>
+                <p>Sanfte und gründliche Haarentfernung für seidig glatte Haut.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">💆</div>
+                <h3>Massagen</h3>
+                <p>Entspannende Massagen für Körper und Seele - pure Erholung vom Alltag.</p>
             </div>
         </div>
     </section>
 
-    <!-- Galerie -->
-    <section id="gallery" class="py-5">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Galerie</h2>
-            <div class="gallery">
-                <img src="galerie1.jpg" alt="Behandlung" data-aos="fade-up">
-                <img src="galerie2.jpg" alt="Vorher-Nachher" data-aos="fade-up" data-aos-delay="100">
-                <img src="galerie3.jpg" alt="Studio" data-aos="fade-up" data-aos-delay="200">
-                <img src="galerie4.jpg" alt="Ergebnis" data-aos="fade-up" data-aos-delay="300">
-                <img src="galerie5.jpg" alt="Glow" data-aos="fade-up" data-aos-delay="400">
-                <img src="galerie6.jpg" alt="Laser" data-aos="fade-up" data-aos-delay="500">
-                <img src="galerie7.jpg" alt="Facial" data-aos="fade-up" data-aos-delay="600">
-                <img src="galerie8.jpg" alt="Kundin" data-aos="fade-up" data-aos-delay="700">
+    <!-- About Section -->
+    <section id="about">
+        <div class="about-content">
+            <div class="about-image">
+                💐
+            </div>
+            <div class="about-text">
+                <h2>Über Beautiful Merima Beric</h2>
+                <p>
+                    Willkommen in unserem Kosmetiksalon! Mit Leidenschaft und jahrelanger Erfahrung 
+                    bieten wir Ihnen professionelle Schönheitsbehandlungen in entspannter Atmosphäre.
+                </p>
+                <p>
+                    Unsere Mission ist es, Ihre natürliche Schönheit hervorzuheben und Ihnen 
+                    ein unvergessliches Wohlfühlerlebnis zu bieten. Wir verwenden ausschließlich 
+                    hochwertige Produkte und modernste Techniken.
+                </p>
+                <p>
+                    <strong>Hinweis:</strong> Ersetzen Sie diesen Text mit Informationen von Ihrer Facebook-Seite 
+                    und fügen Sie ein echtes Foto hinzu.
+                </p>
+                <a href="#contact" class="btn btn-primary" style="margin-top: 1rem;">Jetzt Termin vereinbaren</a>
             </div>
         </div>
     </section>
 
-    <!-- Kontakt -->
-    <section id="contact" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Kontakt & Termin</h2>
-            <div class="row">
-                <div class="col-lg-6" data-aos="fade-right">
-                    <p class="lead">Wir freuen uns auf dich!</p>
-                    <p><strong>Adresse:</strong> Gablenberger Hauptstraße 92, 70186 Stuttgart<br>
-                    <strong>WhatsApp/Telefon:</strong> <a href="https://wa.me/491742065255">+49 174 2065255</a></p>
+    <!-- Pricing Section -->
+    <section id="pricing">
+        <h2 class="section-title">Preisliste</h2>
+        <p class="section-subtitle">Transparente Preise für erstklassige Leistungen</p>
+        <div class="pricing-grid">
+            <div class="price-item">
+                <div class="price-info">
+                    <h4>Klassische Gesichtsbehandlung</h4>
+                    <p>60 Minuten</p>
                 </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <!-- Ersetze durch deinen Calendly-Link -->
-                    <iframe src="https://calendly.com/DEIN-CALENDLY-NAME/termin" width="100%" height="700" frameborder="0"></iframe>
+                <div class="price-value">€XX</div>
+            </div>
+            <div class="price-item">
+                <div class="price-info">
+                    <h4>Maniküre</h4>
+                    <p>45 Minuten</p>
                 </div>
+                <div class="price-value">€XX</div>
+            </div>
+            <div class="price-item">
+                <div class="price-info">
+                    <h4>Pediküre</h4>
+                    <p>60 Minuten</p>
+                </div>
+                <div class="price-value">€XX</div>
+            </div>
+            <div class="price-item">
+                <div class="price-info">
+                    <h4>Wimpernverlängerung</h4>
+                    <p>120 Minuten</p>
+                </div>
+                <div class="price-value">€XX</div>
+            </div>
+            <div class="price-item">
+                <div class="price-info">
+                    <h4>Augenbrauen Styling</h4>
+                    <p>30 Minuten</p>
+                </div>
+                <div class="price-value">€XX</div>
+            </div>
+            <div class="price-item">
+                <div class="price-info">
+                    <h4>Ganzkörper Waxing</h4>
+                    <p>90 Minuten</p>
+                </div>
+                <div class="price-value">€XX</div>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 2rem; color: var(--text-light);">
+            <strong>Hinweis:</strong> Fügen Sie hier Ihre echten Preise von der Facebook-Seite ein.
+        </p>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery">
+        <h2 class="section-title">Galerie</h2>
+        <p class="section-subtitle">Einblicke in unsere Arbeit</p>
+        <div class="gallery-grid">
+            <div class="gallery-item">📸</div>
+            <div class="gallery-item">📸</div>
+            <div class="gallery-item">📸</div>
+            <div class="gallery-item">📸</div>
+            <div class="gallery-item">📸</div>
+            <div class="gallery-item">📸</div>
+        </div>
+        <p style="text-align: center; margin-top: 2rem; color: var(--text-light);">
+            <strong>Hinweis:</strong> Laden Sie Bilder von Ihrer Facebook-Seite herunter und ersetzen Sie die Platzhalter.
+        </p>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title">Kontakt</h2>
+        <p class="section-subtitle">Wir freuen uns auf Sie!</p>
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">📍</div>
+                <h3>Adresse</h3>
+                <p>Ihre Straße 123<br>PLZ Ihre Stadt</p>
+                <p style="font-size: 0.85rem; margin-top: 1rem; opacity: 0.7;">
+                    (Adresse von Facebook übernehmen)
+                </p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">📞</div>
+                <h3>Telefon</h3>
+                <p><a href="tel:+491234567890">+49 123 456 7890</a></p>
+                <p style="font-size: 0.85rem; margin-top: 1rem; opacity: 0.7;">
+                    (Ihre Nummer einfügen)
+                </p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">🕐</div>
+                <h3>Öffnungszeiten</h3>
+                <p>Mo-Fr: 09:00 - 19:00<br>Sa: 10:00 - 16:00<br>So: Geschlossen</p>
+                <p style="font-size: 0.85rem; margin-top: 1rem; opacity: 0.7;">
+                    (Ihre Zeiten einfügen)
+                </p>
             </div>
         </div>
     </section>
 
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/491742065255?text=Hallo,%20ich%20möchte%20einen%20Termin%20vereinbaren!" class="whatsapp-float" target="_blank">
-        <i class="fab fa-whatsapp"></i>
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/491234567890?text=Hallo,%20ich%20möchte%20einen%20Termin%20vereinbaren" 
+       class="whatsapp-float" 
+       target="_blank"
+       title="WhatsApp Kontakt">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
     </a>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 BEautiful Merima Beric – Alle Rechte vorbehalten</p>
+        <p>&copy; 2024 Beautiful Merima Beric - Kosmetiksalon. Alle Rechte vorbehalten.</p>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- JavaScript -->
     <script>
-        AOS.init({ duration: 1000, once: true });
-        // Smooth scroll
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
+            anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
         });
+
+        // Google Calendar Booking Button
+        document.getElementById('bookingBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            // WICHTIG: Ersetzen Sie diese URL mit Ihrem echten Google Kalender Buchungslink
+            // Gehen Sie zu: Google Kalender > Einstellungen > Terminplanungsseite erstellen
+            const googleCalendarLink = 'https://calendar.google.com/calendar/appointments/schedules/IHRE_KALENDER_ID';
+            
+            // Öffnet den Google Kalender in einem neuen Tab
+            window.open(googleCalendarLink, '_blank');
+            
+            // Alternative: Öffnen Sie direkt WhatsApp für Terminvereinbarung
+            // window.open('https://wa.me/491234567890?text=Ich möchte einen Termin vereinbaren', '_blank');
+        });
+
+        // Mobile Menu Toggle (für zukünftige Erweiterung)
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card, .price-item, .contact-card, .gallery-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
     </script>
+
+    <!-- SETUP ANLEITUNG -->
+    <!--
+    
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║  WICHTIGE ANPASSUNGEN - BITTE FOLGEN SIE DIESEN SCHRITTEN:          ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+    
+    1. WHATSAPP NUMMER ÄNDERN (3 Stellen):
+       - Suchen Sie: +491234567890
+       - Ersetzen mit Ihrer echten Nummer (z.B. +4915112345678)
+       - Stellen: Zeile 618 und im JavaScript (Zeile 952)
+    
+    2. GOOGLE KALENDER EINRICHTEN:
+       a) Gehen Sie zu Google Kalender (calendar.google.com)
+       b) Klicken Sie auf Einstellungen (Zahnrad-Symbol)
+       c) Wählen Sie "Terminplanungsseite"
+       d) Erstellen Sie eine neue Terminplanungsseite
+       e) Kopieren Sie den Link
+       f) Ersetzen Sie in Zeile 947 die URL:
+          const googleCalendarLink = 'IHRE_KALENDER_URL_HIER';
+    
+    3. KONTAKTINFORMATIONEN EINFÜGEN:
+       - Adresse (Zeile 594-596)
+       - Telefonnummer (Zeile 601)
+       - Öffnungszeiten (Zeile 608-609)
+    
+    4. PREISE AKTUALISIEREN:
+       - Ersetzen Sie alle "€XX" mit echten Preisen (ab Zeile 499)
+    
+    5. ÜBER UNS TEXT:
+       - Kopieren Sie Text von Facebook und ersetzen in Zeile 433-443
+    
+    6. BILDER HINZUFÜGEN:
+       - Laden Sie Bilder von Facebook herunter
+       - Speichern Sie sie im selben Ordner wie diese HTML-Datei
+       - Ersetzen Sie die Platzhalter mit:
+         <img src="bildname.jpg" alt="Beschreibung">
+       - Wichtige Stellen:
+         * Über uns Bild (Zeile 428)
+         * Galerie (Zeile 568-573)
+    
+    7. SOCIAL MEDIA LINKS (Optional):
+       - Fügen Sie im Footer Facebook/Instagram Links hinzu
+    
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║  TESTEN SIE ALLES:                                                   ║
+    ║  ✓ WhatsApp Button funktioniert                                     ║
+    ║  ✓ Google Kalender öffnet sich                                      ║
+    ║  ✓ Alle Links funktionieren                                         ║
+    ║  ✓ Mobile Ansicht ist gut                                           ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+    
+    -->
 </body>
 </html>
