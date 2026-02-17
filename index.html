@@ -820,15 +820,6 @@
             border-bottom-color: var(--text-light);
         }
 
-        /* ===============================
-        DESKTOP HOVER (nur Mausgeräte)
-        =============================== */
-        body:not(.touch-device) .nav-logo:hover .brand-rest,
-        body:not(.touch-device) .nav-logo:hover .brand-sub,
-        body:not(.touch-device) .nav-logo:hover .brand-ric-text {
-            color: var(--text-light);
-        }
-
         body:not(.touch-device) .nav-logo:hover .brand-autiful {
             border-bottom-color: var(--text-light);
         }
@@ -970,16 +961,15 @@
             transition: var(--transition);
         }
 
-        /* Hover */
-        .nav-logo:hover .brand-ric-text {
-            color: var(--text-light);
+        body.touch-device .nav-logo:hover .brand-rest,
+        body.touch-device .nav-logo:hover .brand-sub,
+        body.touch-device .nav-logo:hover .brand-ric-text {
+            color: var(--primary-color);
         }
 
-        /* Touch devices: disable hover completely */
-        body.touch-device .nav-logo:hover * {
-            color: var(--primary-color) !important;
-            border-bottom-color: var(--primary-color) !important;
-        }
+        body.touch-device .nav-logo:hover .brand-autiful {
+            border-bottom-color: var(--primary-color);
+        }  
     </style>
 </head>
 <body>
@@ -1530,6 +1520,7 @@
     </script>
 </body>
 </html>
+
 
 
 
