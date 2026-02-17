@@ -1492,9 +1492,16 @@
                 }
             });
         });
+
+        // Reset hover state on nav logo after click (fix for mobile touch)
+        const navLogo = document.querySelector('.nav-logo');
+        navLogo.addEventListener('click', () => {
+            navLogo.blur(); // removes focus state
+        });
     </script>
 </body>
 </html>
+
 
 
 
