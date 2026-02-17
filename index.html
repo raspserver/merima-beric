@@ -737,21 +737,17 @@
         }
 
         .nav-logo {
-            display: flex;
-            align-items: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
             text-decoration: none;
+            letter-spacing: 0.05em;
             transition: var(--transition);
         }
 
-        .nav-logo img {
-            height: 45px;
-            width: auto;
-            transition: var(--transition);
-        }
-
-        .nav-logo:hover img {
-            transform: scale(1.05);
-            filter: brightness(1.2);
+        .nav-logo:hover {
+            color: var(--text-light);
         }
 
         .nav-menu {
@@ -840,10 +836,6 @@
                 display: flex;
             }
 
-            .nav-logo img {
-                height: 35px;
-            }
-
             .nav-menu {
                 position: fixed;
                 top: 80px;
@@ -879,9 +871,7 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#home" class="nav-logo">
-                <img src="logo.jpg" alt="Beautiful by Merima Beric Logo">
-            </a>
+            <a href="#home" class="nav-logo">Beautiful Merima Beric</a>
             <div class="nav-toggle">
                 <span></span>
                 <span></span>
