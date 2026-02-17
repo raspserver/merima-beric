@@ -757,10 +757,6 @@
             line-height: 1;
             transition: var(--transition);
         }
-
-        .nav-logo:hover .brand-autiful {
-            border-bottom-color: var(--text-light);
-        }
         
         .brand-be {
             color: #e91e63;
@@ -813,27 +809,6 @@
             color: #e91e63 !important;
         }
 
-        .nav-logo:hover .brand-sub {
-            color: var(--text-light);
-        }
-
-        .nav-logo:hover .brand-sub .brand-rest {
-            color: var(--text-light);
-        }
-
-        .nav-logo:hover .brand-autiful {
-            border-bottom-color: var(--text-light);
-        }
-
-        /* Hover: alles außer BE wird hell */
-        /*
-        .nav-logo:hover .brand-rest,
-        .nav-logo:hover .brand-sub,
-        .nav-logo:hover .brand-ric-text {
-            color: var(--text-light);
-        }
-        */
-
         /* Desktop Hover only */
         body:not(.touch-device) .nav-logo:hover .brand-rest,
         body:not(.touch-device) .nav-logo:hover .brand-sub,
@@ -845,8 +820,16 @@
             border-bottom-color: var(--text-light);
         }
 
-        /* Unterstrich von AUTIFUL */
-        .nav-logo:hover .brand-autiful {
+        /* ===============================
+        DESKTOP HOVER (nur Mausgeräte)
+        =============================== */
+        body:not(.touch-device) .nav-logo:hover .brand-rest,
+        body:not(.touch-device) .nav-logo:hover .brand-sub,
+        body:not(.touch-device) .nav-logo:hover .brand-ric-text {
+            color: var(--text-light);
+        }
+
+        body:not(.touch-device) .nav-logo:hover .brand-autiful {
             border-bottom-color: var(--text-light);
         }
         
@@ -990,6 +973,12 @@
         /* Hover */
         .nav-logo:hover .brand-ric-text {
             color: var(--text-light);
+        }
+
+        /* Touch devices: disable hover completely */
+        body.touch-device .nav-logo:hover * {
+            color: var(--primary-color) !important;
+            border-bottom-color: var(--primary-color) !important;
         }
     </style>
 </head>
@@ -1541,6 +1530,7 @@
     </script>
 </body>
 </html>
+
 
 
 
