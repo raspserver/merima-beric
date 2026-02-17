@@ -1383,6 +1383,18 @@
             });
         });
 
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (event) => {
+            const isClickInsideMenu = navMenu.contains(event.target);
+            const isClickOnToggle = navToggle.contains(event.target);
+            const isMenuOpen = navMenu.classList.contains('active');
+            
+            if (!isClickInsideMenu && !isClickOnToggle && isMenuOpen) {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
         // Pricing Tabs
         const pricingTabs = document.querySelectorAll('.pricing-tab');
         const pricingContents = document.querySelectorAll('.pricing-content');
