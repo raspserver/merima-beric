@@ -960,6 +960,18 @@
             }
         }
 
+        /* Prevent sticky hover on touch devices */
+        @media (hover: none) {
+            .nav-logo:hover {
+                color: var(--primary-color);
+            }
+            .nav-logo:hover .brand-autiful,
+            .nav-logo:hover .brand-rest,
+            .nav-logo:hover .brand-sub {
+                color: var(--primary-color);
+                border-bottom-color: var(--primary-color);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1501,6 +1513,7 @@
     </script>
 </body>
 </html>
+
 
 
 
