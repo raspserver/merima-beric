@@ -746,11 +746,28 @@
             letter-spacing: 0.05em;
             transition: var(--transition);
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             white-space: nowrap;
         }
 
+        .brand-autiful {
+            display: inline-block;
+            border-bottom: 1px solid var(--primary-color);
+            padding-bottom: 0;
+            line-height: 1;
+            transition: var(--transition);
+        }
+
+        .nav-logo:hover .brand-autiful {
+            border-bottom-color: var(--text-light);
+        }
+
         .nav-logo:hover {
+            color: var(--text-light);
+        }
+
+        .nav-logo:hover .brand-rest,
+        .nav-logo:hover .brand-ric {
             color: var(--text-light);
         }
 
@@ -786,6 +803,22 @@
             display: inline-flex;
             align-items: center;
             margin-left: 0.3em;
+        }
+
+        .brand-sub {
+            font-size: 0.55rem;
+            line-height: 1;
+            vertical-align: bottom;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-logo:hover .brand-sub {
+            color: var(--text-light);
+        }
+
+        .nav-logo:hover .brand-sub .brand-rest {
+            color: var(--text-light);
         }
 
         .nav-logo:hover .brand-rest {
@@ -930,7 +963,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="#home" class="nav-logo">
-                <span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-rest">.AUTIFUL BY MERIMA</span><span class="brand-beric"><span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-rest">.RIC</span></span>
+                <span class="brand-autiful"><span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-rest">.AUTIFUL</span></span><span class="brand-sub">&nbsp;&nbsp;&nbsp;BY MERIMA <span style="white-space: nowrap;"><span style="color: #e91e63; font-weight: 700;">B</span><span style="color: #e91e63; font-weight: 700; display: inline-block; transform: scaleX(-1); vertical-align: bottom;">E</span><span class="brand-rest" style="font-size: inherit;">.RIC</span></span></span>
             </a>
             <div class="nav-toggle">
                 <span></span>
