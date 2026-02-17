@@ -808,21 +808,6 @@
         .brand-e-flip {
             color: #e91e63 !important;
         }
-
-        /* Desktop Hover only */
-        body:not(.touch-device) .nav-logo:hover .brand-rest,
-        body:not(.touch-device) .nav-logo:hover .brand-sub,
-        body:not(.touch-device) .nav-logo:hover .brand-ric-text {
-            color: var(--text-light);
-        }
-
-        body:not(.touch-device) .nav-logo:hover .brand-autiful {
-            border-bottom-color: var(--text-light);
-        }
-
-        body:not(.touch-device) .nav-logo:hover .brand-autiful {
-            border-bottom-color: var(--text-light);
-        }
         
         .nav-menu {
             display: flex;
@@ -959,17 +944,21 @@
         .brand-ric-text {
             color: var(--primary-color);
             transition: var(--transition);
-        }
+        } 
 
-        body.touch-device .nav-logo:hover .brand-rest,
-        body.touch-device .nav-logo:hover .brand-sub,
-        body.touch-device .nav-logo:hover .brand-ric-text {
-            color: var(--primary-color);
+        /* =========================
+        HOVER nur bei echten Maus-Geräten
+        ========================= */
+        @media (hover: hover) {
+            .nav-logo:hover .brand-rest,
+            .nav-logo:hover .brand-sub,
+            .nav-logo:hover .brand-ric-text {
+                color: var(--text-light);
+            }
+            .nav-logo:hover .brand-autiful {
+                border-bottom-color: var(--text-light);
+            }
         }
-
-        body.touch-device .nav-logo:hover .brand-autiful {
-            border-bottom-color: var(--primary-color);
-        }  
     </style>
 </head>
 <body>
@@ -1508,18 +1497,10 @@
         navLogo.addEventListener('click', () => {
             navLogo.blur(); // removes focus state
         });
-
-        // Disable hover effects on touch devices completely
-        function isTouchDevice() {
-            return window.matchMedia("(hover: none)").matches;
-        }
-
-        if (isTouchDevice()) {
-            document.body.classList.add("touch-device");
-        }
     </script>
 </body>
 </html>
+
 
 
 
