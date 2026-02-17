@@ -208,15 +208,15 @@
         }
 
         .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
+            position: relative;
         }
 
         .about-image-wrapper {
+            float: left;
+            width: 45%;
+            margin-right: 3rem;
+            margin-bottom: 2rem;
             position: relative;
-            width: 100%;
         }
 
         .about-image {
@@ -248,6 +248,12 @@
             margin-bottom: 1.5rem;
         }
 
+        .about-text::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
         .about-highlight {
             background: linear-gradient(135deg, var(--primary-color) 0%, #b8922e 100%);
             color: var(--text-light);
@@ -255,6 +261,7 @@
             border-radius: 2px;
             position: relative;
             margin-top: 2rem;
+            clear: both;
         }
 
         .about-highlight::before {
@@ -674,14 +681,11 @@
                 padding: 4rem 1.5rem;
             }
 
-            .about-content,
-            .contact-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
             .about-image-wrapper {
-                order: -1;
+                float: none;
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 2rem;
             }
 
             .about-image-accent {
@@ -689,6 +693,11 @@
                 height: 100px;
                 top: 10px;
                 right: -10px;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
             }
 
             .testimonials-grid {
@@ -915,36 +924,39 @@
                     <img src="merima_beric.jpg" alt="Merima Beric - Ihre Laser-Fee Mimma" class="about-image">
                 </div>
                 
-                <div>
-                    <div class="about-text fade-in">
-                        <p>
-                            Willkommen bei Beautiful Merima Beric – Ihrem Rückzugsort für Schönheit und Wohlbefinden 
-                            im Herzen von Stuttgart. Seit 2017 verbinden wir modernste Technologie mit persönlicher 
-                            Betreuung und schaffen so ein einzigartiges Beautyer­lebnis.
-                        </p>
-                        <p>
-                            Merima Beric, Ihre Laser-Fee "Mimma", arbeitet mit höchster Präzision und Expertise. 
-                            Mit dem medizinischen Diodenlaser von Amaderm bieten wir Ihnen eine sichere, effektive 
-                            und professionelle Behandlung für dauerhafte Haarentfernung.
-                        </p>
-                        <p>
-                            Unser Studio besticht durch moderne, hygienische Räumlichkeiten und eine Atmosphäre, 
-                            in der Sie sich vom ersten Moment an wohlfühlen. Jede Behandlung wird individuell auf 
-                            Ihren Hauttyp und Ihre Bedürfnisse abgestimmt.
-                        </p>
+                <div class="about-text fade-in">
+                    <p>
+                        Willkommen bei Beautiful Merima Beric – Ihrem Rückzugsort für Schönheit und Wohlbefinden 
+                        im Herzen von Stuttgart. Seit 2017 verbinden wir modernste Technologie mit persönlicher 
+                        Betreuung und schaffen so ein einzigartiges Beautyer­lebnis.
+                    </p>
+                    <p>
+                        Merima Beric, Ihre Laser-Fee "Mimma", arbeitet mit höchster Präzision und Expertise. 
+                        Mit dem medizinischen Diodenlaser von Amaderm bieten wir Ihnen eine sichere, effektive 
+                        und professionelle Behandlung für dauerhafte Haarentfernung.
+                    </p>
+                    <p>
+                        Unser Studio besticht durch moderne, hygienische Räumlichkeiten und eine Atmosphäre, 
+                        in der Sie sich vom ersten Moment an wohlfühlen. Jede Behandlung wird individuell auf 
+                        Ihren Hauttyp und Ihre Bedürfnisse abgestimmt.
+                    </p>
+                    <p>
+                        Bei uns steht Ihre Zufriedenheit an erster Stelle. Mit jahrelanger Erfahrung und 
+                        ständiger Weiterbildung garantieren wir Ihnen Behandlungen auf höchstem Niveau. 
+                        Unsere Kunden schätzen besonders die kompetente Beratung und die sichtbaren Ergebnisse.
+                    </p>
+                </div>
+                
+                <div class="about-highlight fade-in">
+                    <div class="rating-display">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-text">5.0</span>
                     </div>
-                    
-                    <div class="about-highlight fade-in">
-                        <div class="rating-display">
-                            <span class="stars">★★★★★</span>
-                            <span class="rating-text">5.0</span>
-                        </div>
-                        <p class="reviews-count">Basierend auf 102 Google Bewertungen</p>
-                        <p style="margin-top: 1.5rem; font-size: 1.1rem; line-height: 1.7;">
-                            "Die besten Erfahrungen in der Laser-Haarentfernung! 
-                            Merima gibt immer ihr Bestes und natürlich bin ich mit den Ergebnissen sehr zufrieden."
-                        </p>
-                    </div>
+                    <p class="reviews-count">Basierend auf 102 Google Bewertungen</p>
+                    <p style="margin-top: 1.5rem; font-size: 1.1rem; line-height: 1.7;">
+                        "Die besten Erfahrungen in der Laser-Haarentfernung! 
+                        Merima gibt immer ihr Bestes und natürlich bin ich mit den Ergebnissen sehr zufrieden."
+                    </p>
                 </div>
             </div>
         </div>
