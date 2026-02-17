@@ -765,12 +765,7 @@
         .nav-logo:hover {
             color: var(--text-light);
         }
-
-        .nav-logo:hover .brand-rest,
-        .nav-logo:hover .brand-ric {
-            color: var(--text-light);
-        }
-
+        
         .brand-be {
             color: #e91e63;
             font-weight: 700;
@@ -825,10 +820,14 @@
             color: var(--text-light);
         }
 
-        .nav-logo:hover .brand-rest {
+        .nav-logo:hover {
             color: var(--text-light);
         }
 
+        .nav-logo:hover .brand-autiful {
+            border-bottom-color: var(--text-light);
+        }
+        
         .nav-menu {
             display: flex;
             list-style: none;
@@ -971,6 +970,14 @@
             color: var(--text-light);
         }
 
+        @media (hover: none) {
+            .nav-logo:hover,
+            .nav-logo:hover * {
+                color: var(--primary-color) !important;
+                border-bottom-color: var(--primary-color) !important;
+            }
+        }
+        
         /* Touch-Reset */
         @media (hover: none) {
             .nav-logo:hover .brand-ric-text {
@@ -1531,6 +1538,7 @@
     </script>
 </body>
 </html>
+
 
 
 
