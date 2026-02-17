@@ -960,6 +960,24 @@
             }
         }
 
+        /* Standardfarbe für .RIC */
+        .brand-ric-text {
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        /* Hover */
+        .nav-logo:hover .brand-ric-text {
+            color: var(--text-light);
+        }
+
+        /* Touch-Reset */
+        @media (hover: none) {
+            .nav-logo:hover .brand-ric-text {
+                color: var(--primary-color);
+            }
+        }
+        
         /* Prevent sticky hover on touch devices */
         @media (hover: none) {
             .nav-logo:hover {
@@ -979,7 +997,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="#home" class="nav-logo">
-                <span class="brand-autiful"><span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-rest">.AUTIFUL</span></span><span class="brand-sub">&nbsp;&nbsp;BY MERIMA <span style="white-space: nowrap;"><span style="color: #e91e63; font-weight: 700;">B</span><span style="color: #e91e63; font-weight: 700; display: inline-block; transform: scaleX(-1); vertical-align: bottom;">E</span><span class="brand-rest" style="font-size: inherit;">.RIC</span></span></span>
+                <span class="brand-autiful"><span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-rest">.AUTIFUL</span></span><span class="brand-sub">&nbsp;&nbsp;BY MERIMA <span style="white-space: nowrap;"><span style="color: #e91e63; font-weight: 700;">B</span><span style="color: #e91e63; font-weight: 700; display: inline-block; transform: scaleX(-1); vertical-align: bottom;">E</span><span class="brand-rest brand-ric-text">.RIC</span></span></span>
             </a>
             <div class="nav-toggle">
                 <span></span>
@@ -1513,6 +1531,7 @@
     </script>
 </body>
 </html>
+
 
 
 
