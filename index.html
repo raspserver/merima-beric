@@ -214,6 +214,30 @@
             align-items: center;
         }
 
+        .about-image-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .about-image {
+            width: 100%;
+            height: auto;
+            border-radius: 2px;
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+            display: block;
+        }
+
+        .about-image-accent {
+            position: absolute;
+            top: 20px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+            background: var(--primary-color);
+            border-radius: 2px;
+            z-index: -1;
+        }
+
         .about-text {
             font-size: 1.1rem;
             line-height: 1.9;
@@ -230,6 +254,7 @@
             padding: 3rem;
             border-radius: 2px;
             position: relative;
+            margin-top: 2rem;
         }
 
         .about-highlight::before {
@@ -655,6 +680,17 @@
                 gap: 2rem;
             }
 
+            .about-image-wrapper {
+                order: -1;
+            }
+
+            .about-image-accent {
+                width: 100px;
+                height: 100px;
+                top: 10px;
+                right: -10px;
+            }
+
             .testimonials-grid {
                 grid-template-columns: 1fr;
             }
@@ -692,17 +728,21 @@
         }
 
         .nav-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--primary-color);
+            display: flex;
+            align-items: center;
             text-decoration: none;
-            letter-spacing: 0.05em;
             transition: var(--transition);
         }
 
-        .nav-logo:hover {
-            color: var(--text-light);
+        .nav-logo img {
+            height: 45px;
+            width: auto;
+            transition: var(--transition);
+        }
+
+        .nav-logo:hover img {
+            transform: scale(1.05);
+            filter: brightness(1.2);
         }
 
         .nav-menu {
@@ -791,6 +831,10 @@
                 display: flex;
             }
 
+            .nav-logo img {
+                height: 35px;
+            }
+
             .nav-menu {
                 position: fixed;
                 top: 80px;
@@ -826,7 +870,9 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#home" class="nav-logo">Beautiful Merima Beric</a>
+            <a href="#home" class="nav-logo">
+                <img src="logo.jpg" alt="Beautiful by Merima Beric Logo">
+            </a>
             <div class="nav-toggle">
                 <span></span>
                 <span></span>
@@ -864,34 +910,41 @@
             <p class="section-subtitle fade-in">Professionalität trifft Leidenschaft</p>
             
             <div class="about-content">
-                <div class="about-text fade-in">
-                    <p>
-                        Willkommen bei Beautiful Merima Beric – Ihrem Rückzugsort für Schönheit und Wohlbefinden 
-                        im Herzen von Stuttgart. Seit 2017 verbinden wir modernste Technologie mit persönlicher 
-                        Betreuung und schaffen so ein einzigartiges Beautyer­lebnis.
-                    </p>
-                    <p>
-                        Merima Beric, Ihre Laser-Fee "Mimma", arbeitet mit höchster Präzision und Expertise. 
-                        Mit dem medizinischen Diodenlaser von Amaderm bieten wir Ihnen eine sichere, effektive 
-                        und professionelle Behandlung für dauerhafte Haarentfernung.
-                    </p>
-                    <p>
-                        Unser Studio besticht durch moderne, hygienische Räumlichkeiten und eine Atmosphäre, 
-                        in der Sie sich vom ersten Moment an wohlfühlen. Jede Behandlung wird individuell auf 
-                        Ihren Hauttyp und Ihre Bedürfnisse abgestimmt.
-                    </p>
+                <div class="about-image-wrapper fade-in">
+                    <div class="about-image-accent"></div>
+                    <img src="merima_beric.jpg" alt="Merima Beric - Ihre Laser-Fee Mimma" class="about-image">
                 </div>
                 
-                <div class="about-highlight fade-in">
-                    <div class="rating-display">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-text">5.0</span>
+                <div>
+                    <div class="about-text fade-in">
+                        <p>
+                            Willkommen bei Beautiful Merima Beric – Ihrem Rückzugsort für Schönheit und Wohlbefinden 
+                            im Herzen von Stuttgart. Seit 2017 verbinden wir modernste Technologie mit persönlicher 
+                            Betreuung und schaffen so ein einzigartiges Beautyer­lebnis.
+                        </p>
+                        <p>
+                            Merima Beric, Ihre Laser-Fee "Mimma", arbeitet mit höchster Präzision und Expertise. 
+                            Mit dem medizinischen Diodenlaser von Amaderm bieten wir Ihnen eine sichere, effektive 
+                            und professionelle Behandlung für dauerhafte Haarentfernung.
+                        </p>
+                        <p>
+                            Unser Studio besticht durch moderne, hygienische Räumlichkeiten und eine Atmosphäre, 
+                            in der Sie sich vom ersten Moment an wohlfühlen. Jede Behandlung wird individuell auf 
+                            Ihren Hauttyp und Ihre Bedürfnisse abgestimmt.
+                        </p>
                     </div>
-                    <p class="reviews-count">Basierend auf 102 Google Bewertungen</p>
-                    <p style="margin-top: 1.5rem; font-size: 1.1rem; line-height: 1.7;">
-                        "Die besten Erfahrungen in der Laser-Haarentfernung! 
-                        Merima gibt immer ihr Bestes und natürlich bin ich mit den Ergebnissen sehr zufrieden."
-                    </p>
+                    
+                    <div class="about-highlight fade-in">
+                        <div class="rating-display">
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-text">5.0</span>
+                        </div>
+                        <p class="reviews-count">Basierend auf 102 Google Bewertungen</p>
+                        <p style="margin-top: 1.5rem; font-size: 1.1rem; line-height: 1.7;">
+                            "Die besten Erfahrungen in der Laser-Haarentfernung! 
+                            Merima gibt immer ihr Bestes und natürlich bin ich mit den Ergebnissen sehr zufrieden."
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
