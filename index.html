@@ -826,10 +826,23 @@
         }
 
         /* Hover: alles außer BE wird hell */
+        /*
         .nav-logo:hover .brand-rest,
         .nav-logo:hover .brand-sub,
         .nav-logo:hover .brand-ric-text {
             color: var(--text-light);
+        }
+        */
+
+        /* Desktop Hover only */
+        body:not(.touch-device) .nav-logo:hover .brand-rest,
+        body:not(.touch-device) .nav-logo:hover .brand-sub,
+        body:not(.touch-device) .nav-logo:hover .brand-ric-text {
+            color: var(--text-light);
+        }
+
+        body:not(.touch-device) .nav-logo:hover .brand-autiful {
+            border-bottom-color: var(--text-light);
         }
 
         /* Unterstrich von AUTIFUL */
@@ -977,34 +990,6 @@
         /* Hover */
         .nav-logo:hover .brand-ric-text {
             color: var(--text-light);
-        }
-
-        @media (hover: none) {
-            .nav-logo:hover,
-            .nav-logo:hover * {
-                color: var(--primary-color) !important;
-                border-bottom-color: var(--primary-color) !important;
-            }
-        }
-        
-        /* Touch-Reset */
-        @media (hover: none) {
-            .nav-logo:hover .brand-ric-text {
-                color: var(--primary-color);
-            }
-        }
-        
-        /* Prevent sticky hover on touch devices */
-        @media (hover: none) {
-            .nav-logo:hover {
-                color: var(--primary-color);
-            }
-            .nav-logo:hover .brand-autiful,
-            .nav-logo:hover .brand-rest,
-            .nav-logo:hover .brand-sub {
-                color: var(--primary-color);
-                border-bottom-color: var(--primary-color);
-            }
         }
     </style>
 </head>
@@ -1544,9 +1529,19 @@
         navLogo.addEventListener('click', () => {
             navLogo.blur(); // removes focus state
         });
+
+        // Disable hover effects on touch devices completely
+        function isTouchDevice() {
+            return window.matchMedia("(hover: none)").matches;
+        }
+
+        if (isTouchDevice()) {
+            document.body.classList.add("touch-device");
+        }
     </script>
 </body>
 </html>
+
 
 
 
