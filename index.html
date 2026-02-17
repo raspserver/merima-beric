@@ -331,6 +331,145 @@
             line-height: 1.7;
         }
 
+        /* Pricing Section */
+        .pricing {
+            background: var(--bg-light);
+            padding: 8rem 2rem;
+        }
+
+        .pricing-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .pricing-tab {
+            padding: 1rem 2.5rem;
+            background: white;
+            border: 2px solid var(--primary-color);
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .pricing-tab:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .pricing-tab.active {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .pricing-content {
+            display: none;
+            animation: fadeInContent 0.5s ease-out;
+        }
+
+        .pricing-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInContent {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pricing-note {
+            text-align: center;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .pricing-item {
+            background: white;
+            padding: 2rem;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .pricing-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.2);
+            border-left-width: 6px;
+        }
+
+        .pricing-item h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .pricing-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .pricing-amount {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: auto;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .pricing-package {
+            background: linear-gradient(135deg, #fff 0%, #f9f7f4 100%);
+        }
+
+        .pricing-highlight-box {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #b8922e 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 2px;
+            text-align: center;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .pricing-footer-note {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+            margin-top: 3rem;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-dark);
+        }
+
         /* Testimonials Section */
         .testimonials {
             background: var(--accent-color);
@@ -697,6 +836,7 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">Über uns</a></li>
                 <li><a href="#services">Leistungen</a></li>
+                <li><a href="#pricing">Preise</a></li>
                 <li><a href="#testimonials">Bewertungen</a></li>
                 <li><a href="#contact" class="nav-cta">Termin buchen</a></li>
             </ul>
@@ -816,6 +956,151 @@
                         Innovative Hautstraffung und Faltenbehandlung mit modernster 
                         Plasma-Technologie für sichtbare Ergebnisse.
                     </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 class="section-title fade-in">Preisliste</h2>
+            <p class="section-subtitle fade-in">Transparente Preise für Ihre Behandlungen</p>
+            
+            <div class="pricing-tabs fade-in">
+                <button class="pricing-tab active" data-tab="damen">Damen</button>
+                <button class="pricing-tab" data-tab="herren">Herren</button>
+                <button class="pricing-tab" data-tab="pakete">Pakete</button>
+            </div>
+
+            <!-- Damen Preisliste -->
+            <div class="pricing-content active" id="damen">
+                <div class="pricing-note">Der Preis bezieht sich pro Sitzung.</div>
+                <div class="pricing-grid">
+                    <div class="pricing-item fade-in">
+                        <h3>Gesicht komplett</h3>
+                        <p class="pricing-description">Backen, Oberlippe, Kinn, Hals</p>
+                        <span class="pricing-amount">39€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Arme komplett</h3>
+                        <span class="pricing-amount">75€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Achseln</h3>
+                        <span class="pricing-amount">39€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Intim komplett + Bikinizone</h3>
+                        <span class="pricing-amount">65€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Bikinizone</h3>
+                        <span class="pricing-amount">35€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Beine komplett</h3>
+                        <p class="pricing-description">von Füße bis Bikinizone</p>
+                        <span class="pricing-amount">159€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Po komplett</h3>
+                        <p class="pricing-description">inkl. Pofalte</p>
+                        <span class="pricing-amount">65€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Pofalte</h3>
+                        <p class="pricing-description">zw. Pobacken</p>
+                        <span class="pricing-amount">25€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Brustwarzen</h3>
+                        <span class="pricing-amount">25€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Bauch komplett</h3>
+                        <span class="pricing-amount">39€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Haarlinie</h3>
+                        <p class="pricing-description">Bauchnabel bis Bikini</p>
+                        <span class="pricing-amount">25€</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Herren Preisliste -->
+            <div class="pricing-content" id="herren">
+                <div class="pricing-note">Der Preis bezieht sich pro Sitzung.</div>
+                <div class="pricing-grid">
+                    <div class="pricing-item fade-in">
+                        <h3>Gesicht</h3>
+                        <p class="pricing-description">Wangen, Hals, seitlicher Hals</p>
+                        <span class="pricing-amount">35€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Nacken</h3>
+                        <span class="pricing-amount">25€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Achseln</h3>
+                        <span class="pricing-amount">39€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Arme komplett</h3>
+                        <span class="pricing-amount">85€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Brust + Bauch</h3>
+                        <span class="pricing-amount">90€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Rücken komplett</h3>
+                        <p class="pricing-description">inkl. Nacken, Schultern</p>
+                        <span class="pricing-amount">110€</span>
+                    </div>
+                    <div class="pricing-item fade-in">
+                        <h3>Oberkörper Komplett-Paket</h3>
+                        <span class="pricing-amount">220€</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pakete Preisliste -->
+            <div class="pricing-content" id="pakete">
+                <div class="pricing-highlight-box fade-in">
+                    <h3 style="color: var(--primary-color); font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 1rem;">Beautifuls most wanted</h3>
+                    <p style="margin-bottom: 2rem; font-style: italic;">Unsere beliebtesten Paket-Angebote</p>
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-item pricing-package fade-in">
+                        <h3>Intim + Achseln</h3>
+                        <span class="pricing-amount">100€</span>
+                    </div>
+                    <div class="pricing-item pricing-package fade-in">
+                        <h3>Intim + Achseln + Unterschenkel</h3>
+                        <span class="pricing-amount">160€</span>
+                    </div>
+                    <div class="pricing-item pricing-package fade-in">
+                        <h3>Intim + Beine</h3>
+                        <span class="pricing-amount">180€</span>
+                    </div>
+                    <div class="pricing-item pricing-package fade-in">
+                        <h3>Intim + Achseln + Beine komplett</h3>
+                        <span class="pricing-amount">210€</span>
+                    </div>
+                    <div class="pricing-item pricing-package fade-in">
+                        <h3>Ganzkörper ohne Brust + Bauch + Rücken</h3>
+                        <span class="pricing-amount">290€</span>
+                    </div>
+                    <div class="pricing-item pricing-package fade-in">
+                        <h3>Ganzkörper mit allen Bereichen</h3>
+                        <span class="pricing-amount">350€</span>
+                    </div>
+                </div>
+                <div class="pricing-footer-note fade-in">
+                    Die angegebenen Preise beziehen sich auf eine einzelne Sitzung. 
+                    Die Kosten können je nach Sitzung variieren, da nicht bei jeder Sitzung alle Bereiche gelasert werden müssen.
                 </div>
             </div>
         </div>
@@ -1000,6 +1285,25 @@
             link.addEventListener('click', () => {
                 navToggle.classList.remove('active');
                 navMenu.classList.remove('active');
+            });
+        });
+
+        // Pricing Tabs
+        const pricingTabs = document.querySelectorAll('.pricing-tab');
+        const pricingContents = document.querySelectorAll('.pricing-content');
+
+        pricingTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                pricingTabs.forEach(t => t.classList.remove('active'));
+                pricingContents.forEach(c => c.classList.remove('active'));
+
+                // Add active class to clicked tab
+                tab.classList.add('active');
+
+                // Show corresponding content
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
             });
         });
 
