@@ -738,20 +738,27 @@
         }
 
         .nav-logo {
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
             text-decoration: none;
-            font-family: inherit;
-            font-weight: inherit;
+            line-height: 1;
         }
 
-        
         .brand-main {
             display: inline-block;
             border-bottom: 1px solid var(--primary-color);
-            line-height: 1;
-            font-size: 2.0rem;
+            font-size: 2rem;
+            padding-bottom: 0.1rem; /* Abstand zum Unterstrich */
         }
 
+        .brand-sub {
+            font-size: 0.7rem;
+            color: var(--primary-color);
+            margin-top: 0.25rem; /* Abstand unter der Linie */
+            text-align: right;
+        }
+        
         .brand-autiful {
             color: var(--primary-color);
             transition: var(--transition);
@@ -767,13 +774,6 @@
             display: inline-block;
             transform: scaleX(-1);
             transform-origin: center;
-        }
-
-        .brand-sub {
-            font-size: 0.7rem;
-            color: var(--primary-color);
-            transition: var(--transition);
-            margin-left: 0.4em;
         }
 
         .brand-ric-text {
@@ -929,20 +929,17 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-
             <a href="#home" class="nav-logo">
                 <span class="brand-main">
                     <span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-autiful">.autiful</span>
                 </span>
-
                 <span class="brand-sub">
-                    &nbsp;&nbsp;by Merima
+                    by Merima 
                     <span class="brand-beric">
-                        <span class="brand-beric"><span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-ric-text">.ric</span></span>
+                        <span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-ric-text">.ric</span>
                     </span>
                 </span>
             </a>
-
             <div class="nav-toggle">
                 <span></span>
                 <span></span>
@@ -1475,6 +1472,7 @@
     </script>
 </body>
 </html>
+
 
 
 
