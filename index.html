@@ -90,6 +90,18 @@
             line-height: 1.1;
         }
 
+        .hero-brand {
+            font-family: 'Montserrat', sans-serif; /* exakt wie Header */
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 500;
+            color: var(--text-light);
+            line-height: 1.1;
+        }
+
+        .hero-brand .brand-main {
+            border-bottom: none; /* kein Unterstrich im Hero */
+        }
+
         .hero-subtitle {
             font-size: clamp(1rem, 2vw, 1.5rem);
             color: var(--primary-color);
@@ -961,11 +973,19 @@
     <section class="hero" id="home">
         <div class="hero-content">
             <div class="hero-subtitle">Exzellenz in Beauty & Wellness</div>
-            <h1><span style="color: #e91e63; font-weight: 700;">B</span><span style="color: #e91e63; font-weight: 700; display: inline-block; transform: scaleX(-1);">E</span><span style="color: var(--text-light);">.autiful</span><br>Merima Beric</h1>
+            <h1 class="hero-brand">
+                <span class="brand-main">
+                    <span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-autiful">.autiful</span>
+                </span>
+                <br>
+                <span class="brand-beric">
+                    <span class="brand-be">B</span><span class="brand-e-flip">E</span><span class="brand-ric-text">.ric</span>
+                </span>
+            </h1> 
             <p class="hero-description">
                 Ihr Premium-Kosmetiksalon in Stuttgart für dauerhafte Haarentfernung, 
                 Aqua Facial und exklusive Beautyanwendungen
-            </p>
+            </p>    
             <a href="#contact" class="cta-button">Termin vereinbaren</a>
         </div>
         <div class="scroll-indicator"></div>
@@ -1473,6 +1493,7 @@
     </script>
 </body>
 </html>
+
 
 
 
