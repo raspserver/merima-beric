@@ -34,13 +34,12 @@
 
         .hero {
             position: relative;
-            padding: 30px 2rem 0;
+            min-height: 100svh;
+            padding: 100px 2rem 120px; 
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            min-height: 100vh;
+            justify-content: center;
         }
 
         .hero::before {
@@ -153,14 +152,16 @@
         }
 
         .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 30px;
             height: 50px;
             border: 2px solid var(--primary-color);
             border-radius: 20px;
             opacity: 0.7;
-            position: relative;
             animation: bounce 2s infinite;
-            margin: 0;
         }
 
         .scroll-indicator::before {
@@ -1496,6 +1497,7 @@
     </script>
 </body>
 </html>
+
 
 
 
