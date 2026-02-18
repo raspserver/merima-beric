@@ -34,7 +34,7 @@
 
         .hero {
             position: relative;
-            min-height: 100svh;
+            min-height: 100dvh;
             padding: 100px 2rem 120px; 
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             display: flex;
@@ -178,8 +178,8 @@
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(10px); }
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
         }
 
         @keyframes scroll {
@@ -1497,6 +1497,7 @@
     </script>
 </body>
 </html>
+
 
 
 
