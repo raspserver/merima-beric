@@ -755,8 +755,9 @@
         .brand-sub {
             font-size: 0.7rem;
             color: var(--primary-color);
-            margin-top: 0.25rem; /* Abstand unter der Linie */
+            margin-top: 0.25rem;
             text-align: right;
+            transition: var(--transition);
         }
         
         .brand-autiful {
@@ -917,8 +918,10 @@
 
         @media (hover: hover) and (pointer: fine) {
             .nav-logo:hover .brand-autiful,
-            .nav-logo:hover .brand-sub,
             .nav-logo:hover .brand-ric-text {
+                color: var(--text-light);
+            }
+            .nav-logo:hover .brand-sub {
                 color: var(--text-light);
             }
             .nav-logo:hover .brand-main {
@@ -1474,6 +1477,7 @@
     </script>
 </body>
 </html>
+
 
 
 
