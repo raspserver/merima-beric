@@ -34,13 +34,13 @@
 
         .hero {
             position: relative;
-            min-height: 100svh;
-            padding-top: 90px; /* Höhe Navbar + kleiner Abstand */
+            min-height: 100vh;
+            padding-top: 70px; /* Platz für fixe Navbar */
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             display: flex;
-            align-items: flex-start;
+            align-items: center;   /* Desktop wieder mittig */
             justify-content: center;
-        overflow: hidden;
+            overflow: hidden;
         }
 
         .hero::before {
@@ -690,6 +690,11 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .hero {
+                min-height: 100svh;
+                align-items: flex-start;
+                padding-top: 100px; /* etwas höher als Desktop */
+            }
             .hero h1 {
                 font-size: 3rem;
             }
@@ -1494,6 +1499,7 @@
     </script>
 </body>
 </html>
+
 
 
 
