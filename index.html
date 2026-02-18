@@ -152,13 +152,15 @@
         }
 
         .scroll-indicator {
-            margin-top: auto;     /* schiebt ihn nach unten */
-            margin-bottom: 2rem;  /* Abstand zum Ende */
+            align-self: center;      /* horizontal mittig im Flex-Container */
+            margin-top: auto;        /* schiebt ihn nach unten */
+            margin-bottom: 3rem;     /* Abstand vom Hero-Ende */
             width: 30px;
             height: 50px;
             border: 2px solid var(--primary-color);
             border-radius: 20px;
             opacity: 0.7;
+            position: relative;      /* wichtig für ::before */
             animation: bounce 2s infinite;
         }
 
@@ -176,8 +178,8 @@
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
         }
 
         @keyframes scroll {
@@ -1495,6 +1497,7 @@
     </script>
 </body>
 </html>
+
 
 
 
