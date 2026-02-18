@@ -738,20 +738,14 @@
         }
 
         .nav-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            text-decoration: none;
-            letter-spacing: 0.05em;
             display: inline-flex;
-            align-items: flex-end;
-            gap: 0.3em;
+            align-items: baseline;
+            gap: 0.4em;
         }
 
         .brand-main {
             border-bottom: 1px solid var(--primary-color);
-            transition: var(--transition);
+            padding-bottom: 0.05em;
         }
 
         .brand-autiful {
@@ -881,12 +875,6 @@
                 font-size: 1.1rem;
             }
 
-            .brand-be,
-            .brand-e-flip,
-            .brand-rest {
-                font-size: 1.1rem;
-            }
-
             .nav-container {
                 position: relative;
                 z-index: 1001;
@@ -928,19 +916,16 @@
             transition: var(--transition);
         } 
 
-        /* =========================
-        Logo Hover – sauber & eindeutig
-        ========================= */
         @media (hover: hover) {
             .nav-logo:hover .brand-autiful,
             .nav-logo:hover .brand-sub,
             .nav-logo:hover .brand-ric-text {
                 color: var(--text-light);
             }
-            .nav-logo:hover .brand-autiful {
+            .nav-logo:hover .brand-main {
                 border-bottom-color: var(--text-light);
             }
-        }  
+        } 
     </style>
 </head>
 <body>
@@ -1497,6 +1482,7 @@
     </script>
 </body>
 </html>
+
 
 
 
