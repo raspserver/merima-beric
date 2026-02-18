@@ -39,6 +39,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: space-between;
             min-height: 100vh;
         }
 
@@ -152,16 +153,14 @@
         }
 
         .scroll-indicator {
-            align-self: center;      /* horizontal mittig im Flex-Container */
-            margin-top: 4rem;
-            margin-bottom: 3rem;     /* Abstand vom Hero-Ende */
             width: 30px;
             height: 50px;
             border: 2px solid var(--primary-color);
             border-radius: 20px;
             opacity: 0.7;
-            position: relative;      /* wichtig für ::before */
+            position: relative;
             animation: bounce 2s infinite;
+            margin: 0;
         }
 
         .scroll-indicator::before {
@@ -1497,6 +1496,7 @@
     </script>
 </body>
 </html>
+
 
 
 
