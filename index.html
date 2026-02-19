@@ -104,18 +104,6 @@
             font-weight: 700;
         }
 
-        .hero-e {
-            color: #e91e63;
-            font-weight: 700;
-            display: inline-block;
-            transform: scaleX(-1);
-            transform-origin: center;
-        }
-
-        .hero-autiful {
-            font-weight: 600;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -129,46 +117,82 @@
             animation: fadeIn 1.5s ease-out 0.6s both;
         }
 
-        .hero-brand {
-            display: inline-block;
-            line-height: 1.1;
-        }
+        /* ===============================
+   PREMIUM HERO BRAND
+================================= */
 
-        .hero-main {
-            display: inline-block;
-            border-bottom: 2px solid #ffffff;
-            padding-bottom: 0.2rem;
-        }
+.hero-brand {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1;
+    position: relative;
+}
 
-        .hero-autiful {
-            font-weight: 600;
-            color: var(--text-light);
-        }
+/* Hauptschriftzug */
+.hero-main {
+    display: inline-block;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    padding-bottom: 0.35rem;
+    position: relative;
+}
 
-        .hero-subbrand {
-            display: block;
-            font-size: 0.35em; /* proportional kleiner */
-            color: var(--text-light);
-            margin-top: 0.4rem;
-            letter-spacing: 0.08em;
-            text-align: right;
-        }
+/* Edler Gold-Unterstrich mit Glow */
+.hero-main::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        rgba(212,175,55,0.2),
+        var(--primary-color),
+        rgba(212,175,55,0.2)
+    );
+    box-shadow: 0 0 12px rgba(212,175,55,0.5);
+}
 
-        .hero-ric {
-            color: var(--text-light);
-            font-weight: 600;
-        }
+/* BE Styling */
+.hero-be,
+.hero-e {
+    color: #e91e63;
+    font-weight: 700;
+}
 
-        .hero-be,
-        .hero-e {
-            color: #e91e63;
-            font-weight: 700;
-        }
+/* Gespiegeltes E ohne Spacing-Probleme */
+.hero-e {
+    display: inline-block;
+    transform: scaleX(-1);
+    transform-origin: center;
+    margin-left: -0.06em;
+    margin-right: -0.06em;
+}
 
-        .hero-e {
-            display: inline-block;
-            transform: scaleX(-1);
-        }
+/* .autiful */
+.hero-autiful {
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+/* Subline */
+.hero-subbrand {
+    margin-top: 0.7rem;
+    font-size: 0.32em;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+}
+
+/* BE.ric */
+.hero-ric {
+    color: var(--text-light);
+    font-weight: 600;
+}
+
 
         .cta-button {
             display: inline-block;
@@ -1534,6 +1558,7 @@
     </script>
 </body>
 </html>
+
 
 
 
