@@ -143,15 +143,14 @@
             position: absolute;
             left: 0;
             bottom: 0;
-            width: 0;
+            width: 100%;
             height: 2px;
             background: #ffffff;
-            box-shadow: none;
-            animation: underlineReveal 1.2s ease forwards;
-            animation-delay: 0.4s;
-            width: 0;
-            animation: underlineReveal 1.2s ease forwards;
-            animation-delay: 0.4s;
+            opacity: 0;
+            transform: scaleX(0.96);
+            transform-origin: center;
+            animation: underlineSoftReveal 0.9s ease forwards;
+            animation-delay: 0.45s;
         }
 
         .hero-be,
@@ -187,6 +186,13 @@
         .hero-ric {
             color: var(--text-light);
             font-weight: 600;
+        }
+
+        @keyframes underlineSoftReveal {
+            to {
+                opacity: 1;
+                transform: scaleX(1);
+            }
         }
 
         @keyframes heroFadeUp {
@@ -1565,6 +1571,7 @@
     </script>
 </body>
 </html>
+
 
 
 
