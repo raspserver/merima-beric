@@ -129,6 +129,46 @@
             animation: fadeIn 1.5s ease-out 0.6s both;
         }
 
+        .hero-brand {
+            display: inline-block;
+            line-height: 1.1;
+        }
+
+        .hero-main {
+            display: inline-block;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.2rem;
+        }
+
+        .hero-autiful {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .hero-subbrand {
+            display: block;
+            font-size: 0.35em; /* proportional kleiner */
+            color: var(--text-light);
+            margin-top: 0.4rem;
+        letter-spacing: 0.08em;
+        }
+
+        .hero-ric {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .hero-be,
+        .hero-e {
+            color: #e91e63;
+            font-weight: 700;
+        }
+
+        .hero-e {
+            display: inline-block;
+            transform: scaleX(-1);
+        }
+
         .cta-button {
             display: inline-block;
             padding: 1.2rem 3rem;
@@ -975,9 +1015,20 @@
         <div class="hero-content">
             <div class="hero-subtitle">Exzellenz in Beauty & Wellness</div>
             <h1 class="hero-brand">
-                <span class="hero-be">B</span><span class="hero-e">E</span><span class="hero-autiful">.autiful</span>
+                <span class="hero-main">
+                    <span class="hero-be">B</span>
+                    <span class="hero-e">E</span>
+                    <span class="hero-autiful">.autiful</span>
+                </span>
                 <br>
-                Merima Beric
+                <span class="hero-subbrand">
+                    by Merima 
+                    <span class="hero-beric">
+                        <span class="hero-be">B</span>
+                        <span class="hero-e">E</span>
+                        <span class="hero-ric">.ric</span>
+                    </span>
+                </span>
             </h1>
             <p class="hero-description">
                 Ihr Premium-Kosmetiksalon in Stuttgart für dauerhafte Haarentfernung, 
@@ -1490,6 +1541,7 @@
     </script>
 </body>
 </html>
+
 
 
 
