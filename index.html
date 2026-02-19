@@ -133,6 +133,9 @@
             letter-spacing: 0.02em;
             padding-bottom: 0.35rem;
             position: relative;
+            opacity: 0;
+            transform: translateY(8px);
+            animation: heroFadeUp 1.1s cubic-bezier(.22,.61,.36,1) forwards;
         }
 
         .hero-main::after {
@@ -149,6 +152,9 @@
                 rgba(212,175,55,0.2)
             );
             box-shadow: 0 0 12px rgba(212,175,55,0.5);
+            width: 0;
+            animation: underlineReveal 1.2s ease forwards;
+            animation-delay: 0.4s;
         }
 
         .hero-be,
@@ -176,11 +182,28 @@
             letter-spacing: 0.18em;
             text-transform: uppercase;
             color: rgba(255,255,255,0.85);
+            opacity: 0;
+            transform: translateY(8px);
+            animation: heroFadeUp 1.1s cubic-bezier(.22,.61,.36,1) forwards;
+            animation-delay: 0.35s;
         }
 
         .hero-ric {
             color: var(--text-light);
             font-weight: 600;
+        }
+
+        @keyframes heroFadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes underlineReveal {
+            to {
+                width: 100%;
+            }
         }
 
         .cta-button {
@@ -1547,6 +1570,7 @@
     </script>
 </body>
 </html>
+
 
 
 
