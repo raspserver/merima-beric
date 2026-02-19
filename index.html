@@ -130,12 +130,13 @@
             display: inline-block;
             font-size: clamp(3.2rem, 6.5vw, 5.8rem);
             font-weight: 400;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.025em;      /* ruhiger */
+            line-height: 1.04;            /* kompakter Block */
             padding-bottom: 0.22rem;
             position: relative;
             opacity: 0;
-            transform: translateY(8px);
-            animation: heroFadeUp 1.1s cubic-bezier(.22,.61,.36,1) forwards;
+            transform: translateY(18px) scale(0.985);
+            animation: heroReveal 1.4s cubic-bezier(.22,.61,.36,1) forwards;
             white-space: nowrap;
         }
 
@@ -174,10 +175,10 @@
         }
 
         .hero-subbrand {
-            margin-top: 0.2rem;
-            font-size: 0.36em;
-            letter-spacing: 0.04em;
-            word-spacing: 0.08em;
+            margin-top: 0.35rem;
+            font-size: 0.34em;
+            letter-spacing: 0.055em;
+            word-spacing: 0.05em;
             color: rgba(255,255,255,0.85);
             font-weight: 400;
             opacity: 0;
@@ -214,10 +215,20 @@
             }
         }
 
-        @keyframes heroFadeUp {
-            to {
+        @keyframes heroReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(18px) scale(0.985);
+                filter: blur(4px);
+            }
+            60% {
                 opacity: 1;
-                transform: translateY(0);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
             }
         }
 
@@ -1596,6 +1607,7 @@
     </script>
 </body>
 </html>
+
 
 
 
