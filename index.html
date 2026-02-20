@@ -1697,21 +1697,34 @@
             navLogo.blur(); // removes focus state
         });
 
-        // Navbar Scroll + Cinematic Line Animation
-        function getNavbarDelay() {
-            const styles = window.getComputedStyle(navbar);
-            const duration = styles.transitionDuration.split(',')[0].trim();
+        // Navbar Scroll + Cinematic Line Animation (transitionend Version)
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
 
-            let durationMs = 0;
-
-            if (duration.includes("ms")) {
-                durationMs = parseFloat(duration);
-            } else if (duration.includes("s")) {
-                durationMs = parseFloat(duration) * 1000;
+            if (currentScroll > 100) {
+                navbar.classList.add('visible');
+            } else {
+                navbar.classList.remove('visible');
             }
+        });
 
-            return durationMs * 0.4; // 40% der echten Transition
-        }
+        // 🔥 Linie startet exakt nach Navbar-Transition
+        navbar.addEventListener('transitionend', (event) => {
+            // Nur reagieren, wenn transform-Transition fertig ist
+            if (event.propertyName !== "transform") return;
+
+            // Nur wenn Navbar sichtbar ist
+            if (!navbar.classList.contains('visible')) return;
+
+            // Nur einmal pro Session
+            if (!headerLineAnimated && !animationTriggered) {
+                animationTriggered = true;
+
+                brandMain.classList.add("animate-line");
+                sessionStorage.setItem("headerLineAnimated", "true");
+                headerLineAnimated = true;
+            }
+        });
 
         window.addEventListener('scroll', () => {
             const currentScroll = window.pageYOffset;
@@ -1738,5 +1751,6 @@
     </script>
 </body>
 </html>
+
 
 
