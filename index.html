@@ -1636,7 +1636,13 @@
         const navMenu = document.querySelector('.nav-menu');
         
         const brandMain = document.querySelector(".brand-main");
-        let headerLineAnimated = sessionStorage.getItem("headerLineAnimated");
+        
+        let headerLineAnimated = sessionStorage.getItem("headerLineAnimated") === "true";
+        // Wenn Animation schon in dieser Session lief → Linie direkt sichtbar setzen
+        if (headerLineAnimated) {
+            brandMain.classList.add("animate-line");
+        }
+        
         let animationTriggered = false;
 
         // Mobile menu toggle
@@ -1743,4 +1749,5 @@
     </script>
 </body>
 </html>
+
 
