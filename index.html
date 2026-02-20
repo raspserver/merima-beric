@@ -950,14 +950,15 @@
         .brand-main::after {
             content: "";
             position: absolute;
-            left: 0;
+            left: 50%;
             bottom: 0;
-            width: 100%;
+            width: 104%;
             height: 1px;
             background: var(--text-light);
-            opacity: 0.65;
-            transform: scaleX(0.96);
+            opacity: 0;
+            transform: translateX(-50%) scaleX(0.96);
             transform-origin: center;
+            animation: cinematicLine 1.2s cubic-bezier(.16,.84,.44,1) forwards;
         }
         
         .brand-sub {
@@ -1696,6 +1697,7 @@
     </script>
 </body>
 </html>
+
 
 
 
