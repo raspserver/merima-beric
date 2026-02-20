@@ -135,8 +135,8 @@
             padding-bottom: 0.22rem;
             position: relative;
             opacity: 0;
-            transform: translateY(22px) scale(0.982);
-            animation: heroMainReveal 1.2s cubic-bezier(.22,.61,.36,1) forwards;
+            transform: translateY(26px);
+            animation: cinematicMain 1.8s cubic-bezier(.16,.84,.44,1) forwards;
             white-space: nowrap;
         }
 
@@ -144,15 +144,15 @@
             content: "";
             position: absolute;
             left: 0;
-            bottom: 0.02em;
-            width: 100%;
+            bottom: 0;
             height: 1px;
-            background: #ffffff;
+            width: 100%;
+            background: white;
             opacity: 0;
-            transform: scaleX(0.92);
+            transform: scaleX(0.96);
             transform-origin: center;
-            animation: underlineSoftReveal 1s cubic-bezier(.22,.61,.36,1) forwards;
-            animation-delay: 0.5s;
+            animation: cinematicLine 1.4s cubic-bezier(.16,.84,.44,1) forwards;
+            animation-delay: 0.6s;
         }
 
         .hero-be,
@@ -182,9 +182,9 @@
             color: rgba(255,255,255,0.85);
             font-weight: 400;
             opacity: 0;
-            transform: translateY(16px);
-            animation: heroSubReveal 1.1s cubic-bezier(.33,.6,.2,1) forwards;
-            animation-delay: 0.15s; /* 150ms später */
+            transform: translateY(20px);
+            animation: cinematicSub 1.6s cubic-bezier(.16,.84,.44,1) forwards;
+            animation-delay: 0.25s;
         }
 
         .hero-subbrand .hero-be,
@@ -267,6 +267,39 @@
             100% {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        @keyframes cinematicMain {
+            0% {
+                opacity: 0;
+                transform: translateY(26px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cinematicSub {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cinematicLine {
+            0% {
+                opacity: 0;
+                transform: scaleX(0.96);
+            }
+            100% {
+                opacity: 0.65;
+                transform: scaleX(1);
             }
         }
 
@@ -1639,6 +1672,7 @@
     </script>
 </body>
 </html>
+
 
 
 
