@@ -962,7 +962,9 @@
         }
 
         .brand-main.animate-line::after {
-            animation: cinematicLine 1.4s cubic-bezier(.16,.84,.44,1) forwards;
+            animation:
+            cinematicLine 1.4s cubic-bezier(.16,.84,.44,1) forwards,
+            lineBreathMicro 1.8s cubic-bezier(.25,.8,.25,1) 1.4s forwards;
         }
         
         .brand-sub {
@@ -1023,6 +1025,18 @@
             100% {
                 opacity: 0.65;
                 transform: scaleX(1); /* dann erst expandieren */
+            }
+        }
+
+        @keyframes lineBreathMicro {
+            0% {
+                transform: scaleX(1);
+            }
+            50% {
+                transform: scaleX(1.002);
+            }
+            100% {
+                transform: scaleX(1);
             }
         }
 
@@ -1749,5 +1763,6 @@
     </script>
 </body>
 </html>
+
 
 
