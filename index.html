@@ -1708,9 +1708,10 @@
             }
         });
 
-        // 🔥 Linie startet exakt nach Navbar-Transition
+        // 🔥 Linie startet minimal luxuriös nach Navbar-Transition
         navbar.addEventListener('transitionend', (event) => {
-            // Nur reagieren, wenn transform-Transition fertig ist
+
+            // Nur transform-Transition beachten
             if (event.propertyName !== "transform") return;
 
             // Nur wenn Navbar sichtbar ist
@@ -1718,39 +1719,18 @@
 
             // Nur einmal pro Session
             if (!headerLineAnimated && !animationTriggered) {
+
                 animationTriggered = true;
 
-                brandMain.classList.add("animate-line");
-                sessionStorage.setItem("headerLineAnimated", "true");
-                headerLineAnimated = true;
-            }
-        });
-
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-
-            if (currentScroll > 100) {
-                navbar.classList.add('visible');
-
-            if (!headerLineAnimated && !animationTriggered) {
-                animationTriggered = true;
-
-                const dynamicDelay = getNavbarDelay();
-
+                // ✨ Luxus-Verzögerung (100ms wirkt sehr edel)
                 setTimeout(() => {
                     brandMain.classList.add("animate-line");
                     sessionStorage.setItem("headerLineAnimated", "true");
                     headerLineAnimated = true;
-                }, dynamicDelay);
-            }
+                }, 100);
 
-            } else {
-                navbar.classList.remove('visible');
             }
         });
     </script>
 </body>
 </html>
-
-
-
