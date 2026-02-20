@@ -1106,8 +1106,17 @@
             width: 25px;
             height: 2px;
             background: var(--text-light);
-            opacity: 0.9;
-            transition: var(--transition);
+            opacity: 0.88;
+            transition: 
+            opacity 0.4s ease,
+            transform 0.4s cubic-bezier(.16,.84,.44,1),
+            box-shadow 0.4s ease;
+        }
+
+        /* ✨ Premium Highlight wenn geöffnet */
+        .nav-toggle.active span {
+            opacity: 1;
+            box-shadow: 0 0 4px rgba(255,255,255,0.25);
         }
 
         .nav-toggle:hover span {
@@ -1768,6 +1777,7 @@
     </script>
 </body>
 </html>
+
 
 
 
