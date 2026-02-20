@@ -1628,18 +1628,21 @@
         
         const brandMain = document.querySelector(".brand-main");
         let headerLineAnimated = sessionStorage.getItem("headerLineAnimated");
+        let animationTriggered = false;
 
         window.addEventListener('scroll', () => {
             const currentScroll = window.pageYOffset;
-    
             if (currentScroll > 100) {
                 navbar.classList.add('visible');
-                
-                // 🔥 Trigger underline animation exactly once
-                if (!headerLineAnimated) {
-                    brandMain.classList.add("animate-line");
-                    sessionStorage.setItem("headerLineAnimated", "true");
-                    headerLineAnimated = true;
+
+                // 🔥 Cinematic delayed underline (once per session)
+                if (!headerLineAnimated && !animationTriggered) {
+                    animationTriggered = true;
+                    setTimeout(() => {
+                        brandMain.classList.add("animate-line");
+                        sessionStorage.setItem("headerLineAnimated", "true");
+                        headerLineAnimated = true;
+                    }, 120); // 120ms Luxury Delay
                 }
 
             } else {
@@ -1718,3 +1721,4 @@
     </script>
 </body>
 </html>
+
