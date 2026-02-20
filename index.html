@@ -1630,26 +1630,6 @@
         let headerLineAnimated = sessionStorage.getItem("headerLineAnimated");
         let animationTriggered = false;
 
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-            if (currentScroll > 100) {
-                navbar.classList.add('visible');
-
-                // 🔥 Cinematic delayed underline (once per session)
-                if (!headerLineAnimated && !animationTriggered) {
-                    animationTriggered = true;
-                    setTimeout(() => {
-                        brandMain.classList.add("animate-line");
-                        sessionStorage.setItem("headerLineAnimated", "true");
-                        headerLineAnimated = true;
-                    }, 120); // 120ms Luxury Delay
-                }
-
-            } else {
-                navbar.classList.remove('visible');
-            }
-        });
-
         // Mobile menu toggle
         navToggle.addEventListener('click', () => {
             navToggle.classList.toggle('active');
@@ -1717,8 +1697,46 @@
             navLogo.blur(); // removes focus state
         });
 
-        
+        // Navbar Scroll + Cinematic Line Animation
+        function getNavbarDelay() {
+            const styles = window.getComputedStyle(navbar);
+            const duration = styles.transitionDuration.split(',')[0].trim();
+
+            let durationMs = 0;
+
+            if (duration.includes("ms")) {
+                durationMs = parseFloat(duration);
+            } else if (duration.includes("s")) {
+                durationMs = parseFloat(duration) * 1000;
+            }
+
+            return durationMs * 0.4; // 40% der echten Transition
+        }
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                navbar.classList.add('visible');
+
+            if (!headerLineAnimated && !animationTriggered) {
+                animationTriggered = true;
+
+                const dynamicDelay = getNavbarDelay();
+
+                setTimeout(() => {
+                    brandMain.classList.add("animate-line");
+                    sessionStorage.setItem("headerLineAnimated", "true");
+                    headerLineAnimated = true;
+                }, dynamicDelay);
+            }
+
+            } else {
+                navbar.classList.remove('visible');
+            }
+        });
     </script>
 </body>
 </html>
+
 
