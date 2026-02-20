@@ -1105,8 +1105,13 @@
         .nav-toggle span {
             width: 25px;
             height: 2px;
-            background: var(--primary-color);
+            background: var(--text-light);
+            opacity: 0.9;
             transition: var(--transition);
+        }
+
+        .nav-toggle:hover span {
+            opacity: 1;
         }
 
         .nav-toggle.active span:nth-child(1) {
@@ -1763,6 +1768,7 @@
     </script>
 </body>
 </html>
+
 
 
 
