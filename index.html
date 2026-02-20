@@ -1626,18 +1626,25 @@
         const navToggle = document.querySelector('.nav-toggle');
         const navMenu = document.querySelector('.nav-menu');
         
-        // Show navbar on scroll
-        let lastScroll = 0;
+        const brandMain = document.querySelector(".brand-main");
+        let headerLineAnimated = sessionStorage.getItem("headerLineAnimated");
+
         window.addEventListener('scroll', () => {
             const currentScroll = window.pageYOffset;
-            
+    
             if (currentScroll > 100) {
                 navbar.classList.add('visible');
+                
+                // 🔥 Trigger underline animation exactly once
+                if (!headerLineAnimated) {
+                    brandMain.classList.add("animate-line");
+                    sessionStorage.setItem("headerLineAnimated", "true");
+                    headerLineAnimated = true;
+                }
+
             } else {
                 navbar.classList.remove('visible');
             }
-            
-            lastScroll = currentScroll;
         });
 
         // Mobile menu toggle
@@ -1707,154 +1714,7 @@
             navLogo.blur(); // removes focus state
         });
 
-        // Header underline animation only once per session
-        document.addEventListener("DOMContentLoaded", () => {
-            const brandMain = document.querySelector(".brand-main");
-            if (!sessionStorage.getItem("headerLineAnimated")) {
-                brandMain.classList.add("animate-line");
-                sessionStorage.setItem("headerLineAnimated", "true");
-            }
-        });
+        
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
