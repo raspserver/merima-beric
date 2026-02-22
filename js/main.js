@@ -4,6 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.querySelector('.nav-toggle');
   const navMenu = document.querySelector('.nav-menu');
 
+  /* Navbar beim Scrollen anzeigen */
+  window.addEventListener('scroll', () => {
+    if (navbar) {
+      navbar.classList.toggle('visible', window.scrollY > 100);
+    }
+  });
+
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -18,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  /* Mobile Menu Toggle */
+  /* Mobile Menu */
   if (navToggle && navMenu) {
 
     navToggle.addEventListener('click', () => {
@@ -43,4 +50,18 @@ document.addEventListener("DOMContentLoaded", () => {
   pricingTabs.forEach(tab => {
     tab.addEventListener('click', () => {
       pricingTabs.forEach(t => t.classList.remove('active'));
-      pricing
+      pricingContents.forEach(c => c.classList.remove('active'));
+
+      tab.classList.add('active');
+      const target = document.getElementById(tab.dataset.tab);
+      if (target) target.classList.add('active');
+    });
+  });
+
+  /* Jahr im Footer */
+  const year = document.getElementById('year');
+  if (year) {
+    year.textContent = new Date().getFullYear();
+  }
+
+});
