@@ -1742,27 +1742,27 @@
 				}
 			});
 
-			// 🔥 Linie startet minimal luxuriös nach Navbar-Transition
-			navbar.addEventListener('transitionend', (event) => {
+			function triggerHeaderLine() {
 
-				// Nur transform-Transition beachten
-				if (event.propertyName !== "transform") return;
-
-				// Nur wenn Navbar sichtbar ist
-				if (!navbar.classList.contains('visible')) return;
-
-				// Nur einmal pro Session
 				if (!headerLineAnimated && !animationTriggered) {
-
 					animationTriggered = true;
 
-					// ✨ Luxus-Verzögerung (100ms wirkt sehr edel)
 					setTimeout(() => {
 						brandMain.classList.add("animate-line");
 						sessionStorage.setItem("headerLineAnimated", "true");
 						headerLineAnimated = true;
-					}, 100);
+					}, 400); // leicht nach Navbar Slide-In
+				}
+			}
 
+			window.addEventListener('scroll', () => {
+				const currentScroll = window.pageYOffset;
+
+				if (currentScroll > 100) {
+					navbar.classList.add('visible');
+					triggerHeaderLine();
+				} else {
+					navbar.classList.remove('visible');
 				}
 			});
 		</script>
