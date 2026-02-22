@@ -80,5 +80,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Footer year */
   document.getElementById("year").textContent = new Date().getFullYear();
+  
+	.fade-in {
+	  opacity: 0;
+	  transform: translateY(20px);
+	  transition: ...
+	}
+
+	.fade-in.visible {
+	  opacity: 1;
+	  transform: translateY(0);
+	}
 
 });
