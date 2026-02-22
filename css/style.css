@@ -215,57 +215,6 @@ body {
 	}
 }
 
-@keyframes heroReveal {
-	0% {
-		opacity: 0;
-		transform: translateY(18px) scale(0.985);
-		filter: blur(4px);
-	}
-	60% {
-		opacity: 1;
-		filter: blur(0);
-	}
-	100% {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-		filter: blur(0);
-	}
-}
-
-@keyframes underlineReveal {
-	to {
-		width: 100%;
-	}
-}
-
-@keyframes heroMainReveal {
-	0% {
-		opacity: 0;
-		transform: translateY(22px) scale(0.982);
-		filter: blur(6px);
-	}
-	60% {
-		opacity: 1;
-		filter: blur(0);
-	}
-	100% {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-		filter: blur(0);
-	}
-}
-
-@keyframes heroSubReveal {
-	0% {
-		opacity: 0;
-		transform: translateY(18px);
-	}
-	100% {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
 @keyframes cinematicMain {
 	0% {
 		opacity: 0;
