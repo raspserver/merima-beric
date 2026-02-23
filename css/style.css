@@ -179,10 +179,11 @@ body {
 .hero-subbrand {
 	display: block;
 	margin-top: 0.35rem;
-	font-size: 0.34em;
+	font-size: 0.32em;
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);
 	font-weight: 400;
+	
 	opacity: 0;
 	transform: translateY(20px);
 	animation: cinematicSub 1.6s cubic-bezier(.16,.84,.44,1) forwards;
@@ -197,12 +198,6 @@ body {
 .hero-subbrand .hero-ric {
 	color: rgba(255,255,255,0.85);
 	font-weight: 400;
-}
-
-@media (min-width: 1024px) {
-	.hero-subbrand {
-		font-size: 0.30em;
-	}
 }
 
 @keyframes cinematicMain {
@@ -804,10 +799,6 @@ footer {
 	padding-bottom: 0.18rem;
 }
 
-.footer-brand .hero-subbrand {
-	font-size: 0.38em;
-}
-
 .footer-brand .hero-main::after {
 	height: 1px;
 	bottom: -0.02rem;
@@ -1071,45 +1062,6 @@ footer a:hover {
 
 	.nav-menu a::after {
 		display: none;
-	}
-	
-	/* ========================
-	   Einheitliche Logo-Typo
-	   ======================== */
-
-	/* 1) Grundstruktur */
-	nav .nav-logo,
-	footer .footer-brand {
-		display: inline-block;
-		text-align: right;
-		line-height: 1;
-	}
-
-	/* 2) Hauptwort “BE.autiful” */
-	nav .nav-logo .hero-main,
-	footer .footer-brand .hero-main {
-		display: block;
-		white-space: nowrap;
-		font-size: clamp(2rem, 5vw, 4.5rem);  /* proportional wie Hero */
-		line-height: 1.04;
-		padding-bottom: 0.22rem;
-	}
-
-	/* 3) Subline “by Merima BE.ric” */
-	nav .nav-logo .hero-subbrand,
-	footer .footer-brand .hero-subbrand {
-		display: block;
-		font-size: 0.34em;   /* exakt wie Hero */
-		margin-top: 0.35rem;
-	}
-
-	/* 4) Unterstrich-Anpassung */
-	nav .nav-logo .hero-main::after,
-	footer .footer-brand .hero-main::after {
-		height: 1px;
-		bottom: 0;
-		opacity: 0.6;
-		transform: none;
 	}
 	
 }
