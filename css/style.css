@@ -787,26 +787,8 @@ footer {
 	margin: 0 auto;
 }
 
-.footer-main {
-	font-size: 1.2rem;
-	animation: none;
-	opacity: 1;
-	transform: none;
-}
-
-.footer-sub {
-	font-size: 0.5rem;
-	letter-spacing: 0;
-	margin-top: 0.2rem;
-	animation: none;
-	opacity: 1;
-	transform: none;
-}
-
 .footer-brand {
-	display: inline-flex;
-	flex-direction: column;
-	align-items: flex-end;   /* Subline rechts ausrichten */
+	display: inline-block;
 	text-align: right;
 }
 
@@ -818,6 +800,7 @@ footer {
 .footer-brand .hero-subbrand {
 	display: block;
 	margin-top: 0.25rem;
+	white-space: nowrap;
 }
 
 footer a {
