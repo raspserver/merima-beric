@@ -806,8 +806,8 @@ footer {
 .footer-brand {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-end;   /* 🔥 rechtsbündig */
-	text-align: right;
+	align-items: center;
+	text-align: center;
 }
 
 footer a {
