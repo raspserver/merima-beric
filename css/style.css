@@ -804,12 +804,20 @@ footer {
 }
 
 .footer-brand {
-	display: inline-block;
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-end;   /* Subline rechts ausrichten */
 	text-align: right;
 }
 
+.footer-brand .hero-main {
+	display: block;
+	white-space: nowrap;
+}
+
 .footer-brand .hero-subbrand {
-	display: inline-block;
+	display: block;
+	margin-top: 0.25rem;
 }
 
 footer a {
