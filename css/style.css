@@ -917,6 +917,13 @@ footer a:hover {
 	align-items: flex-end;
 	text-decoration: none;
 	line-height: 1;
+	--navbar-main-size: clamp(1.4rem, 2.5vw, 1.8rem);
+}
+
+.nav-logo .hero-main {
+	font-size: var(--navbar-main-size);
+	display: block;
+	white-space: nowrap;
 }
 
 @keyframes lineBreathMicro {
@@ -1029,10 +1036,6 @@ footer a:hover {
 @media (max-width: 968px) {
 	.nav-toggle {
 		display: flex;
-	}
-
-	.nav-logo {
-		font-size: 1.1rem;
 	}
 
 	.nav-container {
