@@ -9,7 +9,7 @@
 	/* === Brand System === */
 	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo home und footer */
 	/* === Context Overrides === */
-	--navbar-sub-ratio: 0.35; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo navbar */
+	--navbar-sub-ratio: 0.15; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo navbar */
 }
 
 html {
