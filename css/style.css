@@ -117,13 +117,14 @@ body {
 }
 
 .hero-brand {
-	display: inline-block;
-	text-align: right;
-	line-height: 1;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1;
 }
 
 .hero-main {
-	display: inline-block;
+	display: block;
 	font-size: clamp(3.2rem, 6.5vw, 5.8rem);
 	font-weight: 400;
 	letter-spacing: 0;
