@@ -185,7 +185,7 @@ body {
 .hero-autiful {
 	color: var(--text-light);
 	font-weight: 600;
-	letter-spacing: 0.025em;
+	letter-spacing: 0;
 }
 
 .hero-subbrand {
