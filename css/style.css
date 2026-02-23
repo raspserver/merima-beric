@@ -6,7 +6,10 @@
 	--text-light: #ffffff;
 	--bg-light: #fafaf8;
 	--transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo home und footer*/
+	/* === Brand System === */
+	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo home und footer */
+	/* === Context Overrides === */
+	--navbar-sub-ratio: 0.18; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo navbar */
 }
 
 html {
@@ -918,7 +921,6 @@ footer a:hover {
 	text-decoration: none;
 	line-height: 1;
 	--navbar-main-size: clamp(1.4rem, 2.5vw, 1.8rem);
-	--navbar-sub-ratio: 0.18; /* kleiner als global */
 }
 
 .nav-logo .hero-main {
