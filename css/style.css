@@ -6,6 +6,7 @@
 	--text-light: #ffffff;
 	--bg-light: #fafaf8;
 	--transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo home, navbar und footer*/
 }
 
 html {
@@ -180,7 +181,7 @@ body {
 .hero-subbrand {
 	display: block;
 	margin-top: 0.35rem;
-	font-size: calc(clamp(3.2rem, 6.5vw, 5.8rem) * 0.25);
+	font-size: calc(clamp(3.2rem, 6.5vw, 5.8rem) * var(--brand-sub-ratio));
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);
 	font-weight: 400;
@@ -792,6 +793,7 @@ footer {
 	display: block;
 	margin-top: 0.25rem;
 	white-space: nowrap;
+	font-size: calc(clamp(3.2rem, 6.5vw, 5.8rem) * var(--brand-sub-ratio));
 }
 
 .footer-brand .hero-main {
