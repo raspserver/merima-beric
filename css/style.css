@@ -191,9 +191,10 @@ body {
 	animation-delay: 0.25s;
 }
 
+/* Section Styles */
 @media (min-width: 1024px) {
 	.hero-subbrand {
-		font-size: 0.30em;   /* kleiner */
+		font-size: 0.20em;   /* kleiner */
 	}
 }
 
