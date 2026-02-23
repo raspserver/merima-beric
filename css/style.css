@@ -790,7 +790,9 @@ footer {
 .footer-brand {
 	display: inline-block;
 	text-align: right;
+	max-width: 320px;
 }
+
 
 .footer-brand .hero-main {
 	display: block;
@@ -811,6 +813,12 @@ footer {
 
 .footer-brand .hero-subbrand {
 	font-size: 0.38em;
+}
+
+.footer-brand .hero-main::after {
+	height: 1px;
+	bottom: -0.02rem;
+	opacity: 0.6;
 }
 
 footer a {
