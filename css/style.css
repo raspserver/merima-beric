@@ -180,7 +180,7 @@ body {
 .hero-subbrand {
 	display: block;
 	margin-top: 0.35rem;
-	font-size: calc(clamp(3.2rem, 6.5vw, 5.8rem) * 0.25);
+	font-size: calc(clamp(3.2rem, 6.5vw, 5.8rem) * 0.20);
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);
 	font-weight: 400;
