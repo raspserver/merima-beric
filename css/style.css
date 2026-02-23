@@ -935,6 +935,12 @@ footer a:hover {
 	white-space: nowrap;
 }
 
+.nav-subbrand {
+	font-size: calc(var(--navbar-main-size) * var(--navbar-sub-ratio));
+	margin-top: 0.2rem;
+	white-space: nowrap;
+}
+
 @keyframes lineBreathMicro {
 	0% {
 		transform: scaleX(1);
