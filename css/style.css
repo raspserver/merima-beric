@@ -122,11 +122,12 @@ body {
   flex-direction: column;
   align-items: flex-end;
   line-height: 1;
+  --hero-main-size: clamp(3.2rem, 6.5vw, 5.8rem);
 }
 
 .hero-main {
 	display: block;
-	font-size: clamp(3.2rem, 6.5vw, 5.8rem);
+	font-size: var(--hero-main-size);
 	font-weight: 400;
 	letter-spacing: 0;
 	line-height: 1.04;
@@ -181,7 +182,7 @@ body {
 .hero-subbrand {
 	display: block;
 	margin-top: 0.35rem;
-	font-size: calc(clamp(3.2rem, 6.5vw, 5.8rem) * var(--brand-sub-ratio));
+	font-size: calc(var(--hero-main-size) * var(--brand-sub-ratio));
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);
 	font-weight: 400;
