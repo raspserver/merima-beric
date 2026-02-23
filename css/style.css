@@ -804,11 +804,12 @@ footer {
 }
 
 .footer-brand {
-	display: inline-flex;
-	flex-direction: column;
-	align-items: flex-end;
-	margin: 0 auto;
+	display: inline-block;
 	text-align: right;
+}
+
+.footer-brand .hero-subbrand {
+	display: inline-block;
 }
 
 footer a {
