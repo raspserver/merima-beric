@@ -211,6 +211,12 @@ body {
 	font-weight: 400;
 }
 
+@media (min-width: 1024px) {
+	.hero-subbrand {
+		font-size: 0.30em;
+	}
+}
+
 @keyframes cinematicMain {
 	0% {
 		opacity: 0;
