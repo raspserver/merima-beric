@@ -781,23 +781,24 @@ footer {
 .footer-brand {
 	display: inline-block;
 	text-align: right;
+	--footer-main-size: clamp(1.6rem, 4.5vw, 2.4rem);
 }
 
 
 .footer-brand .hero-main {
 	display: block;
 	white-space: nowrap;
+	font-size: var(--footer-main-size);
 }
 
 .footer-brand .hero-subbrand {
 	display: block;
 	margin-top: 0.25rem;
 	white-space: nowrap;
-	font-size: calc(clamp(3.2rem, 6.5vw, 5.8rem) * var(--brand-sub-ratio));
+	font-size: calc(var(--footer-main-size) * var(--brand-sub-ratio));
 }
 
 .footer-brand .hero-main {
-	font-size: clamp(1.6rem, 4.5vw, 2.4rem);
 	line-height: 1.08;
 	padding-bottom: 0.18rem;
 }
