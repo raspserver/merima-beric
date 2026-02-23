@@ -25,23 +25,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  /* Mobile Menu */
   if (navToggle && navMenu) {
 
-    navToggle.addEventListener('click', () => {
-      navToggle.classList.toggle('active');
-      navMenu.classList.toggle('active');
-    });
+	  // Toggle Button (Hamburger)
+	  navToggle.addEventListener('click', () => {
+		navToggle.classList.toggle('active');
+		navMenu.classList.toggle('active');
+	  });
 
-    document.addEventListener('click', (event) => {
-      if (!navMenu.contains(event.target) &&
-          !navToggle.contains(event.target) &&
-          navMenu.classList.contains('active')) {
-        navToggle.classList.remove('active');
-        navMenu.classList.remove('active');
-      }
-    });
-  }
+	  // Menü schließen bei Klick auf Nav-Link
+	  const navLinks = document.querySelectorAll('.nav-menu a');
+
+	  navLinks.forEach(link => {
+		link.addEventListener('click', () => {
+		  navToggle.classList.remove('active');
+		  navMenu.classList.remove('active');
+		});
+	  });
+
+	  // Menü schließen bei Klick außerhalb
+	  document.addEventListener('click', (event) => {
+		if (
+		  !navMenu.contains(event.target) &&
+		  !navToggle.contains(event.target) &&
+		  navMenu.classList.contains('active')
+		) {
+		  navToggle.classList.remove('active');
+		  navMenu.classList.remove('active');
+		}
+	  });
+	}
 
   /* Pricing Tabs */
   const pricingTabs = document.querySelectorAll('.pricing-tab');
