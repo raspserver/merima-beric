@@ -929,21 +929,6 @@ footer a:hover {
 	line-height: 1;
 }
 
-.nav-brand {
-	font-size: 1.85rem;
-	animation: none;
-	opacity: 1;
-	transform: none;
-}
-
-.nav-subbrand {
-	font-size: 0.7rem;
-	margin-top: 0.3rem;
-	animation: none;
-	opacity: 1;
-	transform: none;
-}
-
 @keyframes lineBreathMicro {
 	0% {
 		transform: scaleX(1);
@@ -1093,4 +1078,43 @@ footer a:hover {
 	.nav-menu a::after {
 		display: none;
 	}
+	
+	/* ========================
+   Einheitliche Logo-Typo
+   ======================== */
+
+/* 1) Grundstruktur */
+nav .nav-logo,
+footer .footer-brand {
+  display: inline-block;
+  text-align: right;
+  line-height: 1;
+}
+
+/* 2) Hauptwort “BE.autiful” */
+nav .nav-logo .hero-main,
+footer .footer-brand .hero-main {
+  display: block;
+  white-space: nowrap;
+  font-size: clamp(2rem, 5vw, 4.5rem);  /* proportional wie Hero */
+  line-height: 1.04;
+  padding-bottom: 0.22rem;
+}
+
+/* 3) Subline “by Merima BE.ric” */
+nav .nav-logo .hero-subbrand,
+footer .footer-brand .hero-subbrand {
+  display: block;
+  font-size: 0.34em;   /* exakt wie Hero */
+  margin-top: 0.35rem;
+}
+
+/* 4) Unterstrich-Anpassung */
+nav .nav-logo .hero-main::after,
+footer .footer-brand .hero-main::after {
+  height: 1px;
+  bottom: 0;
+  opacity: 0.6;
+  transform: none;
+}
 }
