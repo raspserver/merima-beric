@@ -180,7 +180,7 @@ body {
 .hero-subbrand {
 	display: block;
 	margin-top: 0.35rem;
-	font-size: 0.32em;
+	font-size: calc(clamp(3.2rem, 6.5vw, 5.8rem) * 0.32);
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);
 	font-weight: 400;
@@ -189,13 +189,6 @@ body {
 	transform: translateY(20px);
 	animation: cinematicSub 1.6s cubic-bezier(.16,.84,.44,1) forwards;
 	animation-delay: 0.25s;
-}
-
-/* Section Styles */
-@media (min-width: 1024px) {
-	.hero-subbrand {
-		font-size: 0.20em;   /* kleiner */
-	}
 }
 
 .hero-subbrand .hero-be,
