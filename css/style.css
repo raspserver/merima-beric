@@ -191,6 +191,12 @@ body {
 	animation-delay: 0.25s;
 }
 
+@media (min-width: 1024px) {
+	.hero-subbrand {
+		font-size: 0.30em;   /* kleiner */
+	}
+}
+
 .hero-subbrand .hero-be,
 .hero-subbrand .hero-e {
 	font-weight: 700;
