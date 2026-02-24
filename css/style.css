@@ -943,6 +943,8 @@ footer a:hover {
 	opacity: 0;
 	transition: top 0.4s ease, opacity 0.4s ease;
 	will-change: top, opacity;
+	backdrop-filter: none;
+	background: rgba(26, 26, 26, 0.98);
 }
 
 .navbar.visible {
