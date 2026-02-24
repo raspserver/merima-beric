@@ -31,7 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
     rootMargin: '0px 0px -50px 0px'
   });
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+//  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+
 
   if (navToggle && navMenu) {
 
