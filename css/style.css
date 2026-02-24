@@ -431,11 +431,6 @@ section {
 	clear: both;
 }
 
-.about-highlight::before {
-	content: '';
-	display: none;
-}
-
 .rating-display {
 	display: flex;
 	align-items: center;
