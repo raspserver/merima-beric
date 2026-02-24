@@ -119,15 +119,13 @@ body {
 }
 
 .hero-brand {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  line-height: 1;
-  --hero-main-size: clamp(3.2rem, 6.5vw, 5.8rem);
-}
-
-/* === Hero Logo Settling Effect === */
-.hero-brand {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-end;
+	line-height: 1;
+	--hero-main-size: clamp(3.2rem, 6.5vw, 5.8rem);
+	
+	/* === Hero Logo Settling Effect === */
 	transition: transform 0.6s cubic-bezier(.16,.84,.44,1),
 				filter 0.6s ease,
 				opacity 0.6s ease;
