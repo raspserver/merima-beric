@@ -134,10 +134,13 @@ body {
 	line-height: 1.04;
 	padding-bottom: 0.22rem;
 	position: relative;
+	white-space: nowrap;
+}
+
+.hero .hero-main {
 	opacity: 0;
 	transform: translateY(26px);
 	animation: cinematicMain 1.8s cubic-bezier(.16,.84,.44,1) forwards;
-	white-space: nowrap;
 }
 
 .hero-main::after {
@@ -151,13 +154,16 @@ body {
 	opacity: 0;
 	transform-origin: center;
 	will-change: transform, opacity;
-	animation-name: cinematicLine, lineBreathMicro;
 	animation-duration: 1.4s, 1.8s;
 	animation-timing-function: cubic-bezier(.16,.84,.44,1), cubic-bezier(.25,.8,.25,1);
 	animation-fill-mode: forwards, forwards;
 	animation-delay: 0s, 1.4s;
 	backface-visibility: hidden;
 	transform: translateZ(0) scaleX(0.96);
+}
+
+.hero .hero-main::after {
+	animation-name: cinematicLine, lineBreathMicro;
 }
 
 .hero-be,
@@ -187,7 +193,9 @@ body {
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);
 	font-weight: 400;
-	
+}
+
+.hero .hero-subbrand {
 	opacity: 0;
 	transform: translateY(20px);
 	animation: cinematicSub 1.6s cubic-bezier(.16,.84,.44,1) forwards;
@@ -1094,6 +1102,29 @@ footer a:hover {
 
 	.nav-menu a::after {
 		display: none;
+	}
+	
+	/* === LOGO STATIC IN NAVBAR & FOOTER === */
+	.nav-logo .hero-main,
+	.footer-brand .hero-main {
+		opacity: 1;
+		transform: none;
+		animation: none;
+	}
+
+	.nav-logo .hero-main::after,
+	.footer-brand .hero-main::after {
+		animation: none;
+		opacity: 0.6;
+		transform: scaleX(1);
+	}
+
+	.nav-logo .hero-subbrand,
+	.footer-brand .hero-subbrand,
+	.nav-logo .nav-subbrand {
+		opacity: 1;
+		transform: none;
+		animation: none;
 	}
 	
 }
