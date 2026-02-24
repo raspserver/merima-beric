@@ -925,7 +925,6 @@ footer a:hover {
 
 .nav-logo,
 .nav-logo .hero-main,
-.nav-logo .hero-subbrand,
 .nav-logo .nav-subbrand {
 	color: var(--text-light);
 }
@@ -944,12 +943,6 @@ footer a:hover {
 .nav-logo .hero-main {
 	font-size: var(--navbar-main-size);
 	display: block;
-	white-space: nowrap;
-}
-
-.nav-logo .hero-subbrand {
-	font-size: calc(var(--navbar-main-size) * var(--navbar-sub-ratio));
-	margin-top: 0.2rem;
 	white-space: nowrap;
 }
 
