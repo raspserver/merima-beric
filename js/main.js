@@ -6,6 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Navbar beim Scrollen anzeigen */
   window.addEventListener('scroll', () => {
+	  const hero = document.querySelector('.hero');
+	if (hero) {
+	  window.addEventListener('scroll', () => {
+		const heroHeight = hero.offsetHeight;
+		hero.classList.toggle('scrolled', window.scrollY > heroHeight * 0.4);
+	  });
+	}
     if (navbar) {
       navbar.classList.toggle('visible', window.scrollY > 100);
     }

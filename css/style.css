@@ -126,6 +126,22 @@ body {
   --hero-main-size: clamp(3.2rem, 6.5vw, 5.8rem);
 }
 
+/* === Hero Logo Settling Effect === */
+.hero-brand {
+	transition: transform 0.6s cubic-bezier(.16,.84,.44,1),
+				filter 0.6s ease,
+				opacity 0.6s ease;
+}
+
+.hero.scrolled .hero-brand {
+	transform: scale(0.992);
+	filter: drop-shadow(0 0 18px rgba(212,175,55,0.08));
+}
+
+.hero.scrolled .hero-main::after {
+	opacity: 0.45;
+}
+
 .hero-main {
 	display: block;
 	font-size: var(--hero-main-size);
