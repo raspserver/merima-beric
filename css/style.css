@@ -923,6 +923,13 @@ footer a:hover {
 	--navbar-main-size: clamp(1.4rem, 2.5vw, 1.8rem);
 }
 
+.nav-logo,
+.nav-logo .hero-main,
+.nav-logo .hero-subbrand,
+.nav-logo .nav-subbrand {
+	color: var(--text-light);
+}
+
 .nav-logo .hero-main {
 	font-size: var(--navbar-main-size);
 	display: block;
