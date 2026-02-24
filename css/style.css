@@ -930,6 +930,17 @@ footer a:hover {
 	color: var(--text-light);
 }
 
+.nav-logo:link,
+.nav-logo:visited,
+.nav-logo:hover,
+.nav-logo:active,
+.nav-logo:link .hero-main,
+.nav-logo:visited .hero-main,
+.nav-logo:link .hero-subbrand,
+.nav-logo:visited .hero-subbrand {
+	color: var(--text-light);
+}
+
 .nav-logo .hero-main {
 	font-size: var(--navbar-main-size);
 	display: block;
