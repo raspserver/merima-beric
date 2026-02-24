@@ -100,11 +100,6 @@ body {
 	animation: fadeIn 1.5s ease-out 0.3s both;
 }
 
-.hero-be {
-	color: #e91e63;
-	font-weight: 700;
-}
-
 @keyframes fadeIn {
 	from { opacity: 0; }
 	to { opacity: 1; }
