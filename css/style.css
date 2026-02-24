@@ -160,6 +160,13 @@ body {
 	animation-delay: 0s, 1.4s;
 	backface-visibility: hidden;
 	transform: translateZ(0) scaleX(0.96);
+	transition: opacity 0.6s ease;
+	background: linear-gradient(
+		to right,
+		rgba(255,255,255,0.4),
+		rgba(255,255,255,0.9),
+		rgba(255,255,255,0.4)
+	);
 }
 
 .hero .hero-main::after {
@@ -199,7 +206,7 @@ body {
 	opacity: 0;
 	transform: translateY(20px);
 	animation: cinematicSub 1.6s cubic-bezier(.16,.84,.44,1) forwards;
-	animation-delay: 0.25s;
+	animation-delay: 0.35s;
 }
 
 .hero-subbrand .hero-be,
@@ -215,21 +222,29 @@ body {
 @keyframes cinematicMain {
 	0% {
 		opacity: 0;
-		transform: translateY(26px);
+		transform: translateY(32px) scale(0.985);
+		filter: blur(4px);
+	}
+	60% {
+		opacity: 1;
+		filter: blur(0);
 	}
 	100% {
-		opacity: 1;
-		transform: translateY(0);
+		transform: translateY(0) scale(1);
 	}
 }
 
 @keyframes cinematicSub {
 	0% {
 		opacity: 0;
-		transform: translateY(20px);
+		transform: translateY(24px);
+		filter: blur(3px);
+	}
+	70% {
+		opacity: 1;
+		filter: blur(0);
 	}
 	100% {
-		opacity: 1;
 		transform: translateY(0);
 	}
 }
@@ -237,10 +252,13 @@ body {
 @keyframes cinematicLine {
 	0% {
 		opacity: 0;
-		transform: scaleX(0.96);
+		transform: scaleX(0.92);
+	}
+	70% {
+		opacity: 0.7;
 	}
 	100% {
-		opacity: 0.65;
+		opacity: 0.6;
 		transform: scaleX(1);
 	}
 }
