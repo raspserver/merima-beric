@@ -4,19 +4,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.querySelector('.nav-toggle');
   const navMenu = document.querySelector('.nav-menu');
 
-  /* Navbar beim Scrollen anzeigen */
-  window.addEventListener('scroll', () => {
-	  const hero = document.querySelector('.hero');
-	if (hero) {
-	  window.addEventListener('scroll', () => {
+	/* Navbar beim Scrollen anzeigen */
+	const hero = document.querySelector('.hero');
+	window.addEventListener('scroll', () => {
+
+	  if (navbar) {
+		navbar.classList.toggle('visible', window.scrollY > 100);
+	  }
+
+	  if (hero) {
 		const heroHeight = hero.offsetHeight;
 		hero.classList.toggle('scrolled', window.scrollY > heroHeight * 0.4);
-	  });
-	}
-    if (navbar) {
-      navbar.classList.toggle('visible', window.scrollY > 100);
-    }
-  });
+	  }
+
+	});
 
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
