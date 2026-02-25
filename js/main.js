@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			// Scroll nach unten → verstecken
-			else if (currentScrollY > lastScrollY) {
+			else if (currentScrollY > lastScrollY + 5) {
 			  navbar.classList.remove('visible');
 			}
 
