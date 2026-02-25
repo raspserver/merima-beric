@@ -29,17 +29,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	/* Navbar beim Scrollen anzeigen */
 	const hero = document.querySelector('.hero');
+	
+	/* === Premium Scroll Direction Navbar === */
+	let lastScrollY = window.scrollY;
+	let ticking = false;
+
 	window.addEventListener('scroll', () => {
+	  if (!ticking) {
+		window.requestAnimationFrame(() => {
 
-	  if (navbar) {
-		navbar.classList.toggle('visible', window.scrollY > 100);
+		  const currentScrollY = window.scrollY;
+
+		  if (navbar) {
+
+			// Ganz oben → Navbar verstecken
+			if (currentScrollY <= 10) {
+			  navbar.classList.remove('visible');
+			}
+
+			// Scroll nach unten → verstecken
+			else if (currentScrollY > lastScrollY) {
+			  navbar.classList.remove('visible');
+			}
+
+			// Scroll nach oben → anzeigen
+			else {
+			  navbar.classList.add('visible');
+			}
+
+		  }
+
+		  // Hero settling Effekt bleibt wie gehabt
+		  if (hero) {
+			const heroHeight = hero.offsetHeight;
+			hero.classList.toggle('scrolled', currentScrollY > heroHeight * 0.4);
+		  }
+
+		  lastScrollY = currentScrollY;
+		  ticking = false;
+
+		});
+
+		ticking = true;
 	  }
-
-	  if (hero) {
-		const heroHeight = hero.offsetHeight;
-		hero.classList.toggle('scrolled', window.scrollY > heroHeight * 0.4);
-	  }
-
 	});
 
   /* Intersection Observer */
