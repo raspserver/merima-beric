@@ -911,22 +911,6 @@ footer a:hover {
 	}
 }
 
-/*
-.navbar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	background: rgba(26, 26, 26, 0.95);
-	backdrop-filter: blur(10px);
-	z-index: 1000;
-	border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-	opacity: 0;
-	transform: translateY(-100%);
-	transition: all 0.4s ease;
-}
-*/
-
 .navbar {
 	position: fixed;
 	top: -120px; /* etwas größer als echte Höhe */
@@ -947,13 +931,6 @@ footer a:hover {
 	top: 0;
 	opacity: 1;
 }
-
-/*
-.navbar.visible {
-	opacity: 1;
-	transform: translateY(0);
-}
-*/
 
 .nav-container {
 	max-width: 1400px;
