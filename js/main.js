@@ -1,66 +1,67 @@
 document.addEventListener("DOMContentLoaded", () => {
 	
-	const snapSections = Array.from(document.querySelectorAll('section'));
 	
-	/* === Smart Section Snap === */
+	
+	/* === Premium Directional Section Snap === */
 
-		let isSnapping = false;
-		let scrollTimeout;
-		let lastScrollTime = Date.now();
-		let lastY = window.scrollY;
+	const snapSections = Array.from(document.querySelectorAll('section'));
+	let isSnapping = false;
+	let scrollTimeout;
 
-		window.addEventListener('scroll', () => {
+	window.addEventListener('scroll', () => {
 
-		  if (isSnapping) return;
+	  if (isSnapping) return;
 
-		  const now = Date.now();
-		  const deltaY = window.scrollY - lastY;
-		  const deltaTime = now - lastScrollTime;
+	  clearTimeout(scrollTimeout);
 
-		  const velocity = Math.abs(deltaY) / deltaTime; // px per ms
+	  scrollTimeout = setTimeout(() => {
 
-		  lastY = window.scrollY;
-		  lastScrollTime = now;
+		const navbarHeight = navbar?.offsetHeight || 0;
+		const currentScroll = window.scrollY;
 
-		  clearTimeout(scrollTimeout);
+		let currentIndex = 0;
 
-		  scrollTimeout = setTimeout(() => {
-
-			// nur bei genug Schwung
-			if (velocity < 0.6) return;
-
-			const navbarHeight = navbar?.offsetHeight || 0;
-			const currentScroll = window.scrollY;
-
-			let closestSection = null;
-			let minDistance = Infinity;
-
-			snapSections.forEach(section => {
-			  const top = section.offsetTop - navbarHeight - 10;
-			  const distance = Math.abs(currentScroll - top);
-
-			  if (distance < minDistance) {
-				minDistance = distance;
-				closestSection = section;
-			  }
-			});
-
-			if (closestSection) {
-			  isSnapping = true;
-
-			  window.scrollTo({
-				top: closestSection.offsetTop - navbarHeight - 10,
-				behavior: 'smooth'
-			  });
-
-			  setTimeout(() => {
-				isSnapping = false;
-			  }, 800);
-			}
-
-		  }, 120);
-
+		snapSections.forEach((section, index) => {
+		  const top = section.offsetTop - navbarHeight - 10;
+		  if (currentScroll >= top) {
+			currentIndex = index;
+		  }
 		});
+
+		const currentSection = snapSections[currentIndex];
+		const nextSection = snapSections[currentIndex + 1];
+		const prevSection = snapSections[currentIndex - 1];
+
+		const sectionTop = currentSection.offsetTop - navbarHeight - 10;
+		const progress = (currentScroll - sectionTop) / currentSection.offsetHeight;
+
+		let target = null;
+
+		if (progress > 0.3 && nextSection) {
+		  target = nextSection;
+		}
+
+		if (progress < -0.3 && prevSection) {
+		  target = prevSection;
+		}
+
+		if (target) {
+		  isSnapping = true;
+
+		  window.scrollTo({
+			top: target.offsetTop - navbarHeight - 10,
+			behavior: 'smooth'
+		  });
+
+		  setTimeout(() => {
+			isSnapping = false;
+		  }, 700);
+		}
+
+	  }, 120);
+
+	});
+	
 	
 
   const navbar = document.querySelector('.navbar');
