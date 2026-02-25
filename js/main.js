@@ -1,4 +1,67 @@
 document.addEventListener("DOMContentLoaded", () => {
+	
+	const snapSections = Array.from(document.querySelectorAll('section'));
+	
+	/* === Smart Section Snap === */
+
+		let isSnapping = false;
+		let scrollTimeout;
+		let lastScrollTime = Date.now();
+		let lastY = window.scrollY;
+
+		window.addEventListener('scroll', () => {
+
+		  if (isSnapping) return;
+
+		  const now = Date.now();
+		  const deltaY = window.scrollY - lastY;
+		  const deltaTime = now - lastScrollTime;
+
+		  const velocity = Math.abs(deltaY) / deltaTime; // px per ms
+
+		  lastY = window.scrollY;
+		  lastScrollTime = now;
+
+		  clearTimeout(scrollTimeout);
+
+		  scrollTimeout = setTimeout(() => {
+
+			// nur bei genug Schwung
+			if (velocity < 0.6) return;
+
+			const navbarHeight = navbar?.offsetHeight || 0;
+			const currentScroll = window.scrollY;
+
+			let closestSection = null;
+			let minDistance = Infinity;
+
+			snapSections.forEach(section => {
+			  const top = section.offsetTop - navbarHeight - 10;
+			  const distance = Math.abs(currentScroll - top);
+
+			  if (distance < minDistance) {
+				minDistance = distance;
+				closestSection = section;
+			  }
+			});
+
+			if (closestSection) {
+			  isSnapping = true;
+
+			  window.scrollTo({
+				top: closestSection.offsetTop - navbarHeight - 10,
+				behavior: 'smooth'
+			  });
+
+			  setTimeout(() => {
+				isSnapping = false;
+			  }, 800);
+			}
+
+		  }, 120);
+
+		});
+	
 
   const navbar = document.querySelector('.navbar');
   const navToggle = document.querySelector('.nav-toggle');
