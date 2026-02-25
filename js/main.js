@@ -39,25 +39,30 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.requestAnimationFrame(() => {
 
 		  const currentScrollY = window.scrollY;
-
+		  
 		  if (navbar) {
 
-			// Ganz oben → Navbar verstecken
-			if (currentScrollY <= 10) {
-			  navbar.classList.remove('visible');
-			}
+			  if (currentScrollY <= 10) {
+				navbar.classList.remove('visible', 'compact');
+			  }
 
-			// Scroll nach unten → verstecken
-			else if (currentScrollY > lastScrollY + 5) {
-			  navbar.classList.remove('visible');
-			}
+			  else if (currentScrollY > lastScrollY) {
+				navbar.classList.remove('visible');
+			  }
 
-			// Scroll nach oben → anzeigen
-			else {
-			  navbar.classList.add('visible');
-			}
+			  else {
+				navbar.classList.add('visible');
 
-		  }
+				// compact sobald nicht mehr ganz oben
+				if (currentScrollY > 80) {
+				  navbar.classList.add('compact');
+				} else {
+				  navbar.classList.remove('compact');
+				}
+			  }
+			}
+		  
+		  
 
 		  // Hero settling Effekt bleibt wie gehabt
 		  if (hero) {

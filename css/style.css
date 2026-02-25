@@ -925,11 +925,40 @@ footer a:hover {
 	will-change: top, opacity;
 	backdrop-filter: none;
 	background: rgba(26, 26, 26, 0.98);
+	
+	padding-top: 0;
+	padding-bottom: 0;
+	transition:
+		top 0.4s ease,
+		opacity 0.4s ease,
+		background 0.4s ease,
+		padding 0.4s ease;
 }
 
 .navbar.visible {
 	top: 0;
 	opacity: 1;
+}
+
+/* wenn sichtbar UND gescrollt */
+.navbar.visible.compact {
+	background: rgba(15, 15, 15, 0.995);
+	border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+/* Navbar-Inhalt minimal kleiner */
+.navbar.visible.compact .nav-container {
+	padding: 0.4rem 2rem;
+}
+
+/* Logo subtil ruhiger */
+.navbar.visible.compact .nav-logo {
+	transform: scale(0.96);
+	transition: transform 0.5s cubic-bezier(.16,.84,.44,1);
+}
+
+.navbar.visible.compact .nav-logo .hero-main::after {
+	opacity: 0.4;
 }
 
 .nav-container {
