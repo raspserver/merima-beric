@@ -1,65 +1,52 @@
 document.addEventListener("DOMContentLoaded", () => {
 	
 	
-	
-	/* === Premium Directional Section Snap === */
+	/* === Controlled Section Snap (Stable Version) === */
 
-	const snapSections = Array.from(document.querySelectorAll('section'));
-	let isSnapping = false;
-	let scrollTimeout;
+	const sections = Array.from(document.querySelectorAll("section"));
+	let snapLock = false;
+	let scrollEndTimer;
 
-	window.addEventListener('scroll', () => {
+	function snapToNearestSection() {
 
-	  if (isSnapping) return;
+	  if (snapLock) return;
 
-	  clearTimeout(scrollTimeout);
+	  const navbarHeight = navbar?.offsetHeight || 0;
+	  const scrollPos = window.scrollY + navbarHeight + 20;
 
-	  scrollTimeout = setTimeout(() => {
+	  let closest = null;
+	  let minDistance = Infinity;
 
-		const navbarHeight = navbar?.offsetHeight || 0;
-		const currentScroll = window.scrollY;
+	  sections.forEach(section => {
+		const top = section.offsetTop;
+		const distance = Math.abs(scrollPos - top);
 
-		let currentIndex = 0;
-
-		snapSections.forEach((section, index) => {
-		  const top = section.offsetTop - navbarHeight - 10;
-		  if (currentScroll >= top) {
-			currentIndex = index;
-		  }
-		});
-
-		const currentSection = snapSections[currentIndex];
-		const nextSection = snapSections[currentIndex + 1];
-		const prevSection = snapSections[currentIndex - 1];
-
-		const sectionTop = currentSection.offsetTop - navbarHeight - 10;
-		const progress = (currentScroll - sectionTop) / currentSection.offsetHeight;
-
-		let target = null;
-
-		if (progress > 0.3 && nextSection) {
-		  target = nextSection;
+		if (distance < minDistance) {
+		  minDistance = distance;
+		  closest = section;
 		}
+	  });
 
-		if (progress < -0.3 && prevSection) {
-		  target = prevSection;
-		}
+	  if (!closest) return;
 
-		if (target) {
-		  isSnapping = true;
+	  snapLock = true;
 
-		  window.scrollTo({
-			top: target.offsetTop - navbarHeight - 10,
-			behavior: 'smooth'
-		  });
+	  window.scrollTo({
+		top: closest.offsetTop - navbarHeight - 10,
+		behavior: "smooth"
+	  });
 
-		  setTimeout(() => {
-			isSnapping = false;
-		  }, 700);
-		}
+	  setTimeout(() => {
+		snapLock = false;
+	  }, 700);
+	}
 
-	  }, 120);
-
+	/* Scroll-End Detection */
+	window.addEventListener("scroll", () => {
+	  clearTimeout(scrollEndTimer);
+	  scrollEndTimer = setTimeout(() => {
+		snapToNearestSection();
+	  }, 180);
 	});
 	
 	
