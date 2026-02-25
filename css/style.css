@@ -916,9 +916,11 @@ footer a:hover {
 	top: 0;
 	left: 0;
 	width: 100%;
-
-	transform: translateY(-110%);
+	
 	opacity: 0;
+	
+	backface-visibility: hidden;
+	transform: translate3d(0,-110%,0);
 
 	background: rgba(26, 26, 26, 0.98);
 	z-index: 1000;
