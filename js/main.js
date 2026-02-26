@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+	
 	/* =========================
-	   GALLERY VIDEO SYSTEM
+	   GALLERY SLIDER SYSTEM
 	========================= */
 
 	const videoFiles = [
@@ -9,10 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	  "videos/snaptik_7208965603661499654_hd.mp4",
 	  "videos/snaptik_7211607331648441605_hd.mp4",
 	  "videos/snaptik_7444629475364474145_hd.mp4"
-	  // hier neue Videos ergänzen
 	];
 
-	// Shuffle Funktion
+	// Shuffle
 	function shuffle(array) {
 	  for (let i = array.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
@@ -21,45 +21,90 @@ document.addEventListener("DOMContentLoaded", () => {
 	  return array;
 	}
 
-	const galleryContainer = document.querySelector(".gallery-videos");
+	const track = document.querySelector(".gallery-track");
 
-	if (galleryContainer) {
+	if (track) {
 
-	  const shuffledVideos = shuffle([...videoFiles]);
+	  const shuffled = shuffle([...videoFiles]);
+	  let currentIndex = 0;
+	  let videos = [];
 
-	  shuffledVideos.forEach(src => {
+	  // Videos erzeugen
+	  shuffled.forEach(src => {
 		const video = document.createElement("video");
-
 		video.src = src;
-		video.muted = true;
 		video.playsInline = true;
 		video.preload = "metadata";
-		video.style.opacity = "0";
-		video.style.transition = "opacity 0.6s ease";
-
-		galleryContainer.appendChild(video);
+		video.controls = false;
+		video.muted = false;
+		video.volume = 1;
+		track.appendChild(video);
+		videos.push(video);
 	  });
 
-	  const videos = document.querySelectorAll(".gallery video");
+	  function updateSlider() {
+		track.style.transform = `translateX(-${currentIndex * 100}%)`;
 
-	  const videoObserver = new IntersectionObserver(entries => {
-		entries.forEach(entry => {
-		  const video = entry.target;
-
-		  if (entry.isIntersecting) {
-			video.play().catch(() => {});
-			video.style.opacity = "1";
+		videos.forEach((vid, i) => {
+		  if (i === currentIndex) {
+			vid.play().catch(() => {});
 		  } else {
-			video.pause();
+			vid.pause();
 		  }
 		});
-	  }, {
-		threshold: 0.35
+	  }
+
+	  updateSlider();
+
+	  /* Swipe Handling */
+	  let startX = 0;
+	  let isDragging = false;
+
+	  track.addEventListener("touchstart", e => {
+		startX = e.touches[0].clientX;
+		isDragging = true;
 	  });
 
-	  videos.forEach(video => {
-		videoObserver.observe(video);
+	  track.addEventListener("touchend", e => {
+		if (!isDragging) return;
+
+		let diff = e.changedTouches[0].clientX - startX;
+
+		if (diff > 50 && currentIndex > 0) {
+		  currentIndex--;
+		}
+
+		if (diff < -50 && currentIndex < videos.length - 1) {
+		  currentIndex++;
+		}
+
+		updateSlider();
+		isDragging = false;
 	  });
+
+	  /* Desktop Swipe via Mouse */
+	  track.addEventListener("mousedown", e => {
+		startX = e.clientX;
+		isDragging = true;
+	  });
+
+	  track.addEventListener("mouseup", e => {
+		if (!isDragging) return;
+
+		let diff = e.clientX - startX;
+
+		if (diff > 50 && currentIndex > 0) {
+		  currentIndex--;
+		}
+
+		if (diff < -50 && currentIndex < videos.length - 1) {
+		  currentIndex++;
+		}
+
+		updateSlider();
+		isDragging = false;
+	  });
+
 	}
 
 
