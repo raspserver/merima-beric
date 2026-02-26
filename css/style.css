@@ -12,15 +12,6 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-snap-type: y proximity; /* mandatory oder proximity */
-}
-
-section {
-  scroll-snap-align: start;
-}
-
-section {
-  scroll-margin-top: 100px;
 }
 
 * {
