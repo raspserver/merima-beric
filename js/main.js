@@ -4,26 +4,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.querySelector('.nav-toggle');
   const navMenu = document.querySelector('.nav-menu');
 
-	// Smooth Scroll mit Navbar-Offset (Android stabil)
+	/* Native Smooth Scroll + Snap kompatibel */
 	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-	  anchor.addEventListener('click', function (e) {
-		const targetId = this.getAttribute('href');
+	  anchor.addEventListener('click', () => {
 
-		if (targetId.length > 1) {
-		  const target = document.querySelector(targetId);
-
-		  if (target) {
-			e.preventDefault();
-
-			const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 0;
-			const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
-
-			window.scrollTo({
-			  top: targetPosition - navbarHeight - 10,
-			  behavior: 'smooth'
-			});
-		  }
+		// Mobile Menü schließen
+		if (navToggle && navMenu) {
+		  navToggle.classList.remove('active');
+		  navMenu.classList.remove('active');
 		}
+
 	  });
 	});
 
