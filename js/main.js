@@ -1,5 +1,68 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+	/* =========================
+	   GALLERY VIDEO SYSTEM
+	========================= */
+
+	const videoFiles = [
+	  "videos/snaptik_7204469200172190982_hd.mp4",
+	  "videos/snaptik_7208965603661499654_hd.mp4",
+	  "videos/snaptik_7211607331648441605_hd.mp4",
+	  "videos/snaptik_7444629475364474145_hd.mp4"
+	  // hier neue Videos ergänzen
+	];
+
+	// Shuffle Funktion
+	function shuffle(array) {
+	  for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	  }
+	  return array;
+	}
+
+	const galleryContainer = document.querySelector(".gallery-videos");
+
+	if (galleryContainer) {
+
+	  const shuffledVideos = shuffle([...videoFiles]);
+
+	  shuffledVideos.forEach(src => {
+		const video = document.createElement("video");
+
+		video.src = src;
+		video.muted = true;
+		video.playsInline = true;
+		video.preload = "metadata";
+		video.style.opacity = "0";
+		video.style.transition = "opacity 0.6s ease";
+
+		galleryContainer.appendChild(video);
+	  });
+
+	  const videos = document.querySelectorAll(".gallery video");
+
+	  const videoObserver = new IntersectionObserver(entries => {
+		entries.forEach(entry => {
+		  const video = entry.target;
+
+		  if (entry.isIntersecting) {
+			video.play().catch(() => {});
+			video.style.opacity = "1";
+		  } else {
+			video.pause();
+		  }
+		});
+	  }, {
+		threshold: 0.35
+	  });
+
+	  videos.forEach(video => {
+		videoObserver.observe(video);
+	  });
+	}
+
+
   const navbar = document.querySelector('.navbar');
   const navToggle = document.querySelector('.nav-toggle');
   const navMenu = document.querySelector('.nav-menu');

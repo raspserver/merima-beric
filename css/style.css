@@ -1177,4 +1177,28 @@ footer a:hover {
 		animation: none;
 	}
 	
+	/* ===== GALLERY ===== */
+	
+	.gallery {
+	  background: var(--bg-light);
+	}
+
+	.gallery-videos {
+	  max-width: 45%;
+	  margin-left: 0;
+	}
+
+	.gallery video {
+	  width: 100%;
+	  height: auto;
+	  margin-bottom: 2rem;
+	  border-radius: 2px;
+	  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+	  display: block;
+	}
+	
+	.gallery-videos {
+	  max-width: 100%;
+	}
+	
 }
