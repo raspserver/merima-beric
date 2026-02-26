@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
 
 			window.scrollTo({
-			  top: targetPosition - navbarHeight - 10,
+			  top: targetPosition - navbarHeight,
 			  behavior: 'smooth'
 			});
 		  }
