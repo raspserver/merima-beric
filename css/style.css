@@ -1177,6 +1177,21 @@ footer a:hover {
 		animation: none;
 	}
 	
+	/* ===== GALLERY STRUCTURE FIX ===== */
+
+	.gallery {
+		padding-top: 4rem;   /* gleich wie andere Sections */
+		padding-bottom: 4rem;
+	}
+
+	.gallery .section-title {
+		margin-bottom: 2rem; /* Abstand nach unten */
+	}
+
+	.gallery-slider {
+		margin-top: 0; /* kein doppelter Abstand */
+	}
+	
 	/* ===== GALLERY SLIDER ===== */
 
 	.gallery {
@@ -1207,15 +1222,6 @@ footer a:hover {
 	  }
 	}
 	
-	/* ===== GALLERY SPACING FIX ===== */
-
-	.gallery .section-title {
-		margin-bottom: 2rem;
-	}
-
-	.gallery-slider {
-		margin-top: 2rem;
-	}
 
 	
 }
