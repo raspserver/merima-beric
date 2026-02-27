@@ -75,23 +75,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		track.style.transform = `translateX(-${index * 100}%)`;
 	  }
+	  
+	  function playOnly(index) {
+		  videos.forEach((video, i) => {
+			if (i === index) {
+			  video.currentTime = 0;
+			  video.play();
+			} else {
+			  video.pause();
+			}
+		  });
+		}
 
 	  
-	  
-	  function moveTo(index, autoPlay = false) {
-
-		  // 🔥 ALLE Videos pausieren (wichtig!)
-		  videos.forEach(video => video.pause());
+		function moveTo(index, autoPlay = false) {
 
 		  currentIndex = index;
 
 		  setPosition(currentIndex, true);
 
-		  const activeVideo = videos[currentIndex];
-		  activeVideo.currentTime = 0;
-
 		  if (autoPlay) {
-			activeVideo.play();
+			playOnly(currentIndex);
+		  } else {
+			videos.forEach(video => video.pause());
 		  }
 		}
 	  
@@ -117,16 +123,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 
 		  if (jumped) {
-
-			// 🔥 ALLE pausieren bevor wir springen
-			videos.forEach(video => video.pause());
-
 			setPosition(currentIndex, false);
-
-			const activeVideo = videos[currentIndex];
-			activeVideo.currentTime = 0;
-			activeVideo.play();
+			playOnly(currentIndex);
 		  }
+
 		});
 	  
 	  
@@ -180,12 +180,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	  const visibilityObserver = new IntersectionObserver(entries => {
 		  entries.forEach(entry => {
 			const activeVideo = videos[currentIndex];
-
+			
 			if (entry.isIntersecting) {
-			  activeVideo.play();
+			  playOnly(currentIndex);
 			} else {
-			  activeVideo.pause();
+			  videos.forEach(video => video.pause());
 			}
+			
 		  });
 		}, { threshold: 0.6 });
 
