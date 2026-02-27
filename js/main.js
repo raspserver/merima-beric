@@ -1,13 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
 
 
-	
-	
-	
-	
+
 	
 	/* =========================
-	   PREMIUM GALLERY SYSTEM
+	   TRUE INFINITE GALLERY
 	========================= */
 
 	const videoFiles = [
@@ -30,10 +27,21 @@ document.addEventListener("DOMContentLoaded", () => {
 	if (track) {
 
 	  const shuffled = shuffle([...videoFiles]);
-	  let currentIndex = 0;
-	  let videos = [];
 
-	  shuffled.forEach(src => {
+	  let videos = [];
+	  let currentIndex = 1; // wir starten bei 1 wegen clone
+
+	  // 1️⃣ Clone letztes Video vorne einfügen
+	  const firstCloneSrc = shuffled[0];
+	  const lastCloneSrc = shuffled[shuffled.length - 1];
+
+	  const fullList = [
+		lastCloneSrc,
+		...shuffled,
+		firstCloneSrc
+	  ];
+
+	  fullList.forEach(src => {
 		const video = document.createElement("video");
 		video.src = src;
 		video.playsInline = true;
@@ -44,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		track.appendChild(video);
 		videos.push(video);
 
-		/* TAP = PLAY / PAUSE */
+		// Tap = Play/Pause
 		video.addEventListener("click", () => {
 		  if (video.paused) {
 			video.play();
@@ -53,60 +61,65 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 		});
 
-		/* ENDLOS PLAYLIST */
 		video.addEventListener("ended", () => {
-		  nextVideo(true);
+		  moveTo(currentIndex + 1, true);
 		});
 	  });
 
-	  function updateSlider(resetTime = false) {
-		track.style.transform = `translateX(-${currentIndex * 100}%)`;
+	  function setPosition(index, animate = true) {
+		if (!animate) {
+		  track.style.transition = "none";
+		} else {
+		  track.style.transition = "transform 0.6s cubic-bezier(.16,.84,.44,1)";
+		}
 
-		videos.forEach((vid, i) => {
-		  if (i === currentIndex) {
-
-			if (resetTime) {
-			  vid.currentTime = 0;
-			}
-
-		  } else {
-			vid.pause();
-		  }
-		});
+		track.style.transform = `translateX(-${index * 100}%)`;
 	  }
 
-	  function nextVideo(fromEnd = false) {
+	  function moveTo(index, autoPlay = false) {
+
 		videos[currentIndex].pause();
 
-		currentIndex++;
+		currentIndex = index;
 
-		if (currentIndex >= videos.length) {
-		  currentIndex = 0;
-		}
+		setPosition(currentIndex, true);
 
-		updateSlider(true);
+		const activeVideo = videos[currentIndex];
+		activeVideo.currentTime = 0;
 
-		if (fromEnd) {
-		  videos[currentIndex].play();
+		if (autoPlay) {
+		  activeVideo.play();
 		}
 	  }
 
-	  function prevVideo() {
-		videos[currentIndex].pause();
+	  // Initial Position
+	  setPosition(currentIndex, false);
 
-		currentIndex--;
+	  // Transition-End-Check (unsichtbarer Sprung)
+	  track.addEventListener("transitionend", () => {
 
-		if (currentIndex < 0) {
-		  currentIndex = videos.length - 1;
+		// Wenn wir hinter dem letzten echten Video sind
+		if (currentIndex === videos.length - 1) {
+		  currentIndex = 1;
+		  setPosition(currentIndex, false);
 		}
 
-		updateSlider(true);
+		// Wenn wir vor dem ersten echten Video sind
+		if (currentIndex === 0) {
+		  currentIndex = videos.length - 2;
+		  setPosition(currentIndex, false);
+		}
+	  });
+
+	  function next() {
+		moveTo(currentIndex + 1);
 	  }
 
-	  updateSlider(true);
+	  function prev() {
+		moveTo(currentIndex - 1);
+	  }
 
-	  /* SWIPE */
-
+	  // Swipe
 	  let startX = 0;
 	  let isDragging = false;
 
@@ -120,8 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		let diff = e.changedTouches[0].clientX - startX;
 
-		if (diff > 50) prevVideo();
-		if (diff < -50) nextVideo();
+		if (diff > 50) prev();
+		if (diff < -50) next();
 
 		isDragging = false;
 	  });
@@ -136,33 +149,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		let diff = e.clientX - startX;
 
-		if (diff > 50) prevVideo();
-		if (diff < -50) nextVideo();
+		if (diff > 50) prev();
+		if (diff < -50) next();
 
 		isDragging = false;
 	  });
 
-	  /* SCROLL VISIBILITY CONTROL */
-
-	  const observer = new IntersectionObserver(entries => {
+	  // Scroll Pause
+	  const visibilityObserver = new IntersectionObserver(entries => {
 		entries.forEach(entry => {
-		  const video = videos[currentIndex];
-
-		  if (entry.isIntersecting) {
-			// nichts automatisch starten
-		  } else {
-			video.pause();
+		  if (!entry.isIntersecting) {
+			videos[currentIndex].pause();
 		  }
 		});
-	  }, {
-		threshold: 0.05
-	  });
+	  }, { threshold: 0.05 });
 
-	  observer.observe(track);
-
+	  visibilityObserver.observe(track);
 	}
-	
-	
 	
 
 
