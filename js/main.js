@@ -1,8 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+
+	
+	
+	
+	
 	
 	/* =========================
-	   GALLERY SLIDER SYSTEM
+	   PREMIUM GALLERY SYSTEM
 	========================= */
 
 	const videoFiles = [
@@ -12,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  "videos/snaptik_7444629475364474145_hd.mp4"
 	];
 
-	// Shuffle
 	function shuffle(array) {
 	  for (let i = array.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
@@ -29,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  let currentIndex = 0;
 	  let videos = [];
 
-	  // Videos erzeugen
 	  shuffled.forEach(src => {
 		const video = document.createElement("video");
 		video.src = src;
@@ -37,26 +40,73 @@ document.addEventListener("DOMContentLoaded", () => {
 		video.preload = "metadata";
 		video.controls = false;
 		video.muted = false;
-		video.volume = 1;
+
 		track.appendChild(video);
 		videos.push(video);
+
+		/* TAP = PLAY / PAUSE */
+		video.addEventListener("click", () => {
+		  if (video.paused) {
+			video.play();
+		  } else {
+			video.pause();
+		  }
+		});
+
+		/* ENDLOS PLAYLIST */
+		video.addEventListener("ended", () => {
+		  nextVideo(true);
+		});
 	  });
 
-	  function updateSlider() {
+	  function updateSlider(resetTime = false) {
 		track.style.transform = `translateX(-${currentIndex * 100}%)`;
 
 		videos.forEach((vid, i) => {
 		  if (i === currentIndex) {
-			vid.play().catch(() => {});
+
+			if (resetTime) {
+			  vid.currentTime = 0;
+			}
+
 		  } else {
 			vid.pause();
 		  }
 		});
 	  }
 
-	  updateSlider();
+	  function nextVideo(fromEnd = false) {
+		videos[currentIndex].pause();
 
-	  /* Swipe Handling */
+		currentIndex++;
+
+		if (currentIndex >= videos.length) {
+		  currentIndex = 0;
+		}
+
+		updateSlider(true);
+
+		if (fromEnd) {
+		  videos[currentIndex].play();
+		}
+	  }
+
+	  function prevVideo() {
+		videos[currentIndex].pause();
+
+		currentIndex--;
+
+		if (currentIndex < 0) {
+		  currentIndex = videos.length - 1;
+		}
+
+		updateSlider(true);
+	  }
+
+	  updateSlider(true);
+
+	  /* SWIPE */
+
 	  let startX = 0;
 	  let isDragging = false;
 
@@ -70,19 +120,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		let diff = e.changedTouches[0].clientX - startX;
 
-		if (diff > 50 && currentIndex > 0) {
-		  currentIndex--;
-		}
+		if (diff > 50) prevVideo();
+		if (diff < -50) nextVideo();
 
-		if (diff < -50 && currentIndex < videos.length - 1) {
-		  currentIndex++;
-		}
-
-		updateSlider();
 		isDragging = false;
 	  });
 
-	  /* Desktop Swipe via Mouse */
 	  track.addEventListener("mousedown", e => {
 		startX = e.clientX;
 		isDragging = true;
@@ -93,19 +136,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		let diff = e.clientX - startX;
 
-		if (diff > 50 && currentIndex > 0) {
-		  currentIndex--;
-		}
+		if (diff > 50) prevVideo();
+		if (diff < -50) nextVideo();
 
-		if (diff < -50 && currentIndex < videos.length - 1) {
-		  currentIndex++;
-		}
-
-		updateSlider();
 		isDragging = false;
 	  });
 
+	  /* SCROLL VISIBILITY CONTROL */
+
+	  const observer = new IntersectionObserver(entries => {
+		entries.forEach(entry => {
+		  const video = videos[currentIndex];
+
+		  if (entry.isIntersecting) {
+			// nichts automatisch starten
+		  } else {
+			video.pause();
+		  }
+		});
+	  }, {
+		threshold: 0.05
+	  });
+
+	  observer.observe(track);
+
 	}
+	
+	
+	
 
 
   const navbar = document.querySelector('.navbar');
