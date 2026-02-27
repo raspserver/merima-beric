@@ -76,27 +76,33 @@ document.addEventListener("DOMContentLoaded", () => {
 		track.style.transform = `translateX(-${index * 100}%)`;
 	  }
 
+	  
+	  
 	  function moveTo(index, autoPlay = false) {
 
-		videos[currentIndex].pause();
+		  // 🔥 ALLE Videos pausieren (wichtig!)
+		  videos.forEach(video => video.pause());
 
-		currentIndex = index;
+		  currentIndex = index;
 
-		setPosition(currentIndex, true);
+		  setPosition(currentIndex, true);
 
-		const activeVideo = videos[currentIndex];
-		activeVideo.currentTime = 0;
+		  const activeVideo = videos[currentIndex];
+		  activeVideo.currentTime = 0;
 
-		if (autoPlay) {
-		  activeVideo.play();
+		  if (autoPlay) {
+			activeVideo.play();
+		  }
 		}
-	  }
+	  
+	  
 
 	  // Initial Position
 	  setPosition(currentIndex, false);
 
 	  // Transition-End-Check (unsichtbarer Sprung)
-	  track.addEventListener("transitionend", () => {
+		
+		track.addEventListener("transitionend", () => {
 
 		  let jumped = false;
 
@@ -111,6 +117,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 
 		  if (jumped) {
+
+			// 🔥 ALLE pausieren bevor wir springen
+			videos.forEach(video => video.pause());
+
 			setPosition(currentIndex, false);
 
 			const activeVideo = videos[currentIndex];
