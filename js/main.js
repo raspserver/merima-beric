@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  
 	  // Initial Position
 	  setPosition(currentIndex, false);
+	  playOnly(currentIndex);
 
 	  // Transition-End-Check (unsichtbarer Sprung)
 		
@@ -179,23 +180,26 @@ document.addEventListener("DOMContentLoaded", () => {
 		isDragging = false;
 	  });
 
-	  // Scroll Pause
-	const visibilityObserver = new IntersectionObserver(entries => {
-		  entries.forEach(entry => {
+	  const gallerySection = document.querySelector(".gallery");
 
-			if (isTransitioning) return;
+		function handleGalleryVisibility() {
 
-			if (entry.isIntersecting) {
-			  playOnly(currentIndex);
-			} else {
-			  videos.forEach(video => video.pause());
-			}
+		  const rect = gallerySection.getBoundingClientRect();
+		  const windowHeight = window.innerHeight;
 
-		  });
-		}, { threshold: 0.4 });
+		  const fullyOut =
+			rect.bottom < 0 || rect.top > windowHeight;
 
+		  if (fullyOut) {
+			videos.forEach(video => video.pause());
+		  } else {
+			playOnly(currentIndex);
+		  }
+		}
 
-	  visibilityObserver.observe(track);
+		window.addEventListener("scroll", handleGalleryVisibility);
+		window.addEventListener("resize", handleGalleryVisibility);
+	  
 	  
 
 	}
