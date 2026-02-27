@@ -179,25 +179,25 @@ document.addEventListener("DOMContentLoaded", () => {
 		isDragging = false;
 	  });
 
-	  // Scroll Pause	  
-	  const visibilityObserver = new IntersectionObserver(entries => {
+	  // Scroll Pause
+	const visibilityObserver = new IntersectionObserver(entries => {
 		  entries.forEach(entry => {
-			const activeVideo = videos[currentIndex];
-			
+
+			if (isTransitioning) return;
+
 			if (entry.isIntersecting) {
 			  playOnly(currentIndex);
 			} else {
 			  videos.forEach(video => video.pause());
 			}
-			
+
 		  });
-		}, { threshold: 0.6 });
+		}, { threshold: 0.4 });
+
 
 	  visibilityObserver.observe(track);
 	  
-	  
-	  
-	  
+
 	}
 	
 
