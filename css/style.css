@@ -1180,12 +1180,12 @@ footer a:hover {
 	/* ===== GALLERY STRUCTURE FIX ===== */
 
 	.gallery {
-		padding-top: 4rem;   /* gleich wie andere Sections */
-		padding-bottom: 4rem;
+		padding-top: 8rem;   /* gleich wie andere Sections */
+		padding-bottom: 8rem;
 	}
 
 	.gallery .section-title {
-		margin-bottom: 2rem; /* Abstand nach unten */
+		margin-bottom: 4rem; /* Abstand nach unten */
 	}
 
 	.gallery-slider {
