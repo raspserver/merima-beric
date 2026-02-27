@@ -98,26 +98,37 @@ document.addEventListener("DOMContentLoaded", () => {
 	  // Transition-End-Check (unsichtbarer Sprung)
 	  track.addEventListener("transitionend", () => {
 
-		// Wenn wir hinter dem letzten echten Video sind
-		if (currentIndex === videos.length - 1) {
-		  currentIndex = 1;
-		  setPosition(currentIndex, false);
-		}
+		  let jumped = false;
 
-		// Wenn wir vor dem ersten echten Video sind
-		if (currentIndex === 0) {
-		  currentIndex = videos.length - 2;
-		  setPosition(currentIndex, false);
-		}
-	  });
+		  if (currentIndex === videos.length - 1) {
+			currentIndex = 1;
+			jumped = true;
+		  }
 
-	  function next() {
-		moveTo(currentIndex + 1);
-	  }
+		  if (currentIndex === 0) {
+			currentIndex = videos.length - 2;
+			jumped = true;
+		  }
 
-	  function prev() {
-		moveTo(currentIndex - 1);
-	  }
+		  if (jumped) {
+			setPosition(currentIndex, false);
+
+			const activeVideo = videos[currentIndex];
+			activeVideo.currentTime = 0;
+			activeVideo.play();
+		  }
+		});
+	  
+	  
+	  
+	function next() {
+		moveTo(currentIndex + 1, true);
+	}
+
+	function prev() {
+		moveTo(currentIndex - 1, true);
+	}
+	  
 
 	  // Swipe
 	  let startX = 0;
@@ -155,16 +166,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		isDragging = false;
 	  });
 
-	  // Scroll Pause
+	  // Scroll Pause	  
 	  const visibilityObserver = new IntersectionObserver(entries => {
-		entries.forEach(entry => {
-		  if (!entry.isIntersecting) {
-			videos[currentIndex].pause();
-		  }
-		});
-	  }, { threshold: 0.05 });
+		  entries.forEach(entry => {
+			const activeVideo = videos[currentIndex];
+
+			if (entry.isIntersecting) {
+			  activeVideo.play();
+			} else {
+			  activeVideo.pause();
+			}
+		  });
+		}, { threshold: 0.6 });
 
 	  visibilityObserver.observe(track);
+	  
+	  
+	  
+	  
 	}
 	
 
