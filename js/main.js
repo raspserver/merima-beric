@@ -30,8 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  let videos = [];
 	  let currentIndex = 1; // wir starten bei 1 wegen clone
-	  
-	  let isTransitioning = false;
 
 	  // 1️⃣ Clone letztes Video vorne einfügen
 	  const firstCloneSrc = shuffled[0];
@@ -92,8 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  
 		function moveTo(index, autoPlay = false) {
 
-		  isTransitioning = true;
-
 		  currentIndex = index;
 		  setPosition(currentIndex, true);
 
@@ -128,8 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			setPosition(currentIndex, false);
 			playOnly(currentIndex);
 		  }
-		  
-		  isTransitioning = false;
 
 		});
 	  
