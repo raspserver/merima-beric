@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  "videos/snaptik_7208965603661499654_hd.mp4",
 	  "videos/snaptik_7211607331648441605_hd.mp4",
 	  "videos/snaptik_7444629475364474145_hd.mp4",
-	  "rose.psy.apt.live.from.summerswag.2025.mp4"
+	  "videos/rose.psy.apt.live.from.summerswag.2025.mp4"
 	];
 
 	function shuffle(array) {
