@@ -50,9 +50,17 @@ body {
 	animation: gradientShift 15s ease infinite;
 }
 
+
+/*
 @keyframes gradientShift {
 	0%, 100% { opacity: 1; transform: scale(1); }
 	50% { opacity: 0.8; transform: scale(1.1); }
+}
+* */
+
+@keyframes gradientShift {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
 }
 
 .hero-content {
