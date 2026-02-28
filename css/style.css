@@ -10,10 +10,6 @@
 	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo: home, navbar und footer */
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 * {
 	margin: 0;
 	padding: 0;
