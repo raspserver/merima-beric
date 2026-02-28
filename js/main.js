@@ -243,20 +243,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  const currentScrollY = window.scrollY;
 
-	  // NUR exakt bei 0 ausblenden
 	  if (currentScrollY === 0) {
-		navbar.classList.remove('visible', 'compact');
+		navbar.classList.remove('visible');
+		// compact NICHT entfernen
 	  } else {
 		navbar.classList.add('visible');
 
 		if (currentScrollY > 80) {
 		  navbar.classList.add('compact');
-		} else {
-		  navbar.classList.remove('compact');
 		}
 	  }
 
-	  // Hero settling bleibt
 	  if (hero) {
 		const heroHeight = hero.offsetHeight;
 		hero.classList.toggle('scrolled', currentScrollY > heroHeight * 0.4);
@@ -264,8 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	});
 	
-	
-	 
 
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
