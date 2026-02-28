@@ -926,15 +926,12 @@ footer a:hover {
 	z-index: 1000;
 	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 
-	will-change: transform, opacity, background;
+	will-change: opacity;
 	
 	transition:
 		opacity 0.45s ease,
 		background 0.4s ease,
 		padding 0.4s ease;
-		
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
 }
 
 
