@@ -236,36 +236,33 @@ document.addEventListener("DOMContentLoaded", () => {
 	const hero = document.querySelector('.hero');
 
 	/* === Always Visible Navbar (except very top) === */
+	
+	window.addEventListener('scroll', () => {
 
-		window.addEventListener('scroll', () => {
+	  if (!navbar) return;
 
-		  const currentScrollY = window.scrollY;
+	  const currentScrollY = window.scrollY;
 
-		  if (!navbar) return;
+	  // NUR exakt bei 0 ausblenden
+	  if (currentScrollY === 0) {
+		navbar.classList.remove('visible', 'compact');
+	  } else {
+		navbar.classList.add('visible');
 
-		  // Ganz oben → Navbar ausblenden
-		  if (currentScrollY <= 10) {
-			navbar.classList.remove('visible', 'compact');
-		  } 
-		  // Sonst → immer sichtbar
-		  else {
-			navbar.classList.add('visible');
+		if (currentScrollY > 80) {
+		  navbar.classList.add('compact');
+		} else {
+		  navbar.classList.remove('compact');
+		}
+	  }
 
-			// Compact sobald gescrollt
-			if (currentScrollY > 80) {
-			  navbar.classList.add('compact');
-			} else {
-			  navbar.classList.remove('compact');
-			}
-		  }
+	  // Hero settling bleibt
+	  if (hero) {
+		const heroHeight = hero.offsetHeight;
+		hero.classList.toggle('scrolled', currentScrollY > heroHeight * 0.4);
+	  }
 
-		  // Hero settling Effekt bleibt
-		  if (hero) {
-			const heroHeight = hero.offsetHeight;
-			hero.classList.toggle('scrolled', currentScrollY > heroHeight * 0.4);
-		  }
-
-		});
+	});
 	
 	
 	 
