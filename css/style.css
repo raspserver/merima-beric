@@ -940,10 +940,12 @@ footer a:hover {
 }
 
 /* wenn sichtbar UND gescrollt */
+/*
 .navbar.visible.compact {
 	background: rgba(10, 10, 10, 0.98);
 	border-bottom: 1px solid rgba(212, 175, 55, 0.3);
 }
+*/
 
 /* Navbar-Inhalt minimal kleiner */
 .navbar.visible.compact .nav-container {
