@@ -220,55 +220,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	/* Navbar beim Scrollen anzeigen */
 	const hero = document.querySelector('.hero');
-	
-	/* === Premium Scroll Direction Navbar === */
-	let lastScrollY = window.scrollY;
-	let ticking = false;
 
-	window.addEventListener('scroll', () => {
-	  if (!ticking) {
-		window.requestAnimationFrame(() => {
+	/* === Always Visible Navbar (except very top) === */
+
+		window.addEventListener('scroll', () => {
 
 		  const currentScrollY = window.scrollY;
-		  
-		  if (navbar) {
 
-			  if (currentScrollY <= 10) {
-				navbar.classList.remove('visible', 'compact');
-			  }
+		  if (!navbar) return;
 
-			  else if (currentScrollY > lastScrollY) {
-				navbar.classList.remove('visible');
-			  }
+		  // Ganz oben → Navbar ausblenden
+		  if (currentScrollY <= 10) {
+			navbar.classList.remove('visible', 'compact');
+		  } 
+		  // Sonst → immer sichtbar
+		  else {
+			navbar.classList.add('visible');
 
-			  else {
-				navbar.classList.add('visible');
-
-				// compact sobald nicht mehr ganz oben
-				if (currentScrollY > 80) {
-				  navbar.classList.add('compact');
-				} else {
-				  navbar.classList.remove('compact');
-				}
-			  }
+			// Compact sobald gescrollt
+			if (currentScrollY > 80) {
+			  navbar.classList.add('compact');
+			} else {
+			  navbar.classList.remove('compact');
 			}
-		  
-		  
+		  }
 
-		  // Hero settling Effekt bleibt wie gehabt
+		  // Hero settling Effekt bleibt
 		  if (hero) {
 			const heroHeight = hero.offsetHeight;
 			hero.classList.toggle('scrolled', currentScrollY > heroHeight * 0.4);
 		  }
 
-		  lastScrollY = currentScrollY;
-		  ticking = false;
-
 		});
-
-		ticking = true;
-	  }
-	});
+	
+	
+	
 
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
