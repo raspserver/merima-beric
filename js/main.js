@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	
 	
-	
+	 
 
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
