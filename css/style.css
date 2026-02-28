@@ -968,6 +968,7 @@ footer a:hover {
 	text-decoration: none;
 	line-height: 1;
 	--navbar-main-size: clamp(1.4rem, 2.5vw, 1.8rem);
+	will-change: transform;
 }
 
 .nav-logo,
