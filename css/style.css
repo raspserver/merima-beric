@@ -32,6 +32,9 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	
+	backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 .hero::before {
