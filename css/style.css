@@ -911,29 +911,36 @@ footer a:hover {
 	}
 }
 
+
+
 .navbar {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
-	
+
 	opacity: 0;
-	
+	transform: translateY(-12px);
+
 	backface-visibility: hidden;
-	transform: translate3d(0,-110%,0);
 
-	background: rgba(26, 26, 26, 0.98);
+	background: rgba(26, 26, 26, 0.96);
 	z-index: 1000;
-	border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 
-	will-change: transform, opacity;
+	will-change: transform, opacity, background;
 
 	transition:
-		transform 0.65s cubic-bezier(.16,1.15,.3,1),
-		opacity 0.35s ease,
+		transform 0.55s cubic-bezier(.16,.84,.44,1),
+		opacity 0.45s ease,
 		background 0.4s ease,
 		padding 0.4s ease;
+		
+		
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
+
 
 .navbar.visible {
 	transform: translateY(0);
@@ -942,8 +949,8 @@ footer a:hover {
 
 /* wenn sichtbar UND gescrollt */
 .navbar.visible.compact {
-	background: rgba(15, 15, 15, 0.995);
-	border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+	background: rgba(10, 10, 10, 0.98);
+	border-bottom: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 /* Navbar-Inhalt minimal kleiner */
