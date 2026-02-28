@@ -927,11 +927,10 @@ footer a:hover {
 	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 
 	will-change: opacity;
-	
+		
 	transition:
 		opacity 0.45s ease,
-		background 0.4s ease,
-		padding 0.4s ease;
+		background 0.4s ease;
 }
 
 
@@ -958,17 +957,8 @@ footer a:hover {
 	transition: transform 0.5s cubic-bezier(.16,.84,.44,1);
 }
 
-.navbar.visible.compact .nav-logo .hero-main::after {
-	opacity: 0.4;
-}
-
 .nav-container {
-	max-width: 1400px;
-	margin: 0 auto;
 	padding: 0.7rem 2rem;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
 }
 
 .nav-logo {
