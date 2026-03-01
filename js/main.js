@@ -219,48 +219,37 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		});
 	});
-
+	
 	/* ===============================
-	   PREMIUM NAVBAR CONTROLLER
+	   STICKY AFTER FIRST SCROLL
 	================================ */
 
 	const navbar = document.querySelector(".navbar");
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
-	
-	if (navbar) {
 
-		let lastScrollY = window.scrollY;
+	if (navbar) {
 
 		window.addEventListener("scroll", () => {
 
 			const currentScrollY = window.scrollY;
 
-			// Ganz oben
+			// Ganz oben → alles zurücksetzen
 			if (currentScrollY <= 5) {
 				navbar.classList.remove("visible");
 				navbar.classList.remove("compact");
 				return;
 			}
 
-			// Runterscrollen → ausblenden
-			if (currentScrollY > lastScrollY) {
-				navbar.classList.remove("visible");
-			}
+			// Sobald man scrollt → sichtbar bleiben
+			navbar.classList.add("visible");
 
-			// Hochscrollen → einblenden
-			else {
-				navbar.classList.add("visible");
-			}
-
-			// Compact sobald nicht mehr ganz oben
+			// Compact sobald etwas gescrollt
 			if (currentScrollY > 80) {
 				navbar.classList.add("compact");
 			} else {
 				navbar.classList.remove("compact");
 			}
-
-			lastScrollY = currentScrollY;
 
 		}, { passive: true });
 	}
