@@ -910,41 +910,28 @@ footer a:hover {
 	}
 }
 
-
-
 .navbar {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
-
 	opacity: 0;
-
-	backface-visibility: hidden;
-
 	background: rgba(26, 26, 26, 0.96);
 	z-index: 1000;
 	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-
-	will-change: opacity;
-		
-	transition:
-		opacity 0.45s ease,
-		background 0.4s ease;
+	transition: opacity 0.45s ease, background 0.4s ease;
 }
-
 
 .navbar.visible {
 	opacity: 1;
 }
 
-/* wenn sichtbar UND gescrollt */
-/*
-.navbar.visible.compact {
-	background: rgba(10, 10, 10, 0.98);
-	border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+.nav-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.7rem 2rem;
 }
-*/
 
 /* Navbar-Inhalt minimal kleiner */
 .navbar.visible.compact .nav-container {
@@ -955,10 +942,6 @@ footer a:hover {
 .navbar.visible.compact .nav-logo {
 	transform: scale(0.96);
 	transition: transform 0.5s cubic-bezier(.16,.84,.44,1);
-}
-
-.nav-container {
-	padding: 0.7rem 2rem;
 }
 
 .nav-logo {
