@@ -219,6 +219,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			navMenu.classList.remove('active');
 		  }
 
+		  if (targetId === "#home" || targetId === "#") {
+				navbar.classList.remove("visible");
+				navbar.classList.remove("compact");
+			}
+
 		  const navbarHeight = navbar ? navbar.offsetHeight : 0;
 		  const targetPosition =
 			target.getBoundingClientRect().top + window.pageYOffset;
@@ -231,26 +236,19 @@ document.addEventListener("DOMContentLoaded", () => {
 	  });
 	});
 	
-
-	
-	let lastScrollY = window.scrollY;
-	let ticking = false;
-	
-	
-	
 	window.addEventListener("scroll", () => {
 
 		if (!navbar) return;
 
 		const currentScrollY = window.scrollY;
 
-		// Ganz oben → Navbar verstecken
+		// Ganz oben
 		if (currentScrollY <= 5) {
-			navbar.classList.remove("visible");
 			navbar.classList.remove("compact");
+			// visible NICHT automatisch setzen!
 		}
-		
-		// Sobald man vom Hero weg scrollt → immer sichtbar
+
+		// Sobald man scrollt
 		else {
 			navbar.classList.add("visible");
 
@@ -260,14 +258,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 	});
-
+	
 	const hero = document.querySelector(".hero");
 
 	if (hero) {
 		hero.addEventListener("click", () => {
+
 			if (window.scrollY <= 5) {
-				navbar.classList.add("visible");
+				navbar.classList.toggle("visible");
 			}
+
 		});
 	}
 
