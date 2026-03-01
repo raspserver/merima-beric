@@ -286,40 +286,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	});
 	
-	let scrollEndTimer;
-
-	window.addEventListener("scroll", () => {
-
-	  if (scrollEndTimer) clearTimeout(scrollEndTimer);
-
-	  scrollEndTimer = setTimeout(() => {
-		isProgrammaticScroll = false;
-	  }, 120);
-
-	});
+	
 		
 	const hero = document.querySelector(".hero");
 
 	const navContainer = document.querySelector(".nav-container");
-
-	if (navContainer) {
-
-	  navContainer.addEventListener("click", (e) => {
-
-		const clickedToggle = navToggle && navToggle.contains(e.target);
-
-		if (
-		  window.scrollY <= 5 &&
-		  navbar.classList.contains("visible") &&
-		  !clickedToggle
-		) {
-		  navbar.classList.remove("visible");
-		  navbar.classList.remove("compact");
-		}
-
-	  });
-
-	}
 
 	if (hero) {
 		hero.addEventListener("click", () => {
@@ -330,33 +301,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		});
 	}
-	
-	let homeInactivityTimer;
-
-	function resetHomeTimer() {
-
-	  if (homeInactivityTimer) {
-		clearTimeout(homeInactivityTimer);
-	  }
-
-	  if (window.scrollY <= 5 && navbar.classList.contains("visible")) {
-
-		homeInactivityTimer = setTimeout(() => {
-		  navbar.classList.remove("visible");
-		  navbar.classList.remove("compact");
-		}, 3000);
-
-	  }
-	}
-
-	// Timer triggern bei Interaktion
-	["click", "touchstart", "mousemove"].forEach(event => {
-	  document.addEventListener(event, resetHomeTimer);
-	});
-
-	// Auch bei Scroll prüfen
-	window.addEventListener("scroll", resetHomeTimer);
-	
 	
 
   /* Intersection Observer */
