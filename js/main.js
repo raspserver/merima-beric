@@ -200,8 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 	
 
-
   const navbar = document.querySelector('.navbar');
+  let returningHome = false;
   const navToggle = document.querySelector('.nav-toggle');
   const navMenu = document.querySelector('.nav-menu');
 
@@ -218,22 +218,19 @@ document.addEventListener("DOMContentLoaded", () => {
 			navToggle.classList.remove('active');
 			navMenu.classList.remove('active');
 		  }		
-			
+
 			if (targetId === "#home" || targetId === "#") {
+
+			  returningHome = true;
 
 			  window.scrollTo({
 				top: 0,
 				behavior: "smooth"
 			  });
 
-			  setTimeout(() => {
-				navbar.classList.remove("visible");
-				navbar.classList.remove("compact");
-			  }, 500); // nach Scroll-Animation
-
 			  return;
-			}	
-
+			}
+			
 		  const navbarHeight = navbar ? navbar.offsetHeight : 0;
 		  const targetPosition =
 			target.getBoundingClientRect().top + window.pageYOffset;
@@ -248,26 +245,37 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	window.addEventListener("scroll", () => {
 
-		if (!navbar) return;
+	  if (!navbar) return;
 
-		const currentScrollY = window.scrollY;
+	  const currentScrollY = window.scrollY;
 
-		// Ganz oben
+	  // === Wenn wir bewusst zum Home zurückkehren ===
+	  if (returningHome) {
+
 		if (currentScrollY <= 5) {
-			navbar.classList.remove("compact");
-			// visible NICHT automatisch setzen!
+		  navbar.classList.remove("visible");
+		  navbar.classList.remove("compact");
+		  returningHome = false;
 		}
 
-		// Sobald man scrollt
-		else {
-			navbar.classList.add("visible");
+		return; // währenddessen nichts anderes tun
+	  }
 
-			if (currentScrollY > 80) {
-				navbar.classList.add("compact");
-			}
+	  // === Normales Verhalten ===
+	  if (currentScrollY <= 5) {
+		navbar.classList.remove("compact");
+	  } else {
+		navbar.classList.add("visible");
+
+		if (currentScrollY > 80) {
+		  navbar.classList.add("compact");
 		}
+	  }
 
 	});
+	
+	
+	
 	
 	const hero = document.querySelector(".hero");
 
@@ -280,9 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		});
 	}
-	
-	
-	
 	
 	let homeInactivityTimer;
 
