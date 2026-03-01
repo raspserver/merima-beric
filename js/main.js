@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-
-
 	
 	/* =========================
 	   TRUE INFINITE GALLERY
@@ -195,63 +192,85 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener("scroll", handleGalleryVisibility);
 		window.addEventListener("resize", handleGalleryVisibility);
 	  
-	  
-
 	}
 	
-
-  const navbar = document.querySelector('.navbar');
-  let returningHome = false;
-  let isProgrammaticScroll = false;
-  const navToggle = document.querySelector('.nav-toggle');
-  const navMenu = document.querySelector('.nav-menu');
-
+	
+	
+	
+	
+	
+	
 	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-	  anchor.addEventListener('click', function (e) {
+		anchor.addEventListener('click', function (e) {
 
-		const targetId = this.getAttribute('href');
-		const target = document.querySelector(targetId);
+			const targetId = this.getAttribute('href');
+			const target = document.querySelector(targetId);
 
-		if (target) {
-		  e.preventDefault();
+			if (!target) return;
 
-		  if (navToggle && navMenu) {
-			navToggle.classList.remove('active');
-			navMenu.classList.remove('active');
-		  }		
-
-			if (targetId === "#home" || targetId === "#") {
-
-			  returningHome = true;
-
-				isProgrammaticScroll = true;
-
-			navbar.classList.add("visible");
-			isProgrammaticScroll = true;
-
-			  window.scrollTo({
-				top: 0,
-				behavior: "smooth"
-			  });
-
-			  return;
-			}
-		   
-			isProgrammaticScroll = true;
-			navbar.classList.add("visible");
+			e.preventDefault();
 
 			const navbarHeight = navbar ? navbar.offsetHeight : 0;
-		  		  
-		  const targetPosition =
-			target.getBoundingClientRect().top + window.pageYOffset;
+			const targetPosition =
+				target.getBoundingClientRect().top + window.pageYOffset;
 
-		  window.scrollTo({
-			top: targetPosition - navbarHeight - 5,
-			behavior: 'smooth'
-		  });
-		}
-	  });
+			window.scrollTo({
+				top: targetPosition - navbarHeight - 5,
+				behavior: 'smooth'
+			});
+		});
 	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ===============================
+	   PREMIUM NAVBAR CONTROLLER
+	================================ */
+
+	const navbar = document.querySelector(".navbar");
+
+	if (navbar) {
+
+		let lastScrollY = window.scrollY;
+
+		window.addEventListener("scroll", () => {
+
+			const currentScrollY = window.scrollY;
+
+			// Ganz oben
+			if (currentScrollY <= 5) {
+				navbar.classList.remove("visible");
+				navbar.classList.remove("compact");
+				return;
+			}
+
+			// Runterscrollen → ausblenden
+			if (currentScrollY > lastScrollY) {
+				navbar.classList.remove("visible");
+			}
+
+			// Hochscrollen → einblenden
+			else {
+				navbar.classList.add("visible");
+			}
+
+			// Compact sobald nicht mehr ganz oben
+			if (currentScrollY > 80) {
+				navbar.classList.add("compact");
+			} else {
+				navbar.classList.remove("compact");
+			}
+
+			lastScrollY = currentScrollY;
+
+		}, { passive: true });
+	}
 	
 	window.addEventListener("scroll", () => {
 
@@ -285,9 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 	});
-	
-	
-		
+
 	const hero = document.querySelector(".hero");
 
 	const navContainer = document.querySelector(".nav-container");
@@ -302,7 +319,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 	
-
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {

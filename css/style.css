@@ -941,15 +941,24 @@ footer a:hover {
 	background: rgba(12, 12, 12, 0.98);
 }
 
+/* ===============================
+   PREMIUM NAVBAR SYSTEM
+================================ */
+
 .nav-container {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 0.7rem 2rem;
-	height: 70px; /* feste Höhe */
+
+	padding: 0.9rem 2rem;
+	height: 78px;
+
+	transition:
+		height 0.45s cubic-bezier(.16,.84,.44,1),
+		padding 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
-
+/* Logo-Größe */
 .nav-logo {
 	display: flex;
 	flex-direction: column;
@@ -957,15 +966,19 @@ footer a:hover {
 	text-decoration: none;
 	line-height: 1;
 
-	--navbar-main-size: clamp(1.4rem, 2.5vw, 1.8rem);
+	--navbar-main-size: clamp(1.55rem, 2.8vw, 2rem);
 
-	transition: transform 0.6s cubic-bezier(.16,.84,.44,1);
-	will-change: transform;
+	transition: font-size 0.45s cubic-bezier(.16,.84,.44,1);
+}
+
+/* Kompakte Variante */
+.navbar.compact .nav-container {
+	height: 60px;
+	padding: 0.5rem 2rem;
 }
 
 .navbar.compact .nav-logo {
-	transform: scale(0.94);
-	transform-origin: top right;
+	--navbar-main-size: clamp(1.35rem, 2.3vw, 1.7rem);
 }
 
 .nav-logo,
