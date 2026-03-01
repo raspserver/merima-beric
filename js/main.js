@@ -220,21 +220,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		});
 	});
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/* ===============================
 	   PREMIUM NAVBAR CONTROLLER
 	================================ */
 
 	const navbar = document.querySelector(".navbar");
-
+	const navToggle = document.querySelector(".nav-toggle");
+	const navMenu = document.querySelector(".nav-menu");
+	
 	if (navbar) {
 
 		let lastScrollY = window.scrollY;
@@ -271,39 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		}, { passive: true });
 	}
-	
-	window.addEventListener("scroll", () => {
-
-	  if (!navbar) return;
-
-	  const currentScrollY = window.scrollY;
-
-	  // === Wenn wir bewusst zum Home zurückkehren ===
-	  if (returningHome) {
-
-		if (currentScrollY <= 5) {
-		  navbar.classList.remove("visible");
-		  navbar.classList.remove("compact");
-		  returningHome = false;
-		}
-
-		return; // währenddessen nichts anderes tun
-	  }
-
-	  // === Normales Verhalten ===
-		if (currentScrollY <= 5) {
-		  navbar.classList.remove("compact");
-		} else {
-
-		  navbar.classList.add("visible");
-
-		  // ⛔ Compact NICHT während Programmatic Scroll
-		  if (!isProgrammaticScroll && currentScrollY > 80) {
-			navbar.classList.add("compact");
-		  }
-		}
-
-	});
 
 	const hero = document.querySelector(".hero");
 
