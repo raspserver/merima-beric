@@ -231,52 +231,45 @@ document.addEventListener("DOMContentLoaded", () => {
 	  });
 	});
 	
-	
-	
+
 	
 	let lastScrollY = window.scrollY;
 	let ticking = false;
-
+	
+	
+	
 	window.addEventListener("scroll", () => {
 
 		if (!navbar) return;
 
-		if (!ticking) {
+		const currentScrollY = window.scrollY;
 
-			window.requestAnimationFrame(() => {
+		// Ganz oben → Navbar verstecken
+		if (currentScrollY <= 5) {
+			navbar.classList.remove("visible");
+			navbar.classList.remove("compact");
+		}
+		
+		// Sobald man vom Hero weg scrollt → immer sichtbar
+		else {
+			navbar.classList.add("visible");
 
-				const currentScrollY = window.scrollY;
-				const scrollingDown = currentScrollY > lastScrollY;
-
-				// Ganz oben → Navbar komplett verstecken
-				if (currentScrollY <= 5) {
-					navbar.classList.remove("visible");
-					navbar.classList.remove("compact");
-				}
-
-				// Scroll nach unten → verstecken
-				else if (scrollingDown) {
-					navbar.classList.remove("visible");
-				}
-
-				// Scroll nach oben → zeigen
-				else {
-					navbar.classList.add("visible");
-
-					if (currentScrollY > 80) {
-						navbar.classList.add("compact");
-					}
-				}
-
-				lastScrollY = currentScrollY;
-				ticking = false;
-
-			});
-
-			ticking = true;
+			if (currentScrollY > 80) {
+				navbar.classList.add("compact");
+			}
 		}
 
 	});
+
+	const hero = document.querySelector(".hero");
+
+	if (hero) {
+		hero.addEventListener("click", () => {
+			if (window.scrollY <= 5) {
+				navbar.classList.add("visible");
+			}
+		});
+	}
 
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
