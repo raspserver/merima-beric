@@ -202,6 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navbar = document.querySelector('.navbar');
   let returningHome = false;
+  let isProgrammaticScroll = false;
   const navToggle = document.querySelector('.nav-toggle');
   const navMenu = document.querySelector('.nav-menu');
 
@@ -222,6 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (targetId === "#home" || targetId === "#") {
 
 			  returningHome = true;
+
+				isProgrammaticScroll = true;
 
 			  window.scrollTo({
 				top: 0,
@@ -262,22 +265,54 @@ document.addEventListener("DOMContentLoaded", () => {
 	  }
 
 	  // === Normales Verhalten ===
-	  if (currentScrollY <= 5) {
-		navbar.classList.remove("compact");
-	  } else {
-		navbar.classList.add("visible");
+		if (currentScrollY <= 5) {
+		  navbar.classList.remove("compact");
+		} else {
 
-		if (currentScrollY > 80) {
-		  navbar.classList.add("compact");
+		  navbar.classList.add("visible");
+
+		  // ⛔ Compact NICHT während Programmatic Scroll
+		  if (!isProgrammaticScroll && currentScrollY > 80) {
+			navbar.classList.add("compact");
+		  }
 		}
-	  }
 
 	});
 	
-	
-	
-	
+	let scrollEndTimer;
+
+	window.addEventListener("scroll", () => {
+
+	  if (scrollEndTimer) clearTimeout(scrollEndTimer);
+
+	  scrollEndTimer = setTimeout(() => {
+		isProgrammaticScroll = false;
+	  }, 120);
+
+	});
+		
 	const hero = document.querySelector(".hero");
+
+	const navContainer = document.querySelector(".nav-container");
+
+	if (navContainer) {
+
+	  navContainer.addEventListener("click", (e) => {
+
+		const clickedToggle = navToggle && navToggle.contains(e.target);
+
+		if (
+		  window.scrollY <= 5 &&
+		  navbar.classList.contains("visible") &&
+		  !clickedToggle
+		) {
+		  navbar.classList.remove("visible");
+		  navbar.classList.remove("compact");
+		}
+
+	  });
+
+	}
 
 	if (hero) {
 		hero.addEventListener("click", () => {
