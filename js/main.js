@@ -217,12 +217,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		  if (navToggle && navMenu) {
 			navToggle.classList.remove('active');
 			navMenu.classList.remove('active');
-		  }
+		  }		
+			
+			if (targetId === "#home" || targetId === "#") {
 
-		  if (targetId === "#home" || targetId === "#") {
+			  window.scrollTo({
+				top: 0,
+				behavior: "smooth"
+			  });
+
+			  setTimeout(() => {
 				navbar.classList.remove("visible");
 				navbar.classList.remove("compact");
-			}
+			  }, 500); // nach Scroll-Animation
+
+			  return;
+			}	
 
 		  const navbarHeight = navbar ? navbar.offsetHeight : 0;
 		  const targetPosition =
@@ -270,6 +280,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		});
 	}
+	
+	
+	
+	
+	let homeInactivityTimer;
+
+	function resetHomeTimer() {
+
+	  if (homeInactivityTimer) {
+		clearTimeout(homeInactivityTimer);
+	  }
+
+	  if (window.scrollY <= 5 && navbar.classList.contains("visible")) {
+
+		homeInactivityTimer = setTimeout(() => {
+		  navbar.classList.remove("visible");
+		  navbar.classList.remove("compact");
+		}, 3000);
+
+	  }
+	}
+
+	// Timer triggern bei Interaktion
+	["click", "touchstart", "mousemove"].forEach(event => {
+	  document.addEventListener(event, resetHomeTimer);
+	});
+
+	// Auch bei Scroll prüfen
+	window.addEventListener("scroll", resetHomeTimer);
+	
+	
 
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
