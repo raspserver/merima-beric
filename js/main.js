@@ -236,8 +236,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			  return;
 			}
-			
-		  const navbarHeight = navbar ? navbar.offsetHeight : 0;
 		   
 			isProgrammaticScroll = true;
 			navbar.classList.add("visible");
