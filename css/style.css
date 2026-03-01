@@ -915,15 +915,30 @@ footer a:hover {
 	top: 0;
 	left: 0;
 	width: 100%;
-	opacity: 0;
-	background: rgba(26, 26, 26, 0.96);
 	z-index: 1000;
+
+	background: rgba(26, 26, 26, 0.96);
 	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-	transition: opacity 0.45s ease, background 0.4s ease;
+
+	transform: translateY(-100%);
+	opacity: 0;
+
+	transition:
+		transform 0.5s cubic-bezier(.16,.84,.44,1),
+		opacity 0.4s ease,
+		background 0.4s ease;
+
+	will-change: transform, opacity;
+	backface-visibility: hidden;
 }
 
 .navbar.visible {
+	transform: translateY(0);
 	opacity: 1;
+}
+
+.navbar.compact {
+	background: rgba(12, 12, 12, 0.98);
 }
 
 .nav-container {
@@ -931,18 +946,9 @@ footer a:hover {
 	justify-content: space-between;
 	align-items: center;
 	padding: 0.7rem 2rem;
+	height: 70px; /* feste Höhe */
 }
 
-/* Navbar-Inhalt minimal kleiner */
-.navbar.visible.compact .nav-container {
-	padding: 0.4rem 2rem;
-}
-
-/* Logo subtil ruhiger */
-.navbar.visible.compact .nav-logo {
-	transform: scale(0.96);
-	transition: transform 0.5s cubic-bezier(.16,.84,.44,1);
-}
 
 .nav-logo {
 	display: flex;
@@ -950,8 +956,15 @@ footer a:hover {
 	align-items: flex-end;
 	text-decoration: none;
 	line-height: 1;
+
 	--navbar-main-size: clamp(1.4rem, 2.5vw, 1.8rem);
+
+	transition: transform 0.6s cubic-bezier(.16,.84,.44,1);
 	will-change: transform;
+}
+
+.navbar.compact .nav-logo {
+	transform: scale(0.94);
 }
 
 .nav-logo,

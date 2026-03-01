@@ -231,36 +231,52 @@ document.addEventListener("DOMContentLoaded", () => {
 	  });
 	});
 	
-
-	/* Navbar beim Scrollen anzeigen */
-	const hero = document.querySelector('.hero');
-
-	/* === Always Visible Navbar (except very top) === */
 	
-	window.addEventListener('scroll', () => {
+	
+	
+	let lastScrollY = window.scrollY;
+	let ticking = false;
 
-	  if (!navbar) return;
+	window.addEventListener("scroll", () => {
 
-	  const currentScrollY = window.scrollY;
+		if (!navbar) return;
 
-	  if (currentScrollY === 0) {
-		navbar.classList.remove('visible');
-		// compact NICHT entfernen
-	  } else {
-		navbar.classList.add('visible');
+		if (!ticking) {
 
-		if (currentScrollY > 80) {
-		  navbar.classList.add('compact');
+			window.requestAnimationFrame(() => {
+
+				const currentScrollY = window.scrollY;
+				const scrollingDown = currentScrollY > lastScrollY;
+
+				// Ganz oben → Navbar komplett verstecken
+				if (currentScrollY <= 5) {
+					navbar.classList.remove("visible");
+					navbar.classList.remove("compact");
+				}
+
+				// Scroll nach unten → verstecken
+				else if (scrollingDown) {
+					navbar.classList.remove("visible");
+				}
+
+				// Scroll nach oben → zeigen
+				else {
+					navbar.classList.add("visible");
+
+					if (currentScrollY > 80) {
+						navbar.classList.add("compact");
+					}
+				}
+
+				lastScrollY = currentScrollY;
+				ticking = false;
+
+			});
+
+			ticking = true;
 		}
-	  }
-
-	  if (hero) {
-		const heroHeight = hero.offsetHeight;
-		hero.classList.toggle('scrolled', currentScrollY > heroHeight * 0.4);
-	  }
 
 	});
-	
 
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
