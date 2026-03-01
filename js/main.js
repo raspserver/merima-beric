@@ -226,6 +226,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				isProgrammaticScroll = true;
 
+			navbar.classList.add("visible");
+			isProgrammaticScroll = true;
+
 			  window.scrollTo({
 				top: 0,
 				behavior: "smooth"
@@ -235,6 +238,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 			
 		  const navbarHeight = navbar ? navbar.offsetHeight : 0;
+		   
+			isProgrammaticScroll = true;
+			navbar.classList.add("visible");
+
+			const navbarHeight = navbar ? navbar.offsetHeight : 0;
+		  		  
 		  const targetPosition =
 			target.getBoundingClientRect().top + window.pageYOffset;
 
