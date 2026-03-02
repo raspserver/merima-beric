@@ -203,39 +203,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	
 	
-	
+
+
+
 	if (navbar) {
 
-	  let lastScrollY = 0;
+	  let manualOpen = false;
+
+	  // HERO TAP
+	  if (hero) {
+		hero.addEventListener("click", () => {
+		  if (window.scrollY <= 5) {
+			navbar.classList.toggle("visible");
+			manualOpen = navbar.classList.contains("visible");
+		  }
+		});
+	  }
 
 	  window.addEventListener("scroll", () => {
 
-		const currentScrollY = window.scrollY;
+		const currentScrollY = Math.max(window.scrollY, 0);
 
-		// Ganz oben → alles zurücksetzen
-		if (currentScrollY <= 5) {
-		  navbar.classList.remove("visible");
-		  navbar.classList.remove("compact");
-		  return;
+		// Wenn Navbar manuell geöffnet wurde → nicht automatisch schließen
+		if (!manualOpen) {
+
+		  if (currentScrollY > 5) {
+			navbar.classList.add("visible");
+		  } else {
+			navbar.classList.remove("visible");
+			navbar.classList.remove("compact");
+			return;
+		  }
+
 		}
 
-		navbar.classList.add("visible");
-
-		// Compact erst wenn wirklich deutlich gescrollt wurde
+		// Compact Logik bleibt normal
 		if (currentScrollY > 120) {
 		  navbar.classList.add("compact");
 		}
 
-		// Compact wieder raus wenn fast oben
 		if (currentScrollY < 60) {
 		  navbar.classList.remove("compact");
 		}
 
-		lastScrollY = currentScrollY;
-
 	  }, { passive: true });
 	}
-	
+
+
+
 
 	
 
@@ -307,9 +322,17 @@ document.addEventListener("DOMContentLoaded", () => {
 	  });
 	}
 
+
+
+
+
+
 	/* ===============================
 	   HERO TAP NAVBAR (HOME ONLY)
 	================================ */
+
+/*
+
 
 	if (hero && navbar) {
 
@@ -331,6 +354,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 	}
+
+*/
 	
   /* Pricing Tabs */
   const pricingTabs = document.querySelectorAll('.pricing-tab');
