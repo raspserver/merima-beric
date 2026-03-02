@@ -194,39 +194,55 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 
+
+	/* =========================
+	   NAVBAR (FINAL STABLE)
+	========================= */
+
 	const navbar = document.querySelector(".navbar");
 	const hero = document.querySelector(".hero");
 
-	let manuallyOpened = false;
-
 	if (navbar) {
 
-	  window.addEventListener("scroll", () => {
+	  let manualVisible = false;
 
-		const currentScrollY = Math.max(window.scrollY, 0);
+	  function updateNavbar() {
+		const scrollY = Math.max(window.scrollY, 0);
 
-		// Nur automatisch steuern, wenn NICHT manuell geöffnet
-		if (!manuallyOpened) {
+		// Sichtbarkeit
+		if (!manualVisible) {
+		  navbar.classList.toggle("visible", scrollY > 5);
+		}
 
-		  if (currentScrollY > 5) {
-			navbar.classList.add("visible");
-		  } else {
-			navbar.classList.remove("visible");
-			navbar.classList.remove("compact");
-			return;
+		// Compact
+		navbar.classList.toggle("compact", scrollY > 120);
+	  }
+
+	  window.addEventListener("scroll", updateNavbar, { passive: true });
+
+	  // Initial state (falls Seite nicht ganz oben geladen wird)
+	  updateNavbar();
+
+	  // HERO TAP
+	  if (hero) {
+		hero.addEventListener("click", () => {
+		  if (window.scrollY <= 5) {
+			navbar.classList.toggle("visible");
+			manualVisible = navbar.classList.contains("visible");
 		  }
-
-		}
-
-		// Compact Logik normal
-		if (currentScrollY > 120) {
-		  navbar.classList.add("compact");
-		} else {
-		  navbar.classList.remove("compact");
-		}
-
-	  }, { passive: true });
+		});
+	  }
 	}
+
+
+
+
+
+
+
+
+
+	
 
 
 	/* HERO TAP */
@@ -248,6 +264,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
+	
+
+	
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
 
@@ -258,12 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
-	window.addEventListener("scroll", () => {
-		const scrollY = window.scrollY || 0;
-		navbar.classList.toggle("visible", scrollY > 5);
-		navbar.classList.toggle("compact", scrollY > 120);
-	});
-	
 	
 
 

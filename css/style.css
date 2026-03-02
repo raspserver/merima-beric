@@ -911,7 +911,12 @@ footer a:hover {
 	}
 }
 
+
+
+
+
 /* ===== NAVBAR ===== */
+
 .navbar {
     position: fixed;
     top: 0;
@@ -939,28 +944,34 @@ footer a:hover {
     background: rgba(12, 12, 12, 0.98);
 }
 
-/* Container fixiert Höhe, keine height-Transition */
+/* Container bleibt FIXE Höhe */
 .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 78px; /* feste Höhe */
+    height: 78px;
     padding: 0.9rem 2rem;
-    transform-origin: top;
-    transition: padding 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
-/* Logo und Hamburger skalieren für Compact-Zustand */
+/* Nur Logo & Toggle skalieren */
 .nav-logo,
 .nav-toggle {
     transform: scale(1);
     transition: transform 0.45s cubic-bezier(.16,.84,.44,1);
+    transform-origin: center;
 }
 
 .navbar.compact .nav-logo,
 .navbar.compact .nav-toggle {
     transform: scale(0.85);
 }
+
+
+
+
+
+
+
 
 /* Optional: Padding leicht anpassen bei Compact */
 .navbar.compact .nav-container {
