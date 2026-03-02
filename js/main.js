@@ -248,8 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
-	
-	
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
 
@@ -257,20 +255,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		navToggle.addEventListener("click", () => {
 			navMenu.classList.toggle("active");
 			navToggle.classList.toggle("active");
-			manuallyOpened = navMenu.classList.contains("active");
 		});
 	}
-	
-	
-	
+
 	window.addEventListener("scroll", () => {
-		const currentScrollY = Math.max(window.scrollY, 0);
-		navbar.classList.toggle("visible", currentScrollY > 5);
-		navbar.classList.toggle("compact", currentScrollY > 120);
+		const scrollY = window.scrollY || 0;
+		navbar.classList.toggle("visible", scrollY > 5);
+		navbar.classList.toggle("compact", scrollY > 120);
 	});
 	
 	
-	
+
 
   /* Pricing Tabs */
   const pricingTabs = document.querySelectorAll('.pricing-tab');

@@ -960,8 +960,7 @@ footer a:hover {
 
 .nav-logo,
 .nav-toggle {
-	transition: transform 0.45s cubic-bezier(.16,.84,.44,1);
-	transform-origin: center;
+    transform: none; /* vorher scale entfernt */
 }
 
 .navbar.compact .nav-logo,
@@ -970,7 +969,9 @@ footer a:hover {
 }
 
 .navbar.compact .nav-container {
-    transform: scaleY(0.77);   /* 60 / 78 ≈ 0.77 */
+    height: 60px; /* tatsächliche reduzierte Höhe */
+    padding: 0.5rem 2rem; /* optional anpassen */
+    transform: none; /* scaleY raus */
 }
 
 /* Logo */
