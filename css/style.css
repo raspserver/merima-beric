@@ -916,14 +916,11 @@ footer a:hover {
 	left: 0;
 	width: 100%;
 	z-index: 1000;
-	
-	height: 78px;          /* feste Höhe definieren */
-    overflow: hidden;      /* verhindert Reflow */
 
 	background: rgba(26, 26, 26, 0.96);
 	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 
-	transform: translate3d(0, -100%, 0); /* 3D erzwingt GPU Layer */
+	transform: translate3d(0, -100%, 0);
 	opacity: 0;
 
 	transition:
@@ -944,23 +941,26 @@ footer a:hover {
 	background: rgba(12, 12, 12, 0.98);
 }
 
+/* Container */
 .nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 
-    padding: 0.9rem 2rem;
-    height: 78px;
+	height: 78px;
+	padding: 0.9rem 2rem;
 
-    transform-origin: top;
-    transition: transform 0.45s cubic-bezier(.16,.84,.44,1);
+	transition:
+		height 0.45s cubic-bezier(.16,.84,.44,1),
+		padding 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
 .navbar.compact .nav-container {
-    transform: scaleY(0.77); /* 60 / 78 ≈ 0.77 */
+	height: 60px;
+	padding: 0.5rem 2rem;
 }
 
-/* Logo-Größe */
+/* Logo */
 .nav-logo {
 	display: flex;
 	flex-direction: column;
@@ -969,14 +969,10 @@ footer a:hover {
 	line-height: 1;
 
 	--navbar-main-size: clamp(1.55rem, 2.8vw, 2rem);
-
-	transform-origin: right top;
-    transition: transform 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
 .navbar.compact .nav-logo {
 	--navbar-main-size: clamp(1.35rem, 2.3vw, 1.7rem);
-	transform: scale(0.9);
 }
 
 .nav-logo,
