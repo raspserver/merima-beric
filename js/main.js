@@ -245,22 +245,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 
 
-	/* HERO TAP */
-
-	if (hero && navbar) {
-
-	  hero.addEventListener("click", () => {
-
-		if (window.scrollY <= 5) {
-
-		  navbar.classList.toggle("visible");
-		  manuallyOpened = navbar.classList.contains("visible");
-
-		}
-
-	  });
-
-	}
 	
 	
 	
