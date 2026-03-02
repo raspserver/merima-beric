@@ -226,14 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		}, { passive: true });
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 		anchor.addEventListener('click', function (e) {
 
