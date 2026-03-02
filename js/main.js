@@ -235,6 +235,33 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, { passive: true });
 	}
 	
+	
+	
+	/* ===============================
+	   HERO TAP NAVBAR (HOME ONLY)
+	================================ */
+
+	if (hero && navbar) {
+
+		hero.addEventListener("click", (e) => {
+
+			// nur wenn ganz oben
+			if (window.scrollY <= 5) {
+
+				const isVisible = navbar.classList.contains("visible");
+
+				if (isVisible) {
+					navbar.classList.remove("visible");
+				} else {
+					navbar.classList.add("visible");
+				}
+			}
+		});
+	}
+	
+	
+	
+	
 	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 		anchor.addEventListener('click', function (e) {
 
