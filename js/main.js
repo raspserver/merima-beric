@@ -313,9 +313,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	if (hero && navbar) {
 
-		hero.addEventListener("click", (e) => {
+		hero.addEventListener("click", () => {
 
-			// nur wenn ganz oben
 			if (window.scrollY <= 5) {
 
 				const isVisible = navbar.classList.contains("visible");
@@ -323,12 +322,16 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (isVisible) {
 					navbar.classList.remove("visible");
 				} else {
-					navbar.classList.add("visible");
+
+					// Mini-Delay verhindert iOS Reflow-Glitch
+					requestAnimationFrame(() => {
+						navbar.classList.add("visible");
+					});
 				}
 			}
 		});
 	}
-
+	
   /* Pricing Tabs */
   const pricingTabs = document.querySelectorAll('.pricing-tab');
   const pricingContents = document.querySelectorAll('.pricing-content');
