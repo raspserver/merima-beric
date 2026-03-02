@@ -199,26 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
-	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-		anchor.addEventListener('click', function (e) {
-
-			const targetId = this.getAttribute('href');
-			const target = document.querySelector(targetId);
-
-			if (!target) return;
-
-			e.preventDefault();
-
-			const navbarHeight = navbar ? navbar.offsetHeight : 0;
-			const targetPosition =
-				target.getBoundingClientRect().top + window.pageYOffset;
-
-			window.scrollTo({
-				top: targetPosition - navbarHeight - 5,
-				behavior: 'smooth'
-			});
-		});
-	});
+	
 	
 	/* ===============================
 	   STICKY AFTER FIRST SCROLL
@@ -253,20 +234,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		}, { passive: true });
 	}
+	
+	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+		anchor.addEventListener('click', function (e) {
+
+			const targetId = this.getAttribute('href');
+			const target = document.querySelector(targetId);
+
+			if (!target) return;
+
+			e.preventDefault();
+
+			const navbarHeight = navbar ? navbar.offsetHeight : 0;
+			const targetPosition =
+				target.getBoundingClientRect().top + window.pageYOffset;
+
+			window.scrollTo({
+				top: targetPosition - navbarHeight - 5,
+				behavior: 'smooth'
+			});
+		});
+	});
 
 	const hero = document.querySelector(".hero");
 
 	const navContainer = document.querySelector(".nav-container");
-
-	if (hero) {
-		hero.addEventListener("click", () => {
-
-			if (window.scrollY <= 5) {
-				navbar.classList.toggle("visible");
-			}
-
-		});
-	}
 	
   /* Intersection Observer */
   const observer = new IntersectionObserver((entries) => {
