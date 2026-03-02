@@ -192,15 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener("resize", handleGalleryVisibility);
 	  
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/* ===============================
 	   STICKY AFTER FIRST SCROLL
 	================================ */
@@ -309,11 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	  });
 	}
-	
-	
-	
-	
-	
+
 	/* ===============================
 	   HERO TAP NAVBAR (HOME ONLY)
 	================================ */
@@ -335,9 +323,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 	}
-	
-	
-	
 
   /* Pricing Tabs */
   const pricingTabs = document.querySelectorAll('.pricing-tab');
