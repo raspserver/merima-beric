@@ -944,19 +944,24 @@ footer a:hover {
     background: rgba(12, 12, 12, 0.98);
 }
 
+
+
+
 .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 78px;
     padding: 1.1rem 2rem;
-    transition: padding 0.45s cubic-bezier(.16,.84,.44,1);
+    transition:
+        height 0.45s cubic-bezier(.16,.84,.44,1),
+        padding 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
 .navbar.compact .nav-container {
+    height: 60px;
     padding: 0.4rem 2rem;
 }
-
 
 /* Nur Logo & Toggle skalieren */
 .nav-logo,
@@ -969,11 +974,6 @@ footer a:hover {
 .navbar.compact .nav-logo,
 .navbar.compact .nav-toggle {
     transform: scale(0.85);
-}
-
-/* Optional: Padding leicht anpassen bei Compact */
-.navbar.compact .nav-container {
-    padding: 0.5rem 2rem;
 }
 
 /* Logo */
