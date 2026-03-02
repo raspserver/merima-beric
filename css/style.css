@@ -911,67 +911,60 @@ footer a:hover {
 	}
 }
 
+/* ===== NAVBAR ===== */
 .navbar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: 1000;
-
-	background: rgba(26, 26, 26, 0.96);
-	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-
-	transform: translate3d(0, -100%, 0);
-	opacity: 0;
-
-	transition:
-		transform 0.5s cubic-bezier(.16,.84,.44,1),
-		opacity 0.4s ease,
-		background 0.4s ease;
-
-	will-change: transform;
-	backface-visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(26, 26, 26, 0.96);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    transform: translate3d(0, -100%, 0);
+    opacity: 0;
+    transition:
+        transform 0.5s cubic-bezier(.16,.84,.44,1),
+        opacity 0.4s ease,
+        background 0.4s ease;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .navbar.visible {
-	transform: translate3d(0, 0, 0);
-	opacity: 1;
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
 }
 
 .navbar.compact {
-	background: rgba(12, 12, 12, 0.98);
+    background: rgba(12, 12, 12, 0.98);
 }
 
+/* Container fixiert Höhe, keine height-Transition */
 .nav-container {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	height: 78px;
-	padding: 0.9rem 2rem;
-
-	height: 78px;
-	padding: 0.9rem 2rem;
-
-	transform-origin: top;
-    transition:
-        transform 0.45s cubic-bezier(.16,.84,.44,1),
-        padding 0.45s cubic-bezier(.16,.84,.44,1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 78px; /* feste Höhe */
+    padding: 0.9rem 2rem;
+    transform-origin: top;
+    transition: padding 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
+/* Logo und Hamburger skalieren für Compact-Zustand */
 .nav-logo,
 .nav-toggle {
-    transform: none; /* vorher scale entfernt */
+    transform: scale(1);
+    transition: transform 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
 .navbar.compact .nav-logo,
 .navbar.compact .nav-toggle {
-	transform: scale(0.85);
+    transform: scale(0.85);
 }
 
+/* Optional: Padding leicht anpassen bei Compact */
 .navbar.compact .nav-container {
-    height: 60px; /* tatsächliche reduzierte Höhe */
-    padding: 0.5rem 2rem; /* optional anpassen */
-    transform: none; /* scaleY raus */
+    padding: 0.5rem 2rem;
 }
 
 /* Logo */
@@ -984,15 +977,6 @@ footer a:hover {
 
 	--navbar-main-size: clamp(1.55rem, 2.8vw, 2rem);
 }
-
-
-
-
-
-
-
-
-
 
 .nav-logo,
 .nav-logo .hero-main,
