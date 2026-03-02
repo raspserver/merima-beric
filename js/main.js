@@ -193,56 +193,32 @@ document.addEventListener("DOMContentLoaded", () => {
 	  
 	}
 
-	/* ===============================
-	   STICKY AFTER FIRST SCROLL
-	================================ */
+
+
+
 
 	const navbar = document.querySelector(".navbar");
-	const navToggle = document.querySelector(".nav-toggle");
-	const navMenu = document.querySelector(".nav-menu");
-
-	
-	
-
-
+	const hero = document.querySelector(".hero");
 
 	if (navbar) {
-
-	  let manualOpen = false;
-
-	  // HERO TAP
-	  if (hero) {
-		hero.addEventListener("click", () => {
-		  if (window.scrollY <= 5) {
-			navbar.classList.toggle("visible");
-			manualOpen = navbar.classList.contains("visible");
-		  }
-		});
-	  }
 
 	  window.addEventListener("scroll", () => {
 
 		const currentScrollY = Math.max(window.scrollY, 0);
 
-		// Wenn Navbar manuell geöffnet wurde → nicht automatisch schließen
-		if (!manualOpen) {
-
-		  if (currentScrollY > 5) {
-			navbar.classList.add("visible");
-		  } else {
-			navbar.classList.remove("visible");
-			navbar.classList.remove("compact");
-			return;
-		  }
-
+		// Sichtbar ab minimalem Scroll
+		if (currentScrollY > 5) {
+		  navbar.classList.add("visible");
+		} else {
+		  navbar.classList.remove("visible");
+		  navbar.classList.remove("compact");
+		  return;
 		}
 
-		// Compact Logik bleibt normal
+		// Compact Zustand
 		if (currentScrollY > 120) {
 		  navbar.classList.add("compact");
-		}
-
-		if (currentScrollY < 60) {
+		} else {
 		  navbar.classList.remove("compact");
 		}
 
@@ -250,77 +226,25 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 
+	/* HERO TAP (nur ganz oben) */
 
+	if (hero && navbar) {
 
-	
+	  hero.addEventListener("click", () => {
 
-	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-		anchor.addEventListener('click', function (e) {
+		if (window.scrollY <= 5) {
 
-			const targetId = this.getAttribute('href');
-			const target = document.querySelector(targetId);
+		  navbar.classList.toggle("visible");
 
-			if (!target) return;
-
-			e.preventDefault();
-
-			const navbarHeight = navbar ? navbar.offsetHeight : 0;
-			const targetPosition =
-				target.getBoundingClientRect().top + window.pageYOffset;
-
-			window.scrollTo({
-				top: targetPosition - navbarHeight - 5,
-				behavior: 'smooth'
-			});
-		});
-	});
-
-	const hero = document.querySelector(".hero");
-
-	const navContainer = document.querySelector(".nav-container");
-	
-  /* Intersection Observer */
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  });
-
-  if (navToggle && navMenu) {
-
-	  // Toggle Button (Hamburger)
-	  navToggle.addEventListener('click', () => {
-		navToggle.classList.toggle('active');
-		navMenu.classList.toggle('active');
-	  });
-
-	  // Menü schließen bei Klick auf Nav-Link
-	  const navLinks = document.querySelectorAll('.nav-menu a');
-
-	  navLinks.forEach(link => {
-		link.addEventListener('click', () => {
-		  navToggle.classList.remove('active');
-		  navMenu.classList.remove('active');
-		});
-	  });
-
-	  // Menü schließen bei Klick außerhalb
-	  document.addEventListener('click', (event) => {
-		if (
-		  !navMenu.contains(event.target) &&
-		  !navToggle.contains(event.target) &&
-		  navMenu.classList.contains('active')
-		) {
-		  navToggle.classList.remove('active');
-		  navMenu.classList.remove('active');
 		}
+
 	  });
+
 	}
+
+
+
+
 
 
 
