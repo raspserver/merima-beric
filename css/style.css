@@ -942,16 +942,19 @@ footer a:hover {
 	background: rgba(12, 12, 12, 0.98);
 }
 
-/* Container */
 .nav-container {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	height: 78px;
+	padding: 0.9rem 2rem;
 
 	height: 78px;
 	padding: 0.9rem 2rem;
 
-	transition:
+	transform-origin: top;
+    transition:
+        transform 0.45s cubic-bezier(.16,.84,.44,1),
         padding 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
@@ -959,10 +962,7 @@ footer a:hover {
 
 
 
-.nav-container {
-	height: 78px;
-	padding: 0.9rem 2rem;
-}
+
 
 .nav-logo,
 .nav-toggle {
@@ -975,11 +975,9 @@ footer a:hover {
 	transform: scale(0.85);
 }
 
-
-
-
-
-
+.navbar.compact .nav-container {
+    transform: scaleY(0.77);   /* 60 / 78 ≈ 0.77 */
+}
 
 /* Logo */
 .nav-logo {
