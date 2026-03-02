@@ -331,9 +331,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	   HERO TAP NAVBAR (HOME ONLY)
 	================================ */
 
-/*
-
-
 	if (hero && navbar) {
 
 		hero.addEventListener("click", () => {
@@ -354,8 +351,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 	}
-
-*/
 	
   /* Pricing Tabs */
   const pricingTabs = document.querySelectorAll('.pricing-tab');
