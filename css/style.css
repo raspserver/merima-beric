@@ -955,10 +955,31 @@ footer a:hover {
         padding 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
-.navbar.compact .nav-container {
-	height: 60px;
-	padding: 0.5rem 2rem;
+
+
+
+
+.nav-container {
+	height: 78px;
+	padding: 0.9rem 2rem;
 }
+
+.nav-logo,
+.nav-toggle {
+	transition: transform 0.45s cubic-bezier(.16,.84,.44,1);
+	transform-origin: center;
+}
+
+.navbar.compact .nav-logo,
+.navbar.compact .nav-toggle {
+	transform: scale(0.85);
+}
+
+
+
+
+
+
 
 /* Logo */
 .nav-logo {
@@ -971,9 +992,14 @@ footer a:hover {
 	--navbar-main-size: clamp(1.55rem, 2.8vw, 2rem);
 }
 
-.navbar.compact .nav-logo {
-	--navbar-main-size: clamp(1.35rem, 2.3vw, 1.7rem);
-}
+
+
+
+
+
+
+
+
 
 .nav-logo,
 .nav-logo .hero-main,

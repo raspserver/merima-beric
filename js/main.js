@@ -195,8 +195,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
 	const navbar = document.querySelector(".navbar");
 	const hero = document.querySelector(".hero");
 
@@ -242,48 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	}
 
-
-
-
-
-
-
-
-
-
-	/* ===============================
-	   HERO TAP NAVBAR (HOME ONLY)
-	================================ */
-
-
-/*
-
-	if (hero && navbar) {
-
-		hero.addEventListener("click", () => {
-
-			if (window.scrollY <= 5) {
-
-				const isVisible = navbar.classList.contains("visible");
-
-				if (isVisible) {
-					navbar.classList.remove("visible");
-				} else {
-
-					// Mini-Delay verhindert iOS Reflow-Glitch
-					requestAnimationFrame(() => {
-						navbar.classList.add("visible");
-					});
-				}
-			}
-		});
-	}
-	
-	
-	*/
-	
-	
-	
   /* Pricing Tabs */
   const pricingTabs = document.querySelectorAll('.pricing-tab');
   const pricingContents = document.querySelectorAll('.pricing-content');
