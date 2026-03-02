@@ -201,31 +201,43 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
 
+	
+	
+	
 	if (navbar) {
 
-		window.addEventListener("scroll", () => {
+	  let lastScrollY = 0;
 
-			const currentScrollY = window.scrollY;
+	  window.addEventListener("scroll", () => {
 
-			// Ganz oben → alles zurücksetzen
-			if (currentScrollY <= 5) {
-				navbar.classList.remove("visible");
-				navbar.classList.remove("compact");
-				return;
-			}
+		const currentScrollY = window.scrollY;
 
-			// Sobald man scrollt → sichtbar bleiben
-			navbar.classList.add("visible");
+		// Ganz oben → alles zurücksetzen
+		if (currentScrollY <= 5) {
+		  navbar.classList.remove("visible");
+		  navbar.classList.remove("compact");
+		  return;
+		}
 
-			// Compact sobald etwas gescrollt
-			if (currentScrollY > 80) {
-				navbar.classList.add("compact");
-			} else {
-				navbar.classList.remove("compact");
-			}
+		navbar.classList.add("visible");
 
-		}, { passive: true });
+		// Compact erst wenn wirklich deutlich gescrollt wurde
+		if (currentScrollY > 120) {
+		  navbar.classList.add("compact");
+		}
+
+		// Compact wieder raus wenn fast oben
+		if (currentScrollY < 60) {
+		  navbar.classList.remove("compact");
+		}
+
+		lastScrollY = currentScrollY;
+
+	  }, { passive: true });
 	}
+	
+
+	
 
 	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 		anchor.addEventListener('click', function (e) {
