@@ -958,12 +958,6 @@ footer a:hover {
         padding 0.45s cubic-bezier(.16,.84,.44,1);
 }
 
-
-
-
-
-
-
 .nav-logo,
 .nav-toggle {
 	transition: transform 0.45s cubic-bezier(.16,.84,.44,1);

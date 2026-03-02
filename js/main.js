@@ -194,9 +194,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 
-
 	const navbar = document.querySelector(".navbar");
 	const hero = document.querySelector(".hero");
+
+	let manuallyOpened = false;
 
 	if (navbar) {
 
@@ -204,16 +205,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const currentScrollY = Math.max(window.scrollY, 0);
 
-		// Sichtbar ab minimalem Scroll
-		if (currentScrollY > 5) {
-		  navbar.classList.add("visible");
-		} else {
-		  navbar.classList.remove("visible");
-		  navbar.classList.remove("compact");
-		  return;
+		// Nur automatisch steuern, wenn NICHT manuell geöffnet
+		if (!manuallyOpened) {
+
+		  if (currentScrollY > 5) {
+			navbar.classList.add("visible");
+		  } else {
+			navbar.classList.remove("visible");
+			navbar.classList.remove("compact");
+			return;
+		  }
+
 		}
 
-		// Compact Zustand
+		// Compact Logik normal
 		if (currentScrollY > 120) {
 		  navbar.classList.add("compact");
 		} else {
@@ -224,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 
-	/* HERO TAP (nur ganz oben) */
+	/* HERO TAP */
 
 	if (hero && navbar) {
 
@@ -233,6 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (window.scrollY <= 5) {
 
 		  navbar.classList.toggle("visible");
+		  manuallyOpened = navbar.classList.contains("visible");
 
 		}
 
