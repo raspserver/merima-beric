@@ -263,6 +263,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
+	window.addEventListener("scroll", () => {
+		const currentScrollY = Math.max(window.scrollY, 0);
+		navbar.classList.toggle("visible", currentScrollY > 5);
+		navbar.classList.toggle("compact", currentScrollY > 120);
+	});
+	
+	
+	
 
   /* Pricing Tabs */
   const pricingTabs = document.querySelectorAll('.pricing-tab');
