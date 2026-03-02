@@ -925,6 +925,7 @@ footer a:hover {
     z-index: 1000;
     background: rgba(26, 26, 26, 0.96);
     border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    backdrop-filter: blur(10px);
     transform: translate3d(0, -100%, 0);
     opacity: 0;
     transition:
@@ -943,9 +944,6 @@ footer a:hover {
 .navbar.compact {
     background: rgba(12, 12, 12, 0.98);
 }
-
-
-
 
 .nav-container {
     display: flex;
