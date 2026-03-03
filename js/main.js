@@ -291,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  }
 	});
 	
-	/* Smooth Scrolling */
+	/* verhindert Default-Anker-Sprung, setzt manualVisible = true, schließt ggf. das Mobile-Menü, schließt ggf. das Mobile-Menü */
 	navLinks.forEach(link => {
 	  link.addEventListener("click", (e) => {
 		e.preventDefault();
