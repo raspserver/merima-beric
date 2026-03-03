@@ -216,23 +216,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  let manualVisible = false;
 
-	  function updateNavbar() {
+	  
+		
+		
+		
+		
+		function updateNavbar() {
+
 		  const scrollY = Math.max(window.scrollY, 0);
+		  const isHome = scrollY <= 5;
 
-		  // Wenn ganz oben → manuelle Steuerung zurücksetzen
-		  if (scrollY <= 5) {
-			manualVisible = false;
-			navbar.classList.remove("visible");
+		  if (isHome) {
+
+			// Beim Zurückkehren zum Homescreen:
+			// Compact darf NICHT expandieren.
 			navbar.classList.remove("compact");
-			return;
+
+			// Nur sichtbar lassen, wenn manuell geöffnet
+			if (!manualVisible) {
+			  navbar.classList.remove("visible");
+			}
+
+		  } else {
+
+			// Sobald gescrollt wird:
+			// Immer Compact anzeigen
+			navbar.classList.add("visible");
+			navbar.classList.add("compact");
+
 		  }
-
-		  // Sichtbarkeit
-		  navbar.classList.add("visible");
-
-		  // Compact
-		  navbar.classList.toggle("compact", scrollY > 100);
 		}
+		
 
 	  window.addEventListener("scroll", updateNavbar, { passive: true });
 
@@ -241,13 +255,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  // HERO TAP
 	  if (hero) {
-		hero.addEventListener("click", () => {
-		  if (window.scrollY <= 5) {
-			navbar.classList.toggle("visible");
-			manualVisible = navbar.classList.contains("visible");
-		  }
-		});
-	  }
+		  hero.addEventListener("click", () => {
+
+			if (window.scrollY <= 5) {
+
+			  navbar.classList.toggle("visible");
+
+			  // Nur im Homescreen relevant
+			  manualVisible = navbar.classList.contains("visible");
+
+			}
+
+		  });
+		}
+	  
+	  
 	}
 
 
@@ -296,6 +318,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const targetId = link.getAttribute("href");
 		const target = document.querySelector(targetId);
+		
+		if (targetId === "#home") {
+		  manualVisible = false;
+		}
 
 		if (target) {
 		  const navbarHeight = navbar.offsetHeight;
