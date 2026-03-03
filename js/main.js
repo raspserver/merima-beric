@@ -207,16 +207,22 @@ document.addEventListener("DOMContentLoaded", () => {
 	  let manualVisible = false;
 
 	  function updateNavbar() {
-		const scrollY = Math.max(window.scrollY, 0);
+		  const scrollY = Math.max(window.scrollY, 0);
 
-		// Sichtbarkeit
-		if (!manualVisible) {
-		  navbar.classList.toggle("visible", scrollY > 5);
+		  // Wenn ganz oben → manuelle Steuerung zurücksetzen
+		  if (scrollY <= 5) {
+			manualVisible = false;
+			navbar.classList.remove("visible");
+			navbar.classList.remove("compact");
+			return;
+		  }
+
+		  // Sichtbarkeit
+		  navbar.classList.add("visible");
+
+		  // Compact
+		  navbar.classList.toggle("compact", scrollY > 100);
 		}
-
-		// Compact
-		navbar.classList.toggle("compact", scrollY > 100);
-	  }
 
 	  window.addEventListener("scroll", updateNavbar, { passive: true });
 
@@ -298,8 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  const targetPosition = target.offsetTop - navbarHeight;
 
 		  window.scrollTo({
-			top: targetPosition,
-			behavior: "smooth"
+			top: targetPosition
 		  });
 		}
 
