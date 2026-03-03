@@ -173,38 +173,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  const gallerySection = document.querySelector(".gallery");
 
-		function handleGalleryVisibility() {
+	if (gallerySection) {
 
-		  const rect = gallerySection.getBoundingClientRect();
-		  const windowHeight = window.innerHeight;
+	  const observer = new IntersectionObserver((entries) => {
 
-		  const fullyOut =
-			rect.bottom < 0 || rect.top > windowHeight;
+		entries.forEach(entry => {
 
-		  if (fullyOut) {
-			videos[currentIndex].pause();
-		  } else {
-			const activeVideo = videos[currentIndex];
+		  const activeVideo = videos[currentIndex];
 
+		  if (!activeVideo) return;
+
+		  if (entry.isIntersecting) {
+			// Nur abspielen wenn pausiert und nicht am Anfang
 			if (activeVideo.paused && activeVideo.currentTime > 0) {
 			  activeVideo.play();
 			}
+		  } else {
+			activeVideo.pause();
 		  }
-		}
-		
-		let ticking = false;
 
-		window.addEventListener("scroll", () => {
-		  if (!ticking) {
-			requestAnimationFrame(() => {
-			  handleGalleryVisibility();
-			  ticking = false;
-			});
-			ticking = true;
-		  }
 		});
 
-		window.addEventListener("resize", handleGalleryVisibility);
+	  }, {
+		threshold: 0.4  // 40% sichtbar = aktiv
+	  });
+
+	  observer.observe(gallerySection);
+	}
 	  
 	}
 
