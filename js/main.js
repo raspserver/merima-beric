@@ -205,8 +205,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
 	/* =========================
-	   NAVBAR (FINAL STABLE)
+	   NAVBAR (STATE MACHINE)
 	========================= */
 
 	const navbar = document.querySelector(".navbar");
@@ -217,156 +228,128 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	if (navbar) {
 
-	  let manualVisible = false;
-	  let hasScrolledSinceManual = false;
-	
-		function updateNavbar() {
+	  const STATES = {
+		HOME_HIDDEN: "HOME_HIDDEN",
+		HOME_VISIBLE: "HOME_VISIBLE",
+		SCROLLED: "SCROLLED",
+		COMPACT: "COMPACT"
+	  };
 
-		  const scrollY = Math.max(window.scrollY, 0);
-		  const isHome = scrollY <= 5;
+	  let currentState = STATES.HOME_HIDDEN;
 
-		  if (!isHome) {
-			hasScrolledSinceManual = true;
-		  }
+	  function setState(newState) {
+		if (currentState === newState) return;
 
-		  if (isHome) {
+		currentState = newState;
+		render();
+	  }
 
-			navbar.classList.remove("compact");
+	  function render() {
+		navbar.classList.remove("visible", "compact");
 
-			// Wenn gescrollt wurde → manuelles Öffnen ungültig
-			if (hasScrolledSinceManual) {
-			  manualVisible = false;
-			}
+		switch (currentState) {
 
-			if (!manualVisible) {
-			  navbar.classList.remove("visible");
-			}
+		  case STATES.HOME_HIDDEN:
+			break;
 
-		  } else {
+		  case STATES.HOME_VISIBLE:
+			navbar.classList.add("visible");
+			break;
 
+		  case STATES.SCROLLED:
+			navbar.classList.add("visible");
+			break;
+
+		  case STATES.COMPACT:
 			navbar.classList.add("visible");
 			navbar.classList.add("compact");
-
-		  }
+			break;
 		}
-
-	  window.addEventListener("scroll", updateNavbar, { passive: true });
-
-	  // Initial state (falls Seite nicht ganz oben geladen wird)
-	  updateNavbar();
-
-	  // HERO TAP	
-		if (hero) {
-		  hero.addEventListener("click", () => {
-
-			if (window.scrollY <= 5) {
-
-			  manualVisible = !manualVisible;
-			  hasScrolledSinceManual = false;
-
-			  navbar.classList.toggle("visible", manualVisible);
-
-			}
-
-		  });
-		}
-		
-		// Navbar-Tap schließt sie im Homescreen (außer Hamburger)
-		navbar.addEventListener("click", (e) => {
-
-		  const isHome = window.scrollY <= 5;
-		  if (!isHome) return;
-		  if (!manualVisible) return;
-
-		  // ⭐ Nur schließen wenn direkt auf Navbar geklickt wurde
-		  if (e.target.closest(".nav-menu")) return;
-		  if (e.target.closest(".nav-toggle")) return;
-
-		  manualVisible = false;
-		  navbar.classList.remove("visible");
-
-		});
-
-		const heroCta = document.querySelector(".cta-button");
-
-		if (heroCta) {
-		  heroCta.addEventListener("click", (e) => {
-			e.preventDefault();
-
-			const target = document.querySelector("#contact");
-
-			if (target) {
-			  const navbarHeight = navbar.offsetHeight;
-			  const targetPosition = target.offsetTop - navbarHeight;
-
-			  // WICHTIG: manuelles Öffnen beenden
-			  manualVisible = false;
-
-			  window.scrollTo({
-				top: targetPosition
-			  });
-			}
-		  });
-		}
-		
-	  /* verhindert Default-Anker-Sprung, setzt manualVisible = true, schließt ggf. das Mobile-Menü, schließt ggf. das Mobile-Menü */
-		navLinks.forEach(link => {
-		  link.addEventListener("click", (e) => {
-
-			e.preventDefault();
-			e.stopPropagation();   // ⭐ WICHTIG – verhindert Navbar-Klick-Handler
-
-			const targetId = link.getAttribute("href");
-			const target = document.querySelector(targetId);
-
-			const isHome = window.scrollY <= 5;
-
-			if (isHome) {
-			  manualVisible = false;
-			  hasScrolledSinceManual = true;
-			}
-
-			if (targetId === "#home") {
-			  manualVisible = false;
-			}
-
-			if (target) {
-			  const navbarHeight = navbar.offsetHeight;
-			  const targetPosition = target.offsetTop - navbarHeight;
-
-			  window.scrollTo({
-				top: targetPosition
-			  });
-			}
-
-			navMenu.classList.remove("active");
-			navToggle.classList.remove("active");
-
-		  });
-		});
-		
-		
-	  
-	}
-
-	if (navToggle && navMenu) {
-		navToggle.addEventListener("click", () => {
-			navMenu.classList.toggle("active");
-			navToggle.classList.toggle("active");
-		});
-	}
-	
-
-	/* Menü schließt bei Tippen außerhalb */
-	document.addEventListener("click", (e) => {
-	  const isClickInsideMenu = navMenu.contains(e.target);
-	  const isClickToggle = navToggle.contains(e.target);
-
-	  if (!isClickInsideMenu && !isClickToggle) {
-		navMenu.classList.remove("active");
-		navToggle.classList.remove("active");
 	  }
-	});
+
+	  function handleScroll() {
+		const scrollY = Math.max(window.scrollY, 0);
+		const isHome = scrollY <= 5;
+
+		if (isHome) {
+		  if (currentState === STATES.HOME_VISIBLE) return;
+		  setState(STATES.HOME_HIDDEN);
+		} else {
+		  setState(STATES.COMPACT);
+		}
+	  }
+
+	  window.addEventListener("scroll", handleScroll, { passive: true });
+
+	  handleScroll();
+
+	  /* HERO CLICK */
+	  if (hero) {
+		hero.addEventListener("click", () => {
+		  if (window.scrollY <= 5) {
+			if (currentState === STATES.HOME_VISIBLE) {
+			  setState(STATES.HOME_HIDDEN);
+			} else {
+			  setState(STATES.HOME_VISIBLE);
+			}
+		  }
+		});
+	  }
+
+	  /* NAVBAR CLICK (nur im Home sichtbar schließen) */
+	  navbar.addEventListener("click", (e) => {
+
+		if (currentState !== STATES.HOME_VISIBLE) return;
+
+		if (e.target.closest(".nav-menu")) return;
+		if (e.target.closest(".nav-toggle")) return;
+
+		setState(STATES.HOME_HIDDEN);
+	  });
+
+	  /* HERO CTA */
+	  const heroCta = document.querySelector(".cta-button");
+
+	  if (heroCta) {
+		heroCta.addEventListener("click", (e) => {
+		  e.preventDefault();
+
+		  const target = document.querySelector("#contact");
+		  if (!target) return;
+
+		  const navbarHeight = navbar.offsetHeight;
+		  const targetPosition = target.offsetTop - navbarHeight;
+
+		  setState(STATES.COMPACT);
+
+		  window.scrollTo({ top: targetPosition });
+		});
+	  }
+
+	  /* NAV LINKS */
+	  navLinks.forEach(link => {
+		link.addEventListener("click", (e) => {
+
+		  e.preventDefault();
+		  e.stopPropagation();
+
+		  const targetId = link.getAttribute("href");
+		  const target = document.querySelector(targetId);
+		  if (!target) return;
+
+		  const navbarHeight = navbar.offsetHeight;
+		  const targetPosition = target.offsetTop - navbarHeight;
+
+		  setState(STATES.COMPACT);
+
+		  window.scrollTo({ top: targetPosition });
+
+		  navMenu.classList.remove("active");
+		  navToggle.classList.remove("active");
+		});
+	  });
+
+	}
 	
 	
 	
