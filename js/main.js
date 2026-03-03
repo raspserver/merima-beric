@@ -257,14 +257,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		  hero.addEventListener("click", () => {
 
 			if (window.scrollY <= 5) {
+
 			  manualVisible = !manualVisible;
+			  hasScrolledSinceManual = false;
+
 			  navbar.classList.toggle("visible", manualVisible);
+
 			}
 
 		  });
 		}
-		
-		
 		
 		const heroCta = document.querySelector(".cta-button");
 
