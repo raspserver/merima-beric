@@ -182,13 +182,28 @@ document.addEventListener("DOMContentLoaded", () => {
 			rect.bottom < 0 || rect.top > windowHeight;
 
 		  if (fullyOut) {
-			videos.forEach(video => video.pause());
+			videos[currentIndex].pause();
 		  } else {
-			playOnly(currentIndex);
+			const activeVideo = videos[currentIndex];
+
+			if (activeVideo.paused && activeVideo.currentTime > 0) {
+			  activeVideo.play();
+			}
 		  }
 		}
+		
+		let ticking = false;
 
-		window.addEventListener("scroll", handleGalleryVisibility);
+		window.addEventListener("scroll", () => {
+		  if (!ticking) {
+			requestAnimationFrame(() => {
+			  handleGalleryVisibility();
+			  ticking = false;
+			});
+			ticking = true;
+		  }
+		});
+
 		window.addEventListener("resize", handleGalleryVisibility);
 	  
 	}
@@ -243,18 +258,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
-
-
-
-	
-
-
-	
-	
-	
-	
 
 	
 	const navToggle = document.querySelector(".nav-toggle");
