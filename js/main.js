@@ -358,6 +358,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		  navToggle.classList.remove("active");
 		});
 	  });
+	  
+	  /* Menü schließen beim Scroll */
+		window.addEventListener("scroll", () => {
+		  navMenu.classList.remove("active");
+		  navToggle.classList.remove("active");
+		});
 
 	}
 	
