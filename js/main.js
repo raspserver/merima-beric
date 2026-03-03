@@ -333,9 +333,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  currentProgress += velocity;
 
-			// Clamp
-			if (currentProgress < -0.05) currentProgress = -0.05;
-			if (currentProgress > 1.05) currentProgress = 1.05;
+		  // Clamp
+	      currentProgress = Math.max(0, Math.min(currentProgress, 1));
 
 		  navbar.style.setProperty("--nav-progress", currentProgress);
 

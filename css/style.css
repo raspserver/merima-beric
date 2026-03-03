@@ -974,13 +974,13 @@ footer a:hover {
 
 /* Inner Scale */
 .navbar .nav-container-inner {
-    transform: scale(calc(1 - (0.18 * var(--nav-progress))));
+    transform: scale(calc(1 - (0.08 * var(--nav-progress))));
 }
 
 /* Logo Scale */
 .navbar .nav-logo,
 .navbar .nav-toggle {
-    transform: scale(calc(1 - (0.12 * var(--nav-progress))));
+    transform: scale(calc(1 - (0.10 * var(--nav-progress))));
 }
 
 /* Shadow Fade-In */
@@ -1040,10 +1040,20 @@ footer a:hover {
     justify-content: space-between;
     align-items: center;
 
-    height: 78px; /* FIXE Höhe – bleibt IMMER gleich */
-    padding: 1.1rem 2rem;
+    --nav-max-height: 78px;
+    --nav-min-height: 58px;
+
+    height: calc(
+        var(--nav-max-height) -
+        ( (var(--nav-max-height) - var(--nav-min-height)) * var(--nav-progress) )
+    );
+
+    padding-left: 2rem;
+    padding-right: 2rem;
 
     position: relative;
+
+    transition: height 0.25s linear;
 }
 
 /* =================================
@@ -1243,7 +1253,12 @@ footer a:hover {
 
 	.nav-menu {
 		position: fixed;
-		top: 70px;
+		
+		top: calc(
+				var(--nav-max-height) -
+				( (var(--nav-max-height) - var(--nav-min-height)) * var(--nav-progress) )
+			);
+		
 		left: 0;
 		width: 100%;
 		background: rgba(26, 26, 26, 0.98);
@@ -1254,6 +1269,13 @@ footer a:hover {
 		transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 		z-index: 999;
 	}
+	
+	
+	.nav-menu {
+    
+}
+	
+	
 
 	.nav-menu.active {
 		transform: translateX(0);
