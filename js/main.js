@@ -228,24 +228,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  if (isHome) {
 
-			// Beim Zurückkehren zum Homescreen:
-			// Compact darf NICHT expandieren.
-			navbar.classList.remove("compact");
-
-			// Nur sichtbar lassen, wenn manuell geöffnet
-			if (!manualVisible) {
-			  navbar.classList.remove("visible");
+			// Wenn wir durch Scrollen zurückkehren,
+			// darf die Navbar NICHT wieder 100% werden.
+			if (navbar.classList.contains("compact")) {
+			  manualVisible = false;
 			}
+
+			navbar.classList.remove("compact");
+			navbar.classList.remove("visible");
 
 		  } else {
 
-			// Sobald gescrollt wird:
-			// Immer Compact anzeigen
+			// Sobald gescrollt wird → immer kompakt anzeigen
 			navbar.classList.add("visible");
 			navbar.classList.add("compact");
 
 		  }
 		}
+		
 		
 
 	  window.addEventListener("scroll", updateNavbar, { passive: true });
