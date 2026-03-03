@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	if (navbar) {
 
 	  let manualVisible = false;
-		
+
 		function updateNavbar() {
 
 		  const scrollY = Math.max(window.scrollY, 0);
@@ -223,23 +223,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  if (isHome) {
 
-			// Wenn wir vom Scroll zurückkommen,
-			// darf die Navbar NICHT wieder 100% werden.
-			if (navbar.classList.contains("compact")) {
-			  manualVisible = false;
-			}
-
 			navbar.classList.remove("compact");
-			navbar.classList.remove("visible");
+
+			// Nur einklappen wenn nicht manuell geöffnet
+			if (!manualVisible) {
+			  navbar.classList.remove("visible");
+			}
 
 		  } else {
 
+			// WICHTIG: visible NICHT entfernen!
 			navbar.classList.add("visible");
 			navbar.classList.add("compact");
 
 		  }
 		}
-
+		
 	  window.addEventListener("scroll", updateNavbar, { passive: true });
 
 	  // Initial state (falls Seite nicht ganz oben geladen wird)
