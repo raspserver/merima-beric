@@ -223,21 +223,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  if (isHome) {
 
-			navbar.classList.remove("compact");
-
-			if (!manualVisible) {
-			  navbar.classList.remove("visible");
+			// Wenn wir vom Scroll zurückkommen,
+			// darf die Navbar NICHT wieder 100% werden.
+			if (navbar.classList.contains("compact")) {
+			  manualVisible = false;
 			}
+
+			navbar.classList.remove("compact");
+			navbar.classList.remove("visible");
 
 		  } else {
 
-			// Wichtig: visible NICHT entfernen!
 			navbar.classList.add("visible");
 			navbar.classList.add("compact");
 
 		  }
 		}
-		
+
 	  window.addEventListener("scroll", updateNavbar, { passive: true });
 
 	  // Initial state (falls Seite nicht ganz oben geladen wird)
