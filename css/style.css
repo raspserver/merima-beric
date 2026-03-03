@@ -944,6 +944,29 @@ footer a:hover {
     backface-visibility: hidden;
 }
 
+.navbar::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(212,175,55,0.6),
+        transparent
+    );
+
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.navbar.compact::after {
+    opacity: 0.5;
+}
+
 .navbar.visible {
     transform: translate3d(0, 0, 0);
     opacity: 1;
@@ -964,29 +987,38 @@ footer a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     height: 78px;
     padding: 1.1rem 2rem;
+
     transition:
-        height 0.45s cubic-bezier(.16,.84,.44,1),
-        padding 0.45s cubic-bezier(.16,.84,.44,1);
+        height 0.6s cubic-bezier(.16,.84,.44,1),
+        padding 0.6s cubic-bezier(.16,.84,.44,1),
+        transform 0.6s cubic-bezier(.16,.84,.44,1);
 }
 
 .navbar.compact .nav-container {
-    height: 60px;
+    height: 58px;
     padding: 0.4rem 2rem;
+    transform: translateY(-1px);
 }
 
-/* Nur Logo & Toggle skalieren */
+
+
 .nav-logo,
 .nav-toggle {
     transform: scale(1);
-    transition: transform 0.45s cubic-bezier(.16,.84,.44,1);
+    transition:
+        transform 0.6s cubic-bezier(.16,.84,.44,1),
+        opacity 0.4s ease,
+        filter 0.6s ease;
     transform-origin: center;
 }
 
 .navbar.compact .nav-logo,
 .navbar.compact .nav-toggle {
-    transform: scale(0.85);
+    transform: scale(0.88);
+    filter: drop-shadow(0 0 10px rgba(212,175,55,0.06));
 }
 
 /* Logo */
