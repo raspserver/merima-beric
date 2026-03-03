@@ -215,15 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	if (navbar) {
 
 	  let manualVisible = false;
-
-	  
-		
-		
-		
-
-		
-		
-		
 		
 		function updateNavbar() {
 
@@ -247,11 +238,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 		}
 		
-		
-		
-		
-		
-
 	  window.addEventListener("scroll", updateNavbar, { passive: true });
 
 	  // Initial state (falls Seite nicht ganz oben geladen wird)
@@ -268,6 +254,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  });
 		}
+		
+		
+		
+		const heroCta = document.querySelector(".cta-button");
+
+		if (heroCta) {
+		  heroCta.addEventListener("click", (e) => {
+			e.preventDefault();
+
+			const target = document.querySelector("#contact");
+
+			if (target) {
+			  const navbarHeight = navbar.offsetHeight;
+			  const targetPosition = target.offsetTop - navbarHeight;
+
+			  // WICHTIG: manuelles Öffnen beenden
+			  manualVisible = false;
+
+			  window.scrollTo({
+				top: targetPosition
+			  });
+			}
+		  });
+		}
+		
 	  
 	  
 	}
