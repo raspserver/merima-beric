@@ -275,15 +275,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.addEventListener("click", (e) => {
 
 		  const isHome = window.scrollY <= 5;
-
 		  if (!isHome) return;
 		  if (!manualVisible) return;
 
-		  const clickedToggle = navToggle.contains(e.target);
+		  // ⭐ Nur schließen wenn direkt auf Navbar geklickt wurde
+		  if (e.target.closest(".nav-menu")) return;
+		  if (e.target.closest(".nav-toggle")) return;
 
-		  if (clickedToggle) return; // Hamburger soll normal funktionieren
-
-		  // Alles andere in der Navbar klappt sie ein
 		  manualVisible = false;
 		  navbar.classList.remove("visible");
 
@@ -314,14 +312,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	  /* verhindert Default-Anker-Sprung, setzt manualVisible = true, schließt ggf. das Mobile-Menü, schließt ggf. das Mobile-Menü */
 		navLinks.forEach(link => {
 		  link.addEventListener("click", (e) => {
+
 			e.preventDefault();
+			e.stopPropagation();   // ⭐ WICHTIG – verhindert Navbar-Klick-Handler
 
 			const targetId = link.getAttribute("href");
 			const target = document.querySelector(targetId);
 
 			const isHome = window.scrollY <= 5;
 
-			// ✅ WICHTIG: Wenn wir vom Homescreen navigieren
 			if (isHome) {
 			  manualVisible = false;
 			  hasScrolledSinceManual = true;
@@ -342,11 +341,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			navMenu.classList.remove("active");
 			navToggle.classList.remove("active");
+
 		  });
 		});
-		
-		
-		
 		
 		
 	  
