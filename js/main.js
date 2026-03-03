@@ -267,18 +267,39 @@ document.addEventListener("DOMContentLoaded", () => {
 			break;
 		}
 	  }
+ 
+	  const inertiaThreshold = 180; // px bis full compact
 
-	  function handleScroll() {
-		const scrollY = Math.max(window.scrollY, 0);
-		const isHome = scrollY <= 5;
+		function handleScroll() {
 
-		if (isHome) {
-		  if (currentState === STATES.HOME_VISIBLE) return;
-		  setState(STATES.HOME_HIDDEN);
-		} else {
-		  setState(STATES.COMPACT);
+		  const scrollY = Math.max(window.scrollY, 0);
+		  const isHome = scrollY <= 5;
+
+		  // HERO STATE
+		  if (isHome) {
+			navbar.style.setProperty("--nav-progress", 0);
+
+			if (currentState !== STATES.HOME_VISIBLE) {
+			  setState(STATES.HOME_HIDDEN);
+			}
+
+			return;
+		  }
+
+		  // Ab hier Navbar immer sichtbar
+		  if (!navbar.classList.contains("visible")) {
+			navbar.classList.add("visible");
+		  }
+
+		  // Progress berechnen (0 → 1)
+		  const rawProgress = scrollY / inertiaThreshold;
+		  const clamped = Math.min(Math.max(rawProgress, 0), 1);
+
+		  // Easing Curve (Luxury Feel)
+		  const eased = 1 - Math.pow(1 - clamped, 3);
+
+		  navbar.style.setProperty("--nav-progress", eased);
 		}
-	  }
 
 	  window.addEventListener("scroll", handleScroll, { passive: true });
 
@@ -305,6 +326,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		  }
 		});
+		hero.style.transform = `scale(${1 - (eased * 0.008)})`;
+		hero.style.filter = `brightness(${1 - (eased * 0.05)})`;
 	  }
 
 	  /* NAVBAR CLICK (nur im Home sichtbar schließen) */
