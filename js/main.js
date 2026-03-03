@@ -271,6 +271,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		  });
 		}
 		
+		// Navbar-Tap schließt sie im Homescreen (außer Hamburger)
+		navbar.addEventListener("click", (e) => {
+
+		  const isHome = window.scrollY <= 5;
+
+		  if (!isHome) return;
+		  if (!manualVisible) return;
+
+		  const clickedToggle = navToggle.contains(e.target);
+
+		  if (clickedToggle) return; // Hamburger soll normal funktionieren
+
+		  // Alles andere in der Navbar klappt sie ein
+		  manualVisible = false;
+		  navbar.classList.remove("visible");
+
+		});
+
 		const heroCta = document.querySelector(".cta-button");
 
 		if (heroCta) {
