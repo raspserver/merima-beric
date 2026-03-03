@@ -225,6 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
+	const navbarHeight = navbar.getBoundingClientRect().height;
 
 	if (navbar) {
 
@@ -338,26 +339,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  /* NAV LINKS */
 	  navLinks.forEach(link => {
-		link.addEventListener("click", (e) => {
+		  link.addEventListener("click", (e) => {
 
-		  e.preventDefault();
-		  e.stopPropagation();
+			e.preventDefault();
+			e.stopPropagation();
 
-		  const targetId = link.getAttribute("href");
-		  const target = document.querySelector(targetId);
-		  if (!target) return;
+			const targetId = link.getAttribute("href");
+			const target = document.querySelector(targetId);
+			if (!target) return;
 
-		  const navbarHeight = navbar.offsetHeight;
-		  const targetPosition = target.offsetTop - navbarHeight;
+			// 1️⃣ Erst Navbar fixieren
+			setState(STATES.COMPACT);
 
-		  setState(STATES.COMPACT);
+			// 2️⃣ Einen Frame warten damit Layout stabil ist
+			requestAnimationFrame(() => {
 
-		  window.scrollTo({ top: targetPosition });
+			  const navbarHeight = navbar.offsetHeight;
+			  const targetPosition = target.offsetTop - navbarHeight;
 
-		  navMenu.classList.remove("active");
-		  navToggle.classList.remove("active");
+			  window.scrollTo({
+				top: targetPosition,
+				behavior: "smooth"
+			  });
+
+			});
+
+			navMenu.classList.remove("active");
+			navToggle.classList.remove("active");
+		  });
 		});
-	  });
+	  
+	  
+	  
+	  
+	  
 	  
 	  /* Menü schließen beim Scroll */
 		window.addEventListener("scroll", () => {
