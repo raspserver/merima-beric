@@ -220,6 +220,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		
 		
+
+		
+		
+		
 		
 		function updateNavbar() {
 
@@ -228,23 +232,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  if (isHome) {
 
-			// Wenn wir durch Scrollen zurückkehren,
-			// darf die Navbar NICHT wieder 100% werden.
-			if (navbar.classList.contains("compact")) {
-			  manualVisible = false;
-			}
-
 			navbar.classList.remove("compact");
-			navbar.classList.remove("visible");
+
+			if (!manualVisible) {
+			  navbar.classList.remove("visible");
+			}
 
 		  } else {
 
-			// Sobald gescrollt wird → immer kompakt anzeigen
+			// Wichtig: visible NICHT entfernen!
 			navbar.classList.add("visible");
 			navbar.classList.add("compact");
 
 		  }
 		}
+		
+		
+		
 		
 		
 
@@ -253,17 +257,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	  // Initial state (falls Seite nicht ganz oben geladen wird)
 	  updateNavbar();
 
-	  // HERO TAP
-	  if (hero) {
+	  // HERO TAP	
+		if (hero) {
 		  hero.addEventListener("click", () => {
 
 			if (window.scrollY <= 5) {
-
-			  navbar.classList.toggle("visible");
-
-			  // Nur im Homescreen relevant
-			  manualVisible = navbar.classList.contains("visible");
-
+			  manualVisible = !manualVisible;
+			  navbar.classList.toggle("visible", manualVisible);
 			}
 
 		  });
