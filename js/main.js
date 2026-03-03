@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		// Compact
-		navbar.classList.toggle("compact", scrollY > 120);
+		navbar.classList.toggle("compact", scrollY > 100);
 	  }
 
 	  window.addEventListener("scroll", updateNavbar, { passive: true });
