@@ -280,7 +280,31 @@ document.addEventListener("DOMContentLoaded", () => {
 		  });
 		}
 		
-	  
+	  /* verhindert Default-Anker-Sprung, setzt manualVisible = true, schließt ggf. das Mobile-Menü, schließt ggf. das Mobile-Menü */
+		navLinks.forEach(link => {
+		  link.addEventListener("click", (e) => {
+			e.preventDefault();
+
+			const targetId = link.getAttribute("href");
+			const target = document.querySelector(targetId);
+			
+			if (targetId === "#home") {
+			  manualVisible = false;
+			}
+
+			if (target) {
+			  const navbarHeight = navbar.offsetHeight;
+			  const targetPosition = target.offsetTop - navbarHeight;
+
+			  window.scrollTo({
+				top: targetPosition
+			  });
+			}
+
+			navMenu.classList.remove("active");
+			navToggle.classList.remove("active");
+		  });
+		});
 	  
 	}
 
@@ -323,31 +347,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	  }
 	});
 	
-	/* verhindert Default-Anker-Sprung, setzt manualVisible = true, schließt ggf. das Mobile-Menü, schließt ggf. das Mobile-Menü */
-	navLinks.forEach(link => {
-	  link.addEventListener("click", (e) => {
-		e.preventDefault();
-
-		const targetId = link.getAttribute("href");
-		const target = document.querySelector(targetId);
-		
-		if (targetId === "#home") {
-		  manualVisible = false;
-		}
-
-		if (target) {
-		  const navbarHeight = navbar.offsetHeight;
-		  const targetPosition = target.offsetTop - navbarHeight;
-
-		  window.scrollTo({
-			top: targetPosition
-		  });
-		}
-
-		navMenu.classList.remove("active");
-		navToggle.classList.remove("active");
-	  });
-	});
+	
+	
+	
+	
 	
 
 
