@@ -215,30 +215,38 @@ document.addEventListener("DOMContentLoaded", () => {
 	if (navbar) {
 
 	  let manualVisible = false;
-
+	  let hasScrolledSinceManual = false;
+	
 		function updateNavbar() {
 
 		  const scrollY = Math.max(window.scrollY, 0);
 		  const isHome = scrollY <= 5;
 
+		  if (!isHome) {
+			hasScrolledSinceManual = true;
+		  }
+
 		  if (isHome) {
 
 			navbar.classList.remove("compact");
 
-			// Nur einklappen wenn nicht manuell geöffnet
+			// Wenn gescrollt wurde → manuelles Öffnen ungültig
+			if (hasScrolledSinceManual) {
+			  manualVisible = false;
+			}
+
 			if (!manualVisible) {
 			  navbar.classList.remove("visible");
 			}
 
 		  } else {
 
-			// WICHTIG: visible NICHT entfernen!
 			navbar.classList.add("visible");
 			navbar.classList.add("compact");
 
 		  }
 		}
-		
+
 	  window.addEventListener("scroll", updateNavbar, { passive: true });
 
 	  // Initial state (falls Seite nicht ganz oben geladen wird)
