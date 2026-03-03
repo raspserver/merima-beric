@@ -268,40 +268,93 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	  }
  
-	  const inertiaThreshold = 180; // px bis full compact
+ 
+ 
+ 
+
+	  
+	  
+	  
+	  /* ===============================
+		   VELOCITY BASED INERTIA SYSTEM
+		================================ */
+
+		const inertiaThreshold = 180;
+
+		let targetProgress = 0;
+		let currentProgress = 0;
+		let velocity = 0;
+
+		const stiffness = 0.08;   // Federkraft
+		const damping = 0.82;     // Dämpfung (0.7–0.9 sweet spot)
+		const mass = 1;
+
+		let lastScrollY = window.scrollY;
+		let lastTime = performance.now();
 
 		function handleScroll() {
 
 		  const scrollY = Math.max(window.scrollY, 0);
 		  const isHome = scrollY <= 5;
 
-		  // HERO STATE
 		  if (isHome) {
-			navbar.style.setProperty("--nav-progress", 0);
-
+			targetProgress = 0;
 			if (currentState !== STATES.HOME_VISIBLE) {
 			  setState(STATES.HOME_HIDDEN);
 			}
+		  } else {
 
-			return;
+			if (!navbar.classList.contains("visible")) {
+			  navbar.classList.add("visible");
+			}
+
+			const raw = scrollY / inertiaThreshold;
+			targetProgress = Math.min(Math.max(raw, 0), 1);
 		  }
 
-		  // Ab hier Navbar immer sichtbar
-		  if (!navbar.classList.contains("visible")) {
-			navbar.classList.add("visible");
-		  }
-
-		  // Progress berechnen (0 → 1)
-		  const rawProgress = scrollY / inertiaThreshold;
-		  const clamped = Math.min(Math.max(rawProgress, 0), 1);
-
-		  // Easing Curve (Luxury Feel)
-		  const eased = 1 - Math.pow(1 - clamped, 3);
-
-		  navbar.style.setProperty("--nav-progress", eased);
+		  lastScrollY = scrollY;
 		}
 
-	  window.addEventListener("scroll", handleScroll, { passive: true });
+		window.addEventListener("scroll", handleScroll, { passive: true });
+
+		/* PHYSICS LOOP */
+
+		function animate(now) {
+
+		  const delta = now - lastTime;
+		  lastTime = now;
+
+		  // Spring physics
+		  const force = (targetProgress - currentProgress) * stiffness;
+		  const acceleration = force / mass;
+
+		  velocity += acceleration;
+		  velocity *= damping;
+
+		  currentProgress += velocity;
+
+			// Clamp
+			if (currentProgress < -0.05) currentProgress = -0.05;
+			if (currentProgress > 1.05) currentProgress = 1.05;
+
+		  navbar.style.setProperty("--nav-progress", currentProgress);
+
+		  // Hero micro settling
+		  if (hero) {
+			hero.style.transform = `scale(${1 - (currentProgress * 0.008)})`;
+			hero.style.filter = `brightness(${1 - (currentProgress * 0.05)})`;
+		  }
+
+		  requestAnimationFrame(animate);
+		}
+
+		requestAnimationFrame(animate);
+	  
+	  
+	  
+	  
+	  
+	  
 
 	  handleScroll();
 	  
@@ -326,8 +379,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		  }
 		});
-		hero.style.transform = `scale(${1 - (eased * 0.008)})`;
-		hero.style.filter = `brightness(${1 - (eased * 0.05)})`;
 	  }
 
 	  /* NAVBAR CLICK (nur im Home sichtbar schließen) */
@@ -391,20 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			navToggle.classList.remove("active");
 		  });
 		});
-	  
-	  
-	  
-	  
-	  
-	  
-	  /* Menü schließen beim Scroll */
-	/*	window.addEventListener("scroll", () => {
-		  navMenu.classList.remove("active");
-		  navToggle.classList.remove("active");
-		});
-		
-	*/
-		
+	  	
 
 	}
 	
