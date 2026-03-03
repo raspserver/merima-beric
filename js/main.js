@@ -211,6 +211,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const navbar = document.querySelector(".navbar");
 	const hero = document.querySelector(".hero");
+	const navToggle = document.querySelector(".nav-toggle");
+	const navMenu = document.querySelector(".nav-menu");
+	const navLinks = document.querySelectorAll(".nav-menu a");
 
 	if (navbar) {
 
@@ -318,14 +321,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  
 	}
 
-
-
-
-
-	
-	const navToggle = document.querySelector(".nav-toggle");
-	const navMenu = document.querySelector(".nav-menu");
-
 	if (navToggle && navMenu) {
 		navToggle.addEventListener("click", () => {
 			navMenu.classList.toggle("active");
@@ -335,8 +330,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	/*  Menü klappt nach Navigation zu */
-	const navLinks = document.querySelectorAll(".nav-menu a");
-
 	navLinks.forEach(link => {
 	  link.addEventListener("click", () => {
 		if (navMenu.classList.contains("active")) {
