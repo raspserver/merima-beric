@@ -282,8 +282,18 @@ document.addEventListener("DOMContentLoaded", () => {
 	  window.addEventListener("scroll", handleScroll, { passive: true });
 
 	  handleScroll();
+	  
+	/* HAMBURGER TOGGLE */
+	if (navToggle && navMenu) {
+	  navToggle.addEventListener("click", (e) => {
+		e.stopPropagation(); // verhindert Konflikt mit navbar click
 
-	  /* HERO CLICK */
+		navToggle.classList.toggle("active");
+		navMenu.classList.toggle("active");
+	  });
+	}
+
+	/* HERO CLICK */
 	  if (hero) {
 		hero.addEventListener("click", () => {
 		  if (window.scrollY <= 5) {
