@@ -318,7 +318,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const targetId = link.getAttribute("href");
 			const target = document.querySelector(targetId);
-			
+
+			const isHome = window.scrollY <= 5;
+
+			// ✅ WICHTIG: Wenn wir vom Homescreen navigieren
+			if (isHome) {
+			  manualVisible = false;
+			  hasScrolledSinceManual = true;
+			}
+
 			if (targetId === "#home") {
 			  manualVisible = false;
 			}
@@ -336,6 +344,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			navToggle.classList.remove("active");
 		  });
 		});
+		
+		
+		
+		
+		
 	  
 	}
 
@@ -346,16 +359,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 	
-	
-	/*  Menü klappt nach Navigation zu */
-	navLinks.forEach(link => {
-	  link.addEventListener("click", () => {
-		if (navMenu.classList.contains("active")) {
-		  navMenu.classList.remove("active");
-		  navToggle.classList.remove("active");
-		}
-	  });
-	});
 
 	/* Menü schließt bei Tippen außerhalb */
 	document.addEventListener("click", (e) => {
