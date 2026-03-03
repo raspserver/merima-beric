@@ -398,10 +398,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	  
 	  
 	  /* Menü schließen beim Scroll */
-		window.addEventListener("scroll", () => {
+	/*	window.addEventListener("scroll", () => {
 		  navMenu.classList.remove("active");
 		  navToggle.classList.remove("active");
 		});
+		
+	*/
+		
 
 	}
 	
