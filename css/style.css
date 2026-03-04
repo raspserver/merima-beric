@@ -924,7 +924,6 @@ footer a:hover {
     width: 100%;
     z-index: 1000;
 
-    background: rgba(26, 26, 26, 0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 
