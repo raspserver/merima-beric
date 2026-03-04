@@ -46,6 +46,12 @@ body {
     
     transform: scale(var(--hero-scale));
     filter: brightness(var(--hero-brightness));
+    
+    will-change: transform;
+	transform: translateZ(0) scale(var(--hero-scale));
+	
+	--hero-parallax: 0px;
+	transform: translateY(var(--hero-parallax)) scale(var(--hero-scale));
 }
 
 .hero::before {
@@ -924,9 +930,6 @@ footer a:hover {
 /* ===== NAVBAR LUXURY ===== */
 
 .navbar {
-	--nav-height-eased: calc(
-		1 - pow(1 - var(--nav-height-progress), 3)
-	);
     position: fixed;
     top: 0;
     left: 0;
@@ -970,9 +973,15 @@ footer a:hover {
         calc(26 - (16 * var(--nav-progress))),
         calc(26 - (16 * var(--nav-progress))),
         calc(0.92 + (0.04 * var(--nav-progress)))
-    );
-
-    backdrop-filter: blur(calc(10px + (6px * var(--nav-progress))));
+    ); 
+    backdrop-filter: blur(
+		  calc(
+			10px +
+			(6px * var(--nav-progress)) +
+			(1px * var(--nav-velocity-blur))
+		  )
+		);
+	--nav-velocity-blur: 0;
     -webkit-backdrop-filter: blur(calc(10px + (6px * var(--nav-progress))));
 }
 

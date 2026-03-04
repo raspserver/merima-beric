@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	/* =========================
-	   NAVBAR (STATE MACHINE)
+	   NAVBAR
 	========================= */
 
 	const navbar = document.querySelector(".navbar");
@@ -226,6 +226,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	const navbarHeight = navbar.getBoundingClientRect().height;
+	
+	let lastScrollY = window.scrollY;
+	let scrollVelocity = 0;
 
 	if (navbar) {
 
@@ -245,14 +248,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		let heightProgress = 0;
 		let heightVelocity = 0;
+		
+		const isMobile = window.innerWidth <= 768;
 
-		const stiffness = 0.08;
-		const damping = 0.82;
+		const stiffness = isMobile ? 0.06 : 0.08;
+		const damping = isMobile ? 0.85 : 0.82;
 
-		const heightStiffness = 0.045;
-		const heightDamping = 0.88;
-
+		const heightStiffness = isMobile ? 0.035 : 0.045;
+		const heightDamping = isMobile ? 0.9 : 0.88;
+		
 		function handleScroll() {
+			
+			const currentY = window.scrollY;
+			scrollVelocity = (currentY - lastScrollY) * 0.8;
+			lastScrollY = currentY;	
+		
 		  const scrollY = Math.max(window.scrollY, 0);
 
 		  if (scrollY <= 5) {
@@ -299,18 +309,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			navbar.style.setProperty("--nav-progress", currentProgress);
 			navbar.style.setProperty("--nav-height-progress", easedHeight);
-		  
-		  
-		  
-		  if (hero) {
+			
+			// ✨ Velocity Based Blur Boost
+			const velocityFactor = Math.min(Math.abs(scrollVelocity) * 0.15, 6);
+			navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
+		  	
+			if (hero) {
 
 			  const counter = 1 - currentProgress;
 
 			  hero.style.setProperty("--hero-scale", 1 + (counter * 0.01));
 			  hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
+
+			  // ✨ Parallax (sehr subtil)
+			  const scrollY = window.scrollY;
+			  const parallaxOffset = Math.min(scrollY * -0.04, -40);
+
+			  hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
 			}
-		  
-		  
 
 		  /* ===== STOP CONDITION ===== */
 
