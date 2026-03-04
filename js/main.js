@@ -260,9 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	let scrollVelocity = 0;
 
 	if (navbar) {
-		
-		/* Memory Clean-up */
-		let destroyed = false;
 
 		/* prefers-reduced-motion Support (Accessibility Pflicht) */
 		if (prefersReducedMotion) {
@@ -326,8 +323,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		let animationRunning = false;
 		function animate() {
 			
-			/* Memory Clean-up */
-			if (destroyed) return;
 			/* Scroll Engine FPS-Schutz */
 			if (document.hidden) return;
 
