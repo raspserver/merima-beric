@@ -155,37 +155,26 @@ document.addEventListener("DOMContentLoaded", () => {
 	  let startX = 0;
 	  let isDragging = false;
 
-	  track.addEventListener("touchstart", e => {
-		startX = e.touches[0].clientX;
-		isDragging = true;
-	  });
+		track.style.touchAction = "pan-y";
 
-	  track.addEventListener("touchend", e => {
-		if (!isDragging) return;
+	    let startX = 0;
+		let isDragging = false;
 
-		let diff = e.changedTouches[0].clientX - startX;
+		track.addEventListener("pointerdown", (e) => {
+		  startX = e.clientX;
+		  isDragging = true;
+		});
 
-		if (diff > 50) prev();
-		if (diff < -50) next();
+		track.addEventListener("pointerup", (e) => {
+		  if (!isDragging) return;
 
-		isDragging = false;
-	  });
+		  const diff = e.clientX - startX;
 
-	  track.addEventListener("mousedown", e => {
-		startX = e.clientX;
-		isDragging = true;
-	  });
+		  if (diff > 50) prev();
+		  if (diff < -50) next();
 
-	  track.addEventListener("mouseup", e => {
-		if (!isDragging) return;
-
-		let diff = e.clientX - startX;
-
-		if (diff > 50) prev();
-		if (diff < -50) next();
-
-		isDragging = false;
-	  });
+		  isDragging = false;
+		});
 
 	  const gallerySection = document.querySelector(".gallery");
 
@@ -225,13 +214,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	  
 	}
 	  
+	  
+	  /* Resize-Fix für Gallery Width */
+		window.addEventListener("resize", () => {
+		  setPosition(currentIndex, false);
+		});
+	  
+	  
 	}
 	
-	/* Resize-Fix für Gallery Width */
-	/* Wenn Bildschirm rotiert, kann Slider verspringen. */
-	window.addEventListener("resize", () => {
-	  setPosition(currentIndex, false);
-	});
+
 
 
 
@@ -310,25 +302,28 @@ document.addEventListener("DOMContentLoaded", () => {
 			  const raw = scrollY / inertiaThreshold;
 			  targetProgress = Math.min(Math.max(raw, 0), 1);
 			}
-
+		    
 		  if (!animationRunning) {
-			requestAnimationFrame(animate);
-		  }
+			  animationRunning = true;
+			  lastFrameTime = performance.now();
+			  requestAnimationFrame(animate);
+			}
+		  
 		}
-		
-		
 
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
 		let animationRunning = false;
+		let lastFrameTime = performance.now();
 		function animate() {
 			
+			if (destroyed) return;
 			/* Scroll Engine FPS-Schutz */
 			if (document.hidden) {
 			   animationRunning = false;
 			   return;
 			}
-			
+				
 		  animationRunning = true;
 		  
 		  scrollVelocity *= 0.9;
@@ -336,20 +331,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		  /* ===== SCALE SPRING ===== */
 
 		  const force = (targetProgress - currentProgress) * stiffness;
-			const delta = (now - lastFrame) / 16.67;
+			const delta = (now - lastFrameTime) / 16.67;
+			lastFrameTime = now;
+			
 			velocity += force * delta;
 			velocity *= Math.pow(damping, delta);
-		  
-		  currentProgress += velocity;
+			currentProgress += velocity * delta;
 
-		  currentProgress = Math.max(0, Math.min(currentProgress, 1));
+			currentProgress = Math.max(0, Math.min(currentProgress, 1));
 
 		  /* ===== HEIGHT SPRING ===== */
 
 		  const heightForce = (currentProgress - heightProgress) * heightStiffness;
-		  heightVelocity += heightForce;
-		  heightVelocity *= heightDamping;
-		  heightProgress += heightVelocity;
+
+			heightVelocity += heightForce * delta;
+			heightVelocity *= Math.pow(heightDamping, delta);
+			heightProgress += heightVelocity * delta;
 
 		  heightProgress = Math.max(0, Math.min(heightProgress, 1));
 		  
