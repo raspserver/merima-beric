@@ -950,10 +950,6 @@ footer a:hover {
    INERTIA SCROLL NAVBAR
 ================================= */
 
-.navbar {
-    --nav-progress: 0;
-}
-
 .navbar.visible {
     transform: translate3d(0, 0, 0);
     opacity: 1;

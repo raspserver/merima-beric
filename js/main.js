@@ -272,54 +272,14 @@ document.addEventListener("DOMContentLoaded", () => {
  
  
 
-	  
-	  
-	  
-	  /* ===============================
-		   VELOCITY BASED INERTIA SYSTEM
-		================================ */
-
-		const inertiaThreshold = 180;
-
-		let targetProgress = 0;
-		let currentProgress = 0;
-		let velocity = 0;
-
-		const stiffness = 0.08;   // Federkraft
-		const damping = 0.82;     // Dämpfung (0.7–0.9 sweet spot)
-		const mass = 1;
-
-		let lastScrollY = window.scrollY;
-		let lastTime = performance.now();
-
-		function handleScroll() {
-
-		  const scrollY = Math.max(window.scrollY, 0);
-		  const isHome = scrollY <= 5;
-
-		  if (isHome) {
-			targetProgress = 0;
-			if (currentState !== STATES.HOME_VISIBLE) {
-			  setState(STATES.HOME_HIDDEN);
-			}
-		  } else {
-
-			if (!navbar.classList.contains("visible")) {
-			  navbar.classList.add("visible");
-			}
-
-			const raw = scrollY / inertiaThreshold;
-			targetProgress = Math.min(Math.max(raw, 0), 1);
-		  }
-
-		  lastScrollY = scrollY;
-		}
-
-		window.addEventListener("scroll", handleScroll, { passive: true });
+	
+		
+		
+		
+		
 
 	  /* ===============================
 		   CLEAN DUAL SPRING SYSTEM
-		   (ONE RAF LOOP ONLY)
 		================================ */
 
 		const inertiaThreshold = 180;
