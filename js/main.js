@@ -324,8 +324,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		function animate() {
 			
 			/* Scroll Engine FPS-Schutz */
-			if (document.hidden) return;
-
+			if (document.hidden) {
+			   animationRunning = false;
+			   return;
+			}
+			
 		  animationRunning = true;
 		  
 		  scrollVelocity *= 0.9;
