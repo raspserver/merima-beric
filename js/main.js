@@ -310,11 +310,17 @@ document.addEventListener("DOMContentLoaded", () => {
 			const raw = scrollY / inertiaThreshold;
 			targetProgress = Math.min(Math.max(raw, 0), 1);
 		  }
+		  if (!animationRunning) {
+			  requestAnimationFrame(animate);
+			}
 		}
 
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
+		let animationRunning = false;
 		function animate() {
+
+		  animationRunning = true;
 
 		  /* ===== SCALE SPRING ===== */
 
@@ -322,33 +328,42 @@ document.addEventListener("DOMContentLoaded", () => {
 		  velocity += force;
 		  velocity *= damping;
 		  currentProgress += velocity;
+
 		  currentProgress = Math.max(0, Math.min(currentProgress, 1));
 
-		  /* ===== HEIGHT SPRING (DELAYED) ===== */
+		  /* ===== HEIGHT SPRING ===== */
 
 		  const heightForce = (currentProgress - heightProgress) * heightStiffness;
 		  heightVelocity += heightForce;
 		  heightVelocity *= heightDamping;
 		  heightProgress += heightVelocity;
+
 		  heightProgress = Math.max(0, Math.min(heightProgress, 1));
 
-		  /* ===== APPLY TO CSS ===== */
+		  /* ===== APPLY ===== */
 
 		  navbar.style.setProperty("--nav-progress", currentProgress);
 		  navbar.style.setProperty("--nav-height-progress", heightProgress);
 
-		  /* Hero Micro Settling */
 		  if (hero) {
-			hero.style.transform = `scale(${1 - (currentProgress * 0.008)})`;
-			hero.style.filter = `brightness(${1 - (currentProgress * 0.05)})`;
+			hero.style.setProperty("--hero-scale", 1 - (currentProgress * 0.008));
+			hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.05));
 		  }
 
-		  requestAnimationFrame(animate);
+		  /* ===== STOP CONDITION ===== */
+
+		  const stillMoving =
+			Math.abs(targetProgress - currentProgress) > 0.0005 ||
+			Math.abs(velocity) > 0.0005 ||
+			Math.abs(heightVelocity) > 0.0005;
+
+		  if (stillMoving) {
+			requestAnimationFrame(animate);
+		  } else {
+			animationRunning = false;
+		  }
 		}
 
-		requestAnimationFrame(animate);
-	  
-	  
 	  
 	  
 	  

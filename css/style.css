@@ -40,6 +40,12 @@ body {
 	
 	backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    
+    --hero-scale: 1;
+    --hero-brightness: 1;
+    
+    transform: scale(var(--hero-scale));
+    filter: brightness(var(--hero-brightness));
 }
 
 .hero::before {
