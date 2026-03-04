@@ -336,8 +336,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		  /* ===== SCALE SPRING ===== */
 
 		  const force = (targetProgress - currentProgress) * stiffness;
-		  velocity += force;
-		  velocity *= damping;
+			const delta = (now - lastFrame) / 16.67;
+			velocity += force * delta;
+			velocity *= Math.pow(damping, delta);
+		  
 		  currentProgress += velocity;
 
 		  currentProgress = Math.max(0, Math.min(currentProgress, 1));
