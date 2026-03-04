@@ -182,16 +182,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		  const activeVideo = videos[currentIndex];
 
 		  if (!activeVideo) return;
-
+		  
 		  if (entry.isIntersecting) {
-			// Nur abspielen wenn pausiert und nicht am Anfang
-			if (activeVideo.paused && activeVideo.currentTime > 0) {
-			  activeVideo.play();
+				activeVideo.play();
 			}
-		  } else {
-			activeVideo.pause();
-		  }
-
+		  
 		});
 
 	  }, {
@@ -225,7 +220,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
-	const navbarHeight = navbar.getBoundingClientRect().height;
 	
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
@@ -285,6 +279,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		function animate() {
 
 		  animationRunning = true;
+		  
+		  scrollVelocity *= 0.9;
 
 		  /* ===== SCALE SPRING ===== */
 
