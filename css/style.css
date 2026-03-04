@@ -942,9 +942,9 @@ footer a:hover {
 
     will-change: transform;
     backface-visibility: hidden;
+    --nav-progress: 0;
+    --nav-height-progress: 0;
 }
-
-
 
 /* =================================
    INERTIA SCROLL NAVBAR
@@ -991,9 +991,6 @@ footer a:hover {
         rgba(0,0,0, calc(0.45 * var(--nav-progress)));
 }
 
-
-
-
 .navbar::after {
     content: "";
     position: absolute;
@@ -1022,19 +1019,6 @@ footer a:hover {
     opacity: 1;
 }
 
-/* ✨ COMPACT LUXURY STATE */
-.navbar.compact {
-    background: rgba(10, 10, 10, 0.96);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-
-    box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.45),
-        0 1px 0 rgba(212, 175, 55, 0.18) inset;
-        
-    transform: translate3d(0, 0, 0);
-}
-
 .nav-container {
     display: flex;
     justify-content: space-between;
@@ -1042,11 +1026,11 @@ footer a:hover {
 
     --nav-max-height: 78px;
     --nav-min-height: 58px;
-
+    
     height: calc(
-        var(--nav-max-height) -
-        ( (var(--nav-max-height) - var(--nav-min-height)) * var(--nav-progress) )
-    );
+		var(--nav-max-height) -
+		( (var(--nav-max-height) - var(--nav-min-height)) * var(--nav-height-progress) )
+	);
 
     padding-left: 2rem;
     padding-right: 2rem;
@@ -1072,12 +1056,6 @@ footer a:hover {
     will-change: transform;
 }
 
-
-
-.navbar.compact .nav-container-inner {
-    transform: scale(0.82);
-}
-
 .nav-logo,
 .nav-toggle {
     transform: scale(1);
@@ -1086,12 +1064,6 @@ footer a:hover {
         opacity 0.4s ease,
         filter 0.6s ease;
     transform-origin: center;
-}
-
-.navbar.compact .nav-logo,
-.navbar.compact .nav-toggle {
-    transform: scale(0.88);
-    filter: drop-shadow(0 0 10px rgba(212,175,55,0.06));
 }
 
 /* Logo */
