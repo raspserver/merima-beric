@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		video.playsInline = true;
 		video.preload = "metadata";
 		video.controls = false;
-		video.muted = false;
+		video.muted = true;
 
 		track.appendChild(video);
 		videos.push(video);
