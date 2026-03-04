@@ -256,14 +256,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		  const scrollY = Math.max(window.scrollY, 0);
 
 		  if (scrollY <= 5) {
-			targetProgress = 0;
-			navbar.classList.remove("visible");
-		  } else {
-			navbar.classList.add("visible");
-
-			const raw = scrollY / inertiaThreshold;
-			targetProgress = Math.min(Math.max(raw, 0), 1);
-		  }
+			  targetProgress = 0;
+			} else {
+			  const raw = scrollY / inertiaThreshold;
+			  targetProgress = Math.min(Math.max(raw, 0), 1);
+			}
 
 		  if (!animationRunning) {
 			requestAnimationFrame(animate);
@@ -296,16 +293,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		  heightProgress += heightVelocity;
 
 		  heightProgress = Math.max(0, Math.min(heightProgress, 1));
+		  
+		  // Ease-Out-Cubic
+			const easedHeight = 1 - Math.pow(1 - heightProgress, 3);
 
-		  /* ===== APPLY ===== */
-
-		  navbar.style.setProperty("--nav-progress", currentProgress);
-		  navbar.style.setProperty("--nav-height-progress", heightProgress);
-
+			navbar.style.setProperty("--nav-progress", currentProgress);
+			navbar.style.setProperty("--nav-height-progress", easedHeight);
+		  
+		  
+		  
 		  if (hero) {
-			hero.style.setProperty("--hero-scale", 1 - (currentProgress * 0.008));
-			hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.05));
-		  }
+
+			  const counter = 1 - currentProgress;
+
+			  hero.style.setProperty("--hero-scale", 1 + (counter * 0.01));
+			  hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
+			}
+		  
+		  
 
 		  /* ===== STOP CONDITION ===== */
 

@@ -924,6 +924,9 @@ footer a:hover {
 /* ===== NAVBAR LUXURY ===== */
 
 .navbar {
+	--nav-height-eased: calc(
+		1 - pow(1 - var(--nav-height-progress), 3)
+	);
     position: fixed;
     top: 0;
     left: 0;
@@ -934,9 +937,14 @@ footer a:hover {
     -webkit-backdrop-filter: blur(10px);
 
     border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+    
+    transform: translate3d(
+		0,
+		calc(-100% + (100% * var(--nav-progress))),
+		0
+	);
 
-    transform: translate3d(0, -100%, 0);
-    opacity: 0;
+	opacity: var(--nav-progress);
 
     transition:
         transform 0.6s cubic-bezier(.16,.84,.44,1),
@@ -954,11 +962,6 @@ footer a:hover {
 /* =================================
    INERTIA SCROLL NAVBAR
 ================================= */
-
-.navbar.visible {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-}
 
 /* Background Interpolation */
 .navbar {
@@ -1011,11 +1014,6 @@ footer a:hover {
     transition: opacity 0.6s ease;
 }
 
-.navbar.visible {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-}
-
 .nav-container {
     display: flex;
     justify-content: space-between;
@@ -1033,8 +1031,6 @@ footer a:hover {
     padding-right: 2rem;
 
     position: relative;
-
-    transition: height 0.25s linear;
 }
 
 /* =================================
