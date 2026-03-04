@@ -319,6 +319,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		let animationRunning = false;
 		function animate() {
+			
+			/* Scroll Engine FPS-Schutz */
+			if (document.hidden) return;
 
 		  animationRunning = true;
 		  
