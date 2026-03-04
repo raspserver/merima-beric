@@ -1225,10 +1225,10 @@ footer a:hover {
 
 	.nav-menu {
 		position: fixed;
-		
+			
 		top: calc(
-				var(--nav-max-height) -
-				( (var(--nav-max-height) - var(--nav-min-height)) * var(--nav-progress) )
+			  var(--nav-max-height) -
+			  ((var(--nav-max-height) - var(--nav-min-height)) * var(--nav-height-progress))
 			);
 		
 		left: 0;
