@@ -1232,23 +1232,19 @@ footer a:hover {
 			);
 		
 		left: 0;
+		right: 0;
 		width: 100%;
 		background: rgba(26, 26, 26, 0.98);
 		flex-direction: column;
 		gap: 0;
 		padding: 2rem 0;
-		transform: translateX(-100%);
+		transform: translateX(-100vw);
 		transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 		z-index: 999;
+		will-change: transform;
+		backface-visibility: hidden;
 	}
 	
-	
-	.nav-menu {
-    
-}
-	
-	
-
 	.nav-menu.active {
 		transform: translateX(0);
 	}

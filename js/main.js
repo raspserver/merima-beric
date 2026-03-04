@@ -317,84 +317,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
-		/* PHYSICS LOOP */
+	  /* ===============================
+		   CLEAN DUAL SPRING SYSTEM
+		   (ONE RAF LOOP ONLY)
+		================================ */
 
-		function animate(now) {
+		const inertiaThreshold = 180;
 
-		  const delta = now - lastTime;
-		  lastTime = now;
+		let targetProgress = 0;
+		let currentProgress = 0;
+		let velocity = 0;
 
-		  // Spring physics
+		let heightProgress = 0;
+		let heightVelocity = 0;
+
+		const stiffness = 0.08;
+		const damping = 0.82;
+
+		const heightStiffness = 0.045;
+		const heightDamping = 0.88;
+
+		function handleScroll() {
+		  const scrollY = Math.max(window.scrollY, 0);
+		  const isHome = scrollY <= 5;
+
+		  if (isHome) {
+			targetProgress = 0;
+			setState(STATES.HOME_HIDDEN);
+		  } else {
+			navbar.classList.add("visible");
+
+			const raw = scrollY / inertiaThreshold;
+			targetProgress = Math.min(Math.max(raw, 0), 1);
+		  }
+		}
+
+		window.addEventListener("scroll", handleScroll, { passive: true });
+
+		function animate() {
+
+		  /* ===== SCALE SPRING ===== */
+
 		  const force = (targetProgress - currentProgress) * stiffness;
-		  const acceleration = force / mass;
-
-		  velocity += acceleration;
+		  velocity += force;
 		  velocity *= damping;
-
 		  currentProgress += velocity;
+		  currentProgress = Math.max(0, Math.min(currentProgress, 1));
 
-		  // Clamp
-	      currentProgress = Math.max(0, Math.min(currentProgress, 1));
-		  
-		  /* ===============================
-			   DUAL SPRING SYSTEM
-			   (Scale fast, Height delayed)
-			================================ */
+		  /* ===== HEIGHT SPRING (DELAYED) ===== */
 
-			let heightProgress = 0;
-			let heightVelocity = 0;
+		  const heightForce = (currentProgress - heightProgress) * heightStiffness;
+		  heightVelocity += heightForce;
+		  heightVelocity *= heightDamping;
+		  heightProgress += heightVelocity;
+		  heightProgress = Math.max(0, Math.min(heightProgress, 1));
 
-			// Height reagiert träger
-			const heightStiffness = 0.045;
-			const heightDamping = 0.88;
+		  /* ===== APPLY TO CSS ===== */
 
-			function animate(now) {
+		  navbar.style.setProperty("--nav-progress", currentProgress);
+		  navbar.style.setProperty("--nav-height-progress", heightProgress);
 
-			  const delta = now - lastTime;
-			  lastTime = now;
-
-			  /* ===== SCALE SPRING (FAST) ===== */
-
-			  const force = (targetProgress - currentProgress) * stiffness;
-			  const acceleration = force / mass;
-
-			  velocity += acceleration;
-			  velocity *= damping;
-
-			  currentProgress += velocity;
-			  currentProgress = Math.max(0, Math.min(currentProgress, 1));
-
-			  /* ===== HEIGHT SPRING (DELAYED) ===== */
-
-			  const heightForce = (currentProgress - heightProgress) * heightStiffness;
-			  const heightAcceleration = heightForce / mass;
-
-			  heightVelocity += heightAcceleration;
-			  heightVelocity *= heightDamping;
-
-			  heightProgress += heightVelocity;
-			  heightProgress = Math.max(0, Math.min(heightProgress, 1));
-
-			  /* ===== APPLY ===== */
-
-			  navbar.style.setProperty("--nav-progress", currentProgress);
-			  navbar.style.setProperty("--nav-height-progress", heightProgress);
-
-			  /* Hero Micro Settling */
-			  if (hero) {
-				hero.style.transform = `scale(${1 - (currentProgress * 0.008)})`;
-				hero.style.filter = `brightness(${1 - (currentProgress * 0.05)})`;
-			  }
-
-			  requestAnimationFrame(animate);
-			}
-
-			requestAnimationFrame(animate);
-		  
-		  
-		  
-
-		  // Hero micro settling
+		  /* Hero Micro Settling */
 		  if (hero) {
 			hero.style.transform = `scale(${1 - (currentProgress * 0.008)})`;
 			hero.style.filter = `brightness(${1 - (currentProgress * 0.05)})`;
@@ -404,7 +387,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		requestAnimationFrame(animate);
-	  
 	  
 	  
 	  
