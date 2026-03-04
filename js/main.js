@@ -229,54 +229,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	if (navbar) {
 
-	  const STATES = {
-		HOME_HIDDEN: "HOME_HIDDEN",
-		HOME_VISIBLE: "HOME_VISIBLE",
-		SCROLLED: "SCROLLED",
-		COMPACT: "COMPACT"
-	  };
-
-	  let currentState = STATES.HOME_HIDDEN;
-
-	  function setState(newState) {
-		if (currentState === newState) return;
-
-		currentState = newState;
-		render();
-	  }
-
-	  function render() {
-		navbar.classList.remove("visible", "compact");
-
-		switch (currentState) {
-
-		  case STATES.HOME_HIDDEN:
-			break;
-
-		  case STATES.HOME_VISIBLE:
-			navbar.classList.add("visible");
-			break;
-
-		  case STATES.SCROLLED:
-			navbar.classList.add("visible");
-			break;
-
-		  case STATES.COMPACT:
-			navbar.classList.add("visible");
-			navbar.classList.add("compact");
-			break;
-		}
-	  }
  
  
  
- 
-
-	
-		
-		
-		
-		
 
 	  /* ===============================
 		   CLEAN DUAL SPRING SYSTEM
@@ -299,21 +254,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		function handleScroll() {
 		  const scrollY = Math.max(window.scrollY, 0);
-		  const isHome = scrollY <= 5;
 
-		  if (isHome) {
+		  if (scrollY <= 5) {
 			targetProgress = 0;
-			setState(STATES.HOME_HIDDEN);
+			navbar.classList.remove("visible");
 		  } else {
 			navbar.classList.add("visible");
 
 			const raw = scrollY / inertiaThreshold;
 			targetProgress = Math.min(Math.max(raw, 0), 1);
 		  }
+
 		  if (!animationRunning) {
-			  requestAnimationFrame(animate);
-			}
+			requestAnimationFrame(animate);
+		  }
 		}
+		
+		
 
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
@@ -381,79 +338,58 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	/* HERO CLICK */
-	  if (hero) {
-		hero.addEventListener("click", () => {
-		  if (window.scrollY <= 5) {
-			if (currentState === STATES.HOME_VISIBLE) {
-			  setState(STATES.HOME_HIDDEN);
-			} else {
-			  setState(STATES.HOME_VISIBLE);
-			}
-		  }
-		});
-	  }
+
 
 	  /* NAVBAR CLICK (nur im Home sichtbar schließen) */
-	  navbar.addEventListener("click", (e) => {
-
-		if (currentState !== STATES.HOME_VISIBLE) return;
-
-		if (e.target.closest(".nav-menu")) return;
-		if (e.target.closest(".nav-toggle")) return;
-
-		setState(STATES.HOME_HIDDEN);
-	  });
 
 	  /* HERO CTA */
 	  const heroCta = document.querySelector(".cta-button");
 
-	  if (heroCta) {
-		heroCta.addEventListener("click", (e) => {
-		  e.preventDefault();
+		if (heroCta) {
+		  heroCta.addEventListener("click", (e) => {
+			e.preventDefault();
 
-		  const target = document.querySelector("#contact");
-		  if (!target) return;
+			const target = document.querySelector("#contact");
+			if (!target) return;
 
-		  const navbarHeight = navbar.offsetHeight;
-		  const targetPosition = target.offsetTop - navbarHeight;
+			const navbarHeight = navbar.offsetHeight;
+			const targetPosition = target.offsetTop - navbarHeight;
 
-		  setState(STATES.COMPACT);
+			window.scrollTo({
+			  top: targetPosition,
+			  behavior: "smooth"
+			});
+		  });
+		}
+	  
+	  
 
-		  window.scrollTo({ top: targetPosition });
-		});
-	  }
-
-	  /* NAV LINKS */
-	  navLinks.forEach(link => {
+	  /* NAV LINKS */		
+		navLinks.forEach(link => {
 		  link.addEventListener("click", (e) => {
 
 			e.preventDefault();
-			e.stopPropagation();
 
 			const targetId = link.getAttribute("href");
 			const target = document.querySelector(targetId);
 			if (!target) return;
 
-			// 1️⃣ Erst Navbar fixieren
-			setState(STATES.COMPACT);
+			const navbarHeight = navbar.offsetHeight;
+			const targetPosition = target.offsetTop - navbarHeight;
 
-			// 2️⃣ Einen Frame warten damit Layout stabil ist
-			requestAnimationFrame(() => {
-
-			  const navbarHeight = navbar.offsetHeight;
-			  const targetPosition = target.offsetTop - navbarHeight;
-
-			  window.scrollTo({
-				top: targetPosition,
-				behavior: "smooth"
-			  });
-
+			window.scrollTo({
+			  top: targetPosition,
+			  behavior: "smooth"
 			});
 
 			navMenu.classList.remove("active");
 			navToggle.classList.remove("active");
 		  });
 		});
+		
+		
+		
+		
 	  	
 
 	}
