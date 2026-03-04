@@ -194,6 +194,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	  });
 
 	  observer.observe(gallerySection);
+	 
+	  /* VISIBILITY API – RAF & Videos pausieren wenn Tab inaktiv */
+	  document.addEventListener("visibilitychange", () => {
+		  if (document.hidden) {
+			videos.forEach(v => v.pause());
+		  } else {
+			playOnly(currentIndex);
+		  }
+		});
+	  
 	}
 	  
 	}
@@ -338,11 +348,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 		}
 
-	  
-	  
-	  
-
 	  handleScroll();
+	  
+	  /* VISIBILITY API – RAF & Videos pausieren wenn Tab inaktiv */
+	  document.addEventListener("visibilitychange", () => {
+		  if (document.hidden) {
+			animationRunning = false;
+		  } else {
+			handleScroll(); // re-sync when returning
+		  }
+		});
+	  
 	  
 	/* HAMBURGER TOGGLE */
 	if (navToggle && navMenu) {
