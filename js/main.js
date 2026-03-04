@@ -152,9 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 	  // Swipe
-	  let startX = 0;
-	  let isDragging = false;
-
 		track.style.touchAction = "pan-y";
 
 	    let startX = 0;
