@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
 	
+	/* prefers-reduced-motion Support (Accessibility Pflicht) */
+	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	
+	
 	/* =========================
 	   TRUE INFINITE GALLERY
 	========================= */
@@ -10,6 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	  "videos/snaptik_7211607331648441605_hd.mp4",
 	  "videos/snaptik_7444629475364474145_hd.mp4"
 	];
+	
+	/* Gallery Anti-Spam Guard */
+	let isAnimating = false;
 
 	function shuffle(array) {
 	  for (let i = array.length - 1; i > 0; i--) {
@@ -84,8 +91,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		  });
 		}
 
-	  
+		/* Gallery Anti-Spam Guard */
 		function moveTo(index, autoPlay = false) {
+
+		  if (isAnimating) return;
+		  isAnimating = true;
 
 		  currentIndex = index;
 		  setPosition(currentIndex, true);
@@ -106,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		track.addEventListener("transitionend", () => {
 
 		  let jumped = false;
+		  isAnimating = false;
 
 		  if (currentIndex === videos.length - 1) {
 			currentIndex = 1;
@@ -134,6 +145,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		moveTo(currentIndex - 1, true);
 	}
 	  
+		/* prefers-reduced-motion Support (Accessibility Pflicht) */
+		if (prefersReducedMotion) {
+		  videos.forEach(v => v.pause());
+		  return;
+		}
 
 	  // Swipe
 	  let startX = 0;
@@ -207,6 +223,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 	  
 	}
+	
+	/* Resize-Fix für Gallery Width */
+	/* Wenn Bildschirm rotiert, kann Slider verspringen. */
+	window.addEventListener("resize", () => {
+	  setPosition(currentIndex, false);
+	});
 
 
 
@@ -236,9 +258,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	if (navbar) {
 
- 
- 
- 
+		/* prefers-reduced-motion Support (Accessibility Pflicht) */
+		if (prefersReducedMotion) {
+		  navbar.style.setProperty("--nav-progress", 1);
+		  navbar.style.setProperty("--nav-height-progress", 1);
+		  return;
+		}
 
 	  /* ===============================
 		   CLEAN DUAL SPRING SYSTEM
@@ -253,13 +278,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		let heightProgress = 0;
 		let heightVelocity = 0;
 		
-		const isMobile = window.innerWidth <= 768;
+		let stiffness, damping, heightStiffness, heightDamping;
 
-		const stiffness = isMobile ? 0.06 : 0.08;
-		const damping = isMobile ? 0.85 : 0.82;
+		function updatePhysics() {
+		  const isMobile = window.innerWidth <= 768;
 
-		const heightStiffness = isMobile ? 0.035 : 0.045;
-		const heightDamping = isMobile ? 0.9 : 0.88;
+		  stiffness = isMobile ? 0.06 : 0.08;
+		  damping = isMobile ? 0.85 : 0.82;
+
+		  heightStiffness = isMobile ? 0.035 : 0.045;
+		  heightDamping = isMobile ? 0.9 : 0.88;
+		}
+
+		updatePhysics();
+		window.addEventListener("resize", updatePhysics);
 		
 		function handleScroll() {
 			
