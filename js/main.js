@@ -315,9 +315,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		let animationRunning = false;
 		let lastFrameTime = performance.now();
-		function animate() {
+		function animate(now) {
 			
-			if (destroyed) return;
 			/* Scroll Engine FPS-Schutz */
 			if (document.hidden) {
 			   animationRunning = false;
