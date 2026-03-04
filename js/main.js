@@ -198,9 +198,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		  const activeVideo = videos[currentIndex];
 
 		  if (!activeVideo) return;
-		  
-		  if (entry.isIntersecting) {
-				activeVideo.play();
+			
+			/* Sicherheits-Guard für IntersectionObserver */
+			if (entry.isIntersecting) {
+			  playOnly(currentIndex);
+			} else {
+			  videos.forEach(v => v.pause());
 			}
 		  
 		});
