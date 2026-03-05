@@ -956,7 +956,8 @@ footer a:hover {
 
     will-change: transform;
     backface-visibility: hidden;
-    --nav-progress: 0;
+    /* --nav-progress: 0; */
+    --nav-progress: 0.001;
     --nav-height-progress: 0;
     
     /* Background Interpolation */
