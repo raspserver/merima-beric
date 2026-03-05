@@ -1323,6 +1323,11 @@ footer a:hover {
 .gallery-track {
   display: flex;
   transition: transform 0.6s cubic-bezier(.16,.84,.44,1);
+  
+  .gallery-track {
+	  will-change: transform;
+	  -webkit-overflow-scrolling: touch;
+	}
 }
 
 .gallery video {
