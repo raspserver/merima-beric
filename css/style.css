@@ -355,7 +355,8 @@ body {
 
 /* Section Styles */
 section {
-	padding: 8rem 2rem;
+	padding: 0 2rem;
+	margin: 8rem 0;
 	position: relative;
 }
 
