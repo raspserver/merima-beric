@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	   NAVBAR SCROLL PROGRESS
 	========================= */
 
-	/* const navbar = document.querySelector(".navbar"); */
+	const navbar = document.querySelector(".navbar");
 	navbar.style.setProperty("--nav-progress", 0);
 	navbar.style.setProperty("--nav-height-progress", 0);
 	if (!navbar) return;
