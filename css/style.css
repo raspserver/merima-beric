@@ -37,7 +37,7 @@ body {
     min-height: 100svh;  /* Moderne Browser */
 	padding: 100px 2rem 120px;
 	
-	top: -78px;
+	padding-top: 0;  /* oder 0 + gewünschter Abstand zu Navbar */
 	
 	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 	display: flex;
