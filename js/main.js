@@ -4,6 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	
 	
+	
+	
+	
+	
+	
 	/* =========================
 	   HOMESCREEN TAP NAVBAR
 	========================= */
