@@ -1323,7 +1323,8 @@ footer a:hover {
 }
 
 .gallery-slider {
-  overflow: hidden;
+  overflow: visible; /* vorher hidden */
+  padding: 0 10%;   /* sorgt dafür, dass nächste/letzte Slides rausschauen */
   width: min(900px, 100%);
   margin: 0 auto;
 }
@@ -1339,6 +1340,8 @@ footer a:hover {
 	
 	transform: translateZ(0);
 	contain: layout paint;
+	
+	gap: 2%; /* optional: Abstand zwischen den Videos */
 }
 
 .gallery video {
