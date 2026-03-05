@@ -164,11 +164,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		  return;
 		}
 
-
-
-
-
-
 		// Swipe
 		let startX = 0;
 		let currentTranslate = 0;
@@ -219,12 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		});
 		
-		
-		
-		
-		
-		
-
 	  const gallerySection = document.querySelector(".gallery");
 
 	if (gallerySection) {
