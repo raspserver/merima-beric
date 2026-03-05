@@ -1340,3 +1340,10 @@ footer a:hover {
     width: 100%;
   }
 }
+
+/*  */
+@supports not (backdrop-filter: blur(1px)) {
+  .navbar {
+    backdrop-filter: none;
+  }
+}
