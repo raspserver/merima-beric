@@ -373,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	   NAVBAR
 	========================= */
 
-	const navbar = document.querySelector(".navbar");
+	//~ const navbar = document.querySelector(".navbar");
 	const hero = document.querySelector(".hero");
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
@@ -589,13 +589,17 @@ document.addEventListener("DOMContentLoaded", () => {
 			navToggle.classList.remove("active");
 		  });
 		});
-		
-		
-		
-		
-	  	
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
