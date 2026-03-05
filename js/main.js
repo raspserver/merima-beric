@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	   NAVBAR SCROLL PROGRESS
 	========================= */
 
-	const navbar = document.querySelector(".navbar");
+	/* const navbar = document.querySelector(".navbar"); */
 	navbar.style.setProperty("--nav-progress", 0);
 	navbar.style.setProperty("--nav-height-progress", 0);
 	if (!navbar) return;
@@ -368,7 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	   NAVBAR
 	========================= */
 
-	/* const navbar = document.querySelector(".navbar"); */
+	const navbar = document.querySelector(".navbar");
 	const hero = document.querySelector(".hero");
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
