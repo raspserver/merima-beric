@@ -1341,7 +1341,7 @@ footer a:hover {
   }
 }
 
-/*  */
+/* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
 @supports not (backdrop-filter: blur(1px)) {
   .navbar {
     backdrop-filter: none;
