@@ -539,7 +539,6 @@ section {
 /* Pricing Section */
 .pricing {
 	background: var(--bg-light);
-	padding: 8rem 2rem;
 }
 
 .pricing-tabs {
@@ -1302,8 +1301,7 @@ footer a:hover {
 	/* ===== GALLERY STRUCTURE FIX ===== */
 
 	.gallery {
-		padding-top: 8rem;   /* gleich wie andere Sections */
-		padding-bottom: 8rem;
+		background: var(--bg-light);
 		scroll-margin-top: calc(78px + 2rem);
 	}
 
