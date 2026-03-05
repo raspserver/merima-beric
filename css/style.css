@@ -1341,6 +1341,9 @@ footer a:hover {
 .gallery video {
 	width: 100%;
 	height: auto;
+	aspect-ratio: 9 / 16;
+	object-fit: cover;
+	
 	display: block;
 	flex-shrink: 0;
 	border-radius: 2px;
