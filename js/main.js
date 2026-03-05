@@ -3,6 +3,108 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* prefers-reduced-motion Support (Accessibility Pflicht) */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	
+	/* =========================
+	   HOMESCREEN TAP NAVBAR
+	========================= */
+	const hero = document.querySelector(".hero");
+	const ctaButton = document.querySelector(".cta-button");
+	
+	/* Scroll-Physics Funktion */
+	function smoothScrollTo(targetY, duration) {
+
+	  const startY = window.scrollY;
+	  const diff = targetY - startY;
+
+	  let startTime = null;
+
+	  function step(timestamp) {
+
+		if (!startTime) startTime = timestamp;
+
+		const progress = Math.min((timestamp - startTime) / duration, 1);
+
+		// Ease-Out (fühlt sich wie iOS an)
+		const eased = 1 - Math.pow(1 - progress, 3);
+
+		window.scrollTo(0, startY + diff * eased);
+
+		if (progress < 1) {
+		  requestAnimationFrame(step);
+		}
+
+	  }
+
+	  requestAnimationFrame(step);
+
+	}
+	
+	/* Tap-Spam Schutz */
+	let navTapAnimating = false;
+	let navTapOpened = false;
+	
+	/* Tap Logik */
+	hero.addEventListener("click", (e) => {
+
+	  if (prefersReducedMotion) return;
+
+	  // Anti-Spam
+	  if (navTapAnimating) return;
+
+	  // CTA Button ignorieren
+	  if (ctaButton && ctaButton.contains(e.target)) return;
+
+	  // nur wenn wirklich im Hero
+	  if (!hero.contains(e.target)) return;
+
+	  // nur wenn ganz oben
+	  if (window.scrollY > 5) return;
+
+	  navTapAnimating = true;
+
+	  if (!navTapOpened) {
+
+		navTapOpened = true;
+
+		smoothScrollTo(window.innerHeight * 0.35, 2000);
+
+		setTimeout(() => {
+		  navTapAnimating = false;
+		}, 2000);
+
+	  } else {
+
+		navTapOpened = false;
+
+		smoothScrollTo(0, 500);
+
+		setTimeout(() => {
+		  navTapAnimating = false;
+		}, 500);
+
+	  }
+
+	});
+	
+	/* Scroll Reset */
+	window.addEventListener("scroll", () => {
+
+	  if (window.scrollY > window.innerHeight * 0.4) {
+		navTapOpened = false;
+	  }
+
+	});	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/* =========================
 	   TRUE INFINITE GALLERY
