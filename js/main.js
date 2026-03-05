@@ -374,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	========================= */
 
 	//~ const navbar = document.querySelector(".navbar");
-	const hero = document.querySelector(".hero");
+	//~ const hero = document.querySelector(".hero");
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
