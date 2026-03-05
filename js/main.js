@@ -94,6 +94,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	});	
 	
+	/* =========================
+	   NAVBAR SCROLL PROGRESS
+	========================= */
+
+	const navbar = document.querySelector(".navbar");
+
+	function updateNavbar() {
+
+	  const scrollY = window.scrollY;
+	  const heroHeight = window.innerHeight;
+
+	  // Progress von 0 → 1
+	  let progress = scrollY / (heroHeight * 0.35);
+	  progress = Math.max(0, Math.min(progress, 1));
+
+	  navbar.style.setProperty("--nav-progress", progress);
+
+	  // Height Progress etwas langsamer
+	  let heightProgress = scrollY / (heroHeight * 0.55);
+	  heightProgress = Math.max(0, Math.min(heightProgress, 1));
+
+	  navbar.style.setProperty("--nav-height-progress", heightProgress);
+
+	}
+
+	window.addEventListener("scroll", updateNavbar);
+	updateNavbar();
+	
 	
 	
 	
