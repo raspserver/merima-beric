@@ -164,41 +164,66 @@ document.addEventListener("DOMContentLoaded", () => {
 		  return;
 		}
 
-		// Swipe
-		track.style.touchAction = "pan-y";
 
+
+
+
+
+		// Swipe
 		let startX = 0;
+		let currentTranslate = 0;
 		let isDragging = false;
 
-		// Pointer (Desktop / moderne Browser)
-		track.addEventListener("pointerdown", (e) => {
-		  startX = e.clientX;
-		  isDragging = true;
-		});
+		track.style.touchAction = "pan-y";
 
-		track.addEventListener("pointerup", (e) => {
-		  if (!isDragging) return;
-
-		  const diff = e.clientX - startX;
-
-		  if (diff > 50) prev();
-		  if (diff < -50) next();
-
-		  isDragging = false;
-		});
-
-		// 🔹 Safari iOS Support
 		track.addEventListener("touchstart", (e) => {
 		  startX = e.touches[0].clientX;
+		  isDragging = true;
+
+		  track.style.transition = "none";
+		});
+
+		track.addEventListener("touchmove", (e) => {
+
+		  if (!isDragging) return;
+
+		  const currentX = e.touches[0].clientX;
+		  const diff = currentX - startX;
+
+		  const baseTranslate = -currentIndex * track.offsetWidth;
+
+		  currentTranslate = baseTranslate + diff;
+
+		  track.style.transform = `translateX(${currentTranslate}px)`;
+
 		});
 
 		track.addEventListener("touchend", (e) => {
+
+		  if (!isDragging) return;
+
 		  const endX = e.changedTouches[0].clientX;
 		  const diff = endX - startX;
 
-		  if (diff > 50) prev();
-		  if (diff < -50) next();
+		  track.style.transition = "transform 0.6s cubic-bezier(.16,.84,.44,1)";
+
+		  if (diff > 80) {
+			prev();
+		  } else if (diff < -80) {
+			next();
+		  } else {
+			setPosition(currentIndex, true);
+		  }
+
+		  isDragging = false;
+
 		});
+		
+		
+		
+		
+		
+		
 
 	  const gallerySection = document.querySelector(".gallery");
 
