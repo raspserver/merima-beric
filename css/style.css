@@ -1301,6 +1301,7 @@ footer a:hover {
 	.gallery {
 		padding-top: 8rem;   /* gleich wie andere Sections */
 		padding-bottom: 8rem;
+		scroll-margin-top: calc(78px + 2rem);
 	}
 
 	.gallery .section-title {
