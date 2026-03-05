@@ -1334,10 +1334,12 @@ footer a:hover {
 }
 
 .gallery video {
-  width: 100%;
-  flex-shrink: 0;
-  border-radius: 2px;
-  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+	width: 100%;
+	height: auto;
+	display: block;
+	flex-shrink: 0;
+	border-radius: 2px;
+	box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
 }
 
 @media (max-width: 768px) {
