@@ -50,9 +50,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		const video = document.createElement("video");
 		video.src = src;
 		video.playsInline = true;
-		video.preload = "metadata";
+		video.preload = "auto";
 		video.controls = false;
 		video.muted = true;
+		
+		video.addEventListener("loadeddata", () => {
+		  video.currentTime = 0.01;
+		});
 
 		track.appendChild(video);
 		videos.push(video);
