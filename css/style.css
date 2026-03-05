@@ -1320,8 +1320,6 @@ footer a:hover {
 
 .gallery {
   background: var(--bg-light);
-  padding-top: 8rem;
-  padding-bottom: 8rem;
 }
 
 .gallery-slider {
