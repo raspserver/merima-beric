@@ -1310,6 +1310,7 @@ footer a:hover {
 
 	.gallery-slider {
 		margin-top: 0; /* kein doppelter Abstand */
+		width: 100%;
 	}
 	
 }
