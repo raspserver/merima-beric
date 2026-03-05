@@ -28,23 +28,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	const track = document.querySelector(".gallery-track");
-
 	if (track) {
 
 	  const shuffled = shuffle([...videoFiles]);
-
 	  let videos = [];
-	  let currentIndex = 1; // wir starten bei 1 wegen clone
+	  let currentIndex = 1; // Start bei 1 wegen Clone
 
-	  // 1️⃣ Clone letztes Video vorne einfügen
+	  // Clone für Loop
 	  const firstCloneSrc = shuffled[0];
 	  const lastCloneSrc = shuffled[shuffled.length - 1];
-
-	  const fullList = [
-		lastCloneSrc,
-		...shuffled,
-		firstCloneSrc
-	  ];
+	  const fullList = [lastCloneSrc, ...shuffled, firstCloneSrc];
 
 	  fullList.forEach(src => {
 		const video = document.createElement("video");
@@ -53,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		video.preload = "auto";
 		video.controls = false;
 		video.muted = true;
-		
+
 		video.addEventListener("loadeddata", () => {
 		  video.currentTime = 0.01;
 		});
@@ -62,107 +55,107 @@ document.addEventListener("DOMContentLoaded", () => {
 		videos.push(video);
 
 		// Tap = Play/Pause
-		video.addEventListener("pointerup", (e) => {
+		video.addEventListener("pointerup", e => {
 		  e.stopPropagation();
-
-		  if (video.paused) {
-			safePlay(video);
-		  } else {
-			video.pause();
-		  }
+		  video.paused ? safePlay(video) : video.pause();
 		});
-		
+
 		video.addEventListener("ended", () => {
 		  moveTo(currentIndex + 1, true);
 		});
 	  });
 
+	  // ===== Position setzen =====
 	  function setPosition(index, animate = true) {
-		if (!animate) {
-		  track.style.transition = "none";
-		} else {
-		  track.style.transition = "transform 0.6s cubic-bezier(.16,.84,.44,1)";
-		}
-
-		track.style.transform = `translateX(-${index * 100}%)`;
+		const videoWidth = videos[0].offsetWidth;
+		const padding = track.parentElement.offsetWidth * 0.1; // entspricht CSS padding 10%
+		const offset = videoWidth * index - padding;
+		track.style.transition = animate
+		  ? "transform 0.6s cubic-bezier(.16,.84,.44,1)"
+		  : "none";
+		track.style.transform = `translateX(-${offset}px)`;
 	  }
-	  
-		function safePlay(video) {
-		  const playPromise = video.play();
 
-		  if (playPromise !== undefined) {
-			playPromise.catch(() => {
-			  // AbortError oder Autoplay Block -> ignorieren
-			});
-		  }
-		}
+	  function safePlay(video) {
+		const promise = video.play();
+		if (promise !== undefined) promise.catch(() => {});
+	  }
 
-		function playOnly(index) {
-		  videos.forEach((video, i) => {
-			if (i === index) {
-			  video.currentTime = 0;
-			  safePlay(video);
-			} else {
-			  video.pause();
-			}
-		  });
-		}
+	  function playOnly(index) {
+		videos.forEach((v, i) => {
+		  if (i === index) {
+			v.currentTime = 0;
+			safePlay(v);
+		  } else v.pause();
+		});
+	  }
 
-		/* Gallery Anti-Spam Guard */
-		function moveTo(index, autoPlay = false) {
+	  function moveTo(index, autoPlay = false) {
+		if (isAnimating) return;
+		isAnimating = true;
 
-		  if (isAnimating) return;
-		  isAnimating = true;
+		currentIndex = index;
+		setPosition(currentIndex, true);
 
-		  currentIndex = index;
-		  setPosition(currentIndex, true);
+		if (autoPlay) playOnly(currentIndex);
+		else videos.forEach(v => v.pause());
+	  }
 
-		  if (autoPlay) {
-			playOnly(currentIndex);
-		  } else {
-			videos.forEach(video => video.pause());
-		  }
-		}
-	  
-	  // Initial Position
+	  // Initial
 	  setPosition(currentIndex, false);
 	  playOnly(currentIndex);
 
-	  // Transition-End-Check (unsichtbarer Sprung)	
-		track.addEventListener("transitionend", () => {
+	  // Loop Reset
+	  track.addEventListener("transitionend", () => {
+		isAnimating = false;
+		if (currentIndex === videos.length - 1) {
+		  currentIndex = 1;
+		  requestAnimationFrame(() => setPosition(currentIndex, false));
+		}
+		if (currentIndex === 0) {
+		  currentIndex = videos.length - 2;
+		  requestAnimationFrame(() => setPosition(currentIndex, false));
+		}
+	  });
 
-		  isAnimating = false;
+	  // Swipe
+	  let startX = 0, currentTranslate = 0, isDragging = false;
+	  track.style.touchAction = "pan-y";
 
-		  if (currentIndex === videos.length - 1) {
-			currentIndex = 1;
+	  track.addEventListener("touchstart", e => {
+		startX = e.touches[0].clientX;
+		isDragging = true;
+		track.style.transition = "none";
+	  });
 
-			requestAnimationFrame(() => {
-			  setPosition(currentIndex, false);
-			});
-		  }
+	  track.addEventListener("touchmove", e => {
+		if (!isDragging) return;
+		const diff = e.touches[0].clientX - startX;
+		const videoWidth = videos[0].offsetWidth;
+		const padding = track.parentElement.offsetWidth * 0.1;
+		currentTranslate = -currentIndex * videoWidth + diff - padding;
+		track.style.transform = `translateX(${currentTranslate}px)`;
+	  });
 
-		  if (currentIndex === 0) {
-			currentIndex = videos.length - 2;
+	  track.addEventListener("touchend", e => {
+		if (!isDragging) return;
+		const diff = e.changedTouches[0].clientX - startX;
+		if (diff > 80) prev(); 
+		else if (diff < -80) next(); 
+		else setPosition(currentIndex, true);
+		isDragging = false;
+	  });
 
-			requestAnimationFrame(() => {
-			  setPosition(currentIndex, false);
-			});
-		  }
-
-		});
-		
-		
-		
-	  
-	  
-	  
-	function next() {
-		moveTo(currentIndex + 1, true);
+	  function next() { moveTo(currentIndex + 1, true); }
+	  function prev() { moveTo(currentIndex - 1, true); }
 	}
-
-	function prev() {
-		moveTo(currentIndex - 1, true);
-	}
+	
+	
+	
+	
+	
+	
+	
 	  
 		/* prefers-reduced-motion Support (Accessibility Pflicht) */
 		if (prefersReducedMotion) {
