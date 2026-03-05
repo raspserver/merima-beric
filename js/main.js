@@ -99,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	========================= */
 
 	const navbar = document.querySelector(".navbar");
+	if (!navbar) return;
 
 	function updateNavbar() {
 
