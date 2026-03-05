@@ -162,12 +162,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		  return;
 		}
 
-	  // Swipe
+		// Swipe
 		track.style.touchAction = "pan-y";
 
-	    let startX = 0;
+		let startX = 0;
 		let isDragging = false;
 
+		// Pointer (Desktop / moderne Browser)
 		track.addEventListener("pointerdown", (e) => {
 		  startX = e.clientX;
 		  isDragging = true;
@@ -182,6 +183,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		  if (diff < -50) next();
 
 		  isDragging = false;
+		});
+
+		// 🔹 Safari iOS Support
+		track.addEventListener("touchstart", (e) => {
+		  startX = e.touches[0].clientX;
+		});
+
+		track.addEventListener("touchend", (e) => {
+		  const endX = e.changedTouches[0].clientX;
+		  const diff = endX - startX;
+
+		  if (diff > 50) prev();
+		  if (diff < -50) next();
 		});
 
 	  const gallerySection = document.querySelector(".gallery");
