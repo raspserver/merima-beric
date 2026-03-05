@@ -9,127 +9,127 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
-	/* =========================
-	   HOMESCREEN TAP NAVBAR
-	========================= */
-	const hero = document.querySelector(".hero");
-	const ctaButton = document.querySelector(".cta-button");
+	//~ /* =========================
+	   //~ HOMESCREEN TAP NAVBAR
+	//~ ========================= */
+	//~ const hero = document.querySelector(".hero");
+	//~ const ctaButton = document.querySelector(".cta-button");
 	
-	/* Scroll-Physics Funktion */
-	function smoothScrollTo(targetY, duration) {
+	//~ /* Scroll-Physics Funktion */
+	//~ function smoothScrollTo(targetY, duration) {
 
-	  const startY = window.scrollY;
-	  const diff = targetY - startY;
+	  //~ const startY = window.scrollY;
+	  //~ const diff = targetY - startY;
 
-	  let startTime = null;
+	  //~ let startTime = null;
 
-	  function step(timestamp) {
+	  //~ function step(timestamp) {
 
-		if (!startTime) startTime = timestamp;
+		//~ if (!startTime) startTime = timestamp;
 
-		const progress = Math.min((timestamp - startTime) / duration, 1);
+		//~ const progress = Math.min((timestamp - startTime) / duration, 1);
 
-		// Ease-Out (fühlt sich wie iOS an)
-		const eased = 1 - Math.pow(1 - progress, 3);
+		//~ // Ease-Out (fühlt sich wie iOS an)
+		//~ const eased = 1 - Math.pow(1 - progress, 3);
 
-		window.scrollTo(0, startY + diff * eased);
+		//~ window.scrollTo(0, startY + diff * eased);
 
-		if (progress < 1) {
-		  requestAnimationFrame(step);
-		}
+		//~ if (progress < 1) {
+		  //~ requestAnimationFrame(step);
+		//~ }
 
-	  }
+	  //~ }
 
-	  requestAnimationFrame(step);
+	  //~ requestAnimationFrame(step);
 
-	}
+	//~ }
 	
-	/* Tap-Spam Schutz */
-	let navTapAnimating = false;
-	let navTapOpened = false;
+	//~ /* Tap-Spam Schutz */
+	//~ let navTapAnimating = false;
+	//~ let navTapOpened = false;
 	
-	/* Tap Logik */
-	hero.addEventListener("click", (e) => {
+	//~ /* Tap Logik */
+	//~ hero.addEventListener("click", (e) => {
 
-	  if (prefersReducedMotion) return;
+	  //~ if (prefersReducedMotion) return;
 
-	  // Anti-Spam
-	  if (navTapAnimating) return;
+	  //~ // Anti-Spam
+	  //~ if (navTapAnimating) return;
 
-	  // CTA Button ignorieren
-	  if (ctaButton && ctaButton.contains(e.target)) return;
+	  //~ // CTA Button ignorieren
+	  //~ if (ctaButton && ctaButton.contains(e.target)) return;
 
-	  // nur wenn wirklich im Hero
-	  if (!hero.contains(e.target)) return;
+	  //~ // nur wenn wirklich im Hero
+	  //~ if (!hero.contains(e.target)) return;
 
-	  // nur wenn ganz oben
-	  if (window.scrollY > 5) return;
+	  //~ // nur wenn ganz oben
+	  //~ if (window.scrollY > 5) return;
 
-	  navTapAnimating = true;
+	  //~ navTapAnimating = true;
 
-	  if (!navTapOpened) {
+	  //~ if (!navTapOpened) {
 
-		navTapOpened = true;
+		//~ navTapOpened = true;
 
-		smoothScrollTo(window.innerHeight * 0.35, 2000);
+		//~ smoothScrollTo(window.innerHeight * 0.35, 2000);
 
-		setTimeout(() => {
-		  navTapAnimating = false;
-		}, 2000);
+		//~ setTimeout(() => {
+		  //~ navTapAnimating = false;
+		//~ }, 2000);
 
-	  } else {
+	  //~ } else {
 
-		navTapOpened = false;
+		//~ navTapOpened = false;
 
-		smoothScrollTo(0, 500);
+		//~ smoothScrollTo(0, 500);
 
-		setTimeout(() => {
-		  navTapAnimating = false;
-		}, 500);
+		//~ setTimeout(() => {
+		  //~ navTapAnimating = false;
+		//~ }, 500);
 
-	  }
+	  //~ }
 
-	});
+	//~ });
 	
-	/* Scroll Reset */
-	window.addEventListener("scroll", () => {
+	//~ /* Scroll Reset */
+	//~ window.addEventListener("scroll", () => {
 
-	  if (window.scrollY > window.innerHeight * 0.4) {
-		navTapOpened = false;
-	  }
+	  //~ if (window.scrollY > window.innerHeight * 0.4) {
+		//~ navTapOpened = false;
+	  //~ }
 
-	});	
+	//~ });	
 	
-	/* =========================
-	   NAVBAR SCROLL PROGRESS
-	========================= */
+	//~ /* =========================
+	   //~ NAVBAR SCROLL PROGRESS
+	//~ ========================= */
 
-	const navbar = document.querySelector(".navbar");
-	navbar.style.setProperty("--nav-progress", 0);
-	navbar.style.setProperty("--nav-height-progress", 0);
-	if (!navbar) return;
+	//~ const navbar = document.querySelector(".navbar");
+	//~ navbar.style.setProperty("--nav-progress", 0);
+	//~ navbar.style.setProperty("--nav-height-progress", 0);
+	//~ if (!navbar) return;
 
-	function updateNavbar() {
+	//~ function updateNavbar() {
 
-	  const scrollY = window.scrollY;
-	  const heroHeight = window.innerHeight;
+	  //~ const scrollY = window.scrollY;
+	  //~ const heroHeight = window.innerHeight;
 
-	  // Progress von 0 → 1
-	  let progress = scrollY / (heroHeight * 0.35);
-	  progress = Math.max(0, Math.min(progress, 1));
+	  //~ // Progress von 0 → 1
+	  //~ let progress = scrollY / (heroHeight * 0.35);
+	  //~ progress = Math.max(0, Math.min(progress, 1));
 
-	  navbar.style.setProperty("--nav-progress", progress);
+	  //~ navbar.style.setProperty("--nav-progress", progress);
 
-	  // Height Progress etwas langsamer
-	  let heightProgress = scrollY / (heroHeight * 0.55);
-	  heightProgress = Math.max(0, Math.min(heightProgress, 1));
+	  //~ // Height Progress etwas langsamer
+	  //~ let heightProgress = scrollY / (heroHeight * 0.55);
+	  //~ heightProgress = Math.max(0, Math.min(heightProgress, 1));
 
-	  navbar.style.setProperty("--nav-height-progress", heightProgress);
+	  //~ navbar.style.setProperty("--nav-height-progress", heightProgress);
 
-	}
+	//~ }
 
-	window.addEventListener("scroll", updateNavbar);
-	updateNavbar();
+	//~ window.addEventListener("scroll", updateNavbar);
+	//~ updateNavbar();
 	
 
 	
