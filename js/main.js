@@ -124,29 +124,31 @@ document.addEventListener("DOMContentLoaded", () => {
 	  setPosition(currentIndex, false);
 	  playOnly(currentIndex);
 
-	  // Transition-End-Check (unsichtbarer Sprung)
-		
+	  // Transition-End-Check (unsichtbarer Sprung)	
 		track.addEventListener("transitionend", () => {
 
-		  let jumped = false;
 		  isAnimating = false;
 
 		  if (currentIndex === videos.length - 1) {
 			currentIndex = 1;
-			jumped = true;
+
+			requestAnimationFrame(() => {
+			  setPosition(currentIndex, false);
+			});
 		  }
 
 		  if (currentIndex === 0) {
 			currentIndex = videos.length - 2;
-			jumped = true;
-		  }
 
-		  if (jumped) {
-			setPosition(currentIndex, false);
-			playOnly(currentIndex);
+			requestAnimationFrame(() => {
+			  setPosition(currentIndex, false);
+			});
 		  }
 
 		});
+		
+		
+		
 	  
 	  
 	  
