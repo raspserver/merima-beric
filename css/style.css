@@ -1338,6 +1338,7 @@ footer a:hover {
 	-webkit-overflow-scrolling: touch;
 	
 	transform: translateZ(0);
+	contain: layout paint;
 }
 
 .gallery video {
