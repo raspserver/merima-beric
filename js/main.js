@@ -58,14 +58,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		videos.push(video);
 
 		// Tap = Play/Pause
-		video.addEventListener("click", () => {
+		video.addEventListener("pointerup", (e) => {
+		  e.stopPropagation();
+
 		  if (video.paused) {
 			safePlay(video);
 		  } else {
 			video.pause();
 		  }
 		});
-
+		
 		video.addEventListener("ended", () => {
 		  moveTo(currentIndex + 1, true);
 		});
