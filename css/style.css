@@ -37,7 +37,7 @@ body {
     min-height: 100svh;  /* Moderne Browser */
 	padding: 100px 2rem 120px;
 	
-	margin-top: calc(-1 * var(--nav-max-height));
+	margin-top: calc(-1 * 1.5 * var(--nav-max-height));
 	
 	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 	display: flex;
