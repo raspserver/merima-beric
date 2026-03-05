@@ -35,11 +35,9 @@ body {
 	position: relative;
 	min-height: 100vh;   /* Fallback */
     min-height: 100svh;  /* Moderne Browser */
-/*
 	padding: 100px 2rem 120px;
-*/
 	
-	padding-top: 0;  /* oder 0 + gewünschter Abstand zu Navbar */
+	padding-top: 0; 
 	
 	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 	display: flex;
