@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* prefers-reduced-motion Support (Accessibility Pflicht) */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	
+	
 	/* =========================
 	   HOMESCREEN TAP NAVBAR
 	========================= */
@@ -125,12 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	window.addEventListener("scroll", updateNavbar);
 	updateNavbar();
 	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	
