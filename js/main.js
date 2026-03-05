@@ -2,39 +2,32 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	/* prefers-reduced-motion Support (Accessibility Pflicht) */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	
 
-	
 	/* =========================
 	   TRUE INFINITE GALLERY
 	========================= */
-
 	const videoFiles = [
 	  "videos/snaptik_7204469200172190982_hd.mp4",
 	  "videos/snaptik_7208965603661499654_hd.mp4",
 	  "videos/snaptik_7211607331648441605_hd.mp4",
 	  "videos/snaptik_7444629475364474145_hd.mp4"
 	];
-	
-	/* Gallery Anti-Spam Guard */
-	let isAnimating = false;
-
-	function shuffle(array) {
-	  for (let i = array.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[array[i], array[j]] = [array[j], array[i]];
-	  }
-	  return array;
-	}
 
 	const track = document.querySelector(".gallery-track");
 	if (track) {
+	  let videos = [];
+	  let currentIndex = 1;
+	  let isAnimating = false;
+
+	  function shuffle(array) {
+		for (let i = array.length - 1; i > 0; i--) {
+		  const j = Math.floor(Math.random() * (i + 1));
+		  [array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	  }
 
 	  const shuffled = shuffle([...videoFiles]);
-	  let videos = [];
-	  let currentIndex = 1; // Start bei 1 wegen Clone
-
-	  // Clone für Loop
 	  const firstCloneSrc = shuffled[0];
 	  const lastCloneSrc = shuffled[shuffled.length - 1];
 	  const fullList = [lastCloneSrc, ...shuffled, firstCloneSrc];
@@ -51,54 +44,40 @@ document.addEventListener("DOMContentLoaded", () => {
 		  video.currentTime = 0.01;
 		});
 
-		track.appendChild(video);
-		videos.push(video);
-
-		// Tap = Play/Pause
 		video.addEventListener("pointerup", e => {
 		  e.stopPropagation();
 		  video.paused ? safePlay(video) : video.pause();
 		});
 
-		video.addEventListener("ended", () => {
-		  moveTo(currentIndex + 1, true);
-		});
+		video.addEventListener("ended", () => moveTo(currentIndex + 1, true));
+
+		track.appendChild(video);
+		videos.push(video);
 	  });
 
-	  // ===== Position setzen =====
-	  function setPosition(index, animate = true) {
-		const videoWidth = videos[0].offsetWidth;
-		const padding = track.parentElement.offsetWidth * 0.1; // entspricht CSS padding 10%
-		const offset = videoWidth * index - padding;
-		track.style.transition = animate
-		  ? "transform 0.6s cubic-bezier(.16,.84,.44,1)"
-		  : "none";
-		track.style.transform = `translateX(-${offset}px)`;
-	  }
-
 	  function safePlay(video) {
-		const promise = video.play();
-		if (promise !== undefined) promise.catch(() => {});
+		const p = video.play();
+		if (p !== undefined) p.catch(() => {});
 	  }
 
 	  function playOnly(index) {
-		videos.forEach((v, i) => {
-		  if (i === index) {
-			v.currentTime = 0;
-			safePlay(v);
-		  } else v.pause();
-		});
+		videos.forEach((v, i) => i === index ? (v.currentTime = 0, safePlay(v)) : v.pause());
+	  }
+
+	  function setPosition(index, animate = true) {
+		const videoWidth = videos[0].offsetWidth;
+		const padding = track.parentElement.offsetWidth * 0.1; 
+		const offset = videoWidth * index - padding;
+		track.style.transition = animate ? "transform 0.6s cubic-bezier(.16,.84,.44,1)" : "none";
+		track.style.transform = `translateX(-${offset}px)`;
 	  }
 
 	  function moveTo(index, autoPlay = false) {
 		if (isAnimating) return;
 		isAnimating = true;
-
 		currentIndex = index;
 		setPosition(currentIndex, true);
-
-		if (autoPlay) playOnly(currentIndex);
-		else videos.forEach(v => v.pause());
+		if (autoPlay) playOnly(currentIndex); else videos.forEach(v => v.pause());
 	  }
 
 	  // Initial
@@ -108,18 +87,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	  // Loop Reset
 	  track.addEventListener("transitionend", () => {
 		isAnimating = false;
-		if (currentIndex === videos.length - 1) {
-		  currentIndex = 1;
-		  requestAnimationFrame(() => setPosition(currentIndex, false));
-		}
-		if (currentIndex === 0) {
-		  currentIndex = videos.length - 2;
-		  requestAnimationFrame(() => setPosition(currentIndex, false));
-		}
+		if (currentIndex === videos.length - 1) currentIndex = 1;
+		if (currentIndex === 0) currentIndex = videos.length - 2;
+		requestAnimationFrame(() => setPosition(currentIndex, false));
 	  });
 
 	  // Swipe
-	  let startX = 0, currentTranslate = 0, isDragging = false;
+	  let startX = 0, isDragging = false;
 	  track.style.touchAction = "pan-y";
 
 	  track.addEventListener("touchstart", e => {
@@ -133,147 +107,38 @@ document.addEventListener("DOMContentLoaded", () => {
 		const diff = e.touches[0].clientX - startX;
 		const videoWidth = videos[0].offsetWidth;
 		const padding = track.parentElement.offsetWidth * 0.1;
-		currentTranslate = -currentIndex * videoWidth + diff - padding;
-		track.style.transform = `translateX(${currentTranslate}px)`;
+		track.style.transform = `translateX(${-currentIndex * videoWidth + diff - padding}px)`;
 	  });
 
 	  track.addEventListener("touchend", e => {
 		if (!isDragging) return;
 		const diff = e.changedTouches[0].clientX - startX;
-		if (diff > 80) prev(); 
-		else if (diff < -80) next(); 
+		if (diff > 80) moveTo(currentIndex - 1, true);
+		else if (diff < -80) moveTo(currentIndex + 1, true);
 		else setPosition(currentIndex, true);
 		isDragging = false;
 	  });
 
-	  function next() { moveTo(currentIndex + 1, true); }
-	  function prev() { moveTo(currentIndex - 1, true); }
-	}
-	
-	
-	
-	
-	
-	
-	
-	  
-		/* prefers-reduced-motion Support (Accessibility Pflicht) */
-		if (prefersReducedMotion) {
-		  videos.forEach(v => v.pause());
-		  return;
-		}
-
-		// Swipe
-		let startX = 0;
-		let currentTranslate = 0;
-		let isDragging = false;
-
-		track.style.touchAction = "pan-y";
-
-		track.addEventListener("touchstart", (e) => {
-		  startX = e.touches[0].clientX;
-		  isDragging = true;
-
-		  track.style.transition = "none";
-		});
-
-		track.addEventListener("touchmove", (e) => {
-
-		  if (!isDragging) return;
-
-		  const currentX = e.touches[0].clientX;
-		  const diff = currentX - startX;
-
-		  const baseTranslate = -currentIndex * track.offsetWidth;
-
-		  currentTranslate = baseTranslate + diff;
-
-		  track.style.transform = `translateX(${currentTranslate}px)`;
-
-		});
-
-		track.addEventListener("touchend", (e) => {
-
-		  if (!isDragging) return;
-
-		  const endX = e.changedTouches[0].clientX;
-		  const diff = endX - startX;
-
-		  track.style.transition = "transform 0.6s cubic-bezier(.16,.84,.44,1)";
-
-		  if (diff > 80) {
-			prev();
-		  } else if (diff < -80) {
-			next();
-		  } else {
-			setPosition(currentIndex, true);
-		  }
-
-		  isDragging = false;
-
-		});
-		
+	  // Intersection Observer
 	  const gallerySection = document.querySelector(".gallery");
+	  if (gallerySection) {
+		const observer = new IntersectionObserver(entries => {
+		  entries.forEach(entry => {
+			if (!videos[currentIndex]) return;
+			entry.isIntersecting ? playOnly(currentIndex) : videos.forEach(v => v.pause());
+		  });
+		}, { threshold: 0.4 });
+		observer.observe(gallerySection);
+	  }
 
-	if (gallerySection) {
-
-	  const observer = new IntersectionObserver((entries) => {
-
-		entries.forEach(entry => {
-
-		  const activeVideo = videos[currentIndex];
-
-		  if (!activeVideo) return;
-			
-			/* Sicherheits-Guard für IntersectionObserver */
-			if (entry.isIntersecting) {
-			  playOnly(currentIndex);
-			} else {
-			  videos.forEach(v => v.pause());
-			}
-		  
-		});
-
-	  }, {
-		threshold: 0.4  // 40% sichtbar = aktiv
+	  // Visibility API
+	  document.addEventListener("visibilitychange", () => {
+		document.hidden ? videos.forEach(v => v.pause()) : playOnly(currentIndex);
 	  });
 
-	  observer.observe(gallerySection);
-	 
-	  /* VISIBILITY API – RAF & Videos pausieren wenn Tab inaktiv */
-	  document.addEventListener("visibilitychange", () => {
-		  if (document.hidden) {
-			videos.forEach(v => v.pause());
-		  } else {
-			playOnly(currentIndex);
-		  }
-		});
-	  
+	  // Resize Fix
+	  window.addEventListener("resize", () => setPosition(currentIndex, false));
 	}
-	  
-	  
-	  /* Resize-Fix für Gallery Width */
-		window.addEventListener("resize", () => {
-		  setPosition(currentIndex, false);
-		});
-	  
-	  
-	//~ }
-	
-
-
-
-
-
-
-
-
-	
-	
-	
-	
-	
-	
 	
 	/* =========================
 	   NAVBAR
