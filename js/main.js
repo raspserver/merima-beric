@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		// Tap = Play/Pause
 		video.addEventListener("click", () => {
 		  if (video.paused) {
-			video.play();
+			safePlay(video);
 		  } else {
 			video.pause();
 		  }
