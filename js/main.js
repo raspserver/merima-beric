@@ -100,37 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	});	
 	
-	/* =========================
-	   NAVBAR SCROLL PROGRESS
-	========================= */
-
-	const navbar = document.querySelector(".navbar");
-	navbar.style.setProperty("--nav-progress", 0);
-	navbar.style.setProperty("--nav-height-progress", 0);
-	if (!navbar) return;
-
-	function updateNavbar() {
-
-	  const scrollY = window.scrollY;
-	  const heroHeight = window.innerHeight;
-
-	  // Progress von 0 → 1
-	  let progress = scrollY / (heroHeight * 0.35);
-	  progress = Math.max(0, Math.min(progress, 1));
-
-	  navbar.style.setProperty("--nav-progress", progress);
-
-	  // Height Progress etwas langsamer
-	  let heightProgress = scrollY / (heroHeight * 0.55);
-	  heightProgress = Math.max(0, Math.min(heightProgress, 1));
-
-	  navbar.style.setProperty("--nav-height-progress", heightProgress);
-
-	}
-
-	window.addEventListener("scroll", updateNavbar);
-	updateNavbar();
-	
 
 	
 	
@@ -373,8 +342,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	   NAVBAR
 	========================= */
 
-	//~ const navbar = document.querySelector(".navbar");
-	//~ const hero = document.querySelector(".hero");
+	const navbar = document.querySelector(".navbar");
+	const hero = document.querySelector(".hero");
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
