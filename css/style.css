@@ -31,6 +31,10 @@ body {
 	line-height: 1.6;
 }
 
+html, body {
+    height: 100%;
+}
+
 .hero {
 	position: relative;
 	min-height: 100vh;   /* Fallback */
