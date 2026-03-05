@@ -1300,70 +1300,92 @@ footer a:hover {
 		animation: none;
 	}
 	
-	/* ===== GALLERY STRUCTURE FIX ===== */
+	
+	
+	
+	
+	
+	
+	
+	/* ===============================
+	   GALLERY / VIDEO SLIDER OPTIMIZED
+	================================= */
 
 	.gallery {
-		background: var(--bg-light);
-		scroll-margin-top: calc(78px + 2rem);
+	  background: var(--bg-light);
+	  scroll-margin-top: calc(78px + 2rem);
+	  padding: var(--section-spacing) 0;
 	}
 
 	.gallery .section-title {
-		margin-bottom: 4rem; /* Abstand nach unten */
+	  margin-bottom: 4rem;
+	  text-align: center;
 	}
 
 	.gallery-slider {
-		margin-top: 0; /* kein doppelter Abstand */
-		width: 100%;
+	  overflow: hidden;          /* nur Track scrollt */
+	  width: 100%;
+	  max-width: 1200px;
+	  margin: 0 auto;
+	  padding: 0 5%;             /* für Peek-Effekt */
+	  box-sizing: border-box;
+	}
+
+	.gallery-track {
+	  display: flex;
+	  gap: 2%;                   /* Abstand zwischen Videos */
+	  transition: transform 0.6s cubic-bezier(.16,.84,.44,1);
+	  will-change: transform;
+	  align-items: flex-start;
+	  transform: translateZ(0);
+	}
+
+	.gallery video {
+	  flex: 0 0 auto;             /* verhindert Shrink */
+	  width: calc((100% - (2% * (4 - 1))) / 4); /* 4 Videos pro Reihe Desktop */
+	  aspect-ratio: 9 / 16;
+	  object-fit: cover;
+	  border-radius: 2px;
+	  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+	  cursor: pointer;
+	  transition: transform 0.4s ease, box-shadow 0.4s ease;
+	}
+
+	.gallery video:hover {
+	  transform: scale(1.03);
+	  box-shadow: 0 30px 80px rgba(212, 175, 55, 0.3);
+	}
+
+	/* =========================
+	   RESPONSIVE BREAKPOINTS
+	========================= */
+
+	/* Tablet */
+	@media (max-width: 1024px) {
+	  .gallery video {
+		width: calc((100% - (2% * (2 - 1))) / 2); /* 2 Videos pro Reihe */
+	  }
+	  .gallery-slider {
+		padding: 0 5%;
+	  }
+	}
+
+	/* Mobile */
+	@media (max-width: 768px) {
+	  .gallery video {
+		width: 80%; /* 1 Video pro "Slide" */
+		margin: 0 auto;
+	  }
+	  .gallery-track {
+		gap: 5%; /* mehr Abstand für Swipe */
+	  }
+	  .gallery-slider {
+		padding: 0 10%; /* Peek-Effekt stärker */
+	  }
 	}
 	
-}
-
-.gallery {
-  background: var(--bg-light);
-}
-
-.gallery-slider {
-  overflow: visible; /* vorher hidden */
-  padding: 0 10%;   /* sorgt dafür, dass nächste/letzte Slides rausschauen */
-  width: min(900px, 100%);
-  margin: 0 auto;
-}
-
-.gallery-track {
-	display: flex;
-	width: 100%;
-	align-items: flex-start;   /* ← wichtig */
-	transition: transform 0.6s cubic-bezier(.16,.84,.44,1);
-  
-	will-change: transform;
-	-webkit-overflow-scrolling: touch;
 	
-	transform: translateZ(0);
-	contain: layout paint;
-	
-	gap: 2%; /* optional: Abstand zwischen den Videos */
-}
 
-.gallery video {
-	width: 100%;
-	height: auto;
-	aspect-ratio: 9 / 16;
-	object-fit: cover;
-	
-	display: block;
-	flex-shrink: 0;
-	border-radius: 2px;
-	box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
-	
-	backface-visibility: hidden;
-	transform: translateZ(0);
-}
-
-@media (max-width: 768px) {
-  .gallery-slider {
-    width: 100%;
-  }
-}
 
 /* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
 @supports not (backdrop-filter: blur(1px)) {
