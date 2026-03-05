@@ -81,11 +81,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		track.style.transform = `translateX(-${index * 100}%)`;
 	  }
 	  
-	  function playOnly(index) {
+		function safePlay(video) {
+		  const playPromise = video.play();
+
+		  if (playPromise !== undefined) {
+			playPromise.catch(() => {
+			  // AbortError oder Autoplay Block -> ignorieren
+			});
+		  }
+		}
+
+		function playOnly(index) {
 		  videos.forEach((video, i) => {
 			if (i === index) {
 			  video.currentTime = 0;
-			  video.play();
+			  safePlay(video);
 			} else {
 			  video.pause();
 			}
