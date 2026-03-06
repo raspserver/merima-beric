@@ -84,9 +84,7 @@ body {
 	text-align: center;
 	padding: 0 2rem;
 	animation: fadeInUp 1.2s ease-out;
-/*
 	margin-bottom: 0;
-*/
 	
 	margin-top: auto;
     margin-bottom: auto;
@@ -327,8 +325,8 @@ body {
 }
 
 .scroll-indicator {
-	position: relative;
-    margin-top: 3rem;
+	position: absolute;
+	bottom: 50px;
 	left: 50%;
 	transform: translateX(-50%);
 	width: 30px;
