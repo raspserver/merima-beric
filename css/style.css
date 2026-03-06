@@ -53,7 +53,7 @@ body {
 	padding-top: calc(				/* iPhone Notch – Safe Area					*/
 		var(--nav-height)			/* Auf iPhones mit Notch (z.B. iPhone 15)	*/
 		+ env(safe-area-inset-top) 	/* kann Content unter der Kamera liegen.	*/
-		+ 1px );					/* extra spacing for notch					*/
+		+ 30px );					/* extra spacing for notch					*/
 
 	padding-bottom: 60px;
     
