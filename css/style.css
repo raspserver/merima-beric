@@ -45,12 +45,12 @@ window.addEventListener('resize', setViewportHeight);
 
 .hero {
 	position: relative;
-
-	min-height: calc(100vh - var(--nav-height));				/* fallback */
-	min-height: calc(100dvh - var(--nav-height));				/* min-height statt height */
+/**
+/**	min-height: calc(100vh - var(--nav-height));				/* fallback */
+/**	min-height: calc(100dvh - var(--nav-height));				/* min-height statt height */
 																/* Android Chrome – Toolbar verändert Höhe */
 																/* Android Chrome kann beim Scrollen die Toolbar einfahren → Layout springt. */
-	min-height: calc((var(--vh) * 100) - var(--nav-height));	/* Manche Safari Versionen berechnen dvh falsch. */
+/**	min-height: calc((var(--vh) * 100) - var(--nav-height));	/* Manche Safari Versionen berechnen dvh falsch. */
 
 													
 	display: flex;
