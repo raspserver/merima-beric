@@ -8,6 +8,7 @@
 	--transition-fast: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
 	--transition: all 0.4s cubic-bezier(.4,0,.2,1);
 	--section-spacing: 8rem;
+	--nav-height: 100px;
 	
 	/* === Brand System === */
 	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo: home, navbar und footer */
@@ -27,6 +28,7 @@ body {
 	font-family: 'Montserrat', sans-serif;
 	color: var(--text-dark);
 	background-color: var(--bg-light);
+	background: #1a1a1a;
 	overflow-x: hidden;
 	line-height: 1.6;
 }
@@ -36,6 +38,8 @@ body {
 	min-height: 100vh;   /* Fallback */
     min-height: 100svh;  /* Moderne Browser */
 	padding: 100px 2rem 120px;
+	margin-top: calc(-1 * var(--nav-height));
+    padding-top: calc(var(--nav-height) + 100px);
 	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 	display: flex;
 	align-items: center;
