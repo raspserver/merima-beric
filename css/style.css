@@ -59,11 +59,14 @@ window.addEventListener('resize', setViewportHeight);
 	justify-content: center;
 	
     padding: 0 2rem;
-	padding-top: calc(				/* iPhone Notch – Safe Area					*/
-		var(--nav-height)			/* Auf iPhones mit Notch (z.B. iPhone 15)	*/
-		+ env(safe-area-inset-top) 	/* kann Content unter der Kamera liegen.	*/
-		+ 20px
+/**	padding-top: calc(				/* iPhone Notch – Safe Area					*/
+/**		var(--nav-height)			/* Auf iPhones mit Notch (z.B. iPhone 15)	*/
+/**		+ env(safe-area-inset-top) 	/* kann Content unter der Kamera liegen.	*/
+/**		+ 20px */
+/*
 	);
+*/
+
 	padding-bottom: 60px;
     
     margin-top: 0;
