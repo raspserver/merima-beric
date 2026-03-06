@@ -35,17 +35,13 @@ body {
 	line-height: 1.6;
 }
 
-/*
-function setViewportHeight(){										/* Manche Safari Versionen berechnen dvh falsch. */
-/*
+function setViewportHeight(){										 Manche Safari Versionen berechnen dvh falsch. 
 	const vh = window.innerHeight * 0.01;
 	document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 
 setViewportHeight();
 window.addEventListener('resize', setViewportHeight);
-*/
-
 
 .hero {
 	position: relative;
