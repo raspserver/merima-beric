@@ -1405,6 +1405,21 @@ footer a:hover {
 		}
 
 	}
+	
+	
+	@media (max-width:768px){
+
+		.hero{
+		padding-top: calc(var(--nav-height) + 20px);
+		padding-bottom: 60px;
+		}
+
+		.hero h1{
+		line-height:1.2;
+		}
+
+	}
+	
 
 
 /* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
