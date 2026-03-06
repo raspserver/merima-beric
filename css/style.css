@@ -8,7 +8,7 @@
 	--transition-fast: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
 	--transition: all 0.4s cubic-bezier(.4,0,.2,1);
 	--section-spacing: 8rem;
-	--nav-height: 100px;
+	--nav-height: 78px;
 	
 	/* === Brand System === */
 	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo: home, navbar und footer */
@@ -34,21 +34,21 @@ body {
 
 .hero {
 	position: relative;
-    min-height: 100vh;
-    min-height: 100svh;
-    min-height: 100dvh;
-    
-    padding: 0 2rem;
-    padding-top: calc(var(--nav-height) + 40px);
-    padding-bottom: clamp(60px, 10vh, 100px);
-    margin-top: calc(-1 * var(--nav-height));
 
-	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	min-height: calc(100dvh - var(--nav-height));
 	
-	overflow: visible;
+    padding: 0 2rem;
+	padding-top: calc(var(--nav-height) + 20px);
+	padding-bottom: 60px;
+    
+    margin-top: 0;
+    
+	overflow: hidden;
+
+	background: linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
+	display:flex;
+	align-items:center;
+	justify-content:center;
 
 	backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -89,6 +89,7 @@ body {
     z-index: 2;
     text-align: center;
     padding: 0 2rem;
+    transform: translateY(10px);
     animation: fadeInUp 1.2s ease-out;
 }
 
@@ -329,7 +330,7 @@ body {
 
 .scroll-indicator {
 	position: absolute;
-	bottom: 20px;
+	bottom:40px;
 	left: 50%;
 	transform: translateX(-50%);
 	width: 30px;
@@ -899,52 +900,7 @@ footer a:hover {
 	color: var(--text-light);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-	.hero {
-		padding-top: calc(var(--nav-height) + 40px);
-	}
-	.hero h1 {
-		font-size: 2.2rem;
-	}
 
-	.hero-content {
-		padding-left: 1rem;
-		padding-right: 1rem;
-	}
-
-	section {
-		padding: 4rem 1.5rem;
-		margin: var(--section-spacing) 0;
-	}
-
-	.about-image-wrapper {
-		float: none;
-		width: 100%;
-		margin-right: 0;
-		margin-bottom: 2rem;
-	}
-
-	.about-image-accent {
-		width: 100px;
-		height: 100px;
-		top: 10px;
-		right: -10px;
-	}
-
-	.contact-content {
-		grid-template-columns: 1fr;
-		gap: 2rem;
-	}
-
-	.testimonials-grid {
-		grid-template-columns: 1fr;
-	}
-
-	.services-grid {
-		grid-template-columns: 1fr;
-	}
-}
 
 /* ===== NAVBAR LUXURY ===== */
 
@@ -1365,6 +1321,51 @@ footer a:hover {
 	  transform: scale(1.03);
 	  box-shadow: 0 30px 80px rgba(212, 175, 55, 0.3);
 	}
+	
+	
+	/* Responsive Design */
+@media (max-width: 768px) {
+	.hero h1 {
+		font-size: 2.2rem;
+	}
+
+	.hero-content {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+
+	section {
+		padding: 4rem 1.5rem;
+		margin: var(--section-spacing) 0;
+	}
+
+	.about-image-wrapper {
+		float: none;
+		width: 100%;
+		margin-right: 0;
+		margin-bottom: 2rem;
+	}
+
+	.about-image-accent {
+		width: 100px;
+		height: 100px;
+		top: 10px;
+		right: -10px;
+	}
+
+	.contact-content {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+
+	.testimonials-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.services-grid {
+		grid-template-columns: 1fr;
+	}
+}
 
 	/* =========================
 	   RESPONSIVE BREAKPOINTS
@@ -1408,11 +1409,6 @@ footer a:hover {
 	
 	
 	@media (max-width:768px){
-
-		.hero{
-		padding-top: calc(var(--nav-height) + 20px);
-		padding-bottom: 60px;
-		}
 
 		.hero h1{
 		line-height:1.2;
