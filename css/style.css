@@ -42,13 +42,13 @@ body {
     padding-top: calc(var(--nav-height) + 40px);
     padding-bottom: clamp(60px, 10vh, 100px);
     margin-top: calc(-1 * var(--nav-height));
-    
-    overflow: visible;
 
 	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	
+	overflow: visible;
 
 	backdrop-filter: none;
     -webkit-backdrop-filter: none;
