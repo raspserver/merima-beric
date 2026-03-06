@@ -105,8 +105,8 @@ body {
     padding: 0 2rem;
     transform: translateY(10px);
     animation: fadeInUp 1.2s ease-out;
-*/
 }
+*/
 
 .hero-content{
     animation: fadeInUp 1.2s ease-out forwards;
