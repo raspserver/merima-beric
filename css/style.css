@@ -22,23 +22,36 @@
 
 html {
     scroll-behavior: smooth;
+	scrollbar-gutter: stable;	/* Windows Desktop Browser haben oft sichtbare Scrollbars, die Layout verschieben.	*/
+								/* Das verhindert, dass Layout springt wenn Scrollbar erscheint.					*/
 }
 
 body {
 	font-family: 'Montserrat', sans-serif;
 	color: var(--text-dark);
 	background-color: var(--bg-light);
-	overflow-x: hidden;
+	overflow-x: hidden;						/* Windows Desktop Browser haben oft sichtbare Scrollbars, die Layout verschieben.	*/
+											/* Das verhindert, dass Layout springt wenn Scrollbar erscheint.					*/
 	line-height: 1.6;
 }
+
+function setViewportHeight(){										/* Manche Safari Versionen berechnen dvh falsch. */
+	const vh = window.innerHeight * 0.01;
+	document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+setViewportHeight();
+window.addEventListener('resize', setViewportHeight);
 
 .hero {
 	position: relative;
 
-	min-height: calc(100vh - var(--nav-height));	/* fallback */
-	min-height: calc(100dvh - var(--nav-height));	/* min-height statt height */
-													/* Android Chrome – Toolbar verändert Höhe */
-													/* Android Chrome kann beim Scrollen die Toolbar einfahren → Layout springt. */
+	min-height: calc(100vh - var(--nav-height));				/* fallback */
+	min-height: calc(100dvh - var(--nav-height));				/* min-height statt height */
+																/* Android Chrome – Toolbar verändert Höhe */
+																/* Android Chrome kann beim Scrollen die Toolbar einfahren → Layout springt. */
+	min-height: calc((var(--vh) * 100) - var(--nav-height));	/* Manche Safari Versionen berechnen dvh falsch. */
+													
 	display: flex;
 	align-items: center;
 	justify-content: center;
