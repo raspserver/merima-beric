@@ -1436,6 +1436,8 @@ Hinweis: Stand März 2026 – logische CSS-Pixel (device-width / dpr).
 Viele Modelle teilen dieselben Breakpoints (z. B. 390 px für fast alle 6.1"-Geräte seit iPhone 12).
 iPhone SE (4. Gen) 2025 nutzt 390 × 844 px wie iPhone 16 / 16e.
 
+***
+
 Samsung Galaxy Modell(e)                                 | Typische max-width Media Query                   | Typische max-height Media Query       | Bemerkung / Release
 ---------------------------------------------------------|--------------------------------------------------|---------------------------------------|------------------------------------------------------
 Galaxy S25 Ultra / S24 Ultra / S23 Ultra                 | @media (max-width: 412px)                        | @media (max-height: 891px)            | Ultra-Modelle 2023–2025 (QHD+, ~3.5x DPR)
@@ -1455,6 +1457,7 @@ Die meisten Samsung-Geräte nutzen 360 px oder 412 px.
 Höhen sind indikativ (Browser-UI, Punch-Hole, Nav-Bar variieren stark).
 Foldables brauchen oft extra Queries für Cover vs. Main.
 
+***
 
 Gängigste / empfohlene Breakpoints für moderne responsive CSS-Entwicklung
 (Stand 2026, basierend auf aktuellen Best Practices, Statcounter-Daten,
@@ -1476,9 +1479,6 @@ Mobile-first mit **min-width** ist State-of-the-Art (nicht max-width von groß n
 Die meisten Projekte brauchen nur 3–4 davon.
 
 */
-	
-	
-
 
 /* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
 @supports not (backdrop-filter: blur(1px)) {
