@@ -1,5 +1,6 @@
 
 
+
 ----------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ------------------------------------------------- |
 | iPhone Modell(e)											| Typische max-width Media Query		| Typische max-height Media Query		| Bemerkung / Release								|
 ----------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ------------------------------------------------- |
@@ -17,8 +18,6 @@
 Hinweis: Stand März 2026 – logische CSS-Pixel (device-width / dpr).
 Viele Modelle teilen dieselben Breakpoints (z. B. 390 px für fast alle 6.1"-Geräte seit iPhone 12).
 iPhone SE (4. Gen) 2025 nutzt 390 × 844 px wie iPhone 16 / 16e.
-
-***
 
 | ----------------------------------------------------- | ------------------------------------------------- | ------------------------------------- | --------------------------------------------- |
 | Samsung Galaxy Modell(e)								| Typische max-width Media Query					| Typische max-height Media Query		| Bemerkung / Release							|
@@ -64,7 +63,9 @@ sondern **inhaltsgetriebene / statistisch häufige Breakpoints**.
 Mobile-first mit **min-width** ist State-of-the-Art (nicht max-width von groß nach klein).
 Die meisten Projekte brauchen nur 3–4 davon.
 
-Meine Geräte:
+***
+
+| Meine Geräte |
 
 | ----------------------------- | ----------------------------------------------------------------
 | 					  	   	  	| Display		Viewport	Edge	Chrome	Opera	Safari	Firefox	
@@ -76,9 +77,11 @@ Meine Geräte:
 | i-Phone 7						| 750x1334	
 | ----------------------------- | ----------------------------------------------------------------
 
-Frontend Debug Devices (2026)
+***
 
-Smartphones
+| Frontend Debug Devices (2026) |
+
+| Smartphones |
 
 | ------------------------ | ------- | ----------------- | -------- | --- | --------------------- |
 | Device                   | Browser | Screen Resolution | Viewport | DPR | Notes                 |
@@ -93,7 +96,7 @@ Smartphones
 | ------------------------ | ------- | ----------------- | -------- | --- | --------------------- |
 
 
-Tablets
+| Tablets |
 
 | --------------------- | ------- | --------- | --------- | --- | ------------------- |
 | Device                | Browser | Screen    | Viewport  | DPR | Notes               |
@@ -105,8 +108,7 @@ Tablets
 | Samsung Galaxy Tab S9 | Chrome  | 1600×2560 | 800×1280  | 2   | Android tablet      |
 | --------------------- | ------- | --------- | --------- | --- | ------------------- |
 
-
-Laptops
+| Laptops |
 
 | -------------------- | ------- | --------- | ---------- | --- | ------------------------ |
 | Device               | Browser | Screen    | Viewport   | DPR | Notes                    |
@@ -117,8 +119,7 @@ Laptops
 | Windows Laptop 1440p | Chrome  | 2560×1440 | ~2560×1329 | 1   | Large laptop             |
 | -------------------- | ------- | --------- | ---------- | --- | ------------------------ |
 
-
-Desktop Monitors
+| Desktop Monitors |
 
 | -------------- | ----------------- | ---------------- | --- | ------------------- |
 | Monitor        | Screen Resolution | Typical Viewport | DPR | Notes               |
@@ -128,3 +129,17 @@ Desktop Monitors
 | 4K Monitor     | 3840×2160         | ~3840×2060       | 1–2 | HiDPI scaling       |
 | Ultrawide      | 3440×1440         | ~3440×1320       | 1   | Marketing sites     |
 | -------------- | ----------------- | ---------------- | --- | ------------------- |
+
+| Responsive Breakpoints |
+
+| ------------- | ------ |
+| Name          | Width  |
+| ------------- | ------ |
+| Small mobile  | 360px  |
+| Mobile        | 390px  |
+| Large mobile  | 414px  |
+| Tablet        | 768px  |
+| Laptop        | 1024px |
+| Desktop       | 1280px |
+| Large desktop | 1536px |
+| ------------- | ------ |
