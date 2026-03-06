@@ -33,21 +33,31 @@ body {
 }
 
 .hero {
-    position: relative;
-
-    min-height: 100vh;
-    min-height: 100svh;
-
-    padding-top: var(--nav-height);
-    padding-left: 2rem;
-    padding-right: 2rem;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    background: linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
+	position: relative;
+	min-height: 100vh;   /* Fallback */
+    min-height: 100svh;  /* Moderne Browser */
+	padding: 100px 2rem 120px;
+	margin-top: calc(-1 * var(--nav-height));
+    padding-top: calc(var(--nav-height) + 100px);
+	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	
+	backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    
+    --hero-scale: 1;
+    --hero-brightness: 1;
+    --hero-parallax: 0px;
+    
+    will-change: transform;
+	filter: brightness(var(--hero-brightness));
+	
+	transform:
+        translateZ(0)
+        translateY(var(--hero-parallax))
+        scale(var(--hero-scale));
 }
 
 .hero::before {
@@ -74,8 +84,7 @@ body {
 	text-align: center;
 	padding: 0 2rem;
 	animation: fadeInUp 1.2s ease-out;
-	margin-top: auto;
-    margin-bottom: auto;
+	margin-bottom: 0;
 }
 
 @keyframes fadeInUp {
@@ -312,8 +321,8 @@ body {
 }
 
 .scroll-indicator {
-	position: relative;
-    margin-top: 3rem;
+	position: absolute;
+	bottom: 50px;
 	left: 50%;
 	transform: translateX(-50%);
 	width: 30px;
@@ -323,12 +332,6 @@ body {
 	opacity: 0.7;
 	animation: bounce 2s infinite;
 }
-
-
-.scroll-indicator {
-    
-}
-
 
 .scroll-indicator::before {
 	content: '';
@@ -1385,19 +1388,6 @@ footer a:hover {
 	}
 	
 	
-	
-	
-	@media (max-height: 700px) {
-
-		.hero h1 {
-			font-size: clamp(2rem,6vw,3.5rem);
-		}
-
-		.hero-description {
-			margin-bottom: 2rem;
-		}
-
-	}
 
 
 /* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
