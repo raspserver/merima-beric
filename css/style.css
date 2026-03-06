@@ -917,7 +917,7 @@ footer a:hover {
 /* Responsive Design */
 @media (max-width: 768px) {
 	.hero {
-		padding-top: 45px;
+		padding-top: calc(var(--nav-height) + 40px);
 	}
 	.hero h1 {
 		font-size: 2.2rem;
