@@ -35,14 +35,6 @@ body {
 	line-height: 1.6;
 }
 
-function setViewportHeight(){										/* Manche Safari Versionen berechnen dvh falsch. */
-	const vh = window.innerHeight * 0.01;
-	document.documentElement.style.setProperty('--vh', `${vh}px`);
-}
-
-setViewportHeight();
-window.addEventListener('resize', setViewportHeight);
-
 .hero {
 	position: relative;
 
@@ -61,8 +53,7 @@ window.addEventListener('resize', setViewportHeight);
 	padding-top: calc(				/* iPhone Notch – Safe Area					*/
 		var(--nav-height)			/* Auf iPhones mit Notch (z.B. iPhone 15)	*/
 		+ env(safe-area-inset-top) 	/* kann Content unter der Kamera liegen.	*/
-		+ 20px */
-	);
+		+ 20px );					/* extra spacing for notch					*/
 
 	padding-bottom: 60px;
     

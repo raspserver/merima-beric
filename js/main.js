@@ -1,5 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
 	
+	function setViewportHeight(){										/* Manche Safari Versionen berechnen dvh falsch. */
+		const vh = window.innerHeight * 0.01;
+		document.documentElement.style.setProperty('--vh', `${vh}px`);
+	}
+
+	setViewportHeight();
+	window.addEventListener('resize', setViewportHeight);
+	
 	/* prefers-reduced-motion Support (Accessibility Pflicht) */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
