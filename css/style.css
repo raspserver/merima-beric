@@ -36,9 +36,9 @@ body {
 	position: relative;
 
 	min-height: calc(100vh - var(--nav-height));	/* fallback */
-	min-height: calc(100dvh - var(--nav-height));	/* Android Chrome – Toolbar verändert Höhe */
+	min-height: calc(100dvh - var(--nav-height));	/* min-height statt height */
+													/* Android Chrome – Toolbar verändert Höhe */
 													/* Android Chrome kann beim Scrollen die Toolbar einfahren → Layout springt. */
-	
 	display: flex;
 	align-items: center;
 	justify-content: center;
