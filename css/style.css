@@ -1385,6 +1385,19 @@ footer a:hover {
 	}
 	
 	
+	
+	
+	@media (max-height: 700px) {
+
+		.hero h1 {
+			font-size: clamp(2rem,6vw,3.5rem);
+		}
+
+		.hero-description {
+			margin-bottom: 2rem;
+		}
+
+	}
 
 
 /* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
