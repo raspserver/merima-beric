@@ -36,40 +36,44 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 	
 	
-	
 		
 	/* prefers-reduced-motion Support (Accessibility Pflicht) */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	
+	
+	
 	/* SCROLL INDICATOR HERO SECTION */
-	const indicator = document.querySelector('.scroll-indicator');
-	
-	/* Scroll Indicator verschwindet, wenn nach unten gescrollt wird					*/
-	/* Toggle throttle																	*/
-	/* Performance Optimierung. DOM-Update nur wenn sich der Zustand wirklich ändert.	*/
-	let indicatorHidden = false;
-	window.addEventListener('scroll', () => {
-	  const shouldHide = window.scrollY > 40;
+	const indicator = document.querySelector(".scroll-indicator");
 
-	  if (shouldHide !== indicatorHidden) {
-		indicator.classList.toggle('hidden', shouldHide);
-		indicatorHidden = shouldHide;
-	  }
-	}, { passive: true });
+	if (indicator) {
+
+	  let indicatorHidden = false;
+
+	  window.addEventListener("scroll", () => {
+		const shouldHide = window.scrollY > 40;
+
+		if (shouldHide !== indicatorHidden) {
+		  indicator.classList.toggle("hidden", shouldHide);
+		  indicatorHidden = shouldHide;
+		}
+
+	  }, { passive: true });
+
+	  /* Delayed Appearance (1.2s) */
+	  setTimeout(() => {
+		indicator.classList.remove("hidden");
+		indicator.classList.add("visible");
+	  }, 1200);
+
+	  /* Click → Scroll to About */
+	  indicator.addEventListener("click", () => {
+		const nextSection = document.querySelector("#about");
+		scrollToSection(nextSection);
+	  });
+
+	}
 	
-	/* Scroll Indicator erscheint mit 1,2s Verzögerung, um nicht von den Animationen des Logos abzulenken */
-	setTimeout(() => {
-	  indicator.classList.add('visible');
-	}, 1200);
-	
-	/* Click auf Scroll Indicator navigiert zur nächsten Sektion */
-	indicator.addEventListener('click', () => {
-	  const nextSection = document.querySelector('#about');
-	  scrollToSection(nextSection);
-	});
-	
-	
-	
+
 
 	/* =========================
 	   TRUE INFINITE GALLERY

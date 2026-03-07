@@ -80,8 +80,6 @@ body {
 
     will-change: transform;	/* GPU-Compositing Stabilisierung, verhindert Micro-Ruckler			*/
     contain: layout paint;	/* isoliert die Parallax-Ebene vollständig vom restlichen Layout	*/
-    
-    will-change: transform;
 }
 
 .hero::before {
