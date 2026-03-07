@@ -22,6 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	window.addEventListener('scroll', () => {
 	  indicator.classList.toggle('hidden', window.scrollY > 40);
 	});
+
+	setTimeout(() => {
+	  indicator.classList.add('visible');
+	}, 1200);
 	
 	indicator.addEventListener('click', () => {
 	  const nextSection = document.querySelector('#about');
