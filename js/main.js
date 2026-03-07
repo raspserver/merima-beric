@@ -17,21 +17,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	//~ Indicator erscheint wieder
 	
-	
-	
-	
-	
-	//~ const indicator = document.querySelector('.scroll-indicator');
-
-	//~ window.addEventListener('scroll', () => {
-	  //~ indicator.style.opacity = window.scrollY > 40 ? '0' : '0.75';
-	//~ });
-	
-	
 	const indicator = document.querySelector('.scroll-indicator');
 
 	window.addEventListener('scroll', () => {
 	  indicator.classList.toggle('hidden', window.scrollY > 40);
+	});
+	
+	indicator.addEventListener('click', () => {
+	  const nextSection = document.querySelector('#about');
+	  nextSection.scrollIntoView({ behavior: 'smooth' });
 	});
 	
 
