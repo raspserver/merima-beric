@@ -340,8 +340,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			  hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
 
 			  // ✨ Parallax (sehr subtil)
-			  const scrollY = window.scrollY;
-			  const parallaxOffset = Math.min(scrollY * -0.04, -40);
+				const scrollY = window.scrollY;
+				const parallaxOffset = Math.max(scrollY * -0.04, -40);
 
 			  hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
 			}
