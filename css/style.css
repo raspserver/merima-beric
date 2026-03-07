@@ -346,11 +346,11 @@ body {
 	position:absolute;
 	
 	
-	top:calc(100% + var(--hero-bottom-space) * 0.5);
-	
 /*
-	bottom: calc(var(--hero-bottom-space) * 0.5);
+	top:calc(100% + var(--hero-bottom-space) * 0.5);
 */
+	
+	bottom: calc(var(--hero-bottom-space) * 0.2);
 	
 	left:50%;
 	transform:translateX(-50%);
