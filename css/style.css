@@ -342,7 +342,7 @@ body {
 
 .scroll-indicator {
 	position: absolute;
-	bottom:40px;
+	bottom: calc((60px) / 2);					/* wegen padding-bottom: 60px; in .hero setzt das den Scroll Indikator mittig zwischen Unterkante Termin-Button und Farbgrenze u "Über mich" Hintergrund*/
 	left: 50%;
 	transform: translateX(-50%);
 	width: 30px;
