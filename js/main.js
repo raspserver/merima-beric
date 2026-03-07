@@ -1,4 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
+	
+	
+	
+	
+	/* =================================================
+	   CENTRAL SCROLL ENGINE
+	   ================================================= */
+
+	function scrollToSection(target) {
+
+	  if (!target) return;
+
+	  const navbar = document.querySelector(".navbar");
+	  const navHeight = navbar ? navbar.offsetHeight : 0;
+
+	  const y =
+		target.getBoundingClientRect().top +
+		window.pageYOffset -
+		navHeight;
+
+	  window.scrollTo({
+		top: y,
+		behavior: "smooth"
+	  });
+
+	}
+	
+	
+	
 		
 	/* prefers-reduced-motion Support (Accessibility Pflicht) */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -27,8 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* Click auf Scroll Indicator navigiert zur nächsten Sektion */
 	indicator.addEventListener('click', () => {
 	  const nextSection = document.querySelector('#about');
-	  nextSection.scrollIntoView({ behavior: 'smooth' });
+	  scrollToSection(nextSection);
 	});
+	
+	
 	
 
 	/* =========================
@@ -354,33 +385,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (navLogo && hero) {
 		  navLogo.addEventListener("click", (e) => {
 			e.preventDefault();
-			hero.scrollIntoView({ behavior: "smooth" });
+			scrollToSection(hero);
 		  });
 		}
-		
-		
-
+			
 		if (heroCta) {
 		  heroCta.addEventListener("click", (e) => {
 			e.preventDefault();
 
 			const target = document.querySelector("#contact");
-			if (!target) return;
-
-			const navbarHeight = navbar.offsetHeight;
-			const targetPosition = target.offsetTop - navbarHeight;
-
-			window.scrollTo({
-			  top: targetPosition,
-			  behavior: "smooth"
-			});
+			scrollToSection(target);
 		  });
 		}
-	  
-	  
 
-	  /* NAV LINKS */		
-		navLinks.forEach(link => {
+	  /* NAV LINKS */
+	  navLinks.forEach(link => {
+
 		  link.addEventListener("click", (e) => {
 
 			e.preventDefault();
@@ -389,20 +409,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			const target = document.querySelector(targetId);
 			if (!target) return;
 
-			const navbarHeight = navbar.offsetHeight;
-			const targetPosition = target.offsetTop - navbarHeight;
-
-			window.scrollTo({
-			  top: targetPosition,
-			  behavior: "smooth"
-			});
+			scrollToSection(target);
 
 			navMenu.classList.remove("active");
 			navToggle.classList.remove("active");
+
 		  });
+
 		});
-
-
+	  
 
 
 	}	/* schließt den scope von if (navbar) */
