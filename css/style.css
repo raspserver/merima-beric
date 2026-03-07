@@ -40,12 +40,12 @@ body {
 
 	padding: 0 2rem;
 	
-	/* Steuerung der Höhe des hero Hintergrundes:					*/
-	/* 100% der sichtbaren Viewporthöhe (Dynamic Viewport Height)	*/
-	/* minus Höhe Navbar											*/
-	/* Viewport ermitteln auf https://whatismyviewport.com/			*/
+	/* Steuerung der Höhe des hero Hintergrundes:											*/
+	/* 100% der sichtbaren Viewporthöhe (Dynamic Viewport Height)							*/
+	/* minus Höhe Navbar																	*/
+	/* Viewport ermitteln auf https://whatismyviewport.com/									*/
 	
-	min-height: var(--vh);   			/* mit js function setVH() 	*/								
+	min-height: var(--vh);		/* mit js function setVH() wegen Chromium Sub-Pixel Drift	*/								
 	padding-top: calc(var(--nav-height) + 20px);
 	padding-bottom: var(--hero-bottom-space);
 	
