@@ -39,11 +39,14 @@ body {
 	position: relative;
 
 	padding: 0 2rem;
+	
 	/* Steuerung der Höhe des hero Hintergrundes:					*/
 	/* 100% der sichtbaren Viewporthöhe (Dynamic Viewport Height)	*/
 	/* minus Höhe Navbar											*/
 	/* Viewport ermitteln auf https://whatismyviewport.com/			*/
-	min-height: 100dvh;
+	/* + 1px Workaround für Chromium rounding bugs					*/
+	
+	min-height: calc(100dvh + 1px);									
 	padding-top: calc(var(--nav-height) + 20px);
 	padding-bottom: 60px;
 	
@@ -67,12 +70,14 @@ body {
     will-change: transform;
 	filter: brightness(var(--hero-brightness));
 	
-/*
-	transform:
+	transform: none;
+}
+
+.hero-inner {
+    transform:
         translateZ(0)
         translateY(var(--hero-parallax))
         scale(var(--hero-scale));
-*/
 }
 
 .hero::before {
