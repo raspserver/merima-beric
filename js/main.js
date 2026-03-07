@@ -307,8 +307,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		  /* ===== SCALE SPRING ===== */
 
 		  const force = (targetProgress - currentProgress) * stiffness;
-			const delta = (now - lastFrameTime) / 16.67;
+		  
+			let delta = (now - lastFrameTime) / 16.67;
 			lastFrameTime = now;
+
+			/* Clamp delta → verhindert Physics Jumps bei Frame Drops */
+			delta = Math.min(delta, 2);
 			
 			velocity += force * delta;
 			velocity *= Math.pow(damping, delta);
