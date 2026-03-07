@@ -42,37 +42,50 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
-	/* SCROLL INDICATOR HERO SECTION */
+	
+	
+	
+
+
+
+	/* ================================
+	   HERO SCROLL INDICATOR (PREMIUM)
+	================================ */
+
 	const indicator = document.querySelector(".scroll-indicator");
+	const heroSection = document.querySelector(".hero");
 
-	if (indicator) {
+	if (indicator && heroSection) {
 
-	  let indicatorHidden = false;
-
-	  window.addEventListener("scroll", () => {
-		const shouldHide = window.scrollY > 40;
-
-		if (shouldHide !== indicatorHidden) {
-		  indicator.classList.toggle("hidden", shouldHide);
-		  indicatorHidden = shouldHide;
-		}
-
-	  }, { passive: true });
-
-	  /* Delayed Appearance (1.2s) */
+	  /* 1. Delayed appearance (Hero Animation zuerst) */
 	  setTimeout(() => {
-		indicator.classList.remove("hidden");
 		indicator.classList.add("visible");
 	  }, 1200);
 
-	  /* Click → Scroll to About */
+	  /* 2. Fade out when hero leaves viewport */
+	  const observer = new IntersectionObserver(entries => {
+		entries.forEach(entry => {
+		  indicator.classList.toggle("hidden", !entry.isIntersecting);
+		});
+	  }, {
+		root: null,
+		threshold: 0.15
+	  });
+
+	  observer.observe(heroSection);
+
+	  /* 3. Click → scroll to next section */
 	  indicator.addEventListener("click", () => {
 		const nextSection = document.querySelector("#about");
 		scrollToSection(nextSection);
 	  });
 
 	}
-	
+
+
+
+
+
 
 
 	/* =========================
