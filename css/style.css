@@ -409,9 +409,6 @@ body {
 	border-color:var(--primary-color);
 	box-shadow:0 0 14px rgba(212,175,55,0.25);
 	opacity:1;
-	
-	
-	transform:translateX(-50%) scale(1.05);
 }
 
 /* Section Styles */
