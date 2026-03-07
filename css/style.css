@@ -367,10 +367,9 @@ body {
 	animation: scroll 2s infinite;
 }
 
-
 @keyframes bounce {
-	0%, 100% { transform: translateX(-50%) translateY(0); }
-	50% { transform: translateX(-50%) translateY(10px); }
+	0%,100% { transform: translateX(-50%) translateY(-5px); }
+	50% { transform: translateX(-50%) translateY(5px); }
 }
 
 @keyframes scroll {
