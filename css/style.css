@@ -65,8 +65,8 @@ body {
     --hero-scale: 1;
     --hero-brightness: 1;
     --hero-parallax: 0px;
-    
-    will-change: transform;
+
+    will-change: auto;
 	filter: brightness(var(--hero-brightness));
 	
 	transform: none;
@@ -80,6 +80,8 @@ body {
 
     will-change: transform;	/* GPU-Compositing Stabilisierung, verhindert Micro-Ruckler			*/
     contain: layout paint;	/* isoliert die Parallax-Ebene vollständig vom restlichen Layout	*/
+    
+    will-change: transform;
 }
 
 .hero::before {
