@@ -177,6 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navToggle = document.querySelector(".nav-toggle");
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
+	const navLogo = document.querySelector(".nav-logo");
 	
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
@@ -348,12 +349,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  /* HERO CTA */
 	  const heroCta = document.querySelector(".cta-button");
-	  
-	  /* Click auf Navbar Logo scrollt smoothly zu hero (Homescreen) */
-		navLogo.addEventListener("click", (e) => {
-		  e.preventDefault();
-		  hero.scrollIntoView({ behavior: "smooth" });
-		});
+
+		/* NAV LOGO CLICK → SCROLL TO HERO */
+		if (navLogo && hero) {
+		  navLogo.addEventListener("click", (e) => {
+			e.preventDefault();
+			hero.scrollIntoView({ behavior: "smooth" });
+		  });
+		}
+		
+		
 
 		if (heroCta) {
 		  heroCta.addEventListener("click", (e) => {
