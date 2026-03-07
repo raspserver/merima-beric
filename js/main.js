@@ -181,6 +181,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
 
+	/* Click auf Navbar Logo scrollt smoothly zu hero (Homescreen) */
+	navLogo.addEventListener("click", (e) => {
+	  e.preventDefault();
+	  hero.scrollIntoView({ behavior: "smooth" });
+	});
+
 	if (navbar) {
 
 		/* prefers-reduced-motion Support (Accessibility Pflicht) */
@@ -392,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-	}	/* schließt scope von if (navbar) */
+	}	/* schließt den scope von if (navbar) */
 	
 	
 	
