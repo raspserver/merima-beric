@@ -178,15 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	
-	/* Click auf Logo der Navbar scrollt zu hero smoothly */
-	//~ const hero = document.querySelector(".hero");
-	//~ navLogo.addEventListener("click", (e) => {
-	  //~ e.preventDefault();
-	  //~ hero.scrollIntoView({ behavior: "smooth" });
-	//~ });
-	
-	
-	
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
 
