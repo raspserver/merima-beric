@@ -1,6 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
 	
-	
+	/* Chromium Sub-Pixel Drift Fix */
+	function setVH(){
+		  document.documentElement.style.setProperty("--vh", `${window.innerHeight}px`);
+		}
+
+		setVH();
+		window.addEventListener("resize", setVH);
+		
+		
+		
 	
 	
 	/* =================================================
