@@ -9,6 +9,7 @@
 	--transition: all 0.4s cubic-bezier(.4,0,.2,1);
 	--section-spacing: 8rem;
 	--nav-height: 78px;
+	--hero-bottom-space: 60px;
 	
 	/* === Brand System === */
 	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo: home, navbar und footer */
@@ -48,7 +49,7 @@ body {
 	
 	min-height: calc(100dvh + 1px);									
 	padding-top: calc(var(--nav-height) + 20px);
-	padding-bottom: 60px;
+	padding-bottom: var(--hero-bottom-space);
 	
 	margin-top: 0;
 													
@@ -342,7 +343,7 @@ body {
 
 .scroll-indicator {
 	position: absolute;
-	bottom: calc((60px) / 2);					/* wegen padding-bottom: 60px; in .hero setzt das den Scroll Indikator mittig zwischen Unterkante Termin-Button und Farbgrenze u "Über mich" Hintergrund*/
+	bottom: calc(var(--hero-bottom-space) / 2);		/* setzt Scroll Indikator mittig zwischen Unterkante Termin-Button und Farbgrenze zu Sektion about */
 	left: 50%;
 	transform: translateX(-50%);
 	width: 30px;
