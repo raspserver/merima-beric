@@ -374,6 +374,7 @@ body {
 
 .scroll-indicator.hidden{
 	opacity:0;
+	transform:translate(-50%, 10px);
 }
 
 .scroll-indicator::before{
