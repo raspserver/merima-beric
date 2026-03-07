@@ -3,30 +3,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* prefers-reduced-motion Support (Accessibility Pflicht) */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	
-	/* subtile Fade-Out-Logik beim Scrollen */
-
-	//~ Seite lädt
-
-	//~ Scroll Indicator sichtbar
-
-	//~ User scrollt ~40px
-
-	//~ Indicator fade-out
-
-	//~ User scrollt wieder ganz nach oben
-
-	//~ Indicator erscheint wieder
-	
+	/* SCROLL INDICATOR HERO SECTION */
 	const indicator = document.querySelector('.scroll-indicator');
 
+	/* Scroll Indicator verschwindet, wenn nach unten gescrollt wird */
 	window.addEventListener('scroll', () => {
 	  indicator.classList.toggle('hidden', window.scrollY > 40);
 	});
 
+	/* Scroll Indicator erscheint mit 1,2s Verzögerung, um nicht von den Animationen des Logos abzulenken */
 	setTimeout(() => {
 	  indicator.classList.add('visible');
 	}, 1200);
 	
+	/* Click auf Scroll Indicator navigiert zur nächsten Sektion */
 	indicator.addEventListener('click', () => {
 	  const nextSection = document.querySelector('#about');
 	  nextSection.scrollIntoView({ behavior: 'smooth' });
