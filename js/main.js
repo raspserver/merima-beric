@@ -181,11 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
 
-	/* Click auf Navbar Logo scrollt smoothly zu hero (Homescreen) */
-	navLogo.addEventListener("click", (e) => {
-	  e.preventDefault();
-	  hero.scrollIntoView({ behavior: "smooth" });
-	});
+	
 
 	if (navbar) {
 
@@ -352,6 +348,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  /* HERO CTA */
 	  const heroCta = document.querySelector(".cta-button");
+	  
+	  /* Click auf Navbar Logo scrollt smoothly zu hero (Homescreen) */
+		navLogo.addEventListener("click", (e) => {
+		  e.preventDefault();
+		  hero.scrollIntoView({ behavior: "smooth" });
+		});
 
 		if (heroCta) {
 		  heroCta.addEventListener("click", (e) => {
