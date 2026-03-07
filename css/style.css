@@ -77,6 +77,9 @@ body {
         translateZ(0)
         translateY(var(--hero-parallax))
         scale(var(--hero-scale));
+
+    will-change: transform;	/* GPU-Compositing Stabilisierung, verhindert Micro-Ruckler			*/
+    contain: layout paint;	/* isoliert die Parallax-Ebene vollständig vom restlichen Layout	*/
 }
 
 .hero::before {
