@@ -2,6 +2,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 	/* prefers-reduced-motion Support (Accessibility Pflicht) */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	
+	/* subtile Fade-Out-Logik beim Scrollen */
+	const indicator = document.querySelector('.scroll-indicator');
+
+	window.addEventListener('scroll', () => {
+	  indicator.style.opacity = window.scrollY > 40 ? '0' : '0.75';
+	});
+	
 
 	/* =========================
 	   TRUE INFINITE GALLERY
