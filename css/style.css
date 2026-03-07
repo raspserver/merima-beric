@@ -341,43 +341,69 @@ body {
 	box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
 }
 
-.scroll-indicator {
+.scroll-indicator{
 	position:absolute;
-    top:calc(100% + var(--hero-bottom-space) * 0.5);/* vertikale Position Scroll Indikator zwischen Unterkante Termin-Button und Farbgrenze zu Sektion about	*/
-    left:50%;
-    transform:translateX(-50%);
-	z-index: 3;										/* ein layer über hero-content (z-index: 2)																	*/
-	width: 30px;
-	height: 50px;
-	border: 2px solid var(--primary-color);
-	border-radius: 20px;
-	opacity: 0.7;
-	animation: bounce 2s infinite;
+	top:calc(100% + var(--hero-bottom-space) * 0.5);
+	left:50%;
+	transform:translateX(-50%);
+	z-index:3;
+
+	width:28px;
+	height:46px;
+	border:1.8px solid rgba(212,175,55,0.7);
+	border-radius:20px;
+
+	display:flex;
+	align-items:flex-start;
+	justify-content:center;
+
+	opacity:0.75;
+
+	transition:
+		border-color 0.4s ease,
+		box-shadow 0.4s ease,
+		opacity 0.4s ease;
 }
 
-.scroll-indicator::before {
-	content: '';
-	position: absolute;
-	top: 8px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 4px;
-	height: 8px;
-	background: var(--primary-color);
-	border-radius: 2px;
-	animation: scroll 2s infinite;
+.scroll-indicator::before{
+	content:"";
+	width:4px;
+	height:7px;
+	margin-top:8px;
+
+	background:var(--primary-color);
+	border-radius:2px;
+
+	animation:scrollFlow 2.2s cubic-bezier(.4,0,.2,1) infinite;
 }
 
-@keyframes bounce {
-	0%,100% { transform: translateX(-50%) translateY(-5px); }
-	50% { transform: translateX(-50%) translateY(5px); }
+@keyframes scrollFlow{
+
+	0%{
+		opacity:0;
+		transform:translateY(0);
+	}
+
+	15%{
+		opacity:1;
+	}
+
+	70%{
+		opacity:1;
+	}
+
+	100%{
+		opacity:0;
+		transform:translateY(18px);
+	}
+
 }
 
-@keyframes scroll {
-	0% { opacity: 1; transform: translateX(-50%) translateY(0); }
-	100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+.scroll-indicator:hover{
+	border-color:var(--primary-color);
+	box-shadow:0 0 14px rgba(212,175,55,0.25);
+	opacity:1;
 }
-
 
 /* Section Styles */
 section {
@@ -1429,6 +1455,14 @@ footer a:hover {
 
 	}
 
+/* Accessibility  */
+@media (prefers-reduced-motion: reduce){
+
+	.scroll-indicator::before{
+		animation:none;
+	}
+
+}
 
 /* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
 @supports not (backdrop-filter: blur(1px)) {
