@@ -343,7 +343,7 @@ body {
 
 .scroll-indicator {
 	position:absolute;
-    top:calc(100% + var(--hero-bottom-space) * 0.4);/* vertikale Position Scroll Indikator zwischen Unterkante Termin-Button und Farbgrenze zu Sektion about	*/
+    top:calc(100% + var(--hero-bottom-space) * 0.5);/* vertikale Position Scroll Indikator zwischen Unterkante Termin-Button und Farbgrenze zu Sektion about	*/
     left:50%;
     transform:translateX(-50%);
 	z-index: 3;										/* ein layer über hero-content (z-index: 2)																	*/
