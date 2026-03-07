@@ -5,20 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	/* SCROLL INDICATOR HERO SECTION */
 	const indicator = document.querySelector('.scroll-indicator');
-
-
-
-	
-	/* Scroll Indicator verschwindet, wenn nach unten gescrollt wird */
-	//~ window.addEventListener('scroll', () => {
-	  //~ indicator.classList.toggle('hidden', window.scrollY > 40);
-	//~ });
 	
 	/* Scroll Indicator verschwindet, wenn nach unten gescrollt wird					*/
 	/* Toggle throttle																	*/
 	/* Performance Optimierung. DOM-Update nur wenn sich der Zustand wirklich ändert.	*/
 	let indicatorHidden = false;
-
 	window.addEventListener('scroll', () => {
 	  const shouldHide = window.scrollY > 40;
 
@@ -28,9 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  }
 	}, { passive: true });
 	
-	
-	
-
 	/* Scroll Indicator erscheint mit 1,2s Verzögerung, um nicht von den Animationen des Logos abzulenken */
 	setTimeout(() => {
 	  indicator.classList.add('visible');
@@ -401,7 +389,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		  });
 		});
 
-	}
+
+
+
+	}	/* schließt scope von if (navbar) */
 	
 	
 	
