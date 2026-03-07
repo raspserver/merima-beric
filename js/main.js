@@ -4,6 +4,19 @@ document.addEventListener("DOMContentLoaded", () => {
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	
 	/* subtile Fade-Out-Logik beim Scrollen */
+
+	//~ Seite lädt
+
+	//~ Scroll Indicator sichtbar
+
+	//~ User scrollt ~40px
+
+	//~ Indicator fade-out
+
+	//~ User scrollt wieder ganz nach oben
+
+	//~ Indicator erscheint wieder
+
 	const indicator = document.querySelector('.scroll-indicator');
 
 	window.addEventListener('scroll', () => {
