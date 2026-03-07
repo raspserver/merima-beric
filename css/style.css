@@ -67,10 +67,12 @@ body {
     will-change: transform;
 	filter: brightness(var(--hero-brightness));
 	
+/*
 	transform:
         translateZ(0)
         translateY(var(--hero-parallax))
         scale(var(--hero-scale));
+*/
 }
 
 .hero::before {
