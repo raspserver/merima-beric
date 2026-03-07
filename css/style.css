@@ -365,6 +365,10 @@ body {
 		opacity 0.4s ease;
 }
 
+.scroll-indicator.hidden{
+	opacity:0;
+}
+
 .scroll-indicator::before{
 	content:"";
 	width:4px;

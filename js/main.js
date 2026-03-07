@@ -16,11 +16,22 @@ document.addEventListener("DOMContentLoaded", () => {
 	//~ User scrollt wieder ganz nach oben
 
 	//~ Indicator erscheint wieder
+	
+	
+	
+	
+	
+	//~ const indicator = document.querySelector('.scroll-indicator');
 
+	//~ window.addEventListener('scroll', () => {
+	  //~ indicator.style.opacity = window.scrollY > 40 ? '0' : '0.75';
+	//~ });
+	
+	
 	const indicator = document.querySelector('.scroll-indicator');
 
 	window.addEventListener('scroll', () => {
-	  indicator.style.opacity = window.scrollY > 40 ? '0' : '0.75';
+	  indicator.classList.toggle('hidden', window.scrollY > 40);
 	});
 	
 
