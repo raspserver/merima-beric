@@ -44,7 +44,6 @@ body {
 	/* 100% der sichtbaren Viewporthöhe (Dynamic Viewport Height)	*/
 	/* minus Höhe Navbar											*/
 	/* Viewport ermitteln auf https://whatismyviewport.com/			*/
-	/* + 1px Workaround für Chromium rounding bugs					*/
 	
 	min-height: var(--vh);   			/* mit js function setVH() 	*/								
 	padding-top: calc(var(--nav-height) + 20px);
