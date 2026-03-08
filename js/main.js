@@ -346,9 +346,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				hero.style.setProperty("--hero-scale", 1 - (currentProgress * 0.01));
 				hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
 
-				const parallaxOffset = Math.max(scrollY * -0.02, -24);
+				const parallaxOffset = Math.round(Math.max(scrollY * -0.02, -24));
 				hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
-
+				
 			  }
 
 			}
