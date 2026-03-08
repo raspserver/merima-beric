@@ -995,7 +995,7 @@ footer a:hover {
     --nav-progress: 0;
     --nav-height-progress: 0;
     
-    /* Background Interpolation */
+    /* Background Interpolation */ 
     background: rgba(
         calc(26 - (16 * var(--nav-progress))),
         calc(26 - (16 * var(--nav-progress))),
