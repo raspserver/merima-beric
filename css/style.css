@@ -1293,7 +1293,7 @@ footer a:hover {
 		flex-direction: column;
 		gap: 0;
 		padding: 2rem 0;
-		transform: translateX(-100vw);
+		transform: translateX(-100%);
 		transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 		z-index: 999;
 		will-change: transform;
