@@ -50,18 +50,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		indicator.classList.add("visible");
 	  }, 1200);
 
+
+
 		/* 2. Hide indicator after small scroll */
-		window.addEventListener("scroll", () => {
-
-		  const y = window.scrollY;
-
-		  if (y > 40) {
-			indicator.classList.add("hidden");
-		  } else if (y === 0) {
-			indicator.classList.remove("hidden");
-		  }
-
-		}, { passive: true });
+		/* entfernt und durch andre Logik ersetzt. */
+		
+		
+		
+		
+		
 
 	  /* 3. Click → scroll to next section */
 	  indicator.addEventListener("click", () => {
@@ -359,6 +356,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			  }
 
+			}
+			
+			
+			
+			/* Scroll Indicator synced with RAF */
+			if (indicator) {
+			  const y = window.scrollY;
+			  indicator.classList.toggle("hidden", y > 40);
 			}
 			
 			
