@@ -35,36 +35,24 @@ body {
 	line-height: 1.6;
 }
 
+
+
 .hero {
-	position: relative;
+	position:relative;
+
+	/* Viewport ermitteln auf https://whatismyviewport.com/		*/
+	min-height:100dvh;
+	padding-top:var(--nav-height);
+	padding-bottom:var(--hero-bottom-space);
+
+	display:flex;
+	align-items:center;
+	justify-content:center;
+
+	background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
 
 	padding: 0 2rem;
-	
-	/* Steuerung der Höhe des hero Hintergrundes:											*/
-	/* 100% der sichtbaren Viewporthöhe (Dynamic Viewport Height)							*/
-	/* minus Höhe Navbar																	*/
-	/* Viewport ermitteln auf https://whatismyviewport.com/									*/
-	
-	/* mit js function setVH() wegen Chromium Sub-Pixel Drift	*/
-	min-height: calc(var(--vh) - var(--nav-height));
-/*
-	min-height: var(--vh);
-*/
-									
-	padding-top: calc(var(--nav-height) + 20px);
-	padding-bottom: var(--hero-bottom-space);
-	
-	margin-top: 0;
-													
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-/*
-	overflow: hidden;
-*/
-
-	background: linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
+	margin-top: 0;										
 
 	backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -76,17 +64,18 @@ body {
     will-change: auto;
 	filter: brightness(var(--hero-brightness));
 	
-	transform: none;
+	isolation:isolate;
 }
 
 .hero-inner {
-    transform:
-        translateZ(0)
-        translateY(var(--hero-parallax))
-        scale(var(--hero-scale));
+	transform:translate3d(
+			0,
+			var(--hero-parallax),
+			0
+		) scale(var(--hero-scale));
 
     will-change: transform;	/* GPU-Compositing Stabilisierung, verhindert Micro-Ruckler			*/
-    contain: layout paint;	/* isoliert die Parallax-Ebene vollständig vom restlichen Layout	*/
+    contain: paint;			/* isoliert die Parallax-Ebene vollständig vom restlichen Layout	*/
 }
 
 .hero::before {
@@ -111,9 +100,19 @@ body {
 .hero-content{
     position: relative;
     z-index: 2;
-    text-align: center;
-    padding: 0 2rem;
-    margin:auto;
+    
+    display:flex;
+	flex-direction:column;
+	align-items:center;
+	justify-content:center;
+
+	text-align:center;
+
+	max-width:800px;
+	margin:0 auto;
+
+	gap:1.4rem;
+    
     animation: fadeInUp 1.2s ease-out;
 }
 
@@ -157,7 +156,7 @@ body {
 	font-size: 1.1rem;
 	color: rgba(255, 255, 255, 0.8);
 	max-width: 600px;
-	margin: 0 auto 3rem;
+	margin:0 auto 2rem;
 	animation: fadeIn 1.5s ease-out 0.6s both;
 }
 
@@ -327,6 +326,7 @@ body {
 .cta-button {
 	display: inline-block;
 	padding: 1.2rem 3rem;
+	margin-top:0.6rem;
 	background: var(--primary-color);
 	color: var(--secondary-color);
 	text-decoration: none;
@@ -352,24 +352,9 @@ body {
 
 .scroll-indicator{
 	position:absolute;
-	
-	
-/*
-	top:calc(100% + var(--hero-bottom-space) * 0.5);
-*/
-	
-/*
-	bottom: calc(var(--hero-bottom-space) * 0.2);
-*/
-	
-	bottom: -30px;
-	
-/*
-	top: 0;
-*/
-	
 	left:50%;
 	transform:translateX(-50%);
+	bottom:calc(var(--hero-bottom-space) * -0.5);
 	z-index:3;
 
 	width:28px;

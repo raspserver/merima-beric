@@ -1,17 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 	
-	/* Chromium Sub-Pixel Drift Fix */
-	function setVH(){
-		  document.documentElement.style.setProperty("--vh", `${window.innerHeight}px`);
-		}
-
-		setVH();
-		window.addEventListener("resize", setVH);
-		
-		
-		
-	
-	
 	/* =================================================
 	   CENTRAL SCROLL ENGINE
 	   ================================================= */
@@ -361,10 +349,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			  hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
 
 			  // ✨ Parallax (sehr subtil)
-				const scrollY = window.scrollY;
-				const parallaxOffset = Math.max(scrollY * -0.04, -40);
-
-			  hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
+				const scrollY = window.scrollY;		
+				const parallaxOffset = Math.max(scrollY * -0.02, -24);
+				hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
 			}
 
 		  /* ===== STOP CONDITION ===== */
