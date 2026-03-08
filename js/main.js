@@ -188,13 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	const navLogo = document.querySelector(".nav-logo");
-
-
-
-	
-	
-  const indicator = document.querySelector(".scroll-indicator");
-  const cta = document.querySelector(".cta-button");
+	const indicator = document.querySelector(".scroll-indicator");
+	const cta = document.querySelector(".cta-button");
 
   let lastScrollY = window.scrollY;
   let scrollVelocity = 0;

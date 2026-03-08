@@ -40,7 +40,6 @@ body {
 .hero {
 	position:relative;
 	min-height:100dvh;
-	padding-top:var(--nav-height);
 	padding-bottom:var(--hero-bottom-space);
 
 	display:flex;
