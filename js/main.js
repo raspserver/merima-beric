@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				const counter = 1 - currentProgress;
 
-				hero.style.setProperty("--hero-scale", 1 + (counter * 0.01));
+				hero.style.setProperty("--hero-scale", 1 - (currentProgress * 0.01));
 				hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
 
 				const parallaxOffset = Math.max(scrollY * -0.02, -24);
