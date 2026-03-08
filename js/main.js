@@ -50,17 +50,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		indicator.classList.add("visible");
 	  }, 1200);
 
-	  /* 2. Fade out when hero leaves viewport */
-	  const observer = new IntersectionObserver(entries => {
-		entries.forEach(entry => {
-		  indicator.classList.toggle("hidden", !entry.isIntersecting);
-		});
-	  }, {
-		root: null,
-		threshold: 0.15
-	  });
+		/* 2. Hide indicator after small scroll */
+		window.addEventListener("scroll", () => {
 
-	  observer.observe(heroSection);
+		  const y = window.scrollY;
+
+		  if (y > 40) {
+			indicator.classList.add("hidden");
+		  } else if (y === 0) {
+			indicator.classList.remove("hidden");
+		  }
+
+		}, { passive: true });
 
 	  /* 3. Click → scroll to next section */
 	  indicator.addEventListener("click", () => {
