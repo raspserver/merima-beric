@@ -69,6 +69,8 @@ body {
     --hero-parallax: 0px;
 
     will-change: transform, filter;
+    
+    transform: translateZ(0);
 }
 
 .hero-inner {
