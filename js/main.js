@@ -219,37 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollToSection(target);
   });
 
-  function animateHero(now) {
-    const scrollY = window.scrollY;
-    scrollVelocity = (scrollY - lastScrollY) * 0.8;
-    lastScrollY = scrollY;
 
-    // Hero-Transform & Brightness
-    heroScale = 1 - Math.min(scrollY / 200, 0.01);
-    heroBrightness = 1 - Math.min(scrollY / 200, 0.06);
-    heroParallax = Math.max(scrollY * -0.02, -24);
 
-    hero.style.setProperty("--hero-scale", heroScale);
-    hero.style.setProperty("--hero-brightness", heroBrightness);
-    hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
-
-    // Scroll-Indicator hide after small scroll
-    if (indicator) indicator.classList.toggle("hidden", scrollY > 60);
-
-    animationRunning && requestAnimationFrame(animateHero);
-  }
-
-  window.addEventListener("scroll", () => {
-    if (!animationRunning) {
-      animationRunning = true;
-      requestAnimationFrame(animateHero);
-    }
-  });
-
-	
-	
-
-	
 	
 	
 
