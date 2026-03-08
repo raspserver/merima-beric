@@ -960,6 +960,9 @@ footer a:hover {
 		calc(-100% + (100% * var(--nav-progress))),
 		0
 	);
+	
+	transform: translateZ(0);
+	contain: layout paint style;
 
 	opacity: var(--nav-progress);
 
@@ -985,21 +988,7 @@ footer a:hover {
 
 	--nav-velocity-blur: 0;
 
-    backdrop-filter: blur(
-	  calc(
-		10px +
-		(6px * var(--nav-progress)) +
-		(1px * var(--nav-velocity-blur))
-	  )
-	);
-
-	-webkit-backdrop-filter: blur(
-	  calc(
-		10px +
-		(6px * var(--nav-progress)) +
-		(1px * var(--nav-velocity-blur))
-	  )
-	);
+    
 	
 	/* Shadow Fade-In */
 	box-shadow:
@@ -1025,7 +1014,31 @@ footer a:hover {
     transform: scale(calc(1 - (0.10 * var(--nav-progress))));
 }
 
+.navbar::before{
+	content:"";
+	position:absolute;
+	inset:0;
+	z-index:-1;
 
+	backdrop-filter: blur(
+	  calc(
+		10px +
+		(6px * var(--nav-progress)) +
+		(1px * var(--nav-velocity-blur))
+	  )
+	);
+
+	-webkit-backdrop-filter: blur(
+	  calc(
+		10px +
+		(6px * var(--nav-progress)) +
+		(1px * var(--nav-velocity-blur))
+	  )
+	);
+
+	will-change: backdrop-filter;
+	pointer-events:none;
+}
 
 .navbar::after {
     content: "";
