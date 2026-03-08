@@ -43,8 +43,6 @@ body {
 	
 	padding-bottom:var(--hero-bottom-space);
 	
-	scroll-margin-top: calc(var(--nav-height) + 1px);
-
 	display:flex;
 	
 	align-items:center;
