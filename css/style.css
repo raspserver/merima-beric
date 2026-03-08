@@ -354,11 +354,11 @@ body {
 	bottom: calc(var(--hero-bottom-space) * 0.2);
 */
 	
-/*
-	bottom: 0;
-*/
+	bottom: -30px;
 	
+/*
 	top: 0;
+*/
 	
 	left:50%;
 	transform:translateX(-50%);
