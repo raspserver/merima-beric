@@ -384,18 +384,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		  Math.abs(velocity) > 0.0005 ||
 		  Math.abs(heightVelocity) > 0.0005;
 
-			/* HARD SNAP → verhindert unnötige Restframes */
+			/* HARD SNAP → verhindert unnötige Restframes */	
 			if (!stillMoving) {
-			  currentProgress = targetProgress;
 			  animationRunning = false;
 			  return;
 			}
-
 			requestAnimationFrame(animate);
 		  
-		  
-		  
-		  
+
 		}
 
 	  handleScroll();
