@@ -59,7 +59,7 @@ body {
 	
 	isolation:isolate;
 	
-	filter: brightness(var(--hero-brightness));									
+	filter: none;								
 
 	backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -97,6 +97,20 @@ body {
     50% { opacity: 0.85; }
 }
 
+.hero::after{
+	content:"";
+	position:absolute;
+	inset:0;
+
+	background:#000;
+
+	opacity: calc(0.06 * (1 - var(--hero-brightness)));
+
+	pointer-events:none;
+	z-index:1;
+
+	will-change: opacity;
+}
 
 .hero-content{
     position: relative;
