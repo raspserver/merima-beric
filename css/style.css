@@ -41,13 +41,18 @@ body {
 	position:relative;
 
 	/* Viewport ermitteln auf https://whatismyviewport.com/		*/
+	min-height:100vh;
 	min-height:100dvh;
+	
+	
 	padding-top:var(--nav-height);
 	padding-bottom:var(--hero-bottom-space);
 
 	display:flex;
 	align-items:center;
 	justify-content:center;
+	
+	overflow: clip;
 
 	background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
 
@@ -356,8 +361,7 @@ body {
 	position:absolute;
 	left:50%;
 	transform:translateX(-50%);
-
-	bottom:calc(var(--hero-bottom-space) / 2);
+	bottom: 30px;
 
 	z-index:3;
 
