@@ -30,45 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
-	
-	
-	
-
-
-
-	/* ================================
-	   HERO SCROLL INDICATOR (PREMIUM)
-	================================ */
-
-	const indicator = document.querySelector(".scroll-indicator");
-	const heroSection = document.querySelector(".hero");
-
-	if (indicator && heroSection) {
-
-	  /* 1. Delayed appearance (Hero Animation zuerst) */
-	  setTimeout(() => {
-		indicator.classList.add("visible");
-	  }, 1200);
-
-
-
-		/* 2. Hide indicator after small scroll */
-		/* entfernt und durch andre Logik ersetzt. */
-		
-		
-		
-		
-		
-
-	  /* 3. Click → scroll to next section */
-	  indicator.addEventListener("click", () => {
-		const nextSection = document.querySelector("#about");
-		scrollToSection(nextSection);
-	  });
-
-	}
-
-
 
 
 
@@ -211,6 +172,41 @@ document.addEventListener("DOMContentLoaded", () => {
 	  window.addEventListener("resize", () => setPosition(currentIndex, false));
 	}
 	
+	
+	
+	
+	
+	
+	
+	/* ================================
+	   HERO SCROLL INDICATOR (PREMIUM)
+	================================ */
+
+	const indicator = document.querySelector(".scroll-indicator");
+	const heroSection = document.querySelector(".hero");
+
+	if (indicator && heroSection) {
+
+	  /* 1. Delayed appearance (Hero Animation zuerst) */
+	  setTimeout(() => {
+		indicator.classList.add("visible");
+	  }, 1200);
+
+		/* 2. Hide indicator after small scroll */
+		/* entfernt und durch andre Logik ersetzt. */	
+
+	  /* 3. Click → scroll to next section */
+	  indicator.addEventListener("click", () => {
+		const nextSection = document.querySelector("#about");
+		scrollToSection(nextSection);
+	  });
+
+	}
+	
+	
+
+	
+	
 	/* =========================
 	   NAVBAR
 	========================= */
@@ -221,10 +217,78 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	const navLogo = document.querySelector(".nav-logo");
-	
-	let lastScrollY = window.scrollY;
-	let scrollVelocity = 0;
 
+
+	
+	
+	/* neuer snippet */
+	
+	
+  const indicator = document.querySelector(".scroll-indicator");
+  const cta = document.querySelector(".cta-button");
+
+  let lastScrollY = window.scrollY;
+  let scrollVelocity = 0;
+  let heroScale = 1;
+  let heroBrightness = 1;
+  let heroParallax = 0;
+  let animationRunning = false;
+
+  // Scroll-Indicator: erscheint nach Hero Animation
+  setTimeout(() => indicator?.classList.add("visible"), 1200);
+
+  function scrollToSection(target) {
+    if (!target) return;
+    const navHeight = document.querySelector(".navbar")?.offsetHeight || 0;
+    const y = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+
+  indicator?.addEventListener("click", () => {
+    const next = document.querySelector("#about");
+    scrollToSection(next);
+  });
+
+  cta?.addEventListener("click", (e) => {
+    e.preventDefault();
+    const target = document.querySelector("#contact");
+    scrollToSection(target);
+  });
+
+  function animateHero(now) {
+    const scrollY = window.scrollY;
+    scrollVelocity = (scrollY - lastScrollY) * 0.8;
+    lastScrollY = scrollY;
+
+    // Hero-Transform & Brightness
+    heroScale = 1 - Math.min(scrollY / 200, 0.01);
+    heroBrightness = 1 - Math.min(scrollY / 200, 0.06);
+    heroParallax = Math.max(scrollY * -0.02, -24);
+
+    hero.style.setProperty("--hero-scale", heroScale);
+    hero.style.setProperty("--hero-brightness", heroBrightness);
+    hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
+
+    // Scroll-Indicator hide after small scroll
+    if (indicator) indicator.classList.toggle("hidden", scrollY > 60);
+
+    animationRunning && requestAnimationFrame(animateHero);
+  }
+
+  window.addEventListener("scroll", () => {
+    if (!animationRunning) {
+      animationRunning = true;
+      requestAnimationFrame(animateHero);
+    }
+  });
+
+	
+	
+	
+	/*   */
+	
+	
+	
 	
 
 	if (navbar) {
@@ -410,30 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  });
 	}
 
-	/* HERO CLICK */
-
-
-	  /* NAVBAR CLICK (nur im Home sichtbar schließen) */
-
-	  /* HERO CTA */
-	  const heroCta = document.querySelector(".cta-button");
-
-		/* NAV LOGO CLICK → SCROLL TO HERO */
-		if (navLogo && hero) {
-		  navLogo.addEventListener("click", (e) => {
-			e.preventDefault();
-			scrollToSection(hero);
-		  });
-		}
-			
-		if (heroCta) {
-		  heroCta.addEventListener("click", (e) => {
-			e.preventDefault();
-
-			const target = document.querySelector("#contact");
-			scrollToSection(target);
-		  });
-		}
+	
 
 	  /* NAV LINKS */
 	  navLinks.forEach(link => {
