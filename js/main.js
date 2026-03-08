@@ -319,10 +319,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			currentProgress = Math.max(0, Math.min(currentProgress, 1));
 
-		  /* ===== HEIGHT SPRING ===== */
-
-		  const heightForce = (currentProgress - heightProgress) * heightStiffness;
-
+		  /* ===== HEIGHT SPRING ===== */ 
+		  const heightForce = (targetProgress - heightProgress) * heightStiffness;
+		  
 			heightVelocity += heightForce * delta;
 			heightVelocity *= Math.pow(heightDamping, delta);
 			heightProgress += heightVelocity * delta;

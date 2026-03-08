@@ -360,11 +360,12 @@ body {
 }
 
 .scroll-indicator{
-	position:absolute;
+	position: fixed;  /* statt absolute */
+	bottom: 60px;     /* gewünschter Abstand vom Viewport */
+	left: 50%;
+	
 	left:50%;
 	transform:translateX(-50%);
-	
-	bottom: calc(var(--hero-bottom-space) / 2);
 
 	z-index:3;
 
