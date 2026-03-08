@@ -76,6 +76,7 @@ body {
 	transform-origin: center center;
 	will-change: transform;
 	contain: paint;
+	backface-visibility:hidden;
 }
 
 .hero::before {
