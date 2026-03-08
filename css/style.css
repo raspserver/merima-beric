@@ -408,10 +408,12 @@ body {
 
 /* Section Styles */
 section {
-	padding: 0 2rem;
-	margin: 8rem 0;
-	position: relative;
-	scroll-margin-top: 90px;
+    padding: 0 2rem;
+    margin: 8rem 0;
+}
+
+.hero + section {
+    margin-top: 0;
 }
 
 .container {
