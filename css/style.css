@@ -42,9 +42,8 @@ body {
 	min-height:100svh; /* stabiler viewport */
 	min-height:100dvh;
 
-	display:flex;
-	align-items:center;
-	justify-content:center;
+	display:grid;
+	place-items:center;
 
 	margin:0;
 	padding-top:var(--nav-height);
