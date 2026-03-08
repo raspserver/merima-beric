@@ -363,24 +363,30 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* Scroll Indicator synced with RAF */
 			if (indicator) {
 			  const y = window.scrollY;
-			  indicator.classList.toggle("hidden", y > 40);
+			  indicator.classList.toggle("hidden", y > 60);
 			}
 			
 			
 			
 
-		  /* ===== STOP CONDITION ===== */
-
+		  /* ===== STOP CONDITION ===== */	  
 		  const stillMoving =
-			Math.abs(targetProgress - currentProgress) > 0.0005 ||
-			Math.abs(velocity) > 0.0005 ||
-			Math.abs(heightVelocity) > 0.0005;
+		  Math.abs(targetProgress - currentProgress) > 0.0005 ||
+		  Math.abs(velocity) > 0.0005 ||
+		  Math.abs(heightVelocity) > 0.0005;
 
-		  if (stillMoving) {
+			/* HARD SNAP → verhindert unnötige Restframes */
+			if (!stillMoving) {
+			  currentProgress = targetProgress;
+			  animationRunning = false;
+			  return;
+			}
+
 			requestAnimationFrame(animate);
-		  } else {
-			animationRunning = false;
-		  }
+		  
+		  
+		  
+		  
 		}
 
 	  handleScroll();
