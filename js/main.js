@@ -408,12 +408,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	  
 	/* HAMBURGER TOGGLE */
 	if (navToggle && navMenu) {
-	  navToggle.addEventListener("click", (e) => {
-		e.stopPropagation(); // verhindert Konflikt mit navbar click
 
-		navToggle.classList.toggle("active");
-		navMenu.classList.toggle("active");
-	  });
+		navToggle.addEventListener("click", () => {
+
+		  navToggle.classList.toggle("active");
+		  navMenu.classList.toggle("active");
+
+		});
+		
 	}
 
 	
