@@ -221,6 +221,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+
+	if (navLogo) {
+	  navLogo.addEventListener("click", (e) => {
+		e.preventDefault(); // verhindert den Sprung nach oben
+		const heroSection = document.querySelector(".hero"); // Ziel ist der Hero
+		scrollToSection(heroSection); // smooth scroll
+	  });
+	}
+
 	
 	
 
