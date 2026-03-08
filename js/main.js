@@ -178,35 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
-	/* ================================
-	   HERO SCROLL INDICATOR (PREMIUM)
-	================================ */
-
-	const indicator = document.querySelector(".scroll-indicator");
-	const heroSection = document.querySelector(".hero");
-
-	if (indicator && heroSection) {
-
-	  /* 1. Delayed appearance (Hero Animation zuerst) */
-	  setTimeout(() => {
-		indicator.classList.add("visible");
-	  }, 1200);
-
-		/* 2. Hide indicator after small scroll */
-		/* entfernt und durch andre Logik ersetzt. */	
-
-	  /* 3. Click → scroll to next section */
-	  indicator.addEventListener("click", () => {
-		const nextSection = document.querySelector("#about");
-		scrollToSection(nextSection);
-	  });
-
-	}
-	
-	
-
-	
-	
 	/* =========================
 	   NAVBAR
 	========================= */
@@ -219,9 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navLogo = document.querySelector(".nav-logo");
 
 
-	
-	
-	/* neuer snippet */
+
 	
 	
   const indicator = document.querySelector(".scroll-indicator");
@@ -284,9 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	
 	
-	
-	/*   */
-	
+
 	
 	
 	
