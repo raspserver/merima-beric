@@ -971,13 +971,14 @@ footer a:hover {
 
     border-bottom: 1px solid rgba(212, 175, 55, 0.12);
     
-    transform: translate3d(
-		0,
-		calc(-100% + (100% * var(--nav-progress))),
-		0
-	);
-	
-	transform: translateZ(0);
+    transform:
+		translate3d(
+			0,
+			calc(-100% + (100% * var(--nav-progress))),
+			0
+		)
+		translateZ(0);
+
 	contain: layout paint style;
 
 	opacity: var(--nav-progress);
