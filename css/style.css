@@ -35,36 +35,15 @@ body {
 	line-height: 1.6;
 }
 
-
-
 .hero {
-
-
-	position: relative;
-	
-	/* Steuerung der Höhe des hero Hintergrundes:					*/
-	/* 100% der sichtbaren Viewporthöhe (Dynamic Viewport Height)	*/
-	/* minus Höhe Navbar											*/
-	/* Viewport ermitteln auf https://whatismyviewport.com/			*/
-	/* + 1px Workaround für Chromium rounding bugs					*/
-	
-	min-height: calc(100dvh + 1px);									
-	padding-top: calc(var(--nav-height) + 20px);
-	padding-bottom: var(--hero-bottom-space);
-
-
-/*
 	position:relative;
 	
 	min-height:100vh;
 	min-height:100dvh;
 	
 	padding-bottom:var(--hero-bottom-space);
-*/
 	
-	
-	
-	
+	scroll-margin-top: calc(var(--nav-height) + 1px);
 
 	display:flex;
 	
