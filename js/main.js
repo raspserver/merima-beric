@@ -198,6 +198,34 @@ document.addEventListener("DOMContentLoaded", () => {
   let heroParallax = 0;
   let animationRunning = false;
 
+
+
+		hero?.addEventListener("click", (e) => {
+
+			const clickedCTA = e.target.closest(".cta-button");
+			const clickedIndicator = e.target.closest(".scroll-indicator");
+
+			if(clickedCTA || clickedIndicator) return;
+
+			const progress = parseFloat(
+				getComputedStyle(navbar).getPropertyValue("--nav-progress")
+			);
+
+			const newTarget = progress < 0.5 ? 1 : 0;
+
+			targetProgress = newTarget;
+
+			if (!animationRunning) {
+				animationRunning = true;
+				requestAnimationFrame(animate);
+			}
+
+		});
+
+
+
+
+
   // Scroll-Indicator: erscheint nach Hero Animation
   setTimeout(() => indicator?.classList.add("visible"), 1200);
 
@@ -222,27 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-		hero?.addEventListener("click", (e) => {
-
-			const clickedCTA = e.target.closest(".cta-button");
-			const clickedIndicator = e.target.closest(".scroll-indicator");
-
-			if(clickedCTA || clickedIndicator) return;
-
-			const progress = parseFloat(
-				getComputedStyle(navbar).getPropertyValue("--nav-progress")
-			);
-
-			const newTarget = progress < 0.5 ? 1 : 0;
-
-			targetProgress = newTarget;
-
-			if (!animationRunning) {
-				animationRunning = true;
-				requestAnimationFrame(animate);
-			}
-
-		});
+	
 
 
 
