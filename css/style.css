@@ -357,12 +357,13 @@ body {
 	left:50%;
 	transform:translateX(-50%);
 
-	bottom: max(18px, env(safe-area-inset-bottom));
+	bottom:calc(var(--hero-bottom-space) / 2);
 
 	z-index:3;
 
 	width:28px;
 	height:46px;
+
 	border:1.8px solid rgba(212,175,55,0.7);
 	border-radius:20px;
 
@@ -379,10 +380,6 @@ body {
 
 	cursor:pointer;
 }
-
-
-
-
 
 .scroll-indicator.visible{
 	opacity:0.75;
