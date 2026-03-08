@@ -81,6 +81,8 @@ body {
 			0
 		) scale(var(--hero-scale));
 
+	transform-origin:center center;
+	
     will-change: transform;	/* GPU-Compositing Stabilisierung, verhindert Micro-Ruckler			*/
     contain: paint;			/* isoliert die Parallax-Ebene vollständig vom restlichen Layout	*/
 }

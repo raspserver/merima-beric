@@ -340,19 +340,28 @@ document.addEventListener("DOMContentLoaded", () => {
 			// ✨ Velocity Based Blur Boost
 			const velocityFactor = Math.min(Math.abs(scrollVelocity) * 0.15, 6);
 			navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
-		  	
+	
 			if (hero) {
 
-			  const counter = 1 - currentProgress;
+			  const scrollY = window.scrollY;
 
-			  hero.style.setProperty("--hero-scale", 1 + (counter * 0.01));
-			  hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
+			  /* Hero Animation erst nach echter Scrollbewegung */
+			  if (scrollY > 8) {
 
-			  // ✨ Parallax (sehr subtil)
-				const scrollY = window.scrollY;		
+				const counter = 1 - currentProgress;
+
+				hero.style.setProperty("--hero-scale", 1 + (counter * 0.01));
+				hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
+
 				const parallaxOffset = Math.max(scrollY * -0.02, -24);
 				hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
+
+			  }
+
 			}
+			
+			
+			
 
 		  /* ===== STOP CONDITION ===== */
 
