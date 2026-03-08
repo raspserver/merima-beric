@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			navbar.style.setProperty("--nav-height-progress", easedHeight);
 			
 			// ✨ Velocity Based Blur Boost
-			const velocityFactor = Math.min(Math.abs(scrollVelocity) * 0.15, 6);
+			const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
 			navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
 	
 			if (hero) {
