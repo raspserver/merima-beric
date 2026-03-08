@@ -381,8 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 			if (hero) {
 
-			  const scrollY = window.scrollY;
-
+			  const scrollY = lastScrollY;
 			  
 			  if (hero) {
 
