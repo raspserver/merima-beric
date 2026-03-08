@@ -46,12 +46,8 @@ body {
 	/* Viewport ermitteln auf https://whatismyviewport.com/									*/
 	
 	/* mit js function setVH() wegen Chromium Sub-Pixel Drift	*/
-/*
 	min-height: var(--vh);
-*/
-	
-	min-height: calc(var(--vh) - var(--nav-height));
-	
+
 									
 	padding-top: calc(var(--nav-height) + 20px);
 	padding-bottom: var(--hero-bottom-space);
