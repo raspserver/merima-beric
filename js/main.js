@@ -286,7 +286,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
-		let animationRunning = false;
 		let lastFrameTime = performance.now();
 		function animate(now) {
 			
