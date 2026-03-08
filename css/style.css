@@ -45,7 +45,14 @@ body {
 	/* minus Höhe Navbar																	*/
 	/* Viewport ermitteln auf https://whatismyviewport.com/									*/
 	
-	min-height: var(--vh);		/* mit js function setVH() wegen Chromium Sub-Pixel Drift	*/								
+	/* mit js function setVH() wegen Chromium Sub-Pixel Drift	*/
+/*
+	min-height: var(--vh);
+*/
+	
+	min-height: calc(var(--vh) - var(--nav-height));
+	
+									
 	padding-top: calc(var(--nav-height) + 20px);
 	padding-bottom: var(--hero-bottom-space);
 	
