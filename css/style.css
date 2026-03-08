@@ -33,20 +33,22 @@ body {
 	overflow-x: hidden;						/* Windows Desktop Browser haben oft sichtbare Scrollbars, die Layout verschieben.	*/
 											/* Das verhindert, dass Layout springt wenn Scrollbar erscheint.					*/
 	line-height: 1.6;
+	margin:0;
 }
 
 .hero {
 	position:relative;
-	
-	min-height:100vh;
+
+	min-height:100svh; /* stabiler viewport */
 	min-height:100dvh;
-	
-	padding-bottom:var(--hero-bottom-space);
-	
+
 	display:flex;
-	
 	align-items:center;
 	justify-content:center;
+
+	margin:0;
+	padding-top:var(--nav-height);
+	padding-bottom:var(--hero-bottom-space);
 	
 	overflow: clip;
 
