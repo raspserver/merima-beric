@@ -338,18 +338,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			  const scrollY = window.scrollY;
 
-			  /* Hero Animation erst nach echter Scrollbewegung */
-			  if (scrollY > 8) {
+			  
+			  if (hero) {
 
-				const counter = 1 - currentProgress;
+				const progress = currentProgress;
 
-				hero.style.setProperty("--hero-scale", 1 - (currentProgress * 0.01));
-				hero.style.setProperty("--hero-brightness", 1 - (currentProgress * 0.06));
+				hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
+				hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
 
-				const parallaxOffset = Math.round(Math.max(scrollY * -0.02, -24));
+				const parallaxOffset = Math.round(Math.max(window.scrollY * -0.02, -24));
 				hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
-				
-			  }
+
+				}
+			  
+			  
+			  
+			  
 
 			}
 			
