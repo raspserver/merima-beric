@@ -231,6 +231,8 @@ let heroParallaxVelocity = 0;
 let animationRunning = false;
 let programmaticScroll = false;
 
+let manualNavbarOpen = false;
+
 
 		if(hero){
 		 hero.style.setProperty(
@@ -326,6 +328,10 @@ let programmaticScroll = false;
 			const newTarget = progress < 0.5 ? 1 : 0;
 
 			targetProgress = newTarget;
+			
+			if(newTarget === 1){
+				manualNavbarOpen = true;
+			}
 
 			if (!animationRunning) {
 				animationRunning = true;
@@ -351,6 +357,10 @@ let programmaticScroll = false;
 			const newTarget = progress < 0.5 ? 1 : 0;
 
 			targetProgress = newTarget;
+			
+			if(newTarget === 1){
+				manualNavbarOpen = true;
+			}
 
 			if (!animationRunning) {
 				animationRunning = true;
@@ -405,12 +415,31 @@ let programmaticScroll = false;
 		  
 		  const scrollY = lastScrollY;
 
-		  if (scrollY <= 5) {
-			  targetProgress = 0;
+
+
+		if (manualNavbarOpen) {
+
+				/* Navbar bleibt offen bis wieder ganz oben */
+				if(scrollY <= 5){
+					manualNavbarOpen = false;
+					targetProgress = 0;
+				}else{
+					targetProgress = 1;
+				}
+
 			} else {
-			  const raw = scrollY / inertiaThreshold;
-			  targetProgress = Math.min(Math.max(raw, 0), 1);
+
+				if (scrollY <= 5) {
+					targetProgress = 0;
+				} else {
+					const raw = scrollY / inertiaThreshold;
+					targetProgress = Math.min(Math.max(raw, 0), 1);
+				}
+
 			}
+
+			
+				
 		    
 		  if (!animationRunning) {
 			  animationRunning = true;
