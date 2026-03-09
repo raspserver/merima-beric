@@ -301,7 +301,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		   CLEAN DUAL SPRING SYSTEM
 		================================ */
 
-		const inertiaThreshold = 180;
+		//~ const inertiaThreshold = 180;
+		
+		
+		const inertiaThreshold = Math.min(window.innerHeight * 0.6, 600);
+		
 
 		let targetProgress = 0;
 		let currentProgress = 0;
