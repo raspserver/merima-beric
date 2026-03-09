@@ -1081,6 +1081,15 @@ footer a:hover {
 
 	will-change: backdrop-filter;
 	pointer-events:none;
+	
+	background:
+		linear-gradient(
+			120deg,
+			rgba(255,255,255,0.06),
+			rgba(255,255,255,0.02) 40%,
+			rgba(255,255,255,0.08) 60%,
+			rgba(255,255,255,0.03)
+		);
 }
 
 .navbar::after {
