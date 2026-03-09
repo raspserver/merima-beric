@@ -223,15 +223,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let lastScrollY = window.scrollY;
   let scrollVelocity = 0;
-  let heroScale = 1;
-  let heroBrightness = 1;
-  let heroParallax = 0;
-  let animationRunning = false;
-  let programmaticScroll = false;
-	let heroParallax = 0;
-	let heroParallaxVelocity = 0;
   
- 
+  let heroScale = 1;
+let heroBrightness = 1;
+let heroParallax = 0;
+let heroParallaxVelocity = 0;
+let animationRunning = false;
+let programmaticScroll = false;
 
 
 		if(hero){
