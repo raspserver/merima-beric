@@ -350,8 +350,7 @@ let manualNavbarOpen = false;
 
 		//~ const inertiaThreshold = 180;
 		
-		
-		const inertiaThreshold = Math.min(window.innerHeight * 0.6, 600);
+		const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
 		
 
 		let targetProgress = 0;
