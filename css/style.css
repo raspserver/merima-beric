@@ -988,6 +988,11 @@ footer a:hover {
 /* ===== NAVBAR LUXURY ===== */
 
 .navbar {
+
+
+	--nav-progress: 1 !important;
+
+
     position: fixed;
     top: 0;
     left: 0;
