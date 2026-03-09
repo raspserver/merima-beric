@@ -412,38 +412,6 @@ body {
 
 }
 
-.scroll-indicator.visible{
-	opacity:0.75;
-}
-
-.scroll-indicator.hidden{
-	opacity:0;
-	transform:translate(-50%, 14px);
-}
-
-.scroll-indicator::before{
-	content:"";
-	width:4px;
-	height:7px;
-	margin-top:8px;
-	background:var(--primary-color);
-	border-radius:2px;
-	animation: scrollFlow 2.2s cubic-bezier(.4,0,.2,1) infinite;
-}
-
-@keyframes scrollFlow {
-  0%{opacity:0;transform:translateY(0);}
-  15%{opacity:1;}
-  70%{opacity:1;}
-  100%{opacity:0;transform:translateY(18px);}
-}
-
-.scroll-indicator:hover{
-	border-color:var(--primary-color);
-	box-shadow:0 0 14px rgba(212,175,55,0.25);
-	opacity:1;
-}
-
 /* Section Styles */
 section {
     padding: 0 2rem;
@@ -1531,11 +1499,13 @@ footer a:hover {
 /* Accessibility  */
 @media (prefers-reduced-motion: reduce){
 
-	.scroll-indicator::before{
+	.scroll-indicator{
 		animation:none;
 	}
 
 }
+
+
 
 /* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
 @supports not (backdrop-filter: blur(1px)) {

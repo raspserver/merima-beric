@@ -244,21 +244,6 @@ let manualNavbarOpen = false;
 
 
 
-
-  // Scroll-Indicator: erscheint nach Hero Animation
-  setTimeout(() => indicator?.classList.add("visible"), 1200);
-
-
-	indicator?.addEventListener("click", (e) => {
-
-	  e.stopPropagation();
-
-	  const next = document.querySelector("#about");
-	  scrollToSection(next);
-
-	});
-
-
   cta?.addEventListener("click", (e) => {
     e.preventDefault();
     const target = document.querySelector("#contact");
@@ -507,12 +492,6 @@ let manualNavbarOpen = false;
 			}
 			
 			
-			
-			/* Scroll Indicator synced with RAF */
-			if (indicator) {
-			  const y = window.scrollY;
-			  indicator.classList.toggle("hidden", y > 60);
-			}
 			
 			
 			
