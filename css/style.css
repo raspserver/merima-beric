@@ -1201,6 +1201,7 @@ footer a:hover {
 	list-style: none;
 	gap: 3rem;
 	align-items: center;
+	z-index: 1100;
 }
 
 .nav-menu a {
