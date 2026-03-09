@@ -197,6 +197,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let heroBrightness = 1;
   let heroParallax = 0;
   let animationRunning = false;
+  
+  
+	  hero.style.setProperty(
+		 "--hero-brightness",
+		 1 - (Math.min(window.scrollY / window.innerHeight,1) * 0.15)
+		);
 
 
 
@@ -390,9 +396,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
 				hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
 
-				const parallaxOffset = Math.round(Math.max(window.scrollY * -0.02, -24));
+				const parallaxOffset = Math.round(Math.max(lastScrollY * -0.02, -24));
 				hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
-
+				
 				}
 			  
 			  
