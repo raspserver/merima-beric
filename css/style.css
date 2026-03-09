@@ -989,15 +989,13 @@ footer a:hover {
 
     border-bottom: 1px solid rgba(212, 175, 55, 0.12);
     
-/*
     pointer-events:auto;
-*/
     
-    transform:
+	transform:
 		translate3d(
-			0,
-			calc(-100% + (100% * var(--nav-progress))),
-			0
+		0,
+		calc(-80% + (80% * var(--nav-progress))),
+		0
 		)
 		translateZ(0);
 
