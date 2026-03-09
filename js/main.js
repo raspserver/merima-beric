@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			  
 			  if (hero) {
 				
-				const progress = Math.min(lastScrollY / inertiaThreshold, 1);
+				const progress = Math.min(window.scrollY / inertiaThreshold, 1);
 
 				hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
 				hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
