@@ -1017,12 +1017,13 @@ footer a:hover {
     --nav-height-progress: 0;
     
     /* Background Interpolation */ 
+    
     background: rgba(
-        calc(26 - (16 * var(--nav-progress))),
-        calc(26 - (16 * var(--nav-progress))),
-        calc(26 - (16 * var(--nav-progress))),
-        calc(0.92 + (0.04 * var(--nav-progress)))
-    ); 
+		calc(26 - (16 * var(--nav-progress))),
+		calc(26 - (16 * var(--nav-progress))),
+		calc(26 - (16 * var(--nav-progress))),
+		calc(0.18 + (0.78 * var(--nav-progress)))
+	);
 
 	--nav-velocity-blur: 0;
 
