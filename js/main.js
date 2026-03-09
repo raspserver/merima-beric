@@ -369,10 +369,12 @@ let manualNavbarOpen = false;
 			if (programmaticScroll) {
 			  lastScrollY = window.scrollY;
 			}
-				
+			
 			const currentY = window.scrollY;
+			const direction = currentY > lastScrollY ? "down" : "up";
+
 			scrollVelocity = (currentY - lastScrollY) * 0.8;
-			lastScrollY = currentY;	
+			lastScrollY = currentY;
 		  
 			const scrollY = lastScrollY;
 			
@@ -390,13 +392,23 @@ let manualNavbarOpen = false;
 				}
 
 			} else {
-
+			
 				if (scrollY <= 5) {
+
 					targetProgress = 0;
+
 				} else {
-					const raw = scrollY / inertiaThreshold;
-					targetProgress = Math.min(Math.max(raw, 0), 1);
+
+					if (direction === "down") {
+						targetProgress = 1;   // Navbar voll sichtbar
+					}
+
+					if (direction === "up") {
+						targetProgress = 0.25; // Navbar halbtransparent
+					}
+
 				}
+				
 
 			}
 
