@@ -342,35 +342,6 @@ let manualNavbarOpen = false;
 
 
 
-		/* Navbar Toggle, wenn Bildschirm ganz nach oben gescrollt */
-		hero?.addEventListener("click", (e) => {
-
-			const clickedCTA = e.target.closest(".cta-button");
-			const clickedIndicator = e.target.closest(".scroll-indicator");
-
-			if(clickedCTA || clickedIndicator) return;
-
-			const progress = parseFloat(
-				getComputedStyle(navbar).getPropertyValue("--nav-progress")
-			);
-
-			const newTarget = progress < 0.5 ? 1 : 0;
-
-			targetProgress = newTarget;
-			
-			if(newTarget === 1){
-				manualNavbarOpen = true;
-			}
-
-			if (!animationRunning) {
-				animationRunning = true;
-				requestAnimationFrame(animate);
-			}
-
-		});
-
-
-
 
 
 	  /* ===============================
