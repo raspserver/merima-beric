@@ -1498,29 +1498,31 @@ footer a:hover {
 
 
 /* hero Höhe Optimierung */
-@media (max-height: 580px){
+@media (max-height:580px){
+
+	.hero{
+		padding-bottom:calc(var(--hero-bottom-space) * 0.65);
+	}
 
 	.hero-content{
-		gap:0.9rem;
+		gap:0.7rem;
 	}
 
 	.hero-subtitle{
-		margin-bottom:1.2rem;
+		margin-bottom:0.9rem;
 	}
 
 	.hero-description{
-		margin-bottom:0.6rem;
+		margin-bottom:0.4rem;
 	}
 
 	.cta-button{
-		margin-top:0.2rem;
+		margin-top:0.1rem;
 	}
 
 	.scroll-indicator{
-		bottom:24px;
+		bottom:18px;
 	}
-	
-	padding-bottom: calc(var(--hero-bottom-space) * 0.8);
 
 }
 
