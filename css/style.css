@@ -1055,6 +1055,7 @@ footer a:hover {
 .navbar .nav-logo,
 .navbar .nav-toggle {
     transform: scale(calc(1 - (0.10 * var(--nav-progress))));
+    opacity: var(--nav-progress);
 }
 
 .navbar::before{
@@ -1168,9 +1169,6 @@ footer a:hover {
 	line-height: 1;
 
 	--navbar-main-size: clamp(1.55rem, 2.8vw, 2rem);
-	
-	opacity: var(--nav-progress);
-	transition: opacity 0.6s cubic-bezier(.16,.84,.44,1);
 }
 
 .nav-logo,
