@@ -225,6 +225,17 @@ body {
 	0 0 0.6px rgba(255,255,255,0.85),
 	0 0 18px rgba(255,255,255,0.08),
 	0 0 40px rgba(212,175,55,0.06);
+	overflow:hidden;
+}
+
+.hero-main::before{
+	content:"";
+	position:absolute;
+	inset:-10% -20%;
+	background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,0.35) 50%,transparent 60%);
+	transform:translateX(-120%) skewX(-12deg);
+	animation:logoSweep 2.4s cubic-bezier(.16,.84,.44,1) 1.2s forwards;
+	pointer-events:none;
 }
 
 .hero .hero-main {
@@ -355,6 +366,12 @@ body {
 	100% {
 		opacity: 0.6;
 		transform: scaleX(1);
+	}
+}
+
+@keyframes logoSweep{
+	to{
+		transform:translateX(120%) skewX(-12deg);
 	}
 }
 
