@@ -412,12 +412,13 @@ let manualNavbarOpen = false;
 
 				} else {
 
-					if (direction === "down") {
-						targetProgress = 1;   // Navbar voll sichtbar
+
+					if (scrollDirection === "down") {
+						targetProgress = 1;
 					}
 
-					if (direction === "up") {
-						targetProgress = 0.25; // Navbar halbtransparent
+					if (scrollDirection === "up") {
+						targetProgress = 0.25;
 					}
 
 				}
