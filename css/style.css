@@ -359,6 +359,10 @@ body {
 		box-shadow 0.3s ease;
 	border: 2px solid var(--primary-color);
 	animation: fadeIn 1.5s ease-out 0.9s both;
+	
+	/* Magnetic CTA Button */
+	position:relative;
+	will-change:transform;
 }
 
 .cta-button:hover {
