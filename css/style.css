@@ -989,6 +989,8 @@ footer a:hover {
 
     border-bottom: 1px solid rgba(212, 175, 55, 0.12);
     
+    pointer-events:auto;
+    
     transform:
 		translate3d(
 			0,
