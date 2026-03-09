@@ -317,8 +317,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const currentY = window.scrollY;
 			scrollVelocity = (currentY - lastScrollY) * 0.8;
 			lastScrollY = currentY;	
-		
-		  const scrollY = Math.max(window.scrollY, 0);
+		  
+		  const scrollY = lastScrollY;
 
 		  if (scrollY <= 5) {
 			  targetProgress = 0;
