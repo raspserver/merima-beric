@@ -374,8 +374,9 @@ let manualNavbarOpen = false;
 			scrollVelocity = (currentY - lastScrollY) * 0.8;
 			lastScrollY = currentY;	
 		  
-		  const scrollY = lastScrollY;
-
+			const scrollY = lastScrollY;
+			
+			hero?.classList.toggle("scrolled", scrollY > 10);
 
 
 		if (manualNavbarOpen) {
