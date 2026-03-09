@@ -112,16 +112,20 @@ body {
 	position:absolute;
 	inset:0;
 
-	background:#000;
+	background:
+		radial-gradient(
+			ellipse at center,
+			rgba(0,0,0,0) 45%,
+			rgba(0,0,0,0.18) 100%
+		);
 
-	opacity: calc(0.06 * (1 - var(--hero-brightness)));
+	opacity: calc(0.55 * (1 - var(--hero-brightness)) + 0.25);
 
 	pointer-events:none;
 	z-index:1;
 
 	will-change: opacity;
 }
-
 
 .hero-content{
     position: relative;
@@ -140,7 +144,6 @@ body {
 	gap:clamp(1rem,2.2vh,1.4rem);
     
     animation: fadeInUp 1.2s ease-out;
-
 }
 
 @keyframes fadeInUp {
