@@ -203,6 +203,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let heroParallax = 0;
   let animationRunning = false;
   let programmaticScroll = false;
+	let heroParallax = 0;
+	let heroParallaxVelocity = 0;
   
  
 
@@ -409,13 +411,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			  
 			  if (hero) {
 
-				const progress = Math.min(scrollY / inertiaThreshold, 1);
+					const progress = Math.min(scrollY / inertiaThreshold, 1);
 
-				hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
-				hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
+					hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
+					hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
+					
+					const targetParallax = window.scrollY * -0.03;
 
-				heroParallax += (window.scrollY * -0.02 - heroParallax) * 0.08;
-				hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
+					const parallaxForce = (targetParallax - heroParallax) * 0.04;
+
+					heroParallaxVelocity += parallaxForce;
+					heroParallaxVelocity *= 0.85;
+
+					heroParallax += heroParallaxVelocity;
+
+					hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
+				
 				
 				}
 			  
