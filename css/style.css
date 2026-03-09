@@ -1519,6 +1519,8 @@ footer a:hover {
 	.scroll-indicator{
 		bottom:24px;
 	}
+	
+	padding-bottom: calc(var(--hero-bottom-space) * 0.8);
 
 }
 
