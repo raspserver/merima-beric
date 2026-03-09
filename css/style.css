@@ -1109,6 +1109,9 @@ footer a:hover {
 
     opacity: calc(0.5 * var(--nav-progress));
     transition: opacity 0.6s ease;
+    
+    /* Glass-Depth Effekt */
+    opacity: calc(0.5 * var(--nav-progress) + var(--nav-refraction));
 }
 
 .nav-container {

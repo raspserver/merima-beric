@@ -430,6 +430,17 @@ document.addEventListener("DOMContentLoaded", () => {
 			const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
 			navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
 	
+			/* Glass-Depth Navbar (Light Refraction) */
+			const refraction = Math.min(Math.abs(scrollVelocity) * 0.02, 1);
+			navbar.style.setProperty("--nav-refraction", refraction);
+			
+			/* Velocity-based shadow */
+			const velocityShadow = Math.min(Math.abs(scrollVelocity) * 0.02, 0.2);
+			navbar.style.boxShadow =
+			`0 calc(10px * var(--nav-progress))
+			 calc(40px * var(--nav-progress))
+			 rgba(0,0,0, ${0.45 * currentProgress + velocityShadow})`;
+	
 			if (hero) {
 
 			  const scrollY = window.scrollY;
@@ -452,12 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 					hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
 				
-				
 				}
-			  
-			  
-			  
-			  
 
 			}
 			
