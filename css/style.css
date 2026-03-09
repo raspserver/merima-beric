@@ -76,11 +76,18 @@ body {
 
 .hero-inner {
 	transform: translate3d(0,var(--hero-parallax,0),0) scale(var(--hero-scale,1));
+	transition: filter 0.8s ease;
 	transform-origin: center center;
 	will-change: transform;
 	contain: paint;
 	backface-visibility:hidden;
 }
+
+.hero-inner{
+	
+}
+
+
 
 .hero::before {
 	content: '';
@@ -130,7 +137,7 @@ body {
 	max-width:800px;
 	margin:0 auto;
 
-	gap:1.4rem;
+	gap:clamp(1rem,2.2vh,1.4rem);
     
     animation: fadeInUp 1.2s ease-out;
 

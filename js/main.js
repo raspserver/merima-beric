@@ -481,8 +481,8 @@ let manualNavbarOpen = false;
 
 					hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
 					hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
-					
-					const targetParallax = window.scrollY * -0.03;
+			
+					const targetParallax = window.scrollY * -0.06;
 
 					const parallaxForce = (targetParallax - heroParallax) * 0.04;
 
