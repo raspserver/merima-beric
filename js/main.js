@@ -225,6 +225,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let lastScrollY = window.scrollY;
   let scrollVelocity = 0;
+  let scrollDirection = "down";
+	let directionLockThreshold = 8;
+  
+  
+  
   
   let heroScale = 1;
 let heroBrightness = 1;
@@ -371,10 +376,18 @@ let manualNavbarOpen = false;
 			}
 			
 			const currentY = window.scrollY;
-			const direction = currentY > lastScrollY ? "down" : "up";
+			const delta = currentY - lastScrollY;
 
-			scrollVelocity = (currentY - lastScrollY) * 0.8;
+			scrollVelocity = delta * 0.8;
+
+			/* Richtungswechsel nur bei echter Bewegung */
+			if (Math.abs(delta) > directionLockThreshold) {
+				scrollDirection = delta > 0 ? "down" : "up";
+			}
+
 			lastScrollY = currentY;
+			
+			
 		  
 			const scrollY = lastScrollY;
 			
