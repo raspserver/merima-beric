@@ -221,13 +221,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Scroll-Indicator: erscheint nach Hero Animation
   setTimeout(() => indicator?.classList.add("visible"), 1200);
 
-  function scrollToSection(target) {
-    if (!target) return;
-    const navHeight = document.querySelector(".navbar")?.offsetHeight || 0;
-    const y = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }
-
 
 	indicator?.addEventListener("click", (e) => {
 
