@@ -206,27 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-		hero?.addEventListener("click", (e) => {
-
-			const clickedCTA = e.target.closest(".cta-button");
-			const clickedIndicator = e.target.closest(".scroll-indicator");
-
-			if(clickedCTA || clickedIndicator) return;
-
-			const progress = parseFloat(
-				getComputedStyle(navbar).getPropertyValue("--nav-progress")
-			);
-
-			const newTarget = progress < 0.5 ? 1 : 0;
-
-			targetProgress = newTarget;
-
-			if (!animationRunning) {
-				animationRunning = true;
-				requestAnimationFrame(animate);
-			}
-
-		});
+		
 
 
 
@@ -283,6 +263,33 @@ document.addEventListener("DOMContentLoaded", () => {
 		  navbar.style.setProperty("--nav-height-progress", 1);
 		  return;
 		}
+
+
+		hero?.addEventListener("click", (e) => {
+
+			const clickedCTA = e.target.closest(".cta-button");
+			const clickedIndicator = e.target.closest(".scroll-indicator");
+
+			if(clickedCTA || clickedIndicator) return;
+
+			const progress = parseFloat(
+				getComputedStyle(navbar).getPropertyValue("--nav-progress")
+			);
+
+			const newTarget = progress < 0.5 ? 1 : 0;
+
+			targetProgress = newTarget;
+
+			if (!animationRunning) {
+				animationRunning = true;
+				requestAnimationFrame(animate);
+			}
+
+		});
+
+
+
+
 
 	  /* ===============================
 		   CLEAN DUAL SPRING SYSTEM
