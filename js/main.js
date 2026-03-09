@@ -198,15 +198,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let heroParallax = 0;
   let animationRunning = false;
   
-  
-	  hero.style.setProperty(
-		 "--hero-brightness",
-		 1 - (Math.min(window.scrollY / window.innerHeight,1) * 0.15)
-		);
+ 
 
 
-
-		
+		if(hero){
+		 hero.style.setProperty(
+		  "--hero-brightness",
+		  1 - (Math.min(window.scrollY / window.innerHeight,1) * 0.15)
+		 );
+		}
 
 
 
