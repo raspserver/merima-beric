@@ -222,10 +222,16 @@ document.addEventListener("DOMContentLoaded", () => {
     window.scrollTo({ top: y, behavior: "smooth" });
   }
 
-  indicator?.addEventListener("click", () => {
-    const next = document.querySelector("#about");
-    scrollToSection(next);
-  });
+
+	indicator?.addEventListener("click", (e) => {
+
+	  e.stopPropagation();
+
+	  const next = document.querySelector("#about");
+	  scrollToSection(next);
+
+	});
+
 
   cta?.addEventListener("click", (e) => {
     e.preventDefault();
