@@ -43,7 +43,9 @@ body {
 	height:100svh;
 
 	display:grid;
+
 	place-items:center;
+	padding-bottom:calc(var(--hero-bottom-space) + 6vh);
 
 	margin:0;
 	padding-top:var(--nav-height);
