@@ -3,25 +3,30 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* =================================================
 	   CENTRAL SCROLL ENGINE
 	   ================================================= */
-
+	
 	function scrollToSection(target) {
 
-	  if (!target) return;
+		  if (!target) return;
 
-	  const navbar = document.querySelector(".navbar");
-	  const navHeight = navbar ? navbar.offsetHeight : 0;
+		  const navbar = document.querySelector(".navbar");
+		  const navHeight = navbar ? navbar.offsetHeight : 0;
 
-	  const y =
-		target.getBoundingClientRect().top +
-		window.pageYOffset -
-		navHeight;
+		  const y =
+			target.getBoundingClientRect().top +
+			window.pageYOffset -
+			navHeight;
 
-	  window.scrollTo({
-		top: y,
-		behavior: "smooth"
-	  });
+		  programmaticScroll = true;
 
-	}
+		  window.scrollTo({
+			top: y,
+			behavior: "smooth"
+		  });
+
+		  setTimeout(() => {
+			programmaticScroll = false;
+		  }, 700); // ungefähr deine scroll duration
+		}
 	
 	
 		
@@ -197,6 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let heroBrightness = 1;
   let heroParallax = 0;
   let animationRunning = false;
+  let programmaticScroll = false;
   
  
 
@@ -330,6 +336,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener("resize", updatePhysics);
 		
 		function handleScroll() {
+			
+			if (programmaticScroll) return;
 			
 			const currentY = window.scrollY;
 			scrollVelocity = (currentY - lastScrollY) * 0.8;
