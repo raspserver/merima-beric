@@ -375,7 +375,7 @@ body {
 .scroll-indicator{
 
 	position:absolute;
-	bottom:42px;
+	bottom:calc(var(--hero-bottom-space) * 0.7);
 	left:50%;
 	transform:translateX(-50%);
 
