@@ -24,8 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		  });
 
 		  setTimeout(() => {
-			programmaticScroll = false;
-		  }, 700); // ungefähr deine scroll duration
+				programmaticScroll = false;
+				handleScroll();
+			}, 700);
+		  
 		}
 	
 	
@@ -252,21 +254,23 @@ let manualNavbarOpen = false;
 
 
 
-
-	
-
-
-
-
-
-
-
 	if (navLogo) {
-	  navLogo.addEventListener("click", (e) => {
-		e.preventDefault(); // verhindert den Sprung nach oben
-		const heroSection = document.querySelector(".hero"); // Ziel ist der Hero
-		scrollToSection(heroSection); // smooth scroll
-	  });
+		
+		navLogo.addEventListener("click", (e) => {
+			e.preventDefault();
+
+			manualNavbarOpen = false;
+			targetProgress = 0;
+
+			const heroSection = document.querySelector(".hero");
+			scrollToSection(heroSection);
+
+			if (!animationRunning) {
+				animationRunning = true;
+				requestAnimationFrame(animate);
+			}
+		});  
+	  
 	}
 
 	
@@ -362,8 +366,10 @@ let manualNavbarOpen = false;
 		
 		function handleScroll() {
 			
-			if (programmaticScroll) return;
-			
+			if (programmaticScroll) {
+			  lastScrollY = window.scrollY;
+			}
+				
 			const currentY = window.scrollY;
 			scrollVelocity = (currentY - lastScrollY) * 0.8;
 			lastScrollY = currentY;	
