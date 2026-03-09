@@ -375,7 +375,7 @@ body {
 .scroll-indicator{
 
 	position:absolute;
-	bottom:50px;
+	bottom:38px;
 	left:50%;
 	transform:translateX(-50%);
 
