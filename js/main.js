@@ -295,6 +295,48 @@ let programmaticScroll = false;
 		}
 
 
+		/* Antippen auf den gesamten Bereich unterhalb des Termin Button bis zur Sektionsgrenze  navigiert*/
+		hero?.addEventListener("click", (e) => {
+
+			const clickedCTA = e.target.closest(".cta-button");
+			const clickedIndicator = e.target.closest(".scroll-indicator");
+
+			if(clickedCTA || clickedIndicator) return;
+
+			/* ===== NEW: TAP ZONE FOR ABOUT ===== */
+
+			const ctaRect = cta?.getBoundingClientRect();
+
+			if(ctaRect){
+				const clickY = e.clientY;
+
+				if(clickY > ctaRect.bottom){
+					const about = document.querySelector("#about");
+					scrollToSection(about);
+					return;
+				}
+			}
+
+			/* ===== NAVBAR TOGGLE AREA ===== */
+
+			const progress = parseFloat(
+				getComputedStyle(navbar).getPropertyValue("--nav-progress")
+			);
+
+			const newTarget = progress < 0.5 ? 1 : 0;
+
+			targetProgress = newTarget;
+
+			if (!animationRunning) {
+				animationRunning = true;
+				requestAnimationFrame(animate);
+			}
+
+		});
+
+
+
+		/* Navbar Toggle, wenn Bildschirm ganz nach oben gescrollt */
 		hero?.addEventListener("click", (e) => {
 
 			const clickedCTA = e.target.closest(".cta-button");
