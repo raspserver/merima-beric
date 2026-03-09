@@ -378,10 +378,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* Clamp delta → verhindert Physics Jumps bei Frame Drops */
 			delta = Math.min(delta, 2);
 			
-			velocity += force * delta;
-			velocity *= Math.pow(damping, delta);
-			currentProgress += velocity * delta;
-
+			velocity += force;
+			velocity *= damping;
+			currentProgress += velocity;
+			
 			currentProgress = Math.max(0, Math.min(currentProgress, 1));
 
 		  /* ===== HEIGHT SPRING ===== */ 
@@ -405,7 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 			if (hero) {
 
-			  const scrollY = lastScrollY;
+			  const scrollY = window.scrollY;
 			  
 			  if (hero) {
 
@@ -414,8 +414,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
 				hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
 
-				const parallaxOffset = Math.round(Math.max(lastScrollY * -0.02, -24));
-				hero.style.setProperty("--hero-parallax", `${parallaxOffset}px`);
+				heroParallax += (window.scrollY * -0.02 - heroParallax) * 0.08;
+				hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
 				
 				}
 			  

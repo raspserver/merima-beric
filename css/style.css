@@ -48,8 +48,8 @@ body {
 	margin:0;
 	padding-top:var(--nav-height);
 	padding-bottom:var(--hero-bottom-space);
-	
-	overflow: clip;
+
+	overflow: hidden;
 
 	background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
 
