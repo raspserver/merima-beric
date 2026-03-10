@@ -980,6 +980,8 @@ footer a:hover {
     left: 0;
     width: 100%;
     z-index: 2000;
+    
+    height: auto;
 
     border-bottom: 1px solid rgba(212, 175, 55, 0.12);
     pointer-events: auto;
@@ -1008,7 +1010,10 @@ footer a:hover {
 
     will-change: transform;
     backface-visibility: hidden;
+    
+/*
     contain: paint;
+*/
 
     background: rgba(
         calc(26 - (16 * var(--nav-surface))),
