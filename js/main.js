@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-	/* prefers-reduced-motion Support (Accessibility Pflicht) */
+	/* prefers-reduced-motion Support */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 	/* =========================
@@ -41,14 +40,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	let currentSurface = 0;
 	let surfaceVelocity = 0;
 
-	let stiffness, damping, compactStiffness, compactDamping;
-	
 	let targetBounce = 0;
 	let currentBounce = 0;
 	let bounceVelocity = 0;
 
+	let stiffness, damping, compactStiffness, compactDamping;
 	let bounceStiffness, bounceDamping;
-	
+
 	function updatePhysics() {
 		const isMobile = window.innerWidth <= 768;
 
@@ -72,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			requestAnimationFrame(animate);
 		}
 	}
-	
+
 	function applyNavbarStateImmediately(visible, compact, surface) {
 		if (!navbar) return;
 
@@ -92,18 +90,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
 	}
-	
+
 	function triggerNavbarBounce(delta) {
 		if (!navbar || prefersReducedMotion) return;
 
 		const magnitude = Math.min(Math.abs(delta), 120);
 		if (magnitude < 2) return;
 
-		/* immer positives Aufblähen */
 		const impulse = Math.min(0.18 + (magnitude / 120) * 0.82, 1);
 
-		/* nur dann überschreiben, wenn der neue Impuls stärker ist
-		   oder der alte fast abgeklungen ist */
 		if (impulse > targetBounce || Math.abs(currentBounce) < 0.08) {
 			targetBounce = impulse;
 		}
@@ -129,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		programmaticScroll = true;
 		programmaticNavMode = navMode;
 
-		/* Richtung für programmatic Scroll explizit setzen */
 		if (navMode === "down") {
 			scrollDirection = "down";
 		} else if (navMode === "top") {
@@ -148,8 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			programmaticScroll = false;
 			lastScrollY = finalY;
 
-			/* Finalen Navbar-Zustand explizit festsetzen,
-			   bevor wieder in die normale Scroll-Logik gewechselt wird */
 			if (finalMode === "down") {
 				targetVisible = 1;
 				targetCompact = 1;
@@ -275,7 +267,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			requestAnimationFrame(() => setPosition(currentIndex, false));
 		});
 
-		let startX = 0, isDragging = false;
+		let startX = 0;
+		let isDragging = false;
 		track.style.touchAction = "pan-y";
 
 		track.addEventListener("touchstart", e => {
@@ -335,7 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", 1);
 		navbar.style.setProperty("--nav-height-progress", 1);
 	}
-	
+
 	cta?.addEventListener("click", (e) => {
 		e.preventDefault();
 
@@ -352,9 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			e.preventDefault();
 
 			manualNavbarOpen = false;
-			targetVisible = 1;
-			targetCompact = 1;
-			targetSurface = 0.18;
+			applyNavbarStateImmediately(1, 1, 0.18);
 
 			const heroSection = document.querySelector(".hero");
 			scrollToSection(heroSection, "top");
@@ -370,7 +361,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (clickedCTA) return;
 
-
 		if (clickedIndicator) {
 			manualNavbarOpen = false;
 			applyNavbarStateImmediately(1, 1, 1);
@@ -385,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (ctaRect) {
 			const clickY = e.clientY;
-			
+
 			if (clickY > ctaRect.bottom) {
 				manualNavbarOpen = false;
 				applyNavbarStateImmediately(1, 1, 1);
@@ -395,7 +385,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				startNavbarAnimation();
 				return;
 			}
-			
 		}
 
 		const visible = parseFloat(
@@ -408,11 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		targetCompact = newTarget;
 		targetSurface = newTarget;
 
-		if (newTarget === 1) {
-			manualNavbarOpen = true;
-		} else {
-			manualNavbarOpen = false;
-		}
+		manualNavbarOpen = newTarget === 1;
 
 		startNavbarAnimation();
 	});
@@ -521,17 +506,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		surfaceVelocity *= Math.pow(compactDamping, delta);
 		currentSurface += surfaceVelocity * delta;
 		currentSurface = Math.max(0, Math.min(currentSurface, 1));
-		
+
 		const bounceForce = (targetBounce - currentBounce) * bounceStiffness;
 		bounceVelocity += bounceForce * delta;
 		bounceVelocity *= Math.pow(bounceDamping, delta);
 		currentBounce += bounceVelocity * delta;
 
-		/* Begrenzung */
 		currentBounce = Math.max(-0.35, Math.min(currentBounce, 1.2));
 
-		/* Ziel immer wieder Richtung 0 ziehen,
-		   damit der Impuls nur kurz lebt */
 		targetBounce *= Math.pow(0.78, delta);
 		if (targetBounce < 0.001) targetBounce = 0;
 
@@ -542,7 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-compact", easedCompact);
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
-		
+
 		const easedBounce =
 			currentBounce >= 0
 				? 1 - Math.pow(1 - Math.min(currentBounce, 1), 2.2)
@@ -642,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			navToggle?.classList.remove("active");
 		});
 	});
-	
+
 	/* Pricing Tabs */
 	const pricingTabs = document.querySelectorAll(".pricing-tab");
 	const pricingContents = document.querySelectorAll(".pricing-content");
