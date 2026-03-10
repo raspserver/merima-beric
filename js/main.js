@@ -437,18 +437,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		lastScrollY = currentY;
 
-		scrollVelocity = delta * 0.8;
-		
-		if (!programmaticScroll) {
-			triggerNavbarBounce(delta);
-		}
-
-		if (Math.abs(delta) > directionLockThreshold) {
-			scrollDirection = delta > 0 ? "down" : "up";
-		}
-
-		lastScrollY = currentY;
-
 		const scrollY = lastScrollY;
 		hero?.classList.toggle("scrolled", scrollY > 10);
 
