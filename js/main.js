@@ -1,15 +1,72 @@
 document.addEventListener("DOMContentLoaded", () => {
-	
+
+	/* prefers-reduced-motion Support (Accessibility Pflicht) */
+	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	/* =========================
+	   GLOBAL NAV / SCROLL STATE
+	========================= */
+	const navbar = document.querySelector(".navbar");
+	const hero = document.querySelector(".hero");
+	const navToggle = document.querySelector(".nav-toggle");
+	const navMenu = document.querySelector(".nav-menu");
+	const navLinks = document.querySelectorAll(".nav-menu a");
+	const navLogo = document.querySelector(".nav-logo");
+	const cta = document.querySelector(".cta-button");
+
+	let lastScrollY = window.scrollY;
+	let scrollVelocity = 0;
+	let scrollDirection = "down";
+	const directionLockThreshold = 8;
+
+	let heroParallax = 0;
+	let heroParallaxVelocity = 0;
+
+	let animationRunning = false;
+	let lastFrameTime = performance.now();
+
+	let programmaticScroll = false;
+	let manualNavbarOpen = false;
+	let programmaticNavMode = null; // null | "down" | "top"
+
+	let targetVisible = 0;
+	let currentVisible = 0;
+	let visibleVelocity = 0;
+
+	let targetCompact = 0;
+	let currentCompact = 0;
+	let compactVelocity = 0;
+
+	let stiffness, damping, compactStiffness, compactDamping;
+
+	function updatePhysics() {
+		const isMobile = window.innerWidth <= 768;
+
+		stiffness = isMobile ? 0.06 : 0.08;
+		damping = isMobile ? 0.85 : 0.82;
+
+		compactStiffness = isMobile ? 0.035 : 0.045;
+		compactDamping = isMobile ? 0.9 : 0.88;
+	}
+
+	updatePhysics();
+	window.addEventListener("resize", updatePhysics);
+
+	function startNavbarAnimation() {
+		if (!animationRunning) {
+			animationRunning = true;
+			lastFrameTime = performance.now();
+			requestAnimationFrame(animate);
+		}
+	}
+
 	/* =================================================
 	   CENTRAL SCROLL ENGINE
-	   ================================================= */
-	
+	================================================= */
 	function scrollToSection(target, navMode = null) {
 		if (!target) return;
 
-		const navbar = document.querySelector(".navbar");
 		const navHeight = navbar ? navbar.offsetHeight : 0;
-
 		const isHeroTarget = target.classList?.contains("hero");
 		const offset = isHeroTarget ? 0 : navHeight;
 
@@ -32,221 +89,168 @@ document.addEventListener("DOMContentLoaded", () => {
 			handleScroll();
 		}, 750);
 	}
-	
-	
-	
-	
-		
-	/* prefers-reduced-motion Support (Accessibility Pflicht) */
-	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	
-	
-	
+
 	/* Magnetic CTA Button */
 	const magneticButtons = document.querySelectorAll(".cta-button");
-
-		magneticButtons.forEach(btn => {
-
-		  btn.addEventListener("mousemove", (e) => {
-
+	magneticButtons.forEach(btn => {
+		btn.addEventListener("mousemove", (e) => {
 			const rect = btn.getBoundingClientRect();
-
-			const x = e.clientX - rect.left - rect.width/2;
-			const y = e.clientY - rect.top - rect.height/2;
-
-			btn.style.transform = `translate(${x*0.18}px, ${y*0.18}px)`;
-
-		  });
-
-		  btn.addEventListener("mouseleave", () => {
-			btn.style.transform = "";
-		  });
-
+			const x = e.clientX - rect.left - rect.width / 2;
+			const y = e.clientY - rect.top - rect.height / 2;
+			btn.style.transform = `translate(${x * 0.18}px, ${y * 0.18}px)`;
 		});
 
-
-
-
-
-
-
-
+		btn.addEventListener("mouseleave", () => {
+			btn.style.transform = "";
+		});
+	});
 
 	/* =========================
 	   TRUE INFINITE GALLERY
 	========================= */
 	const videoFiles = [
-	  "videos/snaptik_7204469200172190982_hd.mp4",
-	  "videos/snaptik_7208965603661499654_hd.mp4",
-	  "videos/snaptik_7211607331648441605_hd.mp4",
-	  "videos/snaptik_7444629475364474145_hd.mp4"
+		"videos/snaptik_7204469200172190982_hd.mp4",
+		"videos/snaptik_7208965603661499654_hd.mp4",
+		"videos/snaptik_7211607331648441605_hd.mp4",
+		"videos/snaptik_7444629475364474145_hd.mp4"
 	];
 
 	const track = document.querySelector(".gallery-track");
 	if (track) {
-	  let videos = [];
-	  let currentIndex = 1;
-	  let isAnimating = false;
+		let videos = [];
+		let currentIndex = 1;
+		let isAnimating = false;
 
-	  function shuffle(array) {
-		for (let i = array.length - 1; i > 0; i--) {
-		  const j = Math.floor(Math.random() * (i + 1));
-		  [array[i], array[j]] = [array[j], array[i]];
+		function shuffle(array) {
+			for (let i = array.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[array[i], array[j]] = [array[j], array[i]];
+			}
+			return array;
 		}
-		return array;
-	  }
 
-	  const shuffled = shuffle([...videoFiles]);
-	  const firstCloneSrc = shuffled[0];
-	  const lastCloneSrc = shuffled[shuffled.length - 1];
-	  const fullList = [lastCloneSrc, ...shuffled, firstCloneSrc];
+		const shuffled = shuffle([...videoFiles]);
+		const firstCloneSrc = shuffled[0];
+		const lastCloneSrc = shuffled[shuffled.length - 1];
+		const fullList = [lastCloneSrc, ...shuffled, firstCloneSrc];
 
-	  fullList.forEach(src => {
-		const video = document.createElement("video");
-		video.src = src;
-		video.playsInline = true;
-		video.preload = "auto";
-		video.controls = false;
-		video.muted = true;
+		fullList.forEach(src => {
+			const video = document.createElement("video");
+			video.src = src;
+			video.playsInline = true;
+			video.preload = "auto";
+			video.controls = false;
+			video.muted = true;
 
-		video.addEventListener("loadeddata", () => {
-		  video.currentTime = 0.01;
+			video.addEventListener("loadeddata", () => {
+				video.currentTime = 0.01;
+			});
+
+			video.addEventListener("pointerup", e => {
+				e.stopPropagation();
+				video.paused ? safePlay(video) : video.pause();
+			});
+
+			video.addEventListener("ended", () => moveTo(currentIndex + 1, true));
+
+			track.appendChild(video);
+			videos.push(video);
 		});
 
-		video.addEventListener("pointerup", e => {
-		  e.stopPropagation();
-		  video.paused ? safePlay(video) : video.pause();
+		function safePlay(video) {
+			const p = video.play();
+			if (p !== undefined) p.catch(() => {});
+		}
+
+		function playOnly(index) {
+			videos.forEach((v, i) => i === index ? (v.currentTime = 0, safePlay(v)) : v.pause());
+		}
+
+		function setPosition(index, animate = true) {
+			const videoWidth = videos[0].offsetWidth;
+			const padding = track.parentElement.offsetWidth * 0.1;
+			const offset = videoWidth * index - padding;
+			track.style.transition = animate ? "transform 0.6s cubic-bezier(.16,.84,.44,1)" : "none";
+			track.style.transform = `translateX(-${offset}px)`;
+		}
+
+		function moveTo(index, autoPlay = false) {
+			if (isAnimating) return;
+			isAnimating = true;
+			currentIndex = index;
+			setPosition(currentIndex, true);
+			if (autoPlay) playOnly(currentIndex);
+			else videos.forEach(v => v.pause());
+		}
+
+		setPosition(currentIndex, false);
+		playOnly(currentIndex);
+
+		track.addEventListener("transitionend", () => {
+			isAnimating = false;
+			if (currentIndex === videos.length - 1) currentIndex = 1;
+			if (currentIndex === 0) currentIndex = videos.length - 2;
+			requestAnimationFrame(() => setPosition(currentIndex, false));
 		});
 
-		video.addEventListener("ended", () => moveTo(currentIndex + 1, true));
+		let startX = 0, isDragging = false;
+		track.style.touchAction = "pan-y";
 
-		track.appendChild(video);
-		videos.push(video);
-	  });
+		track.addEventListener("touchstart", e => {
+			startX = e.touches[0].clientX;
+			isDragging = true;
+			track.style.transition = "none";
+		});
 
-	  function safePlay(video) {
-		const p = video.play();
-		if (p !== undefined) p.catch(() => {});
-	  }
+		track.addEventListener("touchmove", e => {
+			if (!isDragging) return;
+			const diff = e.touches[0].clientX - startX;
+			const videoWidth = videos[0].offsetWidth;
+			const padding = track.parentElement.offsetWidth * 0.1;
+			track.style.transform = `translateX(${-currentIndex * videoWidth + diff - padding}px)`;
+		});
 
-	  function playOnly(index) {
-		videos.forEach((v, i) => i === index ? (v.currentTime = 0, safePlay(v)) : v.pause());
-	  }
+		track.addEventListener("touchend", e => {
+			if (!isDragging) return;
+			const diff = e.changedTouches[0].clientX - startX;
+			if (diff > 80) moveTo(currentIndex - 1, true);
+			else if (diff < -80) moveTo(currentIndex + 1, true);
+			else setPosition(currentIndex, true);
+			isDragging = false;
+		});
 
-	  function setPosition(index, animate = true) {
-		const videoWidth = videos[0].offsetWidth;
-		const padding = track.parentElement.offsetWidth * 0.1; 
-		const offset = videoWidth * index - padding;
-		track.style.transition = animate ? "transform 0.6s cubic-bezier(.16,.84,.44,1)" : "none";
-		track.style.transform = `translateX(-${offset}px)`;
-	  }
+		const gallerySection = document.querySelector(".gallery");
+		if (gallerySection) {
+			const observer = new IntersectionObserver(entries => {
+				entries.forEach(entry => {
+					if (!videos[currentIndex]) return;
+					entry.isIntersecting ? playOnly(currentIndex) : videos.forEach(v => v.pause());
+				});
+			}, { threshold: 0.4 });
+			observer.observe(gallerySection);
+		}
 
-	  function moveTo(index, autoPlay = false) {
-		if (isAnimating) return;
-		isAnimating = true;
-		currentIndex = index;
-		setPosition(currentIndex, true);
-		if (autoPlay) playOnly(currentIndex); else videos.forEach(v => v.pause());
-	  }
+		document.addEventListener("visibilitychange", () => {
+			document.hidden ? videos.forEach(v => v.pause()) : playOnly(currentIndex);
+		});
 
-	  // Initial
-	  setPosition(currentIndex, false);
-	  playOnly(currentIndex);
-
-	  // Loop Reset
-	  track.addEventListener("transitionend", () => {
-		isAnimating = false;
-		if (currentIndex === videos.length - 1) currentIndex = 1;
-		if (currentIndex === 0) currentIndex = videos.length - 2;
-		requestAnimationFrame(() => setPosition(currentIndex, false));
-	  });
-
-	  // Swipe
-	  let startX = 0, isDragging = false;
-	  track.style.touchAction = "pan-y";
-
-	  track.addEventListener("touchstart", e => {
-		startX = e.touches[0].clientX;
-		isDragging = true;
-		track.style.transition = "none";
-	  });
-
-	  track.addEventListener("touchmove", e => {
-		if (!isDragging) return;
-		const diff = e.touches[0].clientX - startX;
-		const videoWidth = videos[0].offsetWidth;
-		const padding = track.parentElement.offsetWidth * 0.1;
-		track.style.transform = `translateX(${-currentIndex * videoWidth + diff - padding}px)`;
-	  });
-
-	  track.addEventListener("touchend", e => {
-		if (!isDragging) return;
-		const diff = e.changedTouches[0].clientX - startX;
-		if (diff > 80) moveTo(currentIndex - 1, true);
-		else if (diff < -80) moveTo(currentIndex + 1, true);
-		else setPosition(currentIndex, true);
-		isDragging = false;
-	  });
-
-	  // Intersection Observer
-	  const gallerySection = document.querySelector(".gallery");
-	  if (gallerySection) {
-		const observer = new IntersectionObserver(entries => {
-		  entries.forEach(entry => {
-			if (!videos[currentIndex]) return;
-			entry.isIntersecting ? playOnly(currentIndex) : videos.forEach(v => v.pause());
-		  });
-		}, { threshold: 0.4 });
-		observer.observe(gallerySection);
-	  }
-
-	  // Visibility API
-	  document.addEventListener("visibilitychange", () => {
-		document.hidden ? videos.forEach(v => v.pause()) : playOnly(currentIndex);
-	  });
-
-	  // Resize Fix
-	  window.addEventListener("resize", () => setPosition(currentIndex, false));
+		window.addEventListener("resize", () => setPosition(currentIndex, false));
 	}
-	
-	
-	
-	
-	
-	
-	
-		/* =========================
+
+	/* =========================
 	   NAVBAR
 	========================= */
-
-	const navbar = document.querySelector(".navbar");
-	const hero = document.querySelector(".hero");
-	const navToggle = document.querySelector(".nav-toggle");
-	const navMenu = document.querySelector(".nav-menu");
-	const navLinks = document.querySelectorAll(".nav-menu a");
-	const navLogo = document.querySelector(".nav-logo");
-	const indicator = document.querySelector(".scroll-indicator");
-	const cta = document.querySelector(".cta-button");
-
-	let lastScrollY = window.scrollY;
-	let scrollVelocity = 0;
-	let scrollDirection = "down";
-	let directionLockThreshold = 8;
-
-	let heroParallax = 0;
-	let heroParallaxVelocity = 0;
-	let animationRunning = false;
-	let programmaticScroll = false;
-
-	let manualNavbarOpen = false;
-	let programmaticNavMode = null; 
-	/* null | "down" | "top" */
-
 	if (hero) {
 		hero.style.setProperty(
 			"--hero-brightness",
 			1 - (Math.min(window.scrollY / window.innerHeight, 1) * 0.15)
 		);
+	}
+
+	if (navbar && prefersReducedMotion) {
+		navbar.style.setProperty("--nav-visible", 1);
+		navbar.style.setProperty("--nav-compact", 1);
+		navbar.style.setProperty("--nav-height-progress", 1);
 	}
 
 	cta?.addEventListener("click", (e) => {
@@ -258,12 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const target = document.querySelector("#contact");
 		scrollToSection(target, "down");
-
-		if (!animationRunning) {
-			animationRunning = true;
-			lastFrameTime = performance.now();
-			requestAnimationFrame(animate);
-		}
+		startNavbarAnimation();
 	});
 
 	if (navLogo) {
@@ -271,312 +270,264 @@ document.addEventListener("DOMContentLoaded", () => {
 			e.preventDefault();
 
 			manualNavbarOpen = false;
-
-			/* Während der Fahrt nach oben sichtbar + transparent */
 			targetVisible = 1;
 			targetCompact = 0.18;
 
 			const heroSection = document.querySelector(".hero");
 			scrollToSection(heroSection, "top");
-
-			if (!animationRunning) {
-				animationRunning = true;
-				lastFrameTime = performance.now();
-				requestAnimationFrame(animate);
-			}
+			startNavbarAnimation();
 		});
 	}
 
-	if (navbar) {
+	hero?.addEventListener("click", (e) => {
+		if (!navbar) return;
 
-		if (prefersReducedMotion) {
-			navbar.style.setProperty("--nav-visible", 1);
-			navbar.style.setProperty("--nav-compact", 1);
-			navbar.style.setProperty("--nav-height-progress", 1);
+		const clickedCTA = e.target.closest(".cta-button");
+		const clickedIndicator = e.target.closest(".scroll-indicator");
+
+		if (clickedCTA) return;
+
+		if (clickedIndicator) {
+			manualNavbarOpen = false;
+			targetVisible = 1;
+			targetCompact = 1;
+
+			const about = document.querySelector("#about");
+			scrollToSection(about, "down");
+			startNavbarAnimation();
 			return;
 		}
 
-		hero?.addEventListener("click", (e) => {
-			const clickedCTA = e.target.closest(".cta-button");
-			const clickedIndicator = e.target.closest(".scroll-indicator");
+		const ctaRect = cta?.getBoundingClientRect();
 
-			if (clickedCTA || clickedIndicator) return;
+		if (ctaRect) {
+			const clickY = e.clientY;
 
-			const ctaRect = cta?.getBoundingClientRect();
-
-			if (ctaRect) {
-				const clickY = e.clientY;
-
-				if (clickY > ctaRect.bottom) {
-					manualNavbarOpen = false;
-					targetVisible = 1;
-					targetCompact = 1;
-
-					const about = document.querySelector("#about");
-					scrollToSection(about, "down");
-
-					if (!animationRunning) {
-						animationRunning = true;
-						lastFrameTime = performance.now();
-						requestAnimationFrame(animate);
-					}
-					return;
-				}
-			}
-
-			const visible = parseFloat(
-				getComputedStyle(navbar).getPropertyValue("--nav-visible")
-			);
-
-			const newTarget = visible < 0.5 ? 1 : 0;
-
-			targetVisible = newTarget;
-			targetCompact = newTarget;
-
-			if (newTarget === 1) {
-				manualNavbarOpen = true;
-			}
-
-			if (!animationRunning) {
-				animationRunning = true;
-				requestAnimationFrame(animate);
-			}
-		});
-
-		const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
-
-		let targetVisible = 0;
-		let currentVisible = 0;
-		let visibleVelocity = 0;
-
-		let targetCompact = 0;
-		let currentCompact = 0;
-		let compactVelocity = 0;
-
-		let stiffness, damping, compactStiffness, compactDamping;
-
-		function updatePhysics() {
-			const isMobile = window.innerWidth <= 768;
-
-			stiffness = isMobile ? 0.06 : 0.08;
-			damping = isMobile ? 0.85 : 0.82;
-
-			compactStiffness = isMobile ? 0.035 : 0.045;
-			compactDamping = isMobile ? 0.9 : 0.88;
-		}
-
-		updatePhysics();
-		window.addEventListener("resize", updatePhysics);
-
-		function handleScroll() {
-			if (programmaticScroll) {
-				lastScrollY = window.scrollY;
-			}
-
-			const currentY = window.scrollY;
-			const delta = currentY - lastScrollY;
-
-			scrollVelocity = delta * 0.8;
-
-			if (Math.abs(delta) > directionLockThreshold) {
-				scrollDirection = delta > 0 ? "down" : "up";
-			}
-
-			lastScrollY = currentY;
-
-			const scrollY = lastScrollY;
-
-			hero?.classList.toggle("scrolled", scrollY > 10);
-
-
-			if (programmaticNavMode === "down") {
-				targetVisible = 1;
-				targetCompact = 1;
-
-			} else if (programmaticNavMode === "top") {
-				if (scrollY <= 5) {
-					targetVisible = 0;
-					targetCompact = 0;
-				} else {
-					targetVisible = 1;
-					targetCompact = 0.18;
-				}
-
-			} else if (manualNavbarOpen) {
-				if (scrollY <= 5) {
-					manualNavbarOpen = false;
-					targetVisible = 0;
-					targetCompact = 0;
-				} else {
-					targetVisible = 1;
-					targetCompact = 1;
-				}
-
-			} else {
-				if (scrollY <= 5) {
-					targetVisible = 0;
-					targetCompact = 0;
-				} else if (scrollDirection === "down") {
-					targetVisible = 1;
-					targetCompact = 1;
-				} else if (scrollDirection === "up") {
-					targetVisible = 1;
-					targetCompact = 0.18;
-				}
-			}
-
-			if (!animationRunning) {
-				animationRunning = true;
-				lastFrameTime = performance.now();
-				requestAnimationFrame(animate);
-			}
-		}
-
-		window.addEventListener("scroll", handleScroll, { passive: true });
-
-		let lastFrameTime = performance.now();
-
-		function animate(now) {
-			if (document.hidden) {
-				animationRunning = false;
-				return;
-			}
-
-			animationRunning = true;
-			scrollVelocity *= 0.9;
-
-			let delta = (now - lastFrameTime) / 16.67;
-			lastFrameTime = now;
-			delta = Math.min(delta, 2);
-
-			/* visible spring */
-			const visibleForce = (targetVisible - currentVisible) * stiffness;
-			visibleVelocity += visibleForce * delta;
-			visibleVelocity *= Math.pow(damping, delta);
-			currentVisible += visibleVelocity * delta;
-			currentVisible = Math.max(0, Math.min(currentVisible, 1));
-
-			/* compact spring */
-			const compactForce = (targetCompact - currentCompact) * compactStiffness;
-			compactVelocity += compactForce * delta;
-			compactVelocity *= Math.pow(compactDamping, delta);
-			currentCompact += compactVelocity * delta;
-			currentCompact = Math.max(0, Math.min(currentCompact, 1));
-
-			const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
-
-			navbar.style.setProperty("--nav-visible", currentVisible);
-			navbar.style.setProperty("--nav-compact", easedCompact);
-			navbar.style.setProperty("--nav-height-progress", easedCompact);
-
-			const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
-			navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
-
-			const refraction = Math.min(Math.abs(scrollVelocity) * 0.02, 1);
-			navbar.style.setProperty("--nav-refraction", refraction);
-
-			const velocityShadow = Math.min(Math.abs(scrollVelocity) * 0.02, 0.2);
-			navbar.style.boxShadow =
-				`0 ${10 * easedCompact}px ${40 * easedCompact}px rgba(0,0,0, ${0.45 * easedCompact + velocityShadow})`;
-
-			if (hero) {
-				const scrollY = window.scrollY;
-				const progress = Math.min(scrollY / inertiaThreshold, 1);
-
-				hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
-				hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
-
-				const targetParallax = window.scrollY * -0.06;
-				const parallaxForce = (targetParallax - heroParallax) * 0.04;
-
-				heroParallaxVelocity += parallaxForce;
-				heroParallaxVelocity *= 0.85;
-				heroParallax += heroParallaxVelocity;
-
-				hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
-			}
-
-			const stillMoving =
-				Math.abs(targetVisible - currentVisible) > 0.0005 ||
-				Math.abs(visibleVelocity) > 0.0005 ||
-				Math.abs(targetCompact - currentCompact) > 0.0005 ||
-				Math.abs(compactVelocity) > 0.0005;
-
-			if (!stillMoving) {
-				animationRunning = false;
-				return;
-			}
-
-			requestAnimationFrame(animate);
-		}
-
-		handleScroll();
-
-		document.addEventListener("visibilitychange", () => {
-			if (document.hidden) {
-				animationRunning = false;
-			} else {
-				handleScroll();
-			}
-		});
-
-		if (navToggle && navMenu) {
-			navToggle.addEventListener("click", () => {
-				navToggle.classList.toggle("active");
-				navMenu.classList.toggle("active");
-			});
-		}
-
-		navLinks.forEach(link => {
-			link.addEventListener("click", (e) => {
-				e.preventDefault();
-
-				const targetId = link.getAttribute("href");
-				const target = document.querySelector(targetId);
-				if (!target) return;
-				
+			if (clickY > ctaRect.bottom) {
 				manualNavbarOpen = false;
 				targetVisible = 1;
 				targetCompact = 1;
-				scrollToSection(target, "down");
 
-				if (!animationRunning) {
-					animationRunning = true;
-					lastFrameTime = performance.now();
-					requestAnimationFrame(animate);
-				}
+				const about = document.querySelector("#about");
+				scrollToSection(about, "down");
+				startNavbarAnimation();
+				return;
+			}
+		}
 
-				navMenu.classList.remove("active");
-				navToggle.classList.remove("active");
-			});
+		const visible = parseFloat(
+			getComputedStyle(navbar).getPropertyValue("--nav-visible")
+		);
+
+		const newTarget = visible < 0.5 ? 1 : 0;
+
+		targetVisible = newTarget;
+		targetCompact = newTarget;
+
+		if (newTarget === 1) {
+			manualNavbarOpen = true;
+		} else {
+			manualNavbarOpen = false;
+		}
+
+		startNavbarAnimation();
+	});
+
+	const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
+
+	function handleScroll() {
+		if (!navbar) return;
+
+		if (programmaticScroll) {
+			lastScrollY = window.scrollY;
+		}
+
+		const currentY = window.scrollY;
+		const delta = currentY - lastScrollY;
+
+		scrollVelocity = delta * 0.8;
+
+		if (Math.abs(delta) > directionLockThreshold) {
+			scrollDirection = delta > 0 ? "down" : "up";
+		}
+
+		lastScrollY = currentY;
+
+		const scrollY = lastScrollY;
+		hero?.classList.toggle("scrolled", scrollY > 10);
+
+		if (programmaticNavMode === "down") {
+			targetVisible = 1;
+			targetCompact = 1;
+
+		} else if (programmaticNavMode === "top") {
+			if (scrollY <= 5) {
+				targetVisible = 0;
+				targetCompact = 0;
+			} else {
+				targetVisible = 1;
+				targetCompact = 0.18;
+			}
+
+		} else if (manualNavbarOpen) {
+			if (scrollY <= 5) {
+				manualNavbarOpen = false;
+				targetVisible = 0;
+				targetCompact = 0;
+			} else {
+				targetVisible = 1;
+				targetCompact = 1;
+			}
+
+		} else {
+			if (scrollY <= 5) {
+				targetVisible = 0;
+				targetCompact = 0;
+			} else if (scrollDirection === "down") {
+				targetVisible = 1;
+				targetCompact = 1;
+			} else if (scrollDirection === "up") {
+				targetVisible = 1;
+				targetCompact = 0.18;
+			}
+		}
+
+		startNavbarAnimation();
+	}
+
+	if (navbar) {
+		window.addEventListener("scroll", handleScroll, { passive: true });
+	}
+
+	function animate(now) {
+		if (!navbar || document.hidden) {
+			animationRunning = false;
+			return;
+		}
+
+		animationRunning = true;
+		scrollVelocity *= 0.9;
+
+		let delta = (now - lastFrameTime) / 16.67;
+		lastFrameTime = now;
+		delta = Math.min(delta, 2);
+
+		const visibleForce = (targetVisible - currentVisible) * stiffness;
+		visibleVelocity += visibleForce * delta;
+		visibleVelocity *= Math.pow(damping, delta);
+		currentVisible += visibleVelocity * delta;
+		currentVisible = Math.max(0, Math.min(currentVisible, 1));
+
+		const compactForce = (targetCompact - currentCompact) * compactStiffness;
+		compactVelocity += compactForce * delta;
+		compactVelocity *= Math.pow(compactDamping, delta);
+		currentCompact += compactVelocity * delta;
+		currentCompact = Math.max(0, Math.min(currentCompact, 1));
+
+		const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
+
+		navbar.style.setProperty("--nav-visible", currentVisible);
+		navbar.style.setProperty("--nav-compact", easedCompact);
+		navbar.style.setProperty("--nav-height-progress", easedCompact);
+
+		const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
+		navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
+
+		const refraction = Math.min(Math.abs(scrollVelocity) * 0.02, 1);
+		navbar.style.setProperty("--nav-refraction", refraction);
+
+		const velocityShadow = Math.min(Math.abs(scrollVelocity) * 0.02, 0.2);
+		navbar.style.boxShadow =
+			`0 ${10 * easedCompact}px ${40 * easedCompact}px rgba(0,0,0, ${0.45 * easedCompact + velocityShadow})`;
+
+		if (hero) {
+			const scrollY = window.scrollY;
+			const progress = Math.min(scrollY / inertiaThreshold, 1);
+
+			hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
+			hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
+
+			const targetParallax = window.scrollY * -0.06;
+			const parallaxForce = (targetParallax - heroParallax) * 0.04;
+
+			heroParallaxVelocity += parallaxForce;
+			heroParallaxVelocity *= 0.85;
+			heroParallax += heroParallaxVelocity;
+
+			hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
+		}
+
+		const stillMoving =
+			Math.abs(targetVisible - currentVisible) > 0.0005 ||
+			Math.abs(visibleVelocity) > 0.0005 ||
+			Math.abs(targetCompact - currentCompact) > 0.0005 ||
+			Math.abs(compactVelocity) > 0.0005;
+
+		if (!stillMoving) {
+			animationRunning = false;
+			return;
+		}
+
+		requestAnimationFrame(animate);
+	}
+
+	handleScroll();
+
+	document.addEventListener("visibilitychange", () => {
+		if (document.hidden) {
+			animationRunning = false;
+		} else {
+			handleScroll();
+		}
+	});
+
+	/* HAMBURGER TOGGLE */
+	if (navToggle && navMenu) {
+		navToggle.addEventListener("click", () => {
+			navToggle.classList.toggle("active");
+			navMenu.classList.toggle("active");
 		});
 	}
-	
-	
-	
-	
-	
 
+	/* NAV LINKS */
+	navLinks.forEach(link => {
+		link.addEventListener("click", (e) => {
+			e.preventDefault();
 
-  /* Pricing Tabs */
-  const pricingTabs = document.querySelectorAll('.pricing-tab');
-  const pricingContents = document.querySelectorAll('.pricing-content');
+			const targetId = link.getAttribute("href");
+			const target = document.querySelector(targetId);
+			if (!target) return;
 
-  pricingTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      pricingTabs.forEach(t => t.classList.remove('active'));
-      pricingContents.forEach(c => c.classList.remove('active'));
+			manualNavbarOpen = false;
+			targetVisible = 1;
+			targetCompact = 1;
 
-      tab.classList.add('active');
-      const target = document.getElementById(tab.dataset.tab);
-      if (target) target.classList.add('active');
-    });
-  });
+			scrollToSection(target, "down");
+			startNavbarAnimation();
 
-  /* Jahr im Footer */
-  const year = document.getElementById('year');
-  if (year) {
-    year.textContent = new Date().getFullYear();
-  }
+			navMenu.classList.remove("active");
+			navToggle?.classList.remove("active");
+		});
+	});
 
+	/* Pricing Tabs */
+	const pricingTabs = document.querySelectorAll(".pricing-tab");
+	const pricingContents = document.querySelectorAll(".pricing-content");
+
+	pricingTabs.forEach(tab => {
+		tab.addEventListener("click", () => {
+			pricingTabs.forEach(t => t.classList.remove("active"));
+			pricingContents.forEach(c => c.classList.remove("active"));
+
+			tab.classList.add("active");
+			const target = document.getElementById(tab.dataset.tab);
+			if (target) target.classList.add("active");
+		});
+	});
+
+	/* Jahr im Footer */
+	const year = document.getElementById("year");
+	if (year) {
+		year.textContent = new Date().getFullYear();
+	}
 });
