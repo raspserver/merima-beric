@@ -78,17 +78,49 @@ document.addEventListener("DOMContentLoaded", () => {
 		programmaticScroll = true;
 		programmaticNavMode = navMode;
 
+		/* Richtung für programmatic Scroll explizit setzen */
+		if (navMode === "down") {
+			scrollDirection = "down";
+		} else if (navMode === "top") {
+			scrollDirection = "up";
+		}
+
 		window.scrollTo({
 			top: Math.max(0, y),
 			behavior: "smooth"
 		});
 
 		setTimeout(() => {
+			const finalMode = programmaticNavMode;
+			const finalY = window.scrollY;
+
 			programmaticScroll = false;
+			lastScrollY = finalY;
+
+			/* Finalen Navbar-Zustand explizit festsetzen,
+			   bevor wieder in die normale Scroll-Logik gewechselt wird */
+			if (finalMode === "down") {
+				targetVisible = 1;
+				targetCompact = 1;
+			} else if (finalMode === "top") {
+				if (finalY <= 5) {
+					targetVisible = 0;
+					targetCompact = 0;
+				} else {
+					targetVisible = 1;
+					targetCompact = 0.18;
+				}
+			}
+
 			programmaticNavMode = null;
+			startNavbarAnimation();
 			handleScroll();
 		}, 750);
 	}
+	
+	
+	
+	
 
 	/* Magnetic CTA Button */
 	const magneticButtons = document.querySelectorAll(".cta-button");
