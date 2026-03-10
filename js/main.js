@@ -73,6 +73,26 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 	
+	function applyNavbarStateImmediately(visible, compact, surface) {
+		if (!navbar) return;
+
+		targetVisible = currentVisible = visible;
+		targetCompact = currentCompact = compact;
+		targetSurface = currentSurface = surface;
+
+		visibleVelocity = 0;
+		compactVelocity = 0;
+		surfaceVelocity = 0;
+
+		const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
+		const easedSurface = 1 - Math.pow(1 - currentSurface, 3);
+
+		navbar.style.setProperty("--nav-visible", currentVisible);
+		navbar.style.setProperty("--nav-compact", easedCompact);
+		navbar.style.setProperty("--nav-surface", easedSurface);
+		navbar.style.setProperty("--nav-height-progress", easedCompact);
+	}
+	
 	function triggerNavbarBounce(delta) {
 		if (!navbar || prefersReducedMotion) return;
 
@@ -315,14 +335,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", 1);
 		navbar.style.setProperty("--nav-height-progress", 1);
 	}
-
+	
 	cta?.addEventListener("click", (e) => {
 		e.preventDefault();
 
 		manualNavbarOpen = false;
-		targetVisible = 1;
-		targetCompact = 1;
-		targetSurface = 1;
+		applyNavbarStateImmediately(1, 1, 1);
 
 		const target = document.querySelector("#contact");
 		scrollToSection(target, "down");
@@ -352,11 +370,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (clickedCTA) return;
 
+
 		if (clickedIndicator) {
 			manualNavbarOpen = false;
-			targetVisible = 1;
-			targetCompact = 1;
-			targetSurface = 1;
+			applyNavbarStateImmediately(1, 1, 1);
 
 			const about = document.querySelector("#about");
 			scrollToSection(about, "down");
@@ -368,18 +385,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (ctaRect) {
 			const clickY = e.clientY;
-
+			
 			if (clickY > ctaRect.bottom) {
 				manualNavbarOpen = false;
-				targetVisible = 1;
-				targetCompact = 1;
-				targetSurface = 1;
+				applyNavbarStateImmediately(1, 1, 1);
 
 				const about = document.querySelector("#about");
 				scrollToSection(about, "down");
 				startNavbarAnimation();
 				return;
 			}
+			
 		}
 
 		const visible = parseFloat(
@@ -406,12 +422,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	function handleScroll() {
 		if (!navbar) return;
 
-		if (programmaticScroll) {
-			lastScrollY = window.scrollY;
-		}
-
 		const currentY = window.scrollY;
 		const delta = currentY - lastScrollY;
+
+		scrollVelocity = delta * 0.8;
+
+		if (!programmaticScroll) {
+			triggerNavbarBounce(delta);
+
+			if (Math.abs(delta) > directionLockThreshold) {
+				scrollDirection = delta > 0 ? "down" : "up";
+			}
+		}
+
+		lastScrollY = currentY;
 
 		scrollVelocity = delta * 0.8;
 		
@@ -609,12 +633,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			const targetId = link.getAttribute("href");
 			const target = document.querySelector(targetId);
 			if (!target) return;
-
+			
 			manualNavbarOpen = false;
-			targetVisible = 1;
-			targetCompact = 1;
-			targetSurface = 1;
-
+			applyNavbarStateImmediately(1, 1, 1);
+			
 			scrollToSection(target, "down");
 			startNavbarAnimation();
 
