@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					targetCompact = 1;
 				} else if (scrollDirection === "up") {
 					targetVisible = 1;
-					targetCompact = 0.25;
+					targetCompact = 0.18;
 				}
 			}
 
