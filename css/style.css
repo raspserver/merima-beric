@@ -9,10 +9,10 @@
 	--transition: all 0.4s cubic-bezier(.4,0,.2,1);
 	--section-spacing: 8rem;
 	--nav-height: 78px;
+	--nav-height-max: 78px;
+	--nav-height-min: 58px;
 	--hero-bottom-space: 60px;
-
-	/* === Brand System === */
-	--brand-sub-ratio: 0.25; /* Schriftgröße von "by Merima BE.ric" relativ zu "BE.autiful" im Logo: home, navbar und footer */
+	--brand-sub-ratio: 0.25;
 }
 
 * {
@@ -992,7 +992,12 @@ footer a:hover {
     --nav-velocity-blur: 0;
     --nav-refraction: 0;
 
-    transform: translate3d(0, calc((-1 + var(--nav-visible)) * 100%), 0);
+    transform: translate3d(
+		0,
+		calc((1 - var(--nav-visible)) * -1 * var(--nav-height-max)),
+		0
+	);
+      
     opacity: 1;
 
     transition:
