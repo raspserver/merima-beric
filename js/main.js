@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	
 	
-	/* =========================
+		/* =========================
 	   NAVBAR
 	========================= */
 
@@ -223,49 +223,38 @@ document.addEventListener("DOMContentLoaded", () => {
 	const indicator = document.querySelector(".scroll-indicator");
 	const cta = document.querySelector(".cta-button");
 
-  let lastScrollY = window.scrollY;
-  let scrollVelocity = 0;
-  let scrollDirection = "down";
+	let lastScrollY = window.scrollY;
+	let scrollVelocity = 0;
+	let scrollDirection = "down";
 	let directionLockThreshold = 8;
-  
-  
-  
-  
-  let heroScale = 1;
-let heroBrightness = 1;
-let heroParallax = 0;
-let heroParallaxVelocity = 0;
-let animationRunning = false;
-let programmaticScroll = false;
 
-let manualNavbarOpen = false;
+	let heroParallax = 0;
+	let heroParallaxVelocity = 0;
+	let animationRunning = false;
+	let programmaticScroll = false;
 
+	let manualNavbarOpen = false;
 
-		if(hero){
-		 hero.style.setProperty(
-		  "--hero-brightness",
-		  1 - (Math.min(window.scrollY / window.innerHeight,1) * 0.15)
-		 );
-		}
+	if (hero) {
+		hero.style.setProperty(
+			"--hero-brightness",
+			1 - (Math.min(window.scrollY / window.innerHeight, 1) * 0.15)
+		);
+	}
 
-
-
-
-  cta?.addEventListener("click", (e) => {
-    e.preventDefault();
-    const target = document.querySelector("#contact");
-    scrollToSection(target);
-  });
-
-
+	cta?.addEventListener("click", (e) => {
+		e.preventDefault();
+		const target = document.querySelector("#contact");
+		scrollToSection(target);
+	});
 
 	if (navLogo) {
-		
 		navLogo.addEventListener("click", (e) => {
 			e.preventDefault();
 
 			manualNavbarOpen = false;
-			targetProgress = 0;
+			targetVisible = 0;
+			targetCompact = 0;
 
 			const heroSection = document.querySelector(".hero");
 			scrollToSection(heroSection);
@@ -274,56 +263,46 @@ let manualNavbarOpen = false;
 				animationRunning = true;
 				requestAnimationFrame(animate);
 			}
-		});  
-	  
+		});
 	}
-
-	
-	
 
 	if (navbar) {
 
-		/* prefers-reduced-motion Support (Accessibility Pflicht) */
 		if (prefersReducedMotion) {
-		  navbar.style.setProperty("--nav-progress", 1);
-		  navbar.style.setProperty("--nav-height-progress", 1);
-		  return;
+			navbar.style.setProperty("--nav-visible", 1);
+			navbar.style.setProperty("--nav-compact", 1);
+			navbar.style.setProperty("--nav-height-progress", 1);
+			return;
 		}
 
-
-		/* Antippen auf den gesamten Bereich unterhalb des Termin Button bis zur Sektionsgrenze  navigiert*/
 		hero?.addEventListener("click", (e) => {
-
 			const clickedCTA = e.target.closest(".cta-button");
 			const clickedIndicator = e.target.closest(".scroll-indicator");
 
-			if(clickedCTA || clickedIndicator) return;
-
-			/* ===== NEW: TAP ZONE FOR ABOUT ===== */
+			if (clickedCTA || clickedIndicator) return;
 
 			const ctaRect = cta?.getBoundingClientRect();
 
-			if(ctaRect){
+			if (ctaRect) {
 				const clickY = e.clientY;
 
-				if(clickY > ctaRect.bottom){
+				if (clickY > ctaRect.bottom) {
 					const about = document.querySelector("#about");
 					scrollToSection(about);
 					return;
 				}
 			}
 
-			/* ===== NAVBAR TOGGLE AREA ===== */
-
-			const progress = parseFloat(
-				getComputedStyle(navbar).getPropertyValue("--nav-progress")
+			const visible = parseFloat(
+				getComputedStyle(navbar).getPropertyValue("--nav-visible")
 			);
 
-			const newTarget = progress < 0.5 ? 1 : 0;
+			const newTarget = visible < 0.5 ? 1 : 0;
 
-			targetProgress = newTarget;
-			
-			if(newTarget === 1){
+			targetVisible = newTarget;
+			targetCompact = newTarget;
+
+			if (newTarget === 1) {
 				manualNavbarOpen = true;
 			}
 
@@ -331,279 +310,192 @@ let manualNavbarOpen = false;
 				animationRunning = true;
 				requestAnimationFrame(animate);
 			}
-
 		});
 
-
-
-
-
-	  /* ===============================
-		   CLEAN DUAL SPRING SYSTEM
-		================================ */
-
-		//~ const inertiaThreshold = 180;
-		
 		const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
-		
 
-		let targetProgress = 0;
-		let currentProgress = 0;
-		let velocity = 0;
+		let targetVisible = 0;
+		let currentVisible = 0;
+		let visibleVelocity = 0;
 
-		let heightProgress = 0;
-		let heightVelocity = 0;
-		
-		let stiffness, damping, heightStiffness, heightDamping;
+		let targetCompact = 0;
+		let currentCompact = 0;
+		let compactVelocity = 0;
+
+		let stiffness, damping, compactStiffness, compactDamping;
 
 		function updatePhysics() {
-		  const isMobile = window.innerWidth <= 768;
+			const isMobile = window.innerWidth <= 768;
 
-		  stiffness = isMobile ? 0.06 : 0.08;
-		  damping = isMobile ? 0.85 : 0.82;
+			stiffness = isMobile ? 0.06 : 0.08;
+			damping = isMobile ? 0.85 : 0.82;
 
-		  heightStiffness = isMobile ? 0.035 : 0.045;
-		  heightDamping = isMobile ? 0.9 : 0.88;
+			compactStiffness = isMobile ? 0.035 : 0.045;
+			compactDamping = isMobile ? 0.9 : 0.88;
 		}
 
 		updatePhysics();
 		window.addEventListener("resize", updatePhysics);
-		
+
 		function handleScroll() {
-			
 			if (programmaticScroll) {
-			  lastScrollY = window.scrollY;
+				lastScrollY = window.scrollY;
 			}
-			
+
 			const currentY = window.scrollY;
 			const delta = currentY - lastScrollY;
 
 			scrollVelocity = delta * 0.8;
 
-			/* Richtungswechsel nur bei echter Bewegung */
 			if (Math.abs(delta) > directionLockThreshold) {
 				scrollDirection = delta > 0 ? "down" : "up";
 			}
 
 			lastScrollY = currentY;
-			
-			
-		  
+
 			const scrollY = lastScrollY;
-			
+
 			hero?.classList.toggle("scrolled", scrollY > 10);
 
-
-		if (manualNavbarOpen) {
-
-				/* Navbar bleibt offen bis wieder ganz oben */
-				if(scrollY <= 5){
-					manualNavbarOpen = false;
-					targetProgress = 0;
-				}else{
-					targetProgress = 1;
-				}
-
-			} else {
-			
+			if (manualNavbarOpen) {
 				if (scrollY <= 5) {
-
-					targetProgress = 0;
-
+					manualNavbarOpen = false;
+					targetVisible = 0;
+					targetCompact = 0;
 				} else {
-
-
-					if (scrollDirection === "down") {
-						targetProgress = 1;
-					}
-
-					if (scrollDirection === "up") {
-						targetProgress = 0.25;
-					}
-
+					targetVisible = 1;
+					targetCompact = 1;
 				}
-				
-
+			} else {
+				if (scrollY <= 5) {
+					targetVisible = 0;
+					targetCompact = 0;
+				} else if (scrollDirection === "down") {
+					targetVisible = 1;
+					targetCompact = 1;
+				} else if (scrollDirection === "up") {
+					targetVisible = 1;
+					targetCompact = 0.25;
+				}
 			}
 
-			
-				
-		    
-		  if (!animationRunning) {
-			  animationRunning = true;
-			  lastFrameTime = performance.now();
-			  requestAnimationFrame(animate);
+			if (!animationRunning) {
+				animationRunning = true;
+				lastFrameTime = performance.now();
+				requestAnimationFrame(animate);
 			}
-		  
 		}
 
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
 		let lastFrameTime = performance.now();
+
 		function animate(now) {
-			
-			/* Scroll Engine FPS-Schutz */
 			if (document.hidden) {
-			   animationRunning = false;
-			   return;
+				animationRunning = false;
+				return;
 			}
-				
-		  animationRunning = true;
-		  
-		  scrollVelocity *= 0.9;
 
-		  /* ===== SCALE SPRING ===== */
+			animationRunning = true;
+			scrollVelocity *= 0.9;
 
-		  const force = (targetProgress - currentProgress) * stiffness;
-		  
 			let delta = (now - lastFrameTime) / 16.67;
 			lastFrameTime = now;
-
-			/* Clamp delta → verhindert Physics Jumps bei Frame Drops */
 			delta = Math.min(delta, 2);
-			
-			velocity += force;
-			velocity *= damping;
-			currentProgress += velocity;
-			
-			currentProgress = Math.max(0, Math.min(currentProgress, 1));
 
-		  /* ===== HEIGHT SPRING ===== */ 
-		  const heightForce = (targetProgress - heightProgress) * heightStiffness;
-		  
-			heightVelocity += heightForce * delta;
-			heightVelocity *= Math.pow(heightDamping, delta);
-			heightProgress += heightVelocity * delta;
+			/* visible spring */
+			const visibleForce = (targetVisible - currentVisible) * stiffness;
+			visibleVelocity += visibleForce * delta;
+			visibleVelocity *= Math.pow(damping, delta);
+			currentVisible += visibleVelocity * delta;
+			currentVisible = Math.max(0, Math.min(currentVisible, 1));
 
-		  heightProgress = Math.max(0, Math.min(heightProgress, 1));
-		  
-		  // Ease-Out-Cubic
-			const easedHeight = 1 - Math.pow(1 - heightProgress, 3);
+			/* compact spring */
+			const compactForce = (targetCompact - currentCompact) * compactStiffness;
+			compactVelocity += compactForce * delta;
+			compactVelocity *= Math.pow(compactDamping, delta);
+			currentCompact += compactVelocity * delta;
+			currentCompact = Math.max(0, Math.min(currentCompact, 1));
 
-			navbar.style.setProperty("--nav-progress", currentProgress);
-			navbar.style.setProperty("--nav-height-progress", easedHeight);
-			
-			// ✨ Velocity Based Blur Boost
+			const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
+
+			navbar.style.setProperty("--nav-visible", currentVisible);
+			navbar.style.setProperty("--nav-compact", easedCompact);
+			navbar.style.setProperty("--nav-height-progress", easedCompact);
+
 			const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
 			navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
-	
-			/* Glass-Depth Navbar (Light Refraction) */
+
 			const refraction = Math.min(Math.abs(scrollVelocity) * 0.02, 1);
 			navbar.style.setProperty("--nav-refraction", refraction);
-			
-			/* Velocity-based shadow */
+
 			const velocityShadow = Math.min(Math.abs(scrollVelocity) * 0.02, 0.2);
 			navbar.style.boxShadow =
-			`0 calc(10px * var(--nav-progress))
-			 calc(40px * var(--nav-progress))
-			 rgba(0,0,0, ${0.45 * currentProgress + velocityShadow})`;
-	
+				`0 ${10 * easedCompact}px ${40 * easedCompact}px rgba(0,0,0, ${0.45 * easedCompact + velocityShadow})`;
+
 			if (hero) {
+				const scrollY = window.scrollY;
+				const progress = Math.min(scrollY / inertiaThreshold, 1);
 
-			  const scrollY = window.scrollY;
-			  
-			  if (hero) {
+				hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
+				hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
 
-					const progress = Math.min(scrollY / inertiaThreshold, 1);
+				const targetParallax = window.scrollY * -0.06;
+				const parallaxForce = (targetParallax - heroParallax) * 0.04;
 
-					hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
-					hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
-			
-					const targetParallax = window.scrollY * -0.06;
+				heroParallaxVelocity += parallaxForce;
+				heroParallaxVelocity *= 0.85;
+				heroParallax += heroParallaxVelocity;
 
-					const parallaxForce = (targetParallax - heroParallax) * 0.04;
-
-					heroParallaxVelocity += parallaxForce;
-					heroParallaxVelocity *= 0.85;
-
-					heroParallax += heroParallaxVelocity;
-
-					hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
-				
-				}
-
+				hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
 			}
-			
-			
-			
-			
-			
 
-		  /* ===== STOP CONDITION ===== */	  
-		  const stillMoving =
-		  Math.abs(targetProgress - currentProgress) > 0.0005 ||
-		  Math.abs(velocity) > 0.0005 ||
-		  Math.abs(heightVelocity) > 0.0005;
+			const stillMoving =
+				Math.abs(targetVisible - currentVisible) > 0.0005 ||
+				Math.abs(visibleVelocity) > 0.0005 ||
+				Math.abs(targetCompact - currentCompact) > 0.0005 ||
+				Math.abs(compactVelocity) > 0.0005;
 
-			/* HARD SNAP → verhindert unnötige Restframes */	
 			if (!stillMoving) {
-			  animationRunning = false;
-			  return;
+				animationRunning = false;
+				return;
 			}
-			requestAnimationFrame(animate);
-		  
 
+			requestAnimationFrame(animate);
 		}
 
-	  handleScroll();
-	  
-	  /* VISIBILITY API – RAF & Videos pausieren wenn Tab inaktiv */
-	  document.addEventListener("visibilitychange", () => {
-		  if (document.hidden) {
-			animationRunning = false;
-		  } else {
-			handleScroll(); // re-sync when returning
-		  }
+		handleScroll();
+
+		document.addEventListener("visibilitychange", () => {
+			if (document.hidden) {
+				animationRunning = false;
+			} else {
+				handleScroll();
+			}
 		});
-	  
-	  
-	/* HAMBURGER TOGGLE */
-	if (navToggle && navMenu) {
 
-		navToggle.addEventListener("click", () => {
+		if (navToggle && navMenu) {
+			navToggle.addEventListener("click", () => {
+				navToggle.classList.toggle("active");
+				navMenu.classList.toggle("active");
+			});
+		}
 
-		  navToggle.classList.toggle("active");
-		  navMenu.classList.toggle("active");
+		navLinks.forEach(link => {
+			link.addEventListener("click", (e) => {
+				e.preventDefault();
 
+				const targetId = link.getAttribute("href");
+				const target = document.querySelector(targetId);
+				if (!target) return;
+
+				scrollToSection(target);
+
+				navMenu.classList.remove("active");
+				navToggle.classList.remove("active");
+			});
 		});
-		
 	}
-
-	
-
-	  /* NAV LINKS */
-	  navLinks.forEach(link => {
-
-		  link.addEventListener("click", (e) => {
-
-			e.preventDefault();
-
-			const targetId = link.getAttribute("href");
-			const target = document.querySelector(targetId);
-			if (!target) return;
-
-			scrollToSection(target);
-
-			navMenu.classList.remove("active");
-			navToggle.classList.remove("active");
-
-		  });
-
-		});
-	  
-
-
-	}	/* schließt den scope von if (navbar) */
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
