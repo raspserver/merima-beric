@@ -37,6 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	let currentCompact = 0;
 	let compactVelocity = 0;
 
+	let targetSurface = 0;
+	let currentSurface = 0;
+	let surfaceVelocity = 0;
+
 	let stiffness, damping, compactStiffness, compactDamping;
 
 	function updatePhysics() {
@@ -102,13 +106,16 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (finalMode === "down") {
 				targetVisible = 1;
 				targetCompact = 1;
+				targetSurface = 1;
 			} else if (finalMode === "top") {
 				if (finalY <= 5) {
 					targetVisible = 0;
 					targetCompact = 0;
+					targetSurface = 0;
 				} else {
 					targetVisible = 1;
-					targetCompact = 0.18;
+					targetCompact = 1;
+					targetSurface = 0.18;
 				}
 			}
 
@@ -117,10 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			handleScroll();
 		}, 750);
 	}
-	
-	
-	
-	
 
 	/* Magnetic CTA Button */
 	const magneticButtons = document.querySelectorAll(".cta-button");
@@ -282,6 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	if (navbar && prefersReducedMotion) {
 		navbar.style.setProperty("--nav-visible", 1);
 		navbar.style.setProperty("--nav-compact", 1);
+		navbar.style.setProperty("--nav-surface", 1);
 		navbar.style.setProperty("--nav-height-progress", 1);
 	}
 
@@ -291,6 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		manualNavbarOpen = false;
 		targetVisible = 1;
 		targetCompact = 1;
+		targetSurface = 1;
 
 		const target = document.querySelector("#contact");
 		scrollToSection(target, "down");
@@ -303,7 +308,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			manualNavbarOpen = false;
 			targetVisible = 1;
-			targetCompact = 0.18;
+			targetCompact = 1;
+			targetSurface = 0.18;
 
 			const heroSection = document.querySelector(".hero");
 			scrollToSection(heroSection, "top");
@@ -323,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			manualNavbarOpen = false;
 			targetVisible = 1;
 			targetCompact = 1;
+			targetSurface = 1;
 
 			const about = document.querySelector("#about");
 			scrollToSection(about, "down");
@@ -339,6 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				manualNavbarOpen = false;
 				targetVisible = 1;
 				targetCompact = 1;
+				targetSurface = 1;
 
 				const about = document.querySelector("#about");
 				scrollToSection(about, "down");
@@ -355,6 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		targetVisible = newTarget;
 		targetCompact = newTarget;
+		targetSurface = newTarget;
 
 		if (newTarget === 1) {
 			manualNavbarOpen = true;
@@ -391,14 +400,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (programmaticNavMode === "down") {
 			targetVisible = 1;
 			targetCompact = 1;
+			targetSurface = 1;
 
 		} else if (programmaticNavMode === "top") {
 			if (scrollY <= 5) {
 				targetVisible = 0;
 				targetCompact = 0;
+				targetSurface = 0;
 			} else {
 				targetVisible = 1;
-				targetCompact = 0.18;
+				targetCompact = 1;
+				targetSurface = 0.18;
 			}
 
 		} else if (manualNavbarOpen) {
@@ -406,21 +418,26 @@ document.addEventListener("DOMContentLoaded", () => {
 				manualNavbarOpen = false;
 				targetVisible = 0;
 				targetCompact = 0;
+				targetSurface = 0;
 			} else {
 				targetVisible = 1;
 				targetCompact = 1;
+				targetSurface = 1;
 			}
 
 		} else {
 			if (scrollY <= 5) {
 				targetVisible = 0;
 				targetCompact = 0;
+				targetSurface = 0;
 			} else if (scrollDirection === "down") {
 				targetVisible = 1;
 				targetCompact = 1;
+				targetSurface = 1;
 			} else if (scrollDirection === "up") {
 				targetVisible = 1;
-				targetCompact = 0.18;
+				targetCompact = 1;
+				targetSurface = 0.18;
 			}
 		}
 
@@ -456,10 +473,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		currentCompact += compactVelocity * delta;
 		currentCompact = Math.max(0, Math.min(currentCompact, 1));
 
+		const surfaceForce = (targetSurface - currentSurface) * compactStiffness;
+		surfaceVelocity += surfaceForce * delta;
+		surfaceVelocity *= Math.pow(compactDamping, delta);
+		currentSurface += surfaceVelocity * delta;
+		currentSurface = Math.max(0, Math.min(currentSurface, 1));
+
 		const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
+		const easedSurface = 1 - Math.pow(1 - currentSurface, 3);
 
 		navbar.style.setProperty("--nav-visible", currentVisible);
 		navbar.style.setProperty("--nav-compact", easedCompact);
+		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
 
 		const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
@@ -470,7 +495,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const velocityShadow = Math.min(Math.abs(scrollVelocity) * 0.02, 0.2);
 		navbar.style.boxShadow =
-			`0 ${10 * easedCompact}px ${40 * easedCompact}px rgba(0,0,0, ${0.45 * easedCompact + velocityShadow})`;
+			`0 ${10 * easedSurface}px ${40 * easedSurface}px rgba(0,0,0, ${0.45 * easedSurface + velocityShadow})`;
 
 		if (hero) {
 			const scrollY = window.scrollY;
@@ -493,7 +518,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			Math.abs(targetVisible - currentVisible) > 0.0005 ||
 			Math.abs(visibleVelocity) > 0.0005 ||
 			Math.abs(targetCompact - currentCompact) > 0.0005 ||
-			Math.abs(compactVelocity) > 0.0005;
+			Math.abs(compactVelocity) > 0.0005 ||
+			Math.abs(targetSurface - currentSurface) > 0.0005 ||
+			Math.abs(surfaceVelocity) > 0.0005;
 
 		if (!stillMoving) {
 			animationRunning = false;
@@ -533,6 +560,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			manualNavbarOpen = false;
 			targetVisible = 1;
 			targetCompact = 1;
+			targetSurface = 1;
 
 			scrollToSection(target, "down");
 			startNavbarAnimation();
