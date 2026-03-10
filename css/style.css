@@ -1082,12 +1082,9 @@ footer a:hover {
     justify-content: space-between;
     align-items: center;
 
-    --nav-max-height: 78px;
-    --nav-min-height: 58px;
-
     height: calc(
-        var(--nav-max-height) -
-        ((var(--nav-max-height) - var(--nav-min-height)) * var(--nav-height-progress))
+        var(--nav-height-max) -
+        ((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
     );
 
     padding-left: 2rem;
@@ -1279,9 +1276,9 @@ footer a:hover {
     .nav-menu {
         position: fixed;
         top: calc(
-            var(--nav-max-height) -
-            ((var(--nav-max-height) - var(--nav-min-height)) * var(--nav-height-progress))
-        );
+			var(--nav-height-max) -
+			((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
+		);
         left: 0;
         right: 0;
         width: 100%;
