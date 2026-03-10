@@ -42,7 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	let surfaceVelocity = 0;
 
 	let stiffness, damping, compactStiffness, compactDamping;
+	
+	let targetBounce = 0;
+	let currentBounce = 0;
+	let bounceVelocity = 0;
 
+	let bounceStiffness, bounceDamping;
+	
 	function updatePhysics() {
 		const isMobile = window.innerWidth <= 768;
 
@@ -51,6 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		compactStiffness = isMobile ? 0.035 : 0.045;
 		compactDamping = isMobile ? 0.9 : 0.88;
+
+		bounceStiffness = isMobile ? 0.16 : 0.18;
+		bounceDamping = isMobile ? 0.74 : 0.72;
 	}
 
 	updatePhysics();
@@ -62,6 +71,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			lastFrameTime = performance.now();
 			requestAnimationFrame(animate);
 		}
+	}
+	
+	function triggerNavbarBounce(delta) {
+		if (!navbar || prefersReducedMotion) return;
+
+		const magnitude = Math.min(Math.abs(delta), 120);
+		if (magnitude < 2) return;
+
+		/* immer positives Aufblähen */
+		const impulse = Math.min(0.18 + (magnitude / 120) * 0.82, 1);
+
+		/* nur dann überschreiben, wenn der neue Impuls stärker ist
+		   oder der alte fast abgeklungen ist */
+		if (impulse > targetBounce || Math.abs(currentBounce) < 0.08) {
+			targetBounce = impulse;
+		}
+
+		startNavbarAnimation();
 	}
 
 	/* =================================================
@@ -387,6 +414,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		const delta = currentY - lastScrollY;
 
 		scrollVelocity = delta * 0.8;
+		
+		if (!programmaticScroll) {
+			triggerNavbarBounce(delta);
+		}
 
 		if (Math.abs(delta) > directionLockThreshold) {
 			scrollDirection = delta > 0 ? "down" : "up";
@@ -478,6 +509,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		surfaceVelocity *= Math.pow(compactDamping, delta);
 		currentSurface += surfaceVelocity * delta;
 		currentSurface = Math.max(0, Math.min(currentSurface, 1));
+		
+		const bounceForce = (targetBounce - currentBounce) * bounceStiffness;
+		bounceVelocity += bounceForce * delta;
+		bounceVelocity *= Math.pow(bounceDamping, delta);
+		currentBounce += bounceVelocity * delta;
+
+		/* Begrenzung */
+		currentBounce = Math.max(-0.35, Math.min(currentBounce, 1.2));
+
+		/* Ziel immer wieder Richtung 0 ziehen,
+		   damit der Impuls nur kurz lebt */
+		targetBounce *= Math.pow(0.78, delta);
+		if (targetBounce < 0.001) targetBounce = 0;
 
 		const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
 		const easedSurface = 1 - Math.pow(1 - currentSurface, 3);
@@ -486,6 +530,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-compact", easedCompact);
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
+		
+		const easedBounce =
+			currentBounce >= 0
+				? 1 - Math.pow(1 - Math.min(currentBounce, 1), 2.2)
+				: currentBounce;
+
+		navbar.style.setProperty("--nav-bounce", easedBounce);
 
 		const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
 		navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
@@ -520,7 +571,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			Math.abs(targetCompact - currentCompact) > 0.0005 ||
 			Math.abs(compactVelocity) > 0.0005 ||
 			Math.abs(targetSurface - currentSurface) > 0.0005 ||
-			Math.abs(surfaceVelocity) > 0.0005;
+			Math.abs(surfaceVelocity) > 0.0005 ||
+			Math.abs(targetBounce - currentBounce) > 0.0005 ||
+			Math.abs(bounceVelocity) > 0.0005;
 
 		if (!stillMoving) {
 			animationRunning = false;
