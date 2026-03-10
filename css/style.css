@@ -1010,10 +1010,6 @@ footer a:hover {
 
     will-change: transform;
     backface-visibility: hidden;
-    
-/*
-    contain: paint;
-*/
 
     background: rgba(
         calc(26 - (16 * var(--nav-surface))),
