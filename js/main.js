@@ -633,18 +633,28 @@ document.addEventListener("DOMContentLoaded", () => {
 			const targetId = link.getAttribute("href");
 			const target = document.querySelector(targetId);
 			if (!target) return;
-			
+
+			const currentY = window.scrollY;
+			const targetY = target.getBoundingClientRect().top + window.pageYOffset;
+			const isScrollingUp = targetY < currentY;
+
 			manualNavbarOpen = false;
-			applyNavbarStateImmediately(1, 1, 1);
-			
-			scrollToSection(target, "down");
+
+			if (isScrollingUp) {
+				applyNavbarStateImmediately(1, 1, 0.18);
+				scrollToSection(target, "top");
+			} else {
+				applyNavbarStateImmediately(1, 1, 1);
+				scrollToSection(target, "down");
+			}
+
 			startNavbarAnimation();
 
 			navMenu.classList.remove("active");
 			navToggle?.classList.remove("active");
 		});
 	});
-
+	
 	/* Pricing Tabs */
 	const pricingTabs = document.querySelectorAll(".pricing-tab");
 	const pricingContents = document.querySelectorAll(".pricing-content");
