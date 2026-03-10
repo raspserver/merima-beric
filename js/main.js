@@ -4,31 +4,36 @@ document.addEventListener("DOMContentLoaded", () => {
 	   CENTRAL SCROLL ENGINE
 	   ================================================= */
 	
-	function scrollToSection(target) {
+	function scrollToSection(target, navMode = null) {
+		if (!target) return;
 
-		  if (!target) return;
+		const navbar = document.querySelector(".navbar");
+		const navHeight = navbar ? navbar.offsetHeight : 0;
 
-		  const navbar = document.querySelector(".navbar");
-		  const navHeight = navbar ? navbar.offsetHeight : 0;
+		const isHeroTarget = target.classList?.contains("hero");
+		const offset = isHeroTarget ? 0 : navHeight;
 
-		  const y =
+		const y =
 			target.getBoundingClientRect().top +
 			window.pageYOffset -
-			navHeight;
+			offset;
 
-		  programmaticScroll = true;
+		programmaticScroll = true;
+		programmaticNavMode = navMode;
 
-		  window.scrollTo({
-			top: y,
+		window.scrollTo({
+			top: Math.max(0, y),
 			behavior: "smooth"
-		  });
+		});
 
-		  setTimeout(() => {
-				programmaticScroll = false;
-				handleScroll();
-			}, 700);
-		  
-		}
+		setTimeout(() => {
+			programmaticScroll = false;
+			programmaticNavMode = null;
+			handleScroll();
+		}, 750);
+	}
+	
+	
 	
 	
 		
@@ -234,6 +239,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	let programmaticScroll = false;
 
 	let manualNavbarOpen = false;
+	let programmaticNavMode = null; 
+	/* null | "down" | "top" */
 
 	if (hero) {
 		hero.style.setProperty(
@@ -244,8 +251,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	cta?.addEventListener("click", (e) => {
 		e.preventDefault();
+
+		manualNavbarOpen = false;
+		targetVisible = 1;
+		targetCompact = 1;
+
 		const target = document.querySelector("#contact");
-		scrollToSection(target);
+		scrollToSection(target, "down");
+
+		if (!animationRunning) {
+			animationRunning = true;
+			lastFrameTime = performance.now();
+			requestAnimationFrame(animate);
+		}
 	});
 
 	if (navLogo) {
@@ -253,14 +271,17 @@ document.addEventListener("DOMContentLoaded", () => {
 			e.preventDefault();
 
 			manualNavbarOpen = false;
-			targetVisible = 0;
-			targetCompact = 0;
+
+			/* Während der Fahrt nach oben sichtbar + transparent */
+			targetVisible = 1;
+			targetCompact = 0.18;
 
 			const heroSection = document.querySelector(".hero");
-			scrollToSection(heroSection);
+			scrollToSection(heroSection, "top");
 
 			if (!animationRunning) {
 				animationRunning = true;
+				lastFrameTime = performance.now();
 				requestAnimationFrame(animate);
 			}
 		});
@@ -287,8 +308,18 @@ document.addEventListener("DOMContentLoaded", () => {
 				const clickY = e.clientY;
 
 				if (clickY > ctaRect.bottom) {
+					manualNavbarOpen = false;
+					targetVisible = 1;
+					targetCompact = 1;
+
 					const about = document.querySelector("#about");
-					scrollToSection(about);
+					scrollToSection(about, "down");
+
+					if (!animationRunning) {
+						animationRunning = true;
+						lastFrameTime = performance.now();
+						requestAnimationFrame(animate);
+					}
 					return;
 				}
 			}
@@ -357,7 +388,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			hero?.classList.toggle("scrolled", scrollY > 10);
 
-			if (manualNavbarOpen) {
+
+			if (programmaticNavMode === "down") {
+				targetVisible = 1;
+				targetCompact = 1;
+
+			} else if (programmaticNavMode === "top") {
+				if (scrollY <= 5) {
+					targetVisible = 0;
+					targetCompact = 0;
+				} else {
+					targetVisible = 1;
+					targetCompact = 0.18;
+				}
+
+			} else if (manualNavbarOpen) {
 				if (scrollY <= 5) {
 					manualNavbarOpen = false;
 					targetVisible = 0;
@@ -366,6 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					targetVisible = 1;
 					targetCompact = 1;
 				}
+
 			} else {
 				if (scrollY <= 5) {
 					targetVisible = 0;
@@ -488,8 +534,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				const targetId = link.getAttribute("href");
 				const target = document.querySelector(targetId);
 				if (!target) return;
+				
+				manualNavbarOpen = false;
+				targetVisible = 1;
+				targetCompact = 1;
+				scrollToSection(target, "down");
 
-				scrollToSection(target);
+				if (!animationRunning) {
+					animationRunning = true;
+					lastFrameTime = performance.now();
+					requestAnimationFrame(animate);
+				}
 
 				navMenu.classList.remove("active");
 				navToggle.classList.remove("active");
