@@ -114,12 +114,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const navHeight = navbar ? navbar.offsetHeight : 0;
 		const isHeroTarget = target.classList?.contains("hero");
+
+		const shouldInsetByOnePixel =
+			target.matches?.("#about, #gallery, #services, #pricing, #testimonials, #contact");
+
 		const offset = isHeroTarget ? 0 : navHeight;
+		const inset = shouldInsetByOnePixel ? 1 : 0;
 
 		const y =
 			target.getBoundingClientRect().top +
 			window.pageYOffset -
-			offset;
+			offset +
+			inset;
 
 		programmaticScroll = true;
 		programmaticNavMode = navMode;
