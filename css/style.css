@@ -1563,10 +1563,12 @@ section > .section-scroll-head + * {
 		padding-right: 1rem;
 	}
 
+/*
 	section {
 		padding: 4rem 1.5rem;
 		margin: var(--section-spacing) 0;
 	}
+*/
 
 	#about {
 		padding-top: 2rem;
