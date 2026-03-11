@@ -15,6 +15,7 @@
 	--brand-sub-ratio: 0.25;
 	--nav-surface-up: 0.10;
 	--section-head-title-gap: 0.0rem;
+	--section-scroll-head-height: 60px;
 }
 
 * {
@@ -1485,7 +1486,6 @@ section {
 
 section {
 	position: relative;
-	--section-scroll-head-height: 60px;
 }
 
 .section-scroll-head {
@@ -1516,7 +1516,7 @@ section > .section-scroll-head + * {
 }
 
 @media (max-width: 768px) {
-	section {
+	:root {
 		--section-scroll-head-height: 46px;
 	}
 
