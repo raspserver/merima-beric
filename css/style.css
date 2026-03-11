@@ -497,7 +497,7 @@ section {
 	font-size: 0.9rem;
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
-	margin-bottom: 4rem;
+	margin-bottom: 2.1rem;
 	font-weight: 500;
 }
 
@@ -1469,12 +1469,12 @@ section {
 
 /* Damit der neue Kopfbereich den Inhalt nicht überlappt */
 section > .section-scroll-head + .container {
-	margin-top: 4.5rem;
+	margin-top: 2.2rem;
 }
 
 /* Falls in einer Sektion nicht direkt .container folgt */
 section > .section-scroll-head + * {
-	margin-top: 4.5rem;
+	margin-top: 2.2rem;
 }
 
 /* Mobile etwas kompakter */
@@ -1492,7 +1492,7 @@ section > .section-scroll-head + * {
 
 	section > .section-scroll-head + .container,
 	section > .section-scroll-head + * {
-		margin-top: 3.75rem;
+		margin-top: 2.2rem;
 	}
 }
 
@@ -1665,109 +1665,6 @@ section > .section-scroll-head + * {
 	.scroll-indicator {
 		bottom: 18px;
 	}
-}
-
-/* #about Optimierung für 384x701 und 392x718 */
-/*
-@media (max-width: 392px) and (max-height: 718px) {
-	#about {
-		padding-top: 4.55rem;
-		padding-right: 0.85rem;
-		padding-bottom: 0.8rem;
-		padding-left: 0.85rem;
-
-		margin-top: 0;
-		margin-bottom: 6rem;
-
-		scroll-margin-top: calc(var(--nav-height-min) + 8px);
-
-		min-height: calc(100svh - var(--nav-height-min));
-		display: flex;
-	}
-
-	#about > .container {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		min-height: 0;
-	}
-
-	#about .section-scroll-head {
-		height: 3.7rem;
-		padding-top: 0.35rem;
-		gap: 6px;
-	}
-
-	#about > .section-scroll-head + .container,
-	#about > .section-scroll-head + * {
-		margin-top: 0;
-	}
-
-	#about .section-title {
-		font-size: clamp(1.95rem, 8.3vw, 2.28rem);
-		line-height: 1.04;
-		margin-top: 0.1rem;
-		margin-bottom: 0.18rem;
-		text-align: center;
-	}
-
-	#about .section-subtitle {
-		font-size: 0.72rem;
-		line-height: 1.22;
-		letter-spacing: 0.11em;
-		margin-bottom: 0.52rem;
-		text-align: center;
-		max-width: 19ch;
-		margin-left: auto;
-		margin-right: auto;
-		text-wrap: balance;
-	}
-
-	#about .about-content {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		min-height: 0;
-	}
-
-	#about .about-image-wrapper {
-		float: none;
-		width: 100%;
-		margin-right: 0;
-		margin-top: 0;
-		margin-bottom: 0.85rem;
-	}
-
-	#about .about-image {
-		width: 100%;
-		height: auto;
-		max-height: none;
-		display: block;
-		object-fit: contain;
-	}
-
-	#about .about-image-accent {
-		width: 68px;
-		height: 68px;
-		top: 8px;
-		right: -8px;
-	}
-
-	#about .about-text {
-		font-size: 0.98rem;
-		line-height: 1.75;
-	}
-
-	#about .about-text p {
-		margin-bottom: 1.15rem;
-	}
-
-	#about .about-highlight {
-		padding: 2rem 1.25rem;
-		margin-top: 1.5rem;
-	}
-*/
 }
 
 /* Accessibility */
