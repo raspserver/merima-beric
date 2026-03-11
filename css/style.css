@@ -419,6 +419,28 @@ body {
 	animation: liquidScroll 2.2s ease-in-out infinite;
 }
 
+/* Hero Scroll Indicator Line */
+.hero .scroll-indicator::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-top: 8px;
+
+	width: 1px;
+	height: 26px;
+
+	background: linear-gradient(
+		to bottom,
+		rgba(212,175,55,0.55),
+		rgba(212,175,55,0.15),
+		rgba(212,175,55,0)
+	);
+
+	pointer-events: none;
+}
+
 .hero .scroll-indicator {
 	position: absolute;
 	left: 50%;
