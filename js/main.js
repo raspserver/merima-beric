@@ -303,10 +303,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 	
-	/* Hero: vorhandenen Scroll-Indikator nutzen, aber ohne Double-Click-Funktion */
+	/* Hero-Scroll-Indikator: sofort ohne Double-Click-Wartezeit scrollen */
 	const heroIndicator = document.querySelector(".hero .scroll-indicator");
-	const heroSection = document.querySelector(".hero");
-	bindSectionNavigator(heroIndicator, heroSection, { allowPrev: false });
+
+	heroIndicator?.addEventListener("click", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		manualNavbarOpen = false;
+		applyNavbarStateImmediately(1, 1, 1);
+
+		const about = document.querySelector("#about");
+		scrollToSection(about, "down");
+		startNavbarAnimation();
+	});
 	
 	/* Alle normalen Sektionen: oberer Bereich über volle Breite klickbar */
 	document.querySelectorAll("section").forEach(section => {
