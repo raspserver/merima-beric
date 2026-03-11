@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	const rootStyles = getComputedStyle(document.documentElement);
 	const NAV_SURFACE_UP =
 		parseFloat(rootStyles.getPropertyValue("--nav-surface-up")) || 0.18;
+		
+	const NAV_BOUNCE_STOP_FACTOR =
+	parseFloat(rootStyles.getPropertyValue("--nav-bounce-stop-factor")) || 3.5;
 
 	const SECTION_SCROLL_INSET = 1;
 
@@ -228,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 
 				/* Richtungsimpuls beim Stoppen */
-				triggerNavbarBounce(endDelta * 3.5);
+				triggerNavbarBounce(endDelta * NAV_BOUNCE_STOP_FACTOR);
 
 				programmaticNavMode = null;
 				startNavbarAnimation();
