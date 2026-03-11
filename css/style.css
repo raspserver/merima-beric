@@ -486,7 +486,7 @@ section {
 	font-size: clamp(2.5rem, 5vw, 4rem);
 	font-weight: 400;
 	text-align: center;
-	margin-bottom: 1rem;
+	margin-bottom: 0.8rem;
 	color: var(--secondary-color);
 	position: relative;
 }
@@ -497,7 +497,7 @@ section {
 	font-size: 0.9rem;
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
-	margin-bottom: 2.1rem;
+	margin-bottom: 1.9rem;
 	font-weight: 500;
 }
 
