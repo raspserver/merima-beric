@@ -818,22 +818,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		const container = aboutSection.querySelector(".container");
 		const head = aboutSection.querySelector(".section-scroll-head");
 		const title = aboutSection.querySelector(".section-title");
 		const subtitle = aboutSection.querySelector(".section-subtitle");
-		const imageWrapper = aboutSection.querySelector(".about-image-wrapper");
 
-		if (!container || !title || !subtitle || !imageWrapper) return;
+		if (!title || !subtitle) return;
 
 		const sectionStyles = getComputedStyle(aboutSection);
-		const bottomPadding = parseFloat(sectionStyles.paddingBottom) || 16;
+		const sideGap = parseFloat(
+			sectionStyles.getPropertyValue("--about-mobile-side-gap")
+		) || parseFloat(sectionStyles.paddingLeft) || 16;
 
 		const navHeight = navbar ? navbar.offsetHeight : 58;
 		const viewportHeight = window.innerHeight;
 
 		const headHeight = head ? head.offsetHeight : 0;
-		const containerMarginTop = head ? 49 : 0;
+
+		const containerOffset =
+			window.innerWidth <= 768 ? 59.2 : 72;
 
 		const titleHeight = title.offsetHeight;
 		const subtitleHeight = subtitle.offsetHeight;
@@ -841,20 +843,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		const titleStyles = getComputedStyle(title);
 		const subtitleStyles = getComputedStyle(subtitle);
 
+		const titleMarginTop = parseFloat(titleStyles.marginTop) || 0;
 		const titleMarginBottom = parseFloat(titleStyles.marginBottom) || 0;
+		const subtitleMarginTop = parseFloat(subtitleStyles.marginTop) || 0;
 		const subtitleMarginBottom = parseFloat(subtitleStyles.marginBottom) || 0;
 
 		const reservedSpace =
 			headHeight +
-			containerMarginTop +
+			containerOffset +
 			titleHeight +
+			titleMarginTop +
 			titleMarginBottom +
 			subtitleHeight +
+			subtitleMarginTop +
 			subtitleMarginBottom +
-			bottomPadding;
+			sideGap;
 
 		const imageHeight = Math.max(
-			220,
+			250,
 			Math.floor(viewportHeight - navHeight - reservedSpace)
 		);
 
