@@ -96,22 +96,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
 	}
-
+	
 	function triggerNavbarBounce(delta) {
 		if (!navbar || prefersReducedMotion) return;
 
 		const magnitude = Math.min(Math.abs(delta), 120);
 		if (magnitude < 2) return;
 
-		const impulse = Math.min(0.18 + (magnitude / 120) * 0.82, 1);
+		const direction = delta >= 0 ? 1 : -1;
+		const impulse = direction * Math.min(0.18 + (magnitude / 120) * 0.82, 1);
 
-		if (impulse > targetBounce || Math.abs(currentBounce) < 0.08) {
-			targetBounce = impulse;
-		}
-
+		targetBounce = impulse;
 		startNavbarAnimation();
 	}
-
+	
 	/* =========================
 	   CUSTOM SPRING SCROLL
 	========================= */
@@ -135,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (absDistance < 1) {
 			window.scrollTo(0, targetY);
-			onComplete?.();
+			onComplete?.(0);
 			return;
 		}
 
@@ -148,6 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			: Math.min(2.4, 1.08 + absDistance / 800);
 
 		const startTime = performance.now();
+		let previousY = startY;
+		let lastDelta = 0;
 
 		function frame(now) {
 			const elapsed = now - startTime;
@@ -156,6 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			const eased = prefersReducedMotion ? t : easeOutBack(t, overshoot);
 			const nextY = startY + distance * eased;
 
+			lastDelta = nextY - previousY;
+			previousY = nextY;
+
 			window.scrollTo(0, nextY);
 
 			if (t < 1) {
@@ -163,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			} else {
 				window.scrollTo(0, targetY);
 				activeScrollAnimation = null;
-				onComplete?.();
+				onComplete?.(lastDelta);
 			}
 		}
 
