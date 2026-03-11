@@ -12,11 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	const navLogo = document.querySelector(".nav-logo");
 	const cta = document.querySelector(".cta-button");
-	
+
 	const rootStyles = getComputedStyle(document.documentElement);
 	const NAV_SURFACE_UP =
 		parseFloat(rootStyles.getPropertyValue("--nav-surface-up")) || 0.18;
-	
+
 	const SECTION_SCROLL_INSET = 1;
 
 	let lastScrollY = window.scrollY;
@@ -112,9 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		startNavbarAnimation();
 	}
 
+	/* =========================
+	   CUSTOM SPRING SCROLL
+	========================= */
 	let activeScrollAnimation = null;
 
-	function easeOutBack(t, overshoot = 1.15) {
+	function easeOutBack(t, overshoot = 1.35) {
 		const c1 = overshoot;
 		const c3 = c1 + 1;
 		return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
@@ -136,11 +139,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		/* Dauer abhängig von Distanz */
-		const duration = Math.min(1400, Math.max(650, absDistance * 0.55));
+		const duration = prefersReducedMotion
+			? Math.min(900, Math.max(350, absDistance * 0.35))
+			: Math.min(1600, Math.max(700, absDistance * 0.6));
 
-		/* Federstärke abhängig von Distanz */
-		const overshoot = Math.min(2.2, 1.02 + absDistance / 900);
+		const overshoot = prefersReducedMotion
+			? 0
+			: Math.min(2.4, 1.08 + absDistance / 800);
 
 		const startTime = performance.now();
 
@@ -226,79 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
-	function scrollToSection(target, navMode = null) {
-		if (!target) return;
-
-		const navHeight = navbar ? navbar.offsetHeight : 0;
-		const isHeroTarget = target.classList?.contains("hero");
-
-		const shouldInsetByOnePixel =
-			target.matches?.("#about, #gallery, #services, #pricing, #testimonials, #contact");
-
-		const offset = isHeroTarget ? 0 : navHeight;
-		const inset = shouldInsetByOnePixel ? SECTION_SCROLL_INSET : 0;
-
-		const y =
-			target.getBoundingClientRect().top +
-			window.pageYOffset -
-			offset +
-			inset;
-
-		programmaticScroll = true;
-		programmaticNavMode = navMode;
-
-		if (navMode === "down") {
-			scrollDirection = "down";
-		} else if (navMode === "top") {
-			scrollDirection = "up";
-		}
-
-		window.scrollTo({
-			top: Math.max(0, y),
-			behavior: "smooth"
-		});
-
-		setTimeout(() => {
-			const finalMode = programmaticNavMode;
-			const finalY = window.scrollY;
-
-			programmaticScroll = false;
-			lastScrollY = finalY;
-
-			if (finalMode === "down") {
-				targetVisible = 1;
-				targetCompact = 1;
-				targetSurface = 1;
-			} else if (finalMode === "top") {
-				if (finalY <= 5) {
-					targetVisible = 0;
-					targetCompact = 0;
-					targetSurface = 0;
-				} else {
-					targetVisible = 1;
-					targetCompact = 1;
-					targetSurface = NAV_SURFACE_UP;
-				}
-			}
-
-			programmaticNavMode = null;
-			startNavbarAnimation();
-			handleScroll();
-		}, 750);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/* =========================
 	   SECTION SCROLL NAVIGATION
 	========================= */
@@ -352,19 +284,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			manualNavbarOpen = false;
 			applyNavbarStateImmediately(1, 1, NAV_SURFACE_UP);
-			
-
-			/* zur Hero soll das bestehende "top"-Verhalten genutzt werden */
-			if (prevTarget.classList.contains("hero")) {
-				scrollToSection(prevTarget, "top");
-			} else {
-				scrollToSection(prevTarget, "top");
-			}
-
+			scrollToSection(prevTarget, "top");
 			startNavbarAnimation();
 		}
 	}
-	
+
 	function bindSectionNavigator(
 		triggerEl,
 		sectionEl,
@@ -430,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 	}
-	
+
 	/* Hero-Scroll-Indikator: sofort ohne Double-Click-Wartezeit scrollen */
 	const heroIndicator = document.querySelector(".hero .scroll-indicator");
 
@@ -445,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollToSection(about, "down");
 		startNavbarAnimation();
 	});
-	
+
 	/* Alle normalen Sektionen: oberer Bereich über volle Breite klickbar */
 	document.querySelectorAll("section").forEach(section => {
 		if (section.classList.contains("hero")) return;
@@ -652,8 +576,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		const clickedIndicator = e.target.closest(".scroll-indicator");
 
 		if (clickedCTA) return;
-
-		/* Der Hero-Scroll-Indikator wird jetzt separat behandelt */
 		if (clickedIndicator) return;
 
 		const ctaRect = cta?.getBoundingClientRect();
