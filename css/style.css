@@ -1351,6 +1351,94 @@ footer a:hover {
     }
 }
 
+/* =========================
+   SECTION SCROLL HEAD
+========================= */
+
+section {
+	position: relative;
+}
+
+.section-scroll-head {
+	position: absolute;
+	top: 1.25rem;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 120px;
+	height: 54px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+
+	cursor: pointer;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	z-index: 15;
+}
+
+.section-scroll-head::before {
+	content: "";
+	width: 1px;
+	height: 26px;
+	background: linear-gradient(
+		to bottom,
+		rgba(212, 175, 55, 0),
+		rgba(212, 175, 55, 0.55),
+		rgba(212, 175, 55, 0.15)
+	);
+}
+
+.section-scroll-head .scroll-indicator {
+	position: static;
+	left: auto;
+	bottom: auto;
+	transform: none;
+}
+
+.hero .scroll-indicator,
+.section-scroll-head,
+.section-scroll-head .scroll-indicator {
+	cursor: pointer;
+}
+
+/* Damit der neue Kopfbereich den Inhalt nicht überlappt */
+section > .section-scroll-head + .container {
+	margin-top: 4.5rem;
+}
+
+/* Falls in einer Sektion nicht direkt .container folgt */
+section > .section-scroll-head + * {
+	margin-top: 4.5rem;
+}
+
+/* Mobile etwas kompakter */
+@media (max-width: 768px) {
+	.section-scroll-head {
+		top: 0.75rem;
+		height: 46px;
+		gap: 8px;
+	}
+
+	.section-scroll-head::before {
+		height: 22px;
+	}
+
+	section > .section-scroll-head + .container,
+	section > .section-scroll-head + * {
+		margin-top: 3.75rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.section-scroll-head .scroll-indicator,
+	.hero .scroll-indicator {
+		animation: none;
+	}
+}
+
 /* ===============================
    GALLERY / VIDEO SLIDER OPTIMIZED
 ================================= */
