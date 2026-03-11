@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	const navLogo = document.querySelector(".nav-logo");
 	const cta = document.querySelector(".cta-button");
+	
+	const SECTION_SCROLL_INSET = 1;
 
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
@@ -119,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			target.matches?.("#about, #gallery, #services, #pricing, #testimonials, #contact");
 
 		const offset = isHeroTarget ? 0 : navHeight;
-		const inset = shouldInsetByOnePixel ? 1 : 0;
+		const inset = shouldInsetByOnePixel ? SECTION_SCROLL_INSET : 0;
 
 		const y =
 			target.getBoundingClientRect().top +
