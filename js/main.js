@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	let currentSurface = 0;
 	let surfaceVelocity = 0;
 
-	let targetBounce = 0;
 	let currentBounce = 0;
 	let bounceVelocity = 0;
 
@@ -782,8 +781,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			Math.abs(compactVelocity) > 0.0005 ||
 			Math.abs(targetSurface - currentSurface) > 0.0005 ||
 			Math.abs(surfaceVelocity) > 0.0005 ||
-			Math.abs(targetBounce - currentBounce) > 0.0005 ||
+			Math.abs(currentBounce) > 0.0005 ||
 			Math.abs(bounceVelocity) > 0.0005;
+			
 
 		if (!stillMoving) {
 			animationRunning = false;
