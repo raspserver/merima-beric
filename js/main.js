@@ -102,15 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	function triggerNavbarBounce(delta) {
 		if (!navbar || prefersReducedMotion) return;
 
-		const magnitude = Math.min(Math.abs(delta), 120);
-		if (magnitude < 2) return;
+		const scaledDelta = delta * NAV_BOUNCE_STOP_FACTOR;
+		const magnitude = Math.abs(scaledDelta);
 
-		const direction = delta >= 0 ? 1 : -1;
-		const impulse = direction * Math.min(0.18 + (magnitude / 120) * 0.82, 1);
+		if (magnitude < 0.15) return;
 
-		/* echter Impuls auf die Geschwindigkeit statt Zielwert */
+		const impulse = Math.sign(scaledDelta) * Math.min(magnitude * 0.035, 2.2);
+
 		bounceVelocity += impulse;
-
 		startNavbarAnimation();
 	}
 	
@@ -232,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 
 				/* Richtungsimpuls beim Stoppen */
-				triggerNavbarBounce(endDelta * NAV_BOUNCE_STOP_FACTOR);
+				triggerNavbarBounce(endDelta);
 
 				programmaticNavMode = null;
 				startNavbarAnimation();
