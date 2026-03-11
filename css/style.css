@@ -1669,7 +1669,8 @@ section > .section-scroll-head + * {
 
 /* ==========================================
    ABOUT MOBILE SPACING
-   384x701 / 392x718 ohne JS, ohne Text-Abschnitt
+   384x701 / 392x718 ohne JS, mit sauberem Platz
+   für Scroll-Indicator + vertikale Linie
 ========================================== */
 @media (max-width: 392px) and (max-height: 718px) {
 	#about {
@@ -1683,13 +1684,14 @@ section > .section-scroll-head + * {
 	}
 
 	#about .section-scroll-head {
-		height: 42px;
-		padding-top: 0.45rem;
+		height: 60px;
+		padding-top: 0.55rem;
+		gap: 8px;
 	}
 
 	#about > .section-scroll-head + .container,
 	#about > .section-scroll-head + * {
-		margin-top: 2.85rem;
+		margin-top: 4.15rem;
 	}
 
 	#about .section-title {
@@ -1714,7 +1716,7 @@ section > .section-scroll-head + * {
 		float: none;
 		width: 100%;
 		margin-right: 0;
-		margin-bottom: 1rem; /* unten ungefähr wie links/rechts */
+		margin-bottom: 1rem;
 	}
 
 	#about .about-image {
