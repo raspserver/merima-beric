@@ -419,6 +419,14 @@ body {
 	animation: liquidScroll 2.2s ease-in-out infinite;
 }
 
+.hero .scroll-indicator {
+	position: absolute;
+	left: 50%;
+	bottom: calc(var(--hero-bottom-space) * 0.9);
+	transform: translateX(-50%);
+	animation: liquidScroll 2.2s ease-in-out infinite;
+}
+
 @keyframes liquidScroll {
 	0% {
 		transform: translate(-50%,0) scale(1);
