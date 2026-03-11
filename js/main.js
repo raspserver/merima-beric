@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navLogo = document.querySelector(".nav-logo");
 	const cta = document.querySelector(".cta-button");
 	
+	const rootStyles = getComputedStyle(document.documentElement);
+	const NAV_SURFACE_UP =
+		parseFloat(rootStyles.getPropertyValue("--nav-surface-up")) || 0.18;
+	
 	const SECTION_SCROLL_INSET = 1;
 
 	let lastScrollY = window.scrollY;
@@ -162,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				} else {
 					targetVisible = 1;
 					targetCompact = 1;
-					targetSurface = 0.18;
+					targetSurface = NAV_SURFACE_UP;
 				}
 			}
 
@@ -224,7 +228,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!prevTarget) return;
 
 			manualNavbarOpen = false;
-			applyNavbarStateImmediately(1, 1, 0.18);
+			applyNavbarStateImmediately(1, 1, NAV_SURFACE_UP);
+			
 
 			/* zur Hero soll das bestehende "top"-Verhalten genutzt werden */
 			if (prevTarget.classList.contains("hero")) {
@@ -509,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			e.preventDefault();
 
 			manualNavbarOpen = false;
-			applyNavbarStateImmediately(1, 1, 0.18);
+			applyNavbarStateImmediately(1, 1, NAV_SURFACE_UP);
 
 			const heroSection = document.querySelector(".hero");
 			scrollToSection(heroSection, "top");
@@ -595,7 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			} else {
 				targetVisible = 1;
 				targetCompact = 1;
-				targetSurface = 0.18;
+				targetSurface = NAV_SURFACE_UP;
 			}
 
 		} else if (manualNavbarOpen) {
@@ -622,7 +627,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			} else if (scrollDirection === "up") {
 				targetVisible = 1;
 				targetCompact = 1;
-				targetSurface = 0.18;
+				targetSurface = NAV_SURFACE_UP;
 			}
 		}
 
@@ -768,7 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			manualNavbarOpen = false;
 
 			if (isScrollingUp) {
-				applyNavbarStateImmediately(1, 1, 0.18);
+				applyNavbarStateImmediately(1, 1, NAV_SURFACE_UP);
 				scrollToSection(target, "top");
 			} else {
 				applyNavbarStateImmediately(1, 1, 1);
