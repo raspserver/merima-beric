@@ -112,9 +112,120 @@ document.addEventListener("DOMContentLoaded", () => {
 		startNavbarAnimation();
 	}
 
+	let activeScrollAnimation = null;
+
+	function easeOutBack(t, overshoot = 1.15) {
+		const c1 = overshoot;
+		const c3 = c1 + 1;
+		return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+	}
+
+	function animateWindowScrollTo(targetY, { onComplete } = {}) {
+		if (activeScrollAnimation) {
+			cancelAnimationFrame(activeScrollAnimation);
+			activeScrollAnimation = null;
+		}
+
+		const startY = window.scrollY;
+		const distance = targetY - startY;
+		const absDistance = Math.abs(distance);
+
+		if (absDistance < 1) {
+			window.scrollTo(0, targetY);
+			onComplete?.();
+			return;
+		}
+
+		/* Dauer abhängig von Distanz */
+		const duration = Math.min(1400, Math.max(650, absDistance * 0.55));
+
+		/* Federstärke abhängig von Distanz */
+		const overshoot = Math.min(2.2, 1.02 + absDistance / 900);
+
+		const startTime = performance.now();
+
+		function frame(now) {
+			const elapsed = now - startTime;
+			const t = Math.min(elapsed / duration, 1);
+
+			const eased = prefersReducedMotion ? t : easeOutBack(t, overshoot);
+			const nextY = startY + distance * eased;
+
+			window.scrollTo(0, nextY);
+
+			if (t < 1) {
+				activeScrollAnimation = requestAnimationFrame(frame);
+			} else {
+				window.scrollTo(0, targetY);
+				activeScrollAnimation = null;
+				onComplete?.();
+			}
+		}
+
+		activeScrollAnimation = requestAnimationFrame(frame);
+	}
+
 	/* =================================================
 	   CENTRAL SCROLL ENGINE
 	================================================= */
+	function scrollToSection(target, navMode = null) {
+		if (!target) return;
+
+		const navHeight = navbar ? navbar.offsetHeight : 0;
+		const isHeroTarget = target.classList?.contains("hero");
+
+		const shouldInsetByOnePixel =
+			target.matches?.("#about, #gallery, #services, #pricing, #testimonials, #contact");
+
+		const offset = isHeroTarget ? 0 : navHeight;
+		const inset = shouldInsetByOnePixel ? SECTION_SCROLL_INSET : 0;
+
+		const y =
+			target.getBoundingClientRect().top +
+			window.pageYOffset -
+			offset +
+			inset;
+
+		programmaticScroll = true;
+		programmaticNavMode = navMode;
+
+		if (navMode === "down") {
+			scrollDirection = "down";
+		} else if (navMode === "top") {
+			scrollDirection = "up";
+		}
+
+		animateWindowScrollTo(Math.max(0, y), {
+			onComplete: () => {
+				const finalMode = programmaticNavMode;
+				const finalY = window.scrollY;
+
+				programmaticScroll = false;
+				lastScrollY = finalY;
+
+				if (finalMode === "down") {
+					targetVisible = 1;
+					targetCompact = 1;
+					targetSurface = 1;
+				} else if (finalMode === "top") {
+					if (finalY <= 5) {
+						targetVisible = 0;
+						targetCompact = 0;
+						targetSurface = 0;
+					} else {
+						targetVisible = 1;
+						targetCompact = 1;
+						targetSurface = NAV_SURFACE_UP;
+					}
+				}
+
+				programmaticNavMode = null;
+				startNavbarAnimation();
+				handleScroll();
+			}
+		});
+	}
+
 	function scrollToSection(target, navMode = null) {
 		if (!target) return;
 
@@ -175,6 +286,18 @@ document.addEventListener("DOMContentLoaded", () => {
 			handleScroll();
 		}, 750);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/* =========================
 	   SECTION SCROLL NAVIGATION
