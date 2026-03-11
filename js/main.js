@@ -163,6 +163,120 @@ document.addEventListener("DOMContentLoaded", () => {
 			handleScroll();
 		}, 750);
 	}
+	
+	/* =========================
+	   SECTION SCROLL NAVIGATION
+	========================= */
+	const orderedSections = [
+		document.querySelector(".hero"),
+		document.querySelector("#about"),
+		document.querySelector("#gallery"),
+		document.querySelector("#services"),
+		document.querySelector("#pricing"),
+		document.querySelector("#testimonials"),
+		document.querySelector("#contact")
+	].filter(Boolean);
+
+	const footer = document.querySelector("footer");
+	const sectionNavClickDelay = 240;
+
+	function getSectionIndex(sectionEl) {
+		return orderedSections.findIndex(section => section === sectionEl);
+	}
+
+	function navigateSection(sectionEl, direction, allowPrev = true) {
+		if (!sectionEl) return;
+
+		const currentIndex = getSectionIndex(sectionEl);
+		if (currentIndex === -1) return;
+
+		if (direction === "next") {
+			let nextTarget = null;
+
+			/* contact -> footer */
+			if (sectionEl.id === "contact") {
+				nextTarget = footer;
+			} else {
+				nextTarget = orderedSections[currentIndex + 1] || null;
+			}
+
+			if (!nextTarget) return;
+
+			manualNavbarOpen = false;
+			applyNavbarStateImmediately(1, 1, 1);
+			scrollToSection(nextTarget, "down");
+			startNavbarAnimation();
+			return;
+		}
+
+		if (direction === "prev") {
+			if (!allowPrev) return;
+
+			const prevTarget = orderedSections[currentIndex - 1] || null;
+			if (!prevTarget) return;
+
+			manualNavbarOpen = false;
+			applyNavbarStateImmediately(1, 1, 0.18);
+
+			/* zur Hero soll das bestehende "top"-Verhalten genutzt werden */
+			if (prevTarget.classList.contains("hero")) {
+				scrollToSection(prevTarget, "top");
+			} else {
+				scrollToSection(prevTarget, "top");
+			}
+
+			startNavbarAnimation();
+		}
+	}
+
+	function bindSectionNavigator(triggerEl, sectionEl, { allowPrev = true } = {}) {
+		if (!triggerEl || !sectionEl) return;
+
+		let clickTimer = null;
+
+		triggerEl.addEventListener("click", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			if (clickTimer) clearTimeout(clickTimer);
+
+			clickTimer = setTimeout(() => {
+				clickTimer = null;
+				navigateSection(sectionEl, "next", allowPrev);
+			}, sectionNavClickDelay);
+		});
+
+		triggerEl.addEventListener("dblclick", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			if (clickTimer) {
+				clearTimeout(clickTimer);
+				clickTimer = null;
+			}
+
+			navigateSection(sectionEl, "prev", allowPrev);
+		});
+
+		/* Tastatur-Support */
+		triggerEl.addEventListener("keydown", (e) => {
+			if (e.key === "Enter" || e.key === " ") {
+				e.preventDefault();
+				navigateSection(sectionEl, "next", allowPrev);
+			}
+		});
+	}
+
+	/* Hero: vorhandenen Scroll-Indikator nutzen, aber ohne Double-Click-Funktion */
+	const heroIndicator = document.querySelector(".hero .scroll-indicator");
+	const heroSection = document.querySelector(".hero");
+	bindSectionNavigator(heroIndicator, heroSection, { allowPrev: false });
+
+	/* Alle Kopf-Navigatoren der restlichen Sektionen */
+	document.querySelectorAll(".section-scroll-head").forEach(head => {
+		const parentSection = head.closest("section");
+		bindSectionNavigator(head, parentSection, { allowPrev: true });
+	});
 
 	/* Magnetic CTA Button */
 	const magneticButtons = document.querySelectorAll(".cta-button");
