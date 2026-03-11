@@ -236,13 +236,36 @@ document.addEventListener("DOMContentLoaded", () => {
 			startNavbarAnimation();
 		}
 	}
-
-	function bindSectionNavigator(triggerEl, sectionEl, { allowPrev = true } = {}) {
+	
+	function bindSectionNavigator(
+		triggerEl,
+		sectionEl,
+		{ allowPrev = true, headSelector = null } = {}
+	) {
 		if (!triggerEl || !sectionEl) return;
 
 		let clickTimer = null;
 
+		function isInteractiveElement(target) {
+			return !!target.closest(
+				'a, button, input, textarea, select, option, label, video, iframe, [role="button"], .pricing-tab, .cta-button'
+			);
+		}
+
+		function isInsideHeadArea(event) {
+			if (!headSelector) return true;
+
+			const head = sectionEl.querySelector(headSelector);
+			if (!head) return false;
+
+			const rect = head.getBoundingClientRect();
+			return event.clientY >= rect.top && event.clientY <= rect.bottom;
+		}
+
 		triggerEl.addEventListener("click", (e) => {
+			if (isInteractiveElement(e.target)) return;
+			if (!isInsideHeadArea(e)) return;
+
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -255,6 +278,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 
 		triggerEl.addEventListener("dblclick", (e) => {
+			if (isInteractiveElement(e.target)) return;
+			if (!isInsideHeadArea(e)) return;
+
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -266,24 +292,30 @@ document.addEventListener("DOMContentLoaded", () => {
 			navigateSection(sectionEl, "prev", allowPrev);
 		});
 
-		/* Tastatur-Support */
+		/* Tastatur-Support nur für echte fokussierbare Trigger */
 		triggerEl.addEventListener("keydown", (e) => {
+			if (headSelector) return;
+
 			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
 				navigateSection(sectionEl, "next", allowPrev);
 			}
 		});
 	}
-
+	
 	/* Hero: vorhandenen Scroll-Indikator nutzen, aber ohne Double-Click-Funktion */
 	const heroIndicator = document.querySelector(".hero .scroll-indicator");
 	const heroSection = document.querySelector(".hero");
 	bindSectionNavigator(heroIndicator, heroSection, { allowPrev: false });
+	
+	/* Alle normalen Sektionen: oberer Bereich über volle Breite klickbar */
+	document.querySelectorAll("section").forEach(section => {
+		if (section.classList.contains("hero")) return;
 
-	/* Alle Kopf-Navigatoren der restlichen Sektionen */
-	document.querySelectorAll(".section-scroll-head").forEach(head => {
-		const parentSection = head.closest("section");
-		bindSectionNavigator(head, parentSection, { allowPrev: true });
+		bindSectionNavigator(section, section, {
+			allowPrev: true,
+			headSelector: ".section-scroll-head"
+		});
 	});
 
 	/* Magnetic CTA Button */

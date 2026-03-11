@@ -1391,16 +1391,16 @@ section {
 
 .section-scroll-head {
 	position: absolute;
-	top: 1.25rem;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 120px;
+	top: 0;
+	left: 0;
+	width: 100%;
 	height: 60px;
 
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: flex-start;
+	padding-top: 1.25rem;
 	gap: 10px;
 
 	cursor: pointer;
@@ -1480,8 +1480,9 @@ section > .section-scroll-head + * {
 /* Mobile etwas kompakter */
 @media (max-width: 768px) {
 	.section-scroll-head {
-		top: 0.75rem;
+		top: 0;
 		height: 46px;
+		padding-top: 0.75rem;
 		gap: 8px;
 	}
 
