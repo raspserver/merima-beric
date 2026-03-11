@@ -14,6 +14,7 @@
 	--hero-bottom-space: 60px;
 	--brand-sub-ratio: 0.25;
 	--nav-surface-up: 0.10;
+	--section-head-title-gap: 2.2rem;
 }
 
 * {
@@ -1476,12 +1477,12 @@ section {
 
 /* Damit der neue Kopfbereich den Inhalt nicht überlappt */
 section > .section-scroll-head + .container {
-	margin-top: 2.2rem;
+	margin-top: var(--section-head-title-gap);
 }
 
 /* Falls in einer Sektion nicht direkt .container folgt */
 section > .section-scroll-head + * {
-	margin-top: 2.2rem;
+	margin-top: var(--section-head-title-gap);
 }
 
 /* Mobile etwas kompakter */
@@ -1499,7 +1500,7 @@ section > .section-scroll-head + * {
 
 	section > .section-scroll-head + .container,
 	section > .section-scroll-head + * {
-		margin-top: 2.2rem;
+		margin-top: var(--section-head-title-gap);
 	}
 }
 
@@ -1579,11 +1580,6 @@ section > .section-scroll-head + * {
 
 	#about {
 		padding-top: 2rem;
-	}
-
-	#about > .section-scroll-head + .container,
-	#about > .section-scroll-head + * {
-		margin-top: 1.2rem;
 	}
 
 	.about-image-wrapper {
