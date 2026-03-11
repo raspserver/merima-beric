@@ -64,8 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		compactStiffness = isMobile ? 0.035 : 0.045;
 		compactDamping = isMobile ? 0.9 : 0.88;
 
-		bounceStiffness = isMobile ? 0.16 : 0.18;
-		bounceDamping = isMobile ? 0.74 : 0.72;
+		bounceStiffness = isMobile ? 0.24 : 0.28;
+		bounceDamping = isMobile ? 0.90 : 0.92;
+	
 	}
 
 	updatePhysics();
