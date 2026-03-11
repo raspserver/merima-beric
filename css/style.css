@@ -16,7 +16,7 @@
 	--nav-surface-up: 0.10;
 	--section-head-title-gap: 1.0rem;
 	--section-scroll-head-height: 60px;
-	--nav-bounce-stop-factor: 2.5;
+	--nav-bounce-stop-factor: 1.5;
 }
 
 * {
