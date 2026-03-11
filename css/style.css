@@ -1410,18 +1410,7 @@ section {
 }
 
 .section-scroll-head::before {
-/*
 	display: none;
-*/
-	content: "";
-	width: 1px;
-	height: 26px;
-	background: linear-gradient(
-		to bottom,
-		rgba(212, 175, 55, 0),
-		rgba(212, 175, 55, 0.55),
-		rgba(212, 175, 55, 0.15)
-	);
 }
 
 .section-scroll-head .scroll-indicator {
@@ -1429,8 +1418,29 @@ section {
 	left: auto;
 	bottom: auto;
 	margin: 0 auto;
-	transform: translateZ(0);
+	transform: translateY(0);
 	animation: sectionLiquidScroll 2.2s ease-in-out infinite;
+}
+
+.section-scroll-head .scroll-indicator::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-top: 8px;
+
+	width: 1px;
+	height: 26px;
+
+	background: linear-gradient(
+		to bottom,
+		rgba(212,175,55,0.55),
+		rgba(212,175,55,0.15),
+		rgba(212,175,55,0)
+	);
+
+	pointer-events: none;
 }
 
 @keyframes sectionLiquidScroll {
