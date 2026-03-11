@@ -1475,21 +1475,46 @@ section {
 	cursor: pointer;
 }
 
-/* Damit der neue Kopfbereich den Inhalt nicht überlappt */
-section > .section-scroll-head + .container {
-	margin-top: var(--section-head-title-gap);
+section {
+	position: relative;
+	--section-scroll-head-height: 60px;
 }
 
-/* Falls in einer Sektion nicht direkt .container folgt */
+.section-scroll-head {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: var(--section-scroll-head-height);
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	padding-top: 1.25rem;
+	gap: 10px;
+
+	cursor: pointer;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	z-index: 15;
+}
+
+/* Echter Abstand zwischen Scroll-Head und section-title */
+section > .section-scroll-head + .container,
 section > .section-scroll-head + * {
-	margin-top: var(--section-head-title-gap);
+	margin-top: 0;
+	padding-top: calc(var(--section-scroll-head-height) + var(--section-head-title-gap));
 }
 
-/* Mobile etwas kompakter */
 @media (max-width: 768px) {
+	section {
+		--section-scroll-head-height: 46px;
+	}
+
 	.section-scroll-head {
 		top: 0;
-		height: 46px;
+		height: var(--section-scroll-head-height);
 		padding-top: 0.75rem;
 		gap: 8px;
 	}
@@ -1500,7 +1525,8 @@ section > .section-scroll-head + * {
 
 	section > .section-scroll-head + .container,
 	section > .section-scroll-head + * {
-		margin-top: var(--section-head-title-gap);
+		margin-top: 0;
+		padding-top: calc(var(--section-scroll-head-height) + var(--section-head-title-gap));
 	}
 }
 
