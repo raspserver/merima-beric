@@ -502,6 +502,11 @@ section {
 	line-height: 1;
 }
 
+section .section-title:first-child {
+	margin-top: 0;
+	padding-top: 0;
+}
+
 .section-subtitle {
 	text-align: center;
 	color: var(--primary-color);
