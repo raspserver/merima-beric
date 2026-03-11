@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
 	}
-	
+
 	function triggerNavbarBounce(delta) {
 		if (!navbar || prefersReducedMotion) return;
 
@@ -109,7 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		const direction = delta >= 0 ? 1 : -1;
 		const impulse = direction * Math.min(0.18 + (magnitude / 120) * 0.82, 1);
 
-		targetBounce = impulse;
+		/* echter Impuls auf die Geschwindigkeit statt Zielwert */
+		bounceVelocity += impulse;
+
 		startNavbarAnimation();
 	}
 	
