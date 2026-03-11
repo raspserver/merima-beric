@@ -797,6 +797,74 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	});
 
+	/* =========================
+	   ABOUT MOBILE FIT
+	========================= */
+	const aboutSection = document.querySelector("#about");
+
+	function applyAboutMobileFit() {
+		if (!aboutSection) return;
+
+		const isTargetViewport =
+			window.innerWidth >= 360 &&
+			window.innerWidth <= 392 &&
+			window.innerHeight >= 680 &&
+			window.innerHeight <= 718;
+
+		aboutSection.classList.toggle("about-mobile-fit", isTargetViewport);
+
+		if (!isTargetViewport) {
+			aboutSection.style.removeProperty("--about-mobile-image-height");
+			return;
+		}
+
+		const container = aboutSection.querySelector(".container");
+		const head = aboutSection.querySelector(".section-scroll-head");
+		const title = aboutSection.querySelector(".section-title");
+		const subtitle = aboutSection.querySelector(".section-subtitle");
+		const imageWrapper = aboutSection.querySelector(".about-image-wrapper");
+
+		if (!container || !title || !subtitle || !imageWrapper) return;
+
+		const sectionStyles = getComputedStyle(aboutSection);
+		const bottomPadding = parseFloat(sectionStyles.paddingBottom) || 16;
+
+		const navHeight = navbar ? navbar.offsetHeight : 58;
+		const viewportHeight = window.innerHeight;
+
+		const headHeight = head ? head.offsetHeight : 0;
+		const containerMarginTop = head ? 49 : 0;
+
+		const titleHeight = title.offsetHeight;
+		const subtitleHeight = subtitle.offsetHeight;
+
+		const titleStyles = getComputedStyle(title);
+		const subtitleStyles = getComputedStyle(subtitle);
+
+		const titleMarginBottom = parseFloat(titleStyles.marginBottom) || 0;
+		const subtitleMarginBottom = parseFloat(subtitleStyles.marginBottom) || 0;
+
+		const reservedSpace =
+			headHeight +
+			containerMarginTop +
+			titleHeight +
+			titleMarginBottom +
+			subtitleHeight +
+			subtitleMarginBottom +
+			bottomPadding;
+
+		const imageHeight = Math.max(
+			220,
+			Math.floor(viewportHeight - navHeight - reservedSpace)
+		);
+
+		aboutSection.style.setProperty("--about-mobile-image-height", `${imageHeight}px`);
+	}
+
+	applyAboutMobileFit();
+	window.addEventListener("resize", applyAboutMobileFit);
+	window.addEventListener("orientationchange", applyAboutMobileFit);
+
 	/* Jahr im Footer */
 	const year = document.getElementById("year");
 	if (year) {
