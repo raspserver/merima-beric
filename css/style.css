@@ -1380,7 +1380,18 @@ section {
 }
 
 .section-scroll-head::before {
+/*
 	display: none;
+*/
+	content: "";
+	width: 1px;
+	height: 26px;
+	background: linear-gradient(
+		to bottom,
+		rgba(212, 175, 55, 0),
+		rgba(212, 175, 55, 0.55),
+		rgba(212, 175, 55, 0.15)
+	);
 }
 
 .section-scroll-head .scroll-indicator {
