@@ -475,15 +475,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (clickedCTA) return;
 
-		if (clickedIndicator) {
-			manualNavbarOpen = false;
-			applyNavbarStateImmediately(1, 1, 1);
-
-			const about = document.querySelector("#about");
-			scrollToSection(about, "down");
-			startNavbarAnimation();
-			return;
-		}
+		/* Der Hero-Scroll-Indikator wird jetzt separat behandelt */
+		if (clickedIndicator) return;
 
 		const ctaRect = cta?.getBoundingClientRect();
 
