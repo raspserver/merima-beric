@@ -36,6 +36,12 @@ body {
 	margin: 0;
 }
 
+html, body {
+	-webkit-user-select: none;				/* vehindert Textmarkierung */
+	user-select: none;
+	-webkit-touch-callout: none;
+}
+
 .hero {
 	position: relative;
 
