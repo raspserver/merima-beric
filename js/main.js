@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		animateWindowScrollTo(Math.max(0, y), {
-			onComplete: () => {
+			onComplete: (endDelta) => {
 				const finalMode = programmaticNavMode;
 				const finalY = window.scrollY;
 
@@ -227,11 +227,15 @@ document.addEventListener("DOMContentLoaded", () => {
 					}
 				}
 
+				/* Richtungsimpuls beim Stoppen */
+				triggerNavbarBounce(endDelta * 3.5);
+
 				programmaticNavMode = null;
 				startNavbarAnimation();
 				handleScroll();
 			}
 		});
+	
 	}
 
 	/* =========================
