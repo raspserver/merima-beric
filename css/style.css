@@ -494,9 +494,12 @@ section {
 	font-size: clamp(2.5rem, 5vw, 4rem);
 	font-weight: 400;
 	text-align: center;
+	margin-top: 0;
 	margin-bottom: 0.7rem;
+	padding-top: 0;
 	color: var(--secondary-color);
 	position: relative;
+	line-height: 1;
 }
 
 .section-subtitle {
