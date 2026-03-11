@@ -726,15 +726,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		currentSurface += surfaceVelocity * delta;
 		currentSurface = Math.max(0, Math.min(currentSurface, 1));
 
-		const bounceForce = (targetBounce - currentBounce) * bounceStiffness;
+		const bounceForce = -currentBounce * bounceStiffness;
 		bounceVelocity += bounceForce * delta;
 		bounceVelocity *= Math.pow(bounceDamping, delta);
 		currentBounce += bounceVelocity * delta;
 
 		currentBounce = Math.max(-0.35, Math.min(currentBounce, 1.2));
-
-		targetBounce *= Math.pow(0.78, delta);
-		if (targetBounce < 0.001) targetBounce = 0;
 
 		const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
 		const easedSurface = 1 - Math.pow(1 - currentSurface, 3);
