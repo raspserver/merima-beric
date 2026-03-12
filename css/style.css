@@ -17,6 +17,41 @@
 	--section-head-title-gap: 1.0rem;
 	--section-scroll-head-height: 60px;
 	--nav-bounce-stop-factor: 1.5;
+	
+	/* =========================
+	   SCREEN SCROLL BOUNCE
+	========================= */
+	--scroll-elastic-decay: 10;
+	--scroll-elastic-frequency: 10;
+	--scroll-elastic-phase-shift: 0.75;
+	--scroll-duration-factor: 0.6;
+	--scroll-duration-min: 700;
+	--scroll-duration-max: 1600;
+
+	/* =========================
+	   NAVBAR SPRING DESKTOP
+	========================= */
+	--nav-visible-stiffness: 0.08;
+	--nav-visible-damping: 0.82;
+	--nav-compact-stiffness: 0.045;
+	--nav-compact-damping: 0.88;
+
+	/* =========================
+	   NAVBAR SPRING MOBILE
+	========================= */
+	--nav-visible-stiffness-mobile: 0.06;
+	--nav-visible-damping-mobile: 0.85;
+	--nav-compact-stiffness-mobile: 0.035;
+	--nav-compact-damping-mobile: 0.90;
+
+	/* =========================
+	   HERO PARALLAX
+	========================= */
+	--hero-parallax-factor: -0.06;
+	--hero-parallax-stiffness: 0.04;
+	--hero-parallax-damping: 0.85;
+	--hero-scale-scroll-factor: 0.01;
+	--hero-brightness-scroll-factor: 0.06;
 }
 
 * {
