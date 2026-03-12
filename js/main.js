@@ -16,9 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	const rootStyles = getComputedStyle(document.documentElement);
 	const NAV_SURFACE_UP =
 		parseFloat(rootStyles.getPropertyValue("--nav-surface-up")) || 0.18;
-		
-	const NAV_BOUNCE_STOP_FACTOR =
-	parseFloat(rootStyles.getPropertyValue("--nav-bounce-stop-factor")) || 3.5;
 
 	const SECTION_SCROLL_INSET = 1;
 
@@ -49,11 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let currentSurface = 0;
 	let surfaceVelocity = 0;
 
-	let currentBounce = 0;
-	let bounceVelocity = 0;
-
 	let stiffness, damping, compactStiffness, compactDamping;
-	let bounceStiffness, bounceDamping;
 
 	function updatePhysics() {
 		const isMobile = window.innerWidth <= 768;
@@ -63,10 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		compactStiffness = isMobile ? 0.035 : 0.045;
 		compactDamping = isMobile ? 0.9 : 0.88;
-
-		bounceStiffness = isMobile ? 0.24 : 0.28;
-		bounceDamping = isMobile ? 0.90 : 0.92;
-	
 	}
 
 	updatePhysics();
@@ -99,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
 	}
-	
+
 	function setNavbarTargets(visible, compact, surface) {
 		if (!navbar) return;
 
@@ -109,49 +98,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		startNavbarAnimation();
 	}
-	
-	function triggerNavbarBounce(delta) {
-		if (!navbar || prefersReducedMotion) return;
-
-		const scaledDelta = delta * NAV_BOUNCE_STOP_FACTOR;
-		const magnitude = Math.abs(scaledDelta);
-
-		if (magnitude < 0.15) return;
-
-		const impulse = Math.sign(scaledDelta) * Math.min(magnitude * 0.035, 2.2);
-
-		bounceVelocity += impulse;
-		startNavbarAnimation();
-	}
-	
-	function triggerProgrammaticNavbarBounce(navMode, travelDistance = 0) {
-		if (!navbar || prefersReducedMotion) return;
-
-		const direction = navMode === "top" ? -1 : 1;
-
-		/* Distanz soll den Impuls mitbestimmen */
-		const normalizedDistance = Math.min(
-			Math.max(travelDistance / Math.max(window.innerHeight, 1), 0.35),
-			1.8
-		);
-
-		const impulse =
-			direction *
-			(0.38 * NAV_BOUNCE_STOP_FACTOR) *
-			normalizedDistance;
-
-		bounceVelocity = 0;
-		currentBounce = 0;
-
-		bounceVelocity += impulse;
-		startNavbarAnimation();
-	}
 
 	/* =========================
 	   CUSTOM SPRING SCROLL
 	========================= */
 	let activeScrollAnimation = null;
-	
+
 	function easeOutElastic(t) {
 		const c4 = (2 * Math.PI) / 3;
 
@@ -173,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (absDistance < 1) {
 			window.scrollTo(0, targetY);
-			onComplete?.(0);
+			onComplete?.();
 			return;
 		}
 
@@ -182,8 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			: Math.min(1600, Math.max(700, absDistance * 0.6));
 
 		const startTime = performance.now();
-		let previousY = startY;
-		let lastDelta = 0;
 
 		function frame(now) {
 			const elapsed = now - startTime;
@@ -192,9 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const eased = prefersReducedMotion ? t : easeOutElastic(t);
 			const nextY = startY + distance * eased;
 
-			lastDelta = nextY - previousY;
-			previousY = nextY;
-
 			window.scrollTo(0, nextY);
 
 			if (t < 1) {
@@ -202,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			} else {
 				window.scrollTo(0, targetY);
 				activeScrollAnimation = null;
-				onComplete?.(lastDelta);
+				onComplete?.();
 			}
 		}
 
@@ -229,8 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.pageYOffset -
 			offset +
 			inset;
-
-		const travelDistance = Math.abs(y - window.scrollY);
 
 		programmaticScroll = true;
 		programmaticNavMode = navMode;
@@ -270,7 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				handleScroll();
 			}
 		});
-		
 	}
 
 	/* =========================
@@ -386,7 +330,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			navigateSection(sectionEl, "prev", allowPrev);
 		});
 
-		/* Tastatur-Support nur für echte fokussierbare Trigger */
 		triggerEl.addEventListener("keydown", (e) => {
 			if (headSelector) return;
 
@@ -590,7 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	cta?.addEventListener("click", (e) => {
 		e.preventDefault();
 
-		manualNavbarOpen = false;	
+		manualNavbarOpen = false;
 		setNavbarTargets(1, 1, 1);
 
 		const target = document.querySelector("#contact");
@@ -626,7 +569,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const clickY = e.clientY;
 
 			if (clickY > ctaRect.bottom) {
-				manualNavbarOpen = false;	
+				manualNavbarOpen = false;
 				setNavbarTargets(1, 1, 1);
 
 				const about = document.querySelector("#about");
@@ -662,8 +605,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollVelocity = delta * 0.8;
 
 		if (!programmaticScroll) {
-			triggerNavbarBounce(delta);
-
 			if (Math.abs(delta) > directionLockThreshold) {
 				scrollDirection = delta > 0 ? "down" : "up";
 			}
@@ -764,8 +705,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
 
-		navbar.style.setProperty("--nav-bounce", currentBounce);
-
 		const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
 		navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
 
@@ -799,8 +738,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			Math.abs(targetCompact - currentCompact) > 0.0005 ||
 			Math.abs(compactVelocity) > 0.0005 ||
 			Math.abs(targetSurface - currentSurface) > 0.0005 ||
-			Math.abs(surfaceVelocity) > 0.0005 ||
-			
+			Math.abs(surfaceVelocity) > 0.0005;
 
 		if (!stillMoving) {
 			animationRunning = false;
