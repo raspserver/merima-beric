@@ -1317,6 +1317,18 @@ footer a:hover {
 	}
 }
 
+@keyframes screenBounceFallback {
+	0%   { transform: translateY(0); }
+	28%  { transform: translateY(-18px); }
+	58%  { transform: translateY(8px); }
+	78%  { transform: translateY(-3px); }
+	100% { transform: translateY(0); }
+}
+
+body.screen-bounce {
+	animation: screenBounceFallback 0.72s cubic-bezier(.16,.84,.44,1);
+}
+
 .social-links {
 	display: flex;
 	justify-content: center;
