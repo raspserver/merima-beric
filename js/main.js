@@ -12,8 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	const navLogo = document.querySelector(".nav-logo");
 	const cta = document.querySelector(".cta-button");
-
-	const SECTION_SCROLL_INSET = 1;
 	
 	const directionLockThreshold = 8;
 	const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
@@ -48,6 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let NAV_SURFACE_UP = 0.18;
 	
+	let sectionScrollInset = 1;
+	
 	let scrollElasticDecay = 10;
 	let scrollElasticFrequency = 10;
 	let scrollElasticPhaseShift = 0.75;
@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const isMobile = window.innerWidth <= 768;
 
 		NAV_SURFACE_UP = getRootNumber("--nav-surface-up", 0.18);
+		sectionScrollInset = getRootNumber("--section-scroll-inset", 1);
 
 		scrollElasticDecay = getRootNumber("--scroll-elastic-decay", 10);
 		scrollElasticFrequency = getRootNumber("--scroll-elastic-frequency", 10);
@@ -218,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const shouldInsetByOnePixel =
 			target.matches?.("#about, #gallery, #services, #pricing, #testimonials, #contact");
 
-		const inset = shouldInsetByOnePixel ? SECTION_SCROLL_INSET : 0;
+		const inset = shouldInsetByOnePixel ? sectionScrollInset : 0;
 
 		const y =
 			target.getBoundingClientRect().top +
