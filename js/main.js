@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const cta = document.querySelector(".cta-button");
 
 	const SECTION_SCROLL_INSET = 1;
+	
 	const directionLockThreshold = 8;
 	const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
 
@@ -177,25 +178,40 @@ document.addEventListener("DOMContentLoaded", () => {
 		activeScrollAnimation = requestAnimationFrame(frame);
 	}
 
+	function getTargetNavOffset(navMode = null) {
+		if (!navbar) return 0;
+
+		const navMin = getRootNumber("--nav-height-min", 58);
+		const navMax = getRootNumber("--nav-height-max", 78);
+
+		// Für Scrolls zu normalen Sections soll immer die finale kompakte Navbar-Höhe gelten.
+		// So ist die Zielposition unabhängig davon, ob der Scroll aus Hero, Navbar oder sonstwo kommt.
+		if (navMode === "down" || navMode === "top") {
+			return navMin;
+		}
+
+		// Fallback
+		return navbar.offsetHeight || navMax;
+	}
+	
 	/* =================================================
 	   CENTRAL SCROLL ENGINE
 	================================================= */
 	function scrollToSection(target, navMode = null) {
 		if (!target) return;
 
-		const navHeight = navbar ? navbar.offsetHeight : 0;
 		const isHeroTarget = target.classList?.contains("hero");
+		const navOffset = isHeroTarget ? 0 : getTargetNavOffset(navMode);
 
 		const shouldInsetByOnePixel =
 			target.matches?.("#about, #gallery, #services, #pricing, #testimonials, #contact");
 
-		const offset = isHeroTarget ? 0 : navHeight;
 		const inset = shouldInsetByOnePixel ? SECTION_SCROLL_INSET : 0;
 
 		const y =
 			target.getBoundingClientRect().top +
 			window.pageYOffset -
-			offset +
+			navOffset +
 			inset;
 
 		programmaticScroll = true;
