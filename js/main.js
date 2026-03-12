@@ -659,23 +659,31 @@ document.addEventListener("DOMContentLoaded", () => {
 		const scrollY = lastScrollY;
 		hero?.classList.toggle("scrolled", scrollY > 10);
 
+		/* =========================
+		   PROGRAMMATIC SCROLL STATE
+		========================= */
 		if (programmaticNavMode === "down") {
 			targetVisible = 1;
 			targetCompact = 1;
 			targetSurface = 1;
 
-		} else if (programmaticNavMode === "top") {
-			if (scrollY <= 5) {
-				targetVisible = 0;
-				targetCompact = 0;
-				targetSurface = 0;
-			} else {
-				targetVisible = 1;
-				targetCompact = 1;
-				targetSurface = NAV_SURFACE_UP;
-			}
+			startNavbarAnimation();
+			return;
+		}
 
-		} else if (manualNavbarOpen) {
+		if (programmaticNavMode === "top") {
+			targetVisible = 0;
+			targetCompact = 0;
+			targetSurface = 0;
+
+			startNavbarAnimation();
+			return;
+		}
+
+		/* =========================
+		   MANUAL NAVBAR OPEN STATE
+		========================= */
+		if (manualNavbarOpen) {
 			if (scrollY <= 5) {
 				manualNavbarOpen = false;
 				targetVisible = 0;
@@ -687,20 +695,25 @@ document.addEventListener("DOMContentLoaded", () => {
 				targetSurface = 1;
 			}
 
+			startNavbarAnimation();
+			return;
+		}
+
+		/* =========================
+		   NORMAL SCROLL BEHAVIOR
+		========================= */
+		if (scrollY <= 5) {
+			targetVisible = 0;
+			targetCompact = 0;
+			targetSurface = 0;
+		} else if (scrollDirection === "down") {
+			targetVisible = 1;
+			targetCompact = 1;
+			targetSurface = 1;
 		} else {
-			if (scrollY <= 5) {
-				targetVisible = 0;
-				targetCompact = 0;
-				targetSurface = 0;
-			} else if (scrollDirection === "down") {
-				targetVisible = 1;
-				targetCompact = 1;
-				targetSurface = 1;
-			} else if (scrollDirection === "up") {
-				targetVisible = 1;
-				targetCompact = 1;
-				targetSurface = NAV_SURFACE_UP;
-			}
+			targetVisible = 1;
+			targetCompact = 1;
+			targetSurface = NAV_SURFACE_UP;
 		}
 
 		startNavbarAnimation();
