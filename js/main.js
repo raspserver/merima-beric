@@ -46,6 +46,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let stiffness, damping, compactStiffness, compactDamping;
 	let NAV_SURFACE_UP = 0.18;
+	
+	let scrollElasticDecay = 10;
+	let scrollElasticFrequency = 10;
+	let scrollElasticPhaseShift = 0.75;
+	let scrollDurationFactor = 0.6;
+	let scrollDurationMin = 700;
+	let scrollDurationMax = 1600;
 
 	/* =========================
 	   ROOT VARIABLE HELPERS
@@ -61,6 +68,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		const isMobile = window.innerWidth <= 768;
 
 		NAV_SURFACE_UP = getRootNumber("--nav-surface-up", 0.18);
+
+		scrollElasticDecay = getRootNumber("--scroll-elastic-decay", 10);
+		scrollElasticFrequency = getRootNumber("--scroll-elastic-frequency", 10);
+		scrollElasticPhaseShift = getRootNumber("--scroll-elastic-phase-shift", 0.75);
+		scrollDurationFactor = getRootNumber("--scroll-duration-factor", 0.6);
+		scrollDurationMin = getRootNumber("--scroll-duration-min", 700);
+		scrollDurationMax = getRootNumber("--scroll-duration-max", 1600);
 
 		if (isMobile) {
 			stiffness = getRootNumber("--nav-spring-stiffness-mobile", 0.06);
@@ -127,14 +141,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	let activeScrollAnimation = null;
 
 	function easeOutElastic(t) {
-		const c4 = (2 * Math.PI) / 3;
-
 		if (t === 0) return 0;
 		if (t === 1) return 1;
 
-		return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
-	}
+		const c = (2 * Math.PI) / 3;
 
+		return Math.pow(2, -scrollElasticDecay * t) *
+			Math.sin((t * scrollElasticFrequency - scrollElasticPhaseShift) * c) + 1;
+	}
+	
 	function animateWindowScrollTo(targetY, { onComplete } = {}) {
 		if (activeScrollAnimation) {
 			cancelAnimationFrame(activeScrollAnimation);
@@ -153,7 +168,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const duration = prefersReducedMotion
 			? Math.min(900, Math.max(350, absDistance * 0.35))
-			: Math.min(1600, Math.max(700, absDistance * 0.6));
+			: Math.min(
+				scrollDurationMax,
+				Math.max(scrollDurationMin, absDistance * scrollDurationFactor)
+			);
 
 		const startTime = performance.now();
 

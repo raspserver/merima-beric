@@ -21,13 +21,65 @@
 	/* =========================
 	   SCREEN SCROLL BOUNCE
 	========================= */
+
+	/* preset defaults */
+	/*
 	--scroll-elastic-decay: 10;
 	--scroll-elastic-frequency: 10;
 	--scroll-elastic-phase-shift: 0.75;
 	--scroll-duration-factor: 0.6;
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
+	*/
 
+	/* preset luxury */
+	--scroll-elastic-decay: 12;
+	--scroll-elastic-frequency: 8.5;
+	--scroll-elastic-phase-shift: 0.72;
+	--scroll-duration-factor: 0.68;
+	--scroll-duration-min: 760;
+	--scroll-duration-max: 1750;
+
+	/* preset balanced */
+/*
+	--scroll-elastic-decay: 10;
+	--scroll-elastic-frequency: 10;
+	--scroll-elastic-phase-shift: 0.75;
+	--scroll-duration-factor: 0.6;
+	--scroll-duration-min: 700;
+	--scroll-duration-max: 1600;
+*/
+
+	/* preset cinematic */
+	/*
+	--scroll-elastic-decay: 8.5;
+	--scroll-elastic-frequency: 11.5;
+	--scroll-elastic-phase-shift: 0.78;
+	--scroll-duration-factor: 0.72;
+	--scroll-duration-min: 820;
+	--scroll-duration-max: 1900;
+	*/
+
+	/* preset crisp */
+	/*
+	--scroll-elastic-decay: 13.5;
+	--scroll-elastic-frequency: 9;
+	--scroll-elastic-phase-shift: 0.72;
+	--scroll-duration-factor: 0.48;
+	--scroll-duration-min: 560;
+	--scroll-duration-max: 1250;
+	*/
+
+	/* preset soft */
+	/*
+	--scroll-elastic-decay: 14;
+	--scroll-elastic-frequency: 7.5;
+	--scroll-elastic-phase-shift: 0.70;
+	--scroll-duration-factor: 0.78;
+	--scroll-duration-min: 900;
+	--scroll-duration-max: 2100;
+	*/
+	
 	/* =========================
 	   NAVBAR SPRING DESKTOP
 	========================= */
