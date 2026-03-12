@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let programmaticScroll = false;
 	let manualNavbarOpen = false;
 	let programmaticNavMode = null; // null | "down" | "up-section" | "hero-top"
+	let navbarVisibilityLockUntil = 0;
 
 	let targetVisible = 0;
 	let currentVisible = 0;
@@ -133,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	   CUSTOM SCREEN SCROLL
 	========================= */
 	let activeScrollAnimation = null;
-	
 	let pageBounceAnimation = null;
 
 	function getMaxScrollY() {
@@ -146,53 +146,72 @@ document.addEventListener("DOMContentLoaded", () => {
 	function triggerScreenBounce(intensity = 18) {
 		if (prefersReducedMotion) return;
 
-		const bounceTarget = document.body;
-		if (!bounceTarget) return;
+		const bounceTargets = Array.from(document.body.children).filter(el => {
+			return !el.classList.contains("navbar");
+		});
+
+		if (!bounceTargets.length) return;
 
 		if (pageBounceAnimation) {
-			pageBounceAnimation.cancel();
+			pageBounceAnimation.forEach(animation => animation.cancel());
 			pageBounceAnimation = null;
 		}
 
-		bounceTarget.style.willChange = "transform";
+		/* Navbar während des Bounces sichtbar halten */
+		navbarVisibilityLockUntil = performance.now() + 900;
+		targetVisible = 1;
+		targetCompact = 1;
+		targetSurface = 1;
+		startNavbarAnimation();
 
-		if (bounceTarget.animate) {
-			pageBounceAnimation = bounceTarget.animate(
-				[
-					{ transform: "translateY(0)" },
-					{ transform: `translateY(-${intensity}px)` },
-					{ transform: `translateY(${Math.round(intensity * 0.42)}px)` },
-					{ transform: `translateY(-${Math.round(intensity * 0.14)}px)` },
-					{ transform: "translateY(0)" }
-				],
-				{
-					duration: 720,
-					easing: "cubic-bezier(.16,.84,.44,1)",
-					fill: "none"
-				}
+		bounceTargets.forEach(el => {
+			el.style.willChange = "transform";
+		});
+
+		if (bounceTargets[0].animate) {
+			pageBounceAnimation = bounceTargets.map(el =>
+				el.animate(
+					[
+						{ transform: "translateY(0)" },
+						{ transform: `translateY(-${intensity}px)` },
+						{ transform: `translateY(${Math.round(intensity * 0.42)}px)` },
+						{ transform: `translateY(-${Math.round(intensity * 0.14)}px)` },
+						{ transform: "translateY(0)" }
+					],
+					{
+						duration: 720,
+						easing: "cubic-bezier(.16,.84,.44,1)",
+						fill: "none"
+					}
+				)
 			);
 
-			pageBounceAnimation.addEventListener("finish", () => {
-				bounceTarget.style.willChange = "";
+			const clear = () => {
+				bounceTargets.forEach(el => {
+					el.style.willChange = "";
+				});
 				pageBounceAnimation = null;
-			});
+				handleScroll();
+			};
 
-			pageBounceAnimation.addEventListener("cancel", () => {
-				bounceTarget.style.willChange = "";
-				pageBounceAnimation = null;
-			});
-
+			pageBounceAnimation[0]?.addEventListener("finish", clear, { once: true });
+			pageBounceAnimation[0]?.addEventListener("cancel", clear, { once: true });
 			return;
 		}
 
 		/* Fallback ohne WAAPI */
-		bounceTarget.classList.remove("screen-bounce");
-		void bounceTarget.offsetWidth;
-		bounceTarget.classList.add("screen-bounce");
+		bounceTargets.forEach(el => {
+			el.classList.remove("screen-bounce");
+			void el.offsetWidth;
+			el.classList.add("screen-bounce");
+		});
 
 		window.setTimeout(() => {
-			bounceTarget.classList.remove("screen-bounce");
-			bounceTarget.style.willChange = "";
+			bounceTargets.forEach(el => {
+				el.classList.remove("screen-bounce");
+				el.style.willChange = "";
+			});
+			handleScroll();
 		}, 750);
 	}
 
@@ -260,13 +279,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		const navMin = getRootNumber("--nav-height-min", 58);
 		const navMax = getRootNumber("--nav-height-max", 78);
 
-		// Für Scrolls zu normalen Sections soll immer die finale kompakte Navbar-Höhe gelten.
-		// So ist die Zielposition unabhängig davon, ob der Scroll aus Hero, Navbar oder sonstwo kommt.
 		if (navMode === "down" || navMode === "up-section") {
 			return navMin;
 		}
 
-		// Fallback
 		return navbar.offsetHeight || navMax;
 	}
 	
@@ -274,12 +290,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	   CENTRAL SCROLL ENGINE
 	================================================= */	
 	function scrollToSection(target, navMode = null, { bounceOnComplete = false } = {}) {	
-		
 		if (!target) return;
 
 		const isHeroTarget = target.classList?.contains("hero");
 
-		// Hero separat behandeln
 		const effectiveNavMode = isHeroTarget && navMode === "up-section" ? "hero-top" : navMode;
 
 		const navOffset = isHeroTarget ? 0 : getTargetNavOffset(effectiveNavMode);
@@ -306,7 +320,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		animateWindowScrollTo(Math.max(0, y), {
 			onComplete: () => {
-
 				const finalMode = programmaticNavMode;
 				const finalY = window.scrollY;
 
@@ -750,6 +763,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	function handleScroll() {
 		if (!navbar) return;
+
+		if (performance.now() < navbarVisibilityLockUntil) {
+			targetVisible = 1;
+			targetCompact = 1;
+			targetSurface = 1;
+			startNavbarAnimation();
+			return;
+		}
 
 		const currentY = window.scrollY;
 		const deltaY = currentY - lastScrollY;
