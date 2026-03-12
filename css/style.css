@@ -52,6 +52,59 @@
 	--hero-parallax-damping: 0.85;
 	--hero-scale-scroll-factor: 0.01;
 	--hero-brightness-scroll-factor: 0.06;
+	
+	/* presets */
+	--nav-spring-stiffness-desktop: 0.08;
+	--nav-spring-damping-desktop: 0.82;
+
+	--nav-compact-stiffness-desktop: 0.045;
+	--nav-compact-damping-desktop: 0.88;
+
+	--nav-spring-stiffness-mobile: 0.06;
+	--nav-spring-damping-mobile: 0.85;
+
+	--nav-compact-stiffness-mobile: 0.035;
+	--nav-compact-damping-mobile: 0.90;
+	
+	
+	/* preset luxury */
+	--nav-spring-stiffness-desktop: 0.072;
+	--nav-spring-damping-desktop: 0.84;
+
+	--nav-compact-stiffness-desktop: 0.040;
+	--nav-compact-damping-desktop: 0.90;
+
+	--nav-spring-stiffness-mobile: 0.055;
+	--nav-spring-damping-mobile: 0.87;
+
+	--nav-compact-stiffness-mobile: 0.032;
+	--nav-compact-damping-mobile: 0.92;
+	
+	/* preset balanced */
+	--nav-spring-stiffness-desktop: 0.08;
+	--nav-spring-damping-desktop: 0.82;
+
+	--nav-compact-stiffness-desktop: 0.045;
+	--nav-compact-damping-desktop: 0.88;
+
+	--nav-spring-stiffness-mobile: 0.06;
+	--nav-spring-damping-mobile: 0.85;
+
+	--nav-compact-stiffness-mobile: 0.035;
+	--nav-compact-damping-mobile: 0.90;
+	
+	/* preset cinematic */
+	--nav-spring-stiffness-desktop: 0.095;
+	--nav-spring-damping-desktop: 0.78;
+
+	--nav-compact-stiffness-desktop: 0.055;
+	--nav-compact-damping-desktop: 0.84;
+
+	--nav-spring-stiffness-mobile: 0.072;
+	--nav-spring-damping-mobile: 0.81;
+
+	--nav-compact-stiffness-mobile: 0.042;
+	--nav-compact-damping-mobile: 0.87;
 }
 
 * {

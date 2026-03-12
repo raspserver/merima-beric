@@ -13,53 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navLogo = document.querySelector(".nav-logo");
 	const cta = document.querySelector(".cta-button");
 
-	const rootStyles = getComputedStyle(document.documentElement);
-
-	const NAV_SURFACE_UP =
-		parseFloat(rootStyles.getPropertyValue("--nav-surface-up")) || 0.10;
-
 	const SECTION_SCROLL_INSET = 1;
-
-	/* =========================
-	   ROOT TUNING VARIABLES
-	========================= */
-	const SCROLL_ELASTIC_DECAY =
-		parseFloat(rootStyles.getPropertyValue("--scroll-elastic-decay")) || 10;
-
-	const SCROLL_ELASTIC_FREQUENCY =
-		parseFloat(rootStyles.getPropertyValue("--scroll-elastic-frequency")) || 10;
-
-	const SCROLL_ELASTIC_PHASE_SHIFT =
-		parseFloat(rootStyles.getPropertyValue("--scroll-elastic-phase-shift")) || 0.75;
-
-	const SCROLL_DURATION_FACTOR =
-		parseFloat(rootStyles.getPropertyValue("--scroll-duration-factor")) || 0.6;
-
-	const SCROLL_DURATION_MIN =
-		parseFloat(rootStyles.getPropertyValue("--scroll-duration-min")) || 700;
-
-	const SCROLL_DURATION_MAX =
-		parseFloat(rootStyles.getPropertyValue("--scroll-duration-max")) || 1600;
-
-	const HERO_PARALLAX_FACTOR =
-		parseFloat(rootStyles.getPropertyValue("--hero-parallax-factor")) || -0.06;
-
-	const HERO_PARALLAX_STIFFNESS =
-		parseFloat(rootStyles.getPropertyValue("--hero-parallax-stiffness")) || 0.04;
-
-	const HERO_PARALLAX_DAMPING =
-		parseFloat(rootStyles.getPropertyValue("--hero-parallax-damping")) || 0.85;
-
-	const HERO_SCALE_SCROLL_FACTOR =
-		parseFloat(rootStyles.getPropertyValue("--hero-scale-scroll-factor")) || 0.01;
-
-	const HERO_BRIGHTNESS_SCROLL_FACTOR =
-		parseFloat(rootStyles.getPropertyValue("--hero-brightness-scroll-factor")) || 0.06;
+	const directionLockThreshold = 8;
+	const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
 
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
 	let scrollDirection = "down";
-	const directionLockThreshold = 8;
 
 	let heroParallax = 0;
 	let heroParallaxVelocity = 0;
@@ -84,30 +44,44 @@ document.addEventListener("DOMContentLoaded", () => {
 	let surfaceVelocity = 0;
 
 	let stiffness, damping, compactStiffness, compactDamping;
+	let NAV_SURFACE_UP = 0.18;
+
+	/* =========================
+	   ROOT VARIABLE HELPERS
+	========================= */
+	function getRootNumber(name, fallback) {
+		const value = parseFloat(
+			getComputedStyle(document.documentElement).getPropertyValue(name)
+		);
+		return Number.isFinite(value) ? value : fallback;
+	}
 
 	function updatePhysics() {
 		const isMobile = window.innerWidth <= 768;
 
-		stiffness = isMobile
-			? (parseFloat(rootStyles.getPropertyValue("--nav-visible-stiffness-mobile")) || 0.06)
-			: (parseFloat(rootStyles.getPropertyValue("--nav-visible-stiffness")) || 0.08);
+		NAV_SURFACE_UP = getRootNumber("--nav-surface-up", 0.18);
 
-		damping = isMobile
-			? (parseFloat(rootStyles.getPropertyValue("--nav-visible-damping-mobile")) || 0.85)
-			: (parseFloat(rootStyles.getPropertyValue("--nav-visible-damping")) || 0.82);
+		if (isMobile) {
+			stiffness = getRootNumber("--nav-spring-stiffness-mobile", 0.06);
+			damping = getRootNumber("--nav-spring-damping-mobile", 0.85);
 
-		compactStiffness = isMobile
-			? (parseFloat(rootStyles.getPropertyValue("--nav-compact-stiffness-mobile")) || 0.035)
-			: (parseFloat(rootStyles.getPropertyValue("--nav-compact-stiffness")) || 0.045);
+			compactStiffness = getRootNumber("--nav-compact-stiffness-mobile", 0.035);
+			compactDamping = getRootNumber("--nav-compact-damping-mobile", 0.90);
+		} else {
+			stiffness = getRootNumber("--nav-spring-stiffness-desktop", 0.08);
+			damping = getRootNumber("--nav-spring-damping-desktop", 0.82);
 
-		compactDamping = isMobile
-			? (parseFloat(rootStyles.getPropertyValue("--nav-compact-damping-mobile")) || 0.90)
-			: (parseFloat(rootStyles.getPropertyValue("--nav-compact-damping")) || 0.88);
+			compactStiffness = getRootNumber("--nav-compact-stiffness-desktop", 0.045);
+			compactDamping = getRootNumber("--nav-compact-damping-desktop", 0.88);
+		}
 	}
 
 	updatePhysics();
 	window.addEventListener("resize", updatePhysics);
 
+	/* =========================
+	   ANIMATION CORE
+	========================= */
 	function startNavbarAnimation() {
 		if (!animationRunning) {
 			animationRunning = true;
@@ -157,11 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (t === 0) return 0;
 		if (t === 1) return 1;
 
-		return (
-			Math.pow(2, -SCROLL_ELASTIC_DECAY * t) *
-			Math.sin((t * SCROLL_ELASTIC_FREQUENCY - SCROLL_ELASTIC_PHASE_SHIFT) * c4) +
-			1
-		);
+		return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
 	}
 
 	function animateWindowScrollTo(targetY, { onComplete } = {}) {
@@ -182,10 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const duration = prefersReducedMotion
 			? Math.min(900, Math.max(350, absDistance * 0.35))
-			: Math.min(
-				SCROLL_DURATION_MAX,
-				Math.max(SCROLL_DURATION_MIN, absDistance * SCROLL_DURATION_FACTOR)
-			);
+			: Math.min(1600, Math.max(700, absDistance * 0.6));
 
 		const startTime = performance.now();
 
@@ -393,6 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
+	/* Hero-Scroll-Indikator */
 	const heroIndicator = document.querySelector(".hero .scroll-indicator");
 
 	heroIndicator?.addEventListener("click", (e) => {
@@ -611,8 +579,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const clickedCTA = e.target.closest(".cta-button");
 		const clickedIndicator = e.target.closest(".scroll-indicator");
 
-		if (clickedCTA) return;
-		if (clickedIndicator) return;
+		if (clickedCTA || clickedIndicator) return;
 
 		const ctaRect = cta?.getBoundingClientRect();
 
@@ -645,19 +612,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		startNavbarAnimation();
 	});
 
-	const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
-
 	function handleScroll() {
 		if (!navbar) return;
 
 		const currentY = window.scrollY;
-		const delta = currentY - lastScrollY;
+		const deltaY = currentY - lastScrollY;
 
-		scrollVelocity = delta * 0.8;
+		scrollVelocity = deltaY * 0.8;
 
 		if (!programmaticScroll) {
-			if (Math.abs(delta) > directionLockThreshold) {
-				scrollDirection = delta > 0 ? "down" : "up";
+			if (Math.abs(deltaY) > directionLockThreshold) {
+				scrollDirection = deltaY > 0 ? "down" : "up";
 			}
 		}
 
@@ -770,14 +735,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			const scrollY = window.scrollY;
 			const progress = Math.min(scrollY / inertiaThreshold, 1);
 
-			hero.style.setProperty("--hero-scale", 1 - (progress * HERO_SCALE_SCROLL_FACTOR));
-			hero.style.setProperty("--hero-brightness", 1 - (progress * HERO_BRIGHTNESS_SCROLL_FACTOR));
+			hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
+			hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
 
-			const targetParallax = window.scrollY * HERO_PARALLAX_FACTOR;
-			const parallaxForce = (targetParallax - heroParallax) * HERO_PARALLAX_STIFFNESS;
+			const targetParallax = window.scrollY * -0.06;
+			const parallaxForce = (targetParallax - heroParallax) * 0.04;
 
 			heroParallaxVelocity += parallaxForce;
-			heroParallaxVelocity *= HERO_PARALLAX_DAMPING;
+			heroParallaxVelocity *= 0.85;
 			heroParallax += heroParallaxVelocity;
 
 			hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
