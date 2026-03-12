@@ -14,10 +14,47 @@ document.addEventListener("DOMContentLoaded", () => {
 	const cta = document.querySelector(".cta-button");
 
 	const rootStyles = getComputedStyle(document.documentElement);
+
 	const NAV_SURFACE_UP =
-		parseFloat(rootStyles.getPropertyValue("--nav-surface-up")) || 0.18;
+		parseFloat(rootStyles.getPropertyValue("--nav-surface-up")) || 0.10;
 
 	const SECTION_SCROLL_INSET = 1;
+
+	/* =========================
+	   ROOT TUNING VARIABLES
+	========================= */
+	const SCROLL_ELASTIC_DECAY =
+		parseFloat(rootStyles.getPropertyValue("--scroll-elastic-decay")) || 10;
+
+	const SCROLL_ELASTIC_FREQUENCY =
+		parseFloat(rootStyles.getPropertyValue("--scroll-elastic-frequency")) || 10;
+
+	const SCROLL_ELASTIC_PHASE_SHIFT =
+		parseFloat(rootStyles.getPropertyValue("--scroll-elastic-phase-shift")) || 0.75;
+
+	const SCROLL_DURATION_FACTOR =
+		parseFloat(rootStyles.getPropertyValue("--scroll-duration-factor")) || 0.6;
+
+	const SCROLL_DURATION_MIN =
+		parseFloat(rootStyles.getPropertyValue("--scroll-duration-min")) || 700;
+
+	const SCROLL_DURATION_MAX =
+		parseFloat(rootStyles.getPropertyValue("--scroll-duration-max")) || 1600;
+
+	const HERO_PARALLAX_FACTOR =
+		parseFloat(rootStyles.getPropertyValue("--hero-parallax-factor")) || -0.06;
+
+	const HERO_PARALLAX_STIFFNESS =
+		parseFloat(rootStyles.getPropertyValue("--hero-parallax-stiffness")) || 0.04;
+
+	const HERO_PARALLAX_DAMPING =
+		parseFloat(rootStyles.getPropertyValue("--hero-parallax-damping")) || 0.85;
+
+	const HERO_SCALE_SCROLL_FACTOR =
+		parseFloat(rootStyles.getPropertyValue("--hero-scale-scroll-factor")) || 0.01;
+
+	const HERO_BRIGHTNESS_SCROLL_FACTOR =
+		parseFloat(rootStyles.getPropertyValue("--hero-brightness-scroll-factor")) || 0.06;
 
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
@@ -51,11 +88,21 @@ document.addEventListener("DOMContentLoaded", () => {
 	function updatePhysics() {
 		const isMobile = window.innerWidth <= 768;
 
-		stiffness = isMobile ? 0.06 : 0.08;
-		damping = isMobile ? 0.85 : 0.82;
+		stiffness = isMobile
+			? (parseFloat(rootStyles.getPropertyValue("--nav-visible-stiffness-mobile")) || 0.06)
+			: (parseFloat(rootStyles.getPropertyValue("--nav-visible-stiffness")) || 0.08);
 
-		compactStiffness = isMobile ? 0.035 : 0.045;
-		compactDamping = isMobile ? 0.9 : 0.88;
+		damping = isMobile
+			? (parseFloat(rootStyles.getPropertyValue("--nav-visible-damping-mobile")) || 0.85)
+			: (parseFloat(rootStyles.getPropertyValue("--nav-visible-damping")) || 0.82);
+
+		compactStiffness = isMobile
+			? (parseFloat(rootStyles.getPropertyValue("--nav-compact-stiffness-mobile")) || 0.035)
+			: (parseFloat(rootStyles.getPropertyValue("--nav-compact-stiffness")) || 0.045);
+
+		compactDamping = isMobile
+			? (parseFloat(rootStyles.getPropertyValue("--nav-compact-damping-mobile")) || 0.90)
+			: (parseFloat(rootStyles.getPropertyValue("--nav-compact-damping")) || 0.88);
 	}
 
 	updatePhysics();
@@ -100,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	/* =========================
-	   CUSTOM SPRING SCROLL
+	   CUSTOM SCREEN SCROLL
 	========================= */
 	let activeScrollAnimation = null;
 
@@ -110,7 +157,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (t === 0) return 0;
 		if (t === 1) return 1;
 
-		return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+		return (
+			Math.pow(2, -SCROLL_ELASTIC_DECAY * t) *
+			Math.sin((t * SCROLL_ELASTIC_FREQUENCY - SCROLL_ELASTIC_PHASE_SHIFT) * c4) +
+			1
+		);
 	}
 
 	function animateWindowScrollTo(targetY, { onComplete } = {}) {
@@ -131,7 +182,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const duration = prefersReducedMotion
 			? Math.min(900, Math.max(350, absDistance * 0.35))
-			: Math.min(1600, Math.max(700, absDistance * 0.6));
+			: Math.min(
+				SCROLL_DURATION_MAX,
+				Math.max(SCROLL_DURATION_MIN, absDistance * SCROLL_DURATION_FACTOR)
+			);
 
 		const startTime = performance.now();
 
@@ -246,7 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (direction === "next") {
 			let nextTarget = null;
 
-			/* contact -> footer */
 			if (sectionEl.id === "contact") {
 				nextTarget = footer;
 			} else {
@@ -340,7 +393,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
-	/* Hero-Scroll-Indikator: sofort ohne Double-Click-Wartezeit scrollen */
 	const heroIndicator = document.querySelector(".hero .scroll-indicator");
 
 	heroIndicator?.addEventListener("click", (e) => {
@@ -355,7 +407,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		startNavbarAnimation();
 	});
 
-	/* Alle normalen Sektionen: oberer Bereich über volle Breite klickbar */
 	document.querySelectorAll("section").forEach(section => {
 		if (section.classList.contains("hero")) return;
 
@@ -719,14 +770,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			const scrollY = window.scrollY;
 			const progress = Math.min(scrollY / inertiaThreshold, 1);
 
-			hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
-			hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
+			hero.style.setProperty("--hero-scale", 1 - (progress * HERO_SCALE_SCROLL_FACTOR));
+			hero.style.setProperty("--hero-brightness", 1 - (progress * HERO_BRIGHTNESS_SCROLL_FACTOR));
 
-			const targetParallax = window.scrollY * -0.06;
-			const parallaxForce = (targetParallax - heroParallax) * 0.04;
+			const targetParallax = window.scrollY * HERO_PARALLAX_FACTOR;
+			const parallaxForce = (targetParallax - heroParallax) * HERO_PARALLAX_STIFFNESS;
 
 			heroParallaxVelocity += parallaxForce;
-			heroParallaxVelocity *= 0.85;
+			heroParallaxVelocity *= HERO_PARALLAX_DAMPING;
 			heroParallax += heroParallaxVelocity;
 
 			hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
