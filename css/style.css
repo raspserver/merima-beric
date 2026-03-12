@@ -93,6 +93,7 @@
 	/* =========================
 	   ACTIVE MASTER PRESET: luxury
 	========================= */
+/*
 	--nav-spring-stiffness-desktop: 0.072;
 	--nav-spring-damping-desktop: 0.84;
 	--nav-compact-stiffness-desktop: 0.040;
@@ -115,6 +116,7 @@
 	--hero-parallax-damping: 0.88;
 	--hero-scale-scroll-factor: 0.008;
 	--hero-brightness-scroll-factor: 0.05;
+*/
 
 	/* =========================
 	   MASTER PRESET: balanced
@@ -175,7 +177,6 @@
 	/* =========================
 	   MASTER PRESET: crisp
 	========================= */
-	/*
 	--nav-spring-stiffness-desktop: 0.088;
 	--nav-spring-damping-desktop: 0.80;
 	--nav-compact-stiffness-desktop: 0.05;
@@ -198,7 +199,6 @@
 	--hero-parallax-damping: 0.80;
 	--hero-scale-scroll-factor: 0.006;
 	--hero-brightness-scroll-factor: 0.04;
-	*/
 
 	/* =========================
 	   MASTER PRESET: soft
