@@ -177,6 +177,7 @@
 	/* =========================
 	   MASTER PRESET: crisp
 	========================= */
+/*
 	--nav-spring-stiffness-desktop: 0.088;
 	--nav-spring-damping-desktop: 0.80;
 	--nav-compact-stiffness-desktop: 0.05;
@@ -199,6 +200,7 @@
 	--hero-parallax-damping: 0.80;
 	--hero-scale-scroll-factor: 0.006;
 	--hero-brightness-scroll-factor: 0.04;
+*/
 
 	/* =========================
 	   MASTER PRESET: soft
@@ -227,6 +229,32 @@
 	--hero-scale-scroll-factor: 0.005;
 	--hero-brightness-scroll-factor: 0.035;
 	*/
+	
+	/* =========================
+	   ACTIVE MASTER PRESET: custom
+	========================= */
+	--nav-spring-stiffness-desktop: 0.084;
+	--nav-spring-damping-desktop: 0.81;
+	--nav-compact-stiffness-desktop: 0.048;
+	--nav-compact-damping-desktop: 0.87;
+
+	--nav-spring-stiffness-mobile: 0.064;
+	--nav-spring-damping-mobile: 0.84;
+	--nav-compact-stiffness-mobile: 0.037;
+	--nav-compact-damping-mobile: 0.89;
+
+	--scroll-elastic-decay: 15.8;
+	--scroll-elastic-frequency: 8.2;
+	--scroll-elastic-phase-shift: 0.72;
+	--scroll-duration-factor: 0.42;
+	--scroll-duration-min: 520;
+	--scroll-duration-max: 1080;
+
+	--hero-parallax-factor: -0.038;
+	--hero-parallax-stiffness: 0.055;
+	--hero-parallax-damping: 0.82;
+	--hero-scale-scroll-factor: 0.0055;
+	--hero-brightness-scroll-factor: 0.038;
 }
 
 * {
