@@ -419,6 +419,34 @@ document.addEventListener("DOMContentLoaded", () => {
 			headSelector: ".section-scroll-head"
 		});
 	});
+	
+	/* scroll indicator footer click */
+	const footerScrollTrigger = document.querySelector(".footer-scroll-trigger");
+	
+	footerScrollTrigger?.addEventListener("click", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		manualNavbarOpen = false;
+		setNavbarTargets(1, 1, NAV_SURFACE_UP);
+
+		const contact = document.querySelector("#contact");
+		scrollToSection(contact, "up-section");
+		startNavbarAnimation();
+	});
+
+	footerScrollTrigger?.addEventListener("keydown", (e) => {
+		if (e.key !== "Enter" && e.key !== " ") return;
+
+		e.preventDefault();
+
+		manualNavbarOpen = false;
+		setNavbarTargets(1, 1, NAV_SURFACE_UP);
+
+		const contact = document.querySelector("#contact");
+		scrollToSection(contact, "up-section");
+		startNavbarAnimation();
+	});
 
 	/* Magnetic CTA Button */
 	const magneticButtons = document.querySelectorAll(".cta-button");
