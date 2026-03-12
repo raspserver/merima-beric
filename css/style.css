@@ -1,38 +1,108 @@
 :root {
+	/* =========================
+	   COLORS / SURFACES / TEXT
+	========================= */
 	--primary-color: #d4af37;
 	--secondary-color: #1a1a1a;
 	--accent-color: #f5e6d3;
 	--text-dark: #2d2d2d;
 	--text-light: #ffffff;
 	--bg-light: #fafaf8;
+
+	/* =========================
+	   GLOBAL TRANSITIONS
+	========================= */
 	--transition-fast: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
 	--transition: all 0.4s cubic-bezier(.4,0,.2,1);
+
+	/* =========================
+	   LAYOUT / SPACING
+	========================= */
 	--section-spacing: 8rem;
+	--hero-bottom-space: 60px;
+	--section-head-title-gap: 1rem;
+	--section-scroll-head-height: 60px;
+	--brand-sub-ratio: 0.25;
+
+	/* =========================
+	   NAVBAR STRUCTURE
+	========================= */
 	--nav-height: 78px;
 	--nav-height-max: 78px;
 	--nav-height-min: 58px;
-	--hero-bottom-space: 60px;
-	--brand-sub-ratio: 0.25;
 	--nav-surface-up: 0.10;
-	--section-head-title-gap: 1.0rem;
-	--section-scroll-head-height: 60px;
 	--nav-bounce-stop-factor: 1.5;
-	
+
 	/* =========================
-	   SCREEN SCROLL BOUNCE
+	   MASTER MOTION PRESETS
+	   Navbar + Screen Bounce + Hero
 	========================= */
 
-	/* preset defaults */
-	/*
+	/* Base fallback values */
+	--nav-spring-stiffness-desktop: 0.08;
+	--nav-spring-damping-desktop: 0.82;
+	--nav-compact-stiffness-desktop: 0.045;
+	--nav-compact-damping-desktop: 0.88;
+
+	--nav-spring-stiffness-mobile: 0.06;
+	--nav-spring-damping-mobile: 0.85;
+	--nav-compact-stiffness-mobile: 0.035;
+	--nav-compact-damping-mobile: 0.90;
+
 	--scroll-elastic-decay: 10;
 	--scroll-elastic-frequency: 10;
 	--scroll-elastic-phase-shift: 0.75;
 	--scroll-duration-factor: 0.6;
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
+
+	--hero-parallax-factor: -0.06;
+	--hero-parallax-stiffness: 0.04;
+	--hero-parallax-damping: 0.85;
+	--hero-scale-scroll-factor: 0.01;
+	--hero-brightness-scroll-factor: 0.06;
+
+	/* =========================
+	   MASTER PRESET: defaults
+	========================= */
+	/*
+	--nav-spring-stiffness-desktop: 0.08;
+	--nav-spring-damping-desktop: 0.82;
+	--nav-compact-stiffness-desktop: 0.045;
+	--nav-compact-damping-desktop: 0.88;
+
+	--nav-spring-stiffness-mobile: 0.06;
+	--nav-spring-damping-mobile: 0.85;
+	--nav-compact-stiffness-mobile: 0.035;
+	--nav-compact-damping-mobile: 0.90;
+
+	--scroll-elastic-decay: 10;
+	--scroll-elastic-frequency: 10;
+	--scroll-elastic-phase-shift: 0.75;
+	--scroll-duration-factor: 0.6;
+	--scroll-duration-min: 700;
+	--scroll-duration-max: 1600;
+
+	--hero-parallax-factor: -0.06;
+	--hero-parallax-stiffness: 0.04;
+	--hero-parallax-damping: 0.85;
+	--hero-scale-scroll-factor: 0.01;
+	--hero-brightness-scroll-factor: 0.06;
 	*/
 
-	/* preset luxury */
+	/* =========================
+	   ACTIVE MASTER PRESET: luxury
+	========================= */
+	--nav-spring-stiffness-desktop: 0.072;
+	--nav-spring-damping-desktop: 0.84;
+	--nav-compact-stiffness-desktop: 0.040;
+	--nav-compact-damping-desktop: 0.90;
+
+	--nav-spring-stiffness-mobile: 0.055;
+	--nav-spring-damping-mobile: 0.87;
+	--nav-compact-stiffness-mobile: 0.032;
+	--nav-compact-damping-mobile: 0.92;
+
 	--scroll-elastic-decay: 12;
 	--scroll-elastic-frequency: 8.5;
 	--scroll-elastic-phase-shift: 0.72;
@@ -40,142 +110,33 @@
 	--scroll-duration-min: 760;
 	--scroll-duration-max: 1750;
 
-	/* preset balanced */
-/*
-	--scroll-elastic-decay: 10;
-	--scroll-elastic-frequency: 10;
-	--scroll-elastic-phase-shift: 0.75;
-	--scroll-duration-factor: 0.6;
-	--scroll-duration-min: 700;
-	--scroll-duration-max: 1600;
-*/
-
-	/* preset cinematic */
-	/*
-	--scroll-elastic-decay: 8.5;
-	--scroll-elastic-frequency: 11.5;
-	--scroll-elastic-phase-shift: 0.78;
-	--scroll-duration-factor: 0.72;
-	--scroll-duration-min: 820;
-	--scroll-duration-max: 1900;
-	*/
-
-	/* preset crisp */
-	/*
-	--scroll-elastic-decay: 13.5;
-	--scroll-elastic-frequency: 9;
-	--scroll-elastic-phase-shift: 0.72;
-	--scroll-duration-factor: 0.48;
-	--scroll-duration-min: 560;
-	--scroll-duration-max: 1250;
-	*/
-
-	/* preset soft */
-	/*
-	--scroll-elastic-decay: 14;
-	--scroll-elastic-frequency: 7.5;
-	--scroll-elastic-phase-shift: 0.70;
-	--scroll-duration-factor: 0.78;
-	--scroll-duration-min: 900;
-	--scroll-duration-max: 2100;
-	*/
-	
-	/* =========================
-	   NAVBAR SPRING DESKTOP
-	========================= */
-	--nav-visible-stiffness: 0.08;
-	--nav-visible-damping: 0.82;
-	--nav-compact-stiffness: 0.045;
-	--nav-compact-damping: 0.88;
-
-	/* =========================
-	   NAVBAR SPRING MOBILE
-	========================= */
-	--nav-visible-stiffness-mobile: 0.06;
-	--nav-visible-damping-mobile: 0.85;
-	--nav-compact-stiffness-mobile: 0.035;
-	--nav-compact-damping-mobile: 0.90;
-	
-	/* preset defaults */
-/*
-	--nav-spring-stiffness-desktop: 0.08;
-	--nav-spring-damping-desktop: 0.82;
-
-	--nav-compact-stiffness-desktop: 0.045;
-	--nav-compact-damping-desktop: 0.88;
-
-	--nav-spring-stiffness-mobile: 0.06;
-	--nav-spring-damping-mobile: 0.85;
-
-	--nav-compact-stiffness-mobile: 0.035;
-	--nav-compact-damping-mobile: 0.90;
-*/
-	
-	/* preset luxury */
-/*
-	--nav-spring-stiffness-desktop: 0.072;
-	--nav-spring-damping-desktop: 0.84;
-
-	--nav-compact-stiffness-desktop: 0.040;
-	--nav-compact-damping-desktop: 0.90;
-
-	--nav-spring-stiffness-mobile: 0.055;
-	--nav-spring-damping-mobile: 0.87;
-
-	--nav-compact-stiffness-mobile: 0.032;
-	--nav-compact-damping-mobile: 0.92;
-*/
-	
-	/* preset balanced */
-	--nav-spring-stiffness-desktop: 0.08;
-	--nav-spring-damping-desktop: 0.82;
-
-	--nav-compact-stiffness-desktop: 0.045;
-	--nav-compact-damping-desktop: 0.88;
-
-	--nav-spring-stiffness-mobile: 0.06;
-	--nav-spring-damping-mobile: 0.85;
-
-	--nav-compact-stiffness-mobile: 0.035;
-	--nav-compact-damping-mobile: 0.90;
-	
-	/* preset cinematic */
-/*
-	--nav-spring-stiffness-desktop: 0.095;
-	--nav-spring-damping-desktop: 0.78;
-
-	--nav-compact-stiffness-desktop: 0.055;
-	--nav-compact-damping-desktop: 0.84;
-
-	--nav-spring-stiffness-mobile: 0.072;
-	--nav-spring-damping-mobile: 0.81;
-
-	--nav-compact-stiffness-mobile: 0.042;
-	--nav-compact-damping-mobile: 0.87;
-*/
-
-	/* =========================
-	   HERO PARALLAX
-	========================= */
-
-	/* preset defaults */
-	/*
-	--hero-parallax-factor: -0.06;
-	--hero-parallax-stiffness: 0.04;
-	--hero-parallax-damping: 0.85;
-	--hero-scale-scroll-factor: 0.01;
-	--hero-brightness-scroll-factor: 0.06;
-	*/
-
-	/* preset luxury */
 	--hero-parallax-factor: -0.05;
 	--hero-parallax-stiffness: 0.032;
 	--hero-parallax-damping: 0.88;
 	--hero-scale-scroll-factor: 0.008;
 	--hero-brightness-scroll-factor: 0.05;
 
-	/* preset balanced */
+	/* =========================
+	   MASTER PRESET: balanced
+	========================= */
 	/*
+	--nav-spring-stiffness-desktop: 0.08;
+	--nav-spring-damping-desktop: 0.82;
+	--nav-compact-stiffness-desktop: 0.045;
+	--nav-compact-damping-desktop: 0.88;
+
+	--nav-spring-stiffness-mobile: 0.06;
+	--nav-spring-damping-mobile: 0.85;
+	--nav-compact-stiffness-mobile: 0.035;
+	--nav-compact-damping-mobile: 0.90;
+
+	--scroll-elastic-decay: 10;
+	--scroll-elastic-frequency: 10;
+	--scroll-elastic-phase-shift: 0.75;
+	--scroll-duration-factor: 0.6;
+	--scroll-duration-min: 700;
+	--scroll-duration-max: 1600;
+
 	--hero-parallax-factor: -0.06;
 	--hero-parallax-stiffness: 0.04;
 	--hero-parallax-damping: 0.85;
@@ -183,8 +144,27 @@
 	--hero-brightness-scroll-factor: 0.06;
 	*/
 
-	/* preset cinematic */
+	/* =========================
+	   MASTER PRESET: cinematic
+	========================= */
 	/*
+	--nav-spring-stiffness-desktop: 0.095;
+	--nav-spring-damping-desktop: 0.78;
+	--nav-compact-stiffness-desktop: 0.055;
+	--nav-compact-damping-desktop: 0.84;
+
+	--nav-spring-stiffness-mobile: 0.072;
+	--nav-spring-damping-mobile: 0.81;
+	--nav-compact-stiffness-mobile: 0.042;
+	--nav-compact-damping-mobile: 0.87;
+
+	--scroll-elastic-decay: 8.5;
+	--scroll-elastic-frequency: 11.5;
+	--scroll-elastic-phase-shift: 0.78;
+	--scroll-duration-factor: 0.72;
+	--scroll-duration-min: 820;
+	--scroll-duration-max: 1900;
+
 	--hero-parallax-factor: -0.085;
 	--hero-parallax-stiffness: 0.05;
 	--hero-parallax-damping: 0.82;
@@ -192,8 +172,27 @@
 	--hero-brightness-scroll-factor: 0.075;
 	*/
 
-	/* preset crisp */
+	/* =========================
+	   MASTER PRESET: crisp
+	========================= */
 	/*
+	--nav-spring-stiffness-desktop: 0.088;
+	--nav-spring-damping-desktop: 0.80;
+	--nav-compact-stiffness-desktop: 0.05;
+	--nav-compact-damping-desktop: 0.86;
+
+	--nav-spring-stiffness-mobile: 0.067;
+	--nav-spring-damping-mobile: 0.83;
+	--nav-compact-stiffness-mobile: 0.039;
+	--nav-compact-damping-mobile: 0.88;
+
+	--scroll-elastic-decay: 13.5;
+	--scroll-elastic-frequency: 9;
+	--scroll-elastic-phase-shift: 0.72;
+	--scroll-duration-factor: 0.48;
+	--scroll-duration-min: 560;
+	--scroll-duration-max: 1250;
+
 	--hero-parallax-factor: -0.04;
 	--hero-parallax-stiffness: 0.06;
 	--hero-parallax-damping: 0.80;
@@ -201,8 +200,27 @@
 	--hero-brightness-scroll-factor: 0.04;
 	*/
 
-	/* preset soft */
+	/* =========================
+	   MASTER PRESET: soft
+	========================= */
 	/*
+	--nav-spring-stiffness-desktop: 0.068;
+	--nav-spring-damping-desktop: 0.86;
+	--nav-compact-stiffness-desktop: 0.038;
+	--nav-compact-damping-desktop: 0.91;
+
+	--nav-spring-stiffness-mobile: 0.052;
+	--nav-spring-damping-mobile: 0.89;
+	--nav-compact-stiffness-mobile: 0.03;
+	--nav-compact-damping-mobile: 0.93;
+
+	--scroll-elastic-decay: 14;
+	--scroll-elastic-frequency: 7.5;
+	--scroll-elastic-phase-shift: 0.70;
+	--scroll-duration-factor: 0.78;
+	--scroll-duration-min: 900;
+	--scroll-duration-max: 2100;
+
 	--hero-parallax-factor: -0.035;
 	--hero-parallax-stiffness: 0.026;
 	--hero-parallax-damping: 0.90;

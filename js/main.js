@@ -44,7 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	let currentSurface = 0;
 	let surfaceVelocity = 0;
 
-	let stiffness, damping, compactStiffness, compactDamping;
+	let navVisibleStiffness, navVisibleDamping, navCompactStiffness, navCompactDamping;
+
 	let NAV_SURFACE_UP = 0.18;
 	
 	let scrollElasticDecay = 10;
@@ -87,20 +88,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroParallaxDamping = getRootNumber("--hero-parallax-damping", 0.85);
 		heroScaleScrollFactor = getRootNumber("--hero-scale-scroll-factor", 0.01);
 		heroBrightnessScrollFactor = getRootNumber("--hero-brightness-scroll-factor", 0.06);
-
+	
 		if (isMobile) {
-			stiffness = getRootNumber("--nav-spring-stiffness-mobile", 0.06);
-			damping = getRootNumber("--nav-spring-damping-mobile", 0.85);
+			navVisibleStiffness = getRootNumber("--nav-spring-stiffness-mobile", 0.06);
+			navVisibleDamping = getRootNumber("--nav-spring-damping-mobile", 0.85);
 
-			compactStiffness = getRootNumber("--nav-compact-stiffness-mobile", 0.035);
-			compactDamping = getRootNumber("--nav-compact-damping-mobile", 0.90);
+			navCompactStiffness = getRootNumber("--nav-compact-stiffness-mobile", 0.035);
+			navCompactDamping = getRootNumber("--nav-compact-damping-mobile", 0.90);
 		} else {
-			stiffness = getRootNumber("--nav-spring-stiffness-desktop", 0.08);
-			damping = getRootNumber("--nav-spring-damping-desktop", 0.82);
+			navVisibleStiffness = getRootNumber("--nav-spring-stiffness-desktop", 0.08);
+			navVisibleDamping = getRootNumber("--nav-spring-damping-desktop", 0.82);
 
-			compactStiffness = getRootNumber("--nav-compact-stiffness-desktop", 0.045);
-			compactDamping = getRootNumber("--nav-compact-damping-desktop", 0.88);
+			navCompactStiffness = getRootNumber("--nav-compact-stiffness-desktop", 0.045);
+			navCompactDamping = getRootNumber("--nav-compact-damping-desktop", 0.88);
 		}
+		
 	}
 
 	updatePhysics();
@@ -741,21 +743,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		lastFrameTime = now;
 		delta = Math.min(delta, 2);
 
-		const visibleForce = (targetVisible - currentVisible) * stiffness;
+
+		const visibleForce = (targetVisible - currentVisible) * navVisibleStiffness;
 		visibleVelocity += visibleForce * delta;
-		visibleVelocity *= Math.pow(damping, delta);
+		visibleVelocity *= Math.pow(navVisibleDamping, delta);
 		currentVisible += visibleVelocity * delta;
 		currentVisible = Math.max(0, Math.min(currentVisible, 1));
 
-		const compactForce = (targetCompact - currentCompact) * compactStiffness;
+		const compactForce = (targetCompact - currentCompact) * navCompactStiffness;
 		compactVelocity += compactForce * delta;
-		compactVelocity *= Math.pow(compactDamping, delta);
+		compactVelocity *= Math.pow(navCompactDamping, delta);
 		currentCompact += compactVelocity * delta;
 		currentCompact = Math.max(0, Math.min(currentCompact, 1));
 
-		const surfaceForce = (targetSurface - currentSurface) * compactStiffness;
+		const surfaceForce = (targetSurface - currentSurface) * navCompactStiffness;
 		surfaceVelocity += surfaceForce * delta;
-		surfaceVelocity *= Math.pow(compactDamping, delta);
+		surfaceVelocity *= Math.pow(navCompactDamping, delta);
 		currentSurface += surfaceVelocity * delta;
 		currentSurface = Math.max(0, Math.min(currentSurface, 1));
 
@@ -809,7 +812,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		requestAnimationFrame(animate);
 	}
-
+	
 	handleScroll();
 
 	document.addEventListener("visibilitychange", () => {
