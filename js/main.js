@@ -119,26 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
-	function applyNavbarStateImmediately(visible, compact, surface) {
-		if (!navbar) return;
-
-		targetVisible = currentVisible = visible;
-		targetCompact = currentCompact = compact;
-		targetSurface = currentSurface = surface;
-
-		visibleVelocity = 0;
-		compactVelocity = 0;
-		surfaceVelocity = 0;
-
-		const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
-		const easedSurface = 1 - Math.pow(1 - currentSurface, 3);
-
-		navbar.style.setProperty("--nav-visible", currentVisible);
-		navbar.style.setProperty("--nav-compact", easedCompact);
-		navbar.style.setProperty("--nav-surface", easedSurface);
-		navbar.style.setProperty("--nav-height-progress", easedCompact);
-	}
-
 	function setNavbarTargets(visible, compact, surface) {
 		if (!navbar) return;
 
