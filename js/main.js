@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let programmaticScroll = false;
 	let manualNavbarOpen = false;
-	let programmaticNavMode = null; // null | "down" | "top"
+	let programmaticNavMode = null; // null | "down" | "up-section" | "hero-top"
 
 	let targetVisible = 0;
 	let currentVisible = 0;
@@ -103,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			navCompactStiffness = getRootNumber("--nav-compact-stiffness-desktop", 0.045);
 			navCompactDamping = getRootNumber("--nav-compact-damping-desktop", 0.88);
 		}
-		
 	}
 
 	updatePhysics();
@@ -199,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Für Scrolls zu normalen Sections soll immer die finale kompakte Navbar-Höhe gelten.
 		// So ist die Zielposition unabhängig davon, ob der Scroll aus Hero, Navbar oder sonstwo kommt.
-		if (navMode === "down" || navMode === "top") {
+		if (navMode === "down" || navMode === "up-section") {
 			return navMin;
 		}
 
@@ -216,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const isHeroTarget = target.classList?.contains("hero");
 
 		// Hero separat behandeln
-		const effectiveNavMode = isHeroTarget && navMode === "top" ? "hero-top" : navMode;
+		const effectiveNavMode = isHeroTarget && navMode === "up-section" ? "hero-top" : navMode;
 
 		const navOffset = isHeroTarget ? 0 : getTargetNavOffset(effectiveNavMode);
 
@@ -236,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (effectiveNavMode === "down") {
 			scrollDirection = "down";
-		} else if (effectiveNavMode === "top" || effectiveNavMode === "hero-top") {
+		} else if (effectiveNavMode === "up-section" || effectiveNavMode === "hero-top") {
 			scrollDirection = "up";
 		}
 
@@ -252,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					targetVisible = 1;
 					targetCompact = 1;
 					targetSurface = 1;
-				} else if (finalMode === "top") {
+				} else if (finalMode === "up-section") {
 					targetVisible = 1;
 					targetCompact = 1;
 					targetSurface = NAV_SURFACE_UP;
@@ -327,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			manualNavbarOpen = false;
 			setNavbarTargets(1, 1, NAV_SURFACE_UP);
-			scrollToSection(prevTarget, "top");
+			scrollToSection(prevTarget, "up-section");
 			startNavbarAnimation();
 		}
 	}
@@ -605,7 +604,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			setNavbarTargets(1, 1, NAV_SURFACE_UP);
 
 			const heroSection = document.querySelector(".hero");
-			scrollToSection(heroSection, "top");
+			scrollToSection(heroSection, "up-section");
 			startNavbarAnimation();
 		});
 	}
@@ -680,7 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		if (programmaticNavMode === "top") {
+		if (programmaticNavMode === "up-section") {
 			targetVisible = 1;
 			targetCompact = 1;
 			targetSurface = NAV_SURFACE_UP;
@@ -753,7 +752,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		let delta = (now - lastFrameTime) / 16.67;
 		lastFrameTime = now;
 		delta = Math.min(delta, 2);
-
 
 		const visibleForce = (targetVisible - currentVisible) * navVisibleStiffness;
 		visibleVelocity += visibleForce * delta;
@@ -859,7 +857,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (isScrollingUp) {
 				setNavbarTargets(1, 1, NAV_SURFACE_UP);
-				scrollToSection(target, "top");
+				scrollToSection(target, "up-section");
 			} else {
 				setNavbarTargets(1, 1, 1);
 				scrollToSection(target, "down");
