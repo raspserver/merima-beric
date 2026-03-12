@@ -114,6 +114,29 @@ document.addEventListener("DOMContentLoaded", () => {
 		startNavbarAnimation();
 	}
 	
+	function triggerProgrammaticNavbarBounce(navMode, travelDistance = 0) {
+		if (!navbar || prefersReducedMotion) return;
+
+		const direction = navMode === "top" ? -1 : 1;
+
+		/* Distanz soll den Impuls mitbestimmen */
+		const normalizedDistance = Math.min(
+			Math.max(travelDistance / Math.max(window.innerHeight, 1), 0.35),
+			1.8
+		);
+
+		const impulse =
+			direction *
+			(0.38 * NAV_BOUNCE_STOP_FACTOR) *
+			normalizedDistance;
+
+		bounceVelocity = 0;
+		currentBounce = 0;
+
+		bounceVelocity += impulse;
+		startNavbarAnimation();
+	}
+
 	/* =========================
 	   CUSTOM SPRING SCROLL
 	========================= */
@@ -198,6 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			offset +
 			inset;
 
+		const travelDistance = Math.abs(y - window.scrollY);
+
 		programmaticScroll = true;
 		programmaticNavMode = navMode;
 
@@ -232,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 
 				/* Richtungsimpuls beim Stoppen */
-				triggerNavbarBounce(endDelta);
+				triggerProgrammaticNavbarBounce(finalMode, travelDistance);
 
 				programmaticNavMode = null;
 				startNavbarAnimation();
@@ -729,8 +754,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		bounceVelocity += bounceForce * delta;
 		bounceVelocity *= Math.pow(bounceDamping, delta);
 		currentBounce += bounceVelocity * delta;
-
-		currentBounce = Math.max(-0.35, Math.min(currentBounce, 1.2));
+		
+		currentBounce = Math.max(-0.75, Math.min(currentBounce, 0.75));
 
 		const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
 		const easedSurface = 1 - Math.pow(1 - currentSurface, 3);
@@ -740,12 +765,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
 
-		const easedBounce =
-			currentBounce >= 0
-				? 1 - Math.pow(1 - Math.min(currentBounce, 1), 2.2)
-				: currentBounce;
-
-		navbar.style.setProperty("--nav-bounce", easedBounce);
+		navbar.style.setProperty("--nav-bounce", currentBounce);
 
 		const velocityFactor = Math.round(Math.min(Math.abs(scrollVelocity) * 0.15, 6));
 		navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
