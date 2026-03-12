@@ -99,7 +99,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", easedSurface);
 		navbar.style.setProperty("--nav-height-progress", easedCompact);
 	}
+	
+	function setNavbarTargets(visible, compact, surface) {
+		if (!navbar) return;
 
+		targetVisible = visible;
+		targetCompact = compact;
+		targetSurface = surface;
+
+		startNavbarAnimation();
+	}
+	
 	function triggerNavbarBounce(delta) {
 		if (!navbar || prefersReducedMotion) return;
 
@@ -141,11 +151,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	   CUSTOM SPRING SCROLL
 	========================= */
 	let activeScrollAnimation = null;
+	
+	function easeOutElastic(t) {
+		const c4 = (2 * Math.PI) / 3;
 
-	function easeOutBack(t, overshoot = 1.35) {
-		const c1 = overshoot;
-		const c3 = c1 + 1;
-		return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+		if (t === 0) return 0;
+		if (t === 1) return 1;
+
+		return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
 	}
 
 	function animateWindowScrollTo(targetY, { onComplete } = {}) {
@@ -168,10 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			? Math.min(900, Math.max(350, absDistance * 0.35))
 			: Math.min(1600, Math.max(700, absDistance * 0.6));
 
-		const overshoot = prefersReducedMotion
-			? 0
-			: Math.min(2.4, 1.08 + absDistance / 800);
-
 		const startTime = performance.now();
 		let previousY = startY;
 		let lastDelta = 0;
@@ -180,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const elapsed = now - startTime;
 			const t = Math.min(elapsed / duration, 1);
 
-			const eased = prefersReducedMotion ? t : easeOutBack(t, overshoot);
+			const eased = prefersReducedMotion ? t : easeOutElastic(t);
 			const nextY = startY + distance * eased;
 
 			lastDelta = nextY - previousY;
@@ -233,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		animateWindowScrollTo(Math.max(0, y), {
-			onComplete: (endDelta) => {
+			onComplete: () => {
 				const finalMode = programmaticNavMode;
 				const finalY = window.scrollY;
 
@@ -256,15 +265,12 @@ document.addEventListener("DOMContentLoaded", () => {
 					}
 				}
 
-				/* Richtungsimpuls beim Stoppen */
-				triggerProgrammaticNavbarBounce(finalMode, travelDistance);
-
 				programmaticNavMode = null;
 				startNavbarAnimation();
 				handleScroll();
 			}
 		});
-	
+		
 	}
 
 	/* =========================
@@ -306,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!nextTarget) return;
 
 			manualNavbarOpen = false;
-			applyNavbarStateImmediately(1, 1, 1);
+			setNavbarTargets(1, 1, 1);
 			scrollToSection(nextTarget, "down");
 			startNavbarAnimation();
 			return;
@@ -319,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!prevTarget) return;
 
 			manualNavbarOpen = false;
-			applyNavbarStateImmediately(1, 1, NAV_SURFACE_UP);
+			setNavbarTargets(1, 1, NAV_SURFACE_UP);
 			scrollToSection(prevTarget, "top");
 			startNavbarAnimation();
 		}
@@ -399,7 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		e.stopPropagation();
 
 		manualNavbarOpen = false;
-		applyNavbarStateImmediately(1, 1, 1);
+		setNavbarTargets(1, 1, 1);
 
 		const about = document.querySelector("#about");
 		scrollToSection(about, "down");
@@ -584,8 +590,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	cta?.addEventListener("click", (e) => {
 		e.preventDefault();
 
-		manualNavbarOpen = false;
-		applyNavbarStateImmediately(1, 1, 1);
+		manualNavbarOpen = false;	
+		setNavbarTargets(1, 1, 1);
 
 		const target = document.querySelector("#contact");
 		scrollToSection(target, "down");
@@ -597,7 +603,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			e.preventDefault();
 
 			manualNavbarOpen = false;
-			applyNavbarStateImmediately(1, 1, NAV_SURFACE_UP);
+			setNavbarTargets(1, 1, NAV_SURFACE_UP);
 
 			const heroSection = document.querySelector(".hero");
 			scrollToSection(heroSection, "top");
@@ -620,8 +626,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const clickY = e.clientY;
 
 			if (clickY > ctaRect.bottom) {
-				manualNavbarOpen = false;
-				applyNavbarStateImmediately(1, 1, 1);
+				manualNavbarOpen = false;	
+				setNavbarTargets(1, 1, 1);
 
 				const about = document.querySelector("#about");
 				scrollToSection(about, "down");
@@ -750,13 +756,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		currentSurface += surfaceVelocity * delta;
 		currentSurface = Math.max(0, Math.min(currentSurface, 1));
 
-		const bounceForce = -currentBounce * bounceStiffness;
-		bounceVelocity += bounceForce * delta;
-		bounceVelocity *= Math.pow(bounceDamping, delta);
-		currentBounce += bounceVelocity * delta;
-		
-		currentBounce = Math.max(-0.75, Math.min(currentBounce, 0.75));
-
 		const easedCompact = 1 - Math.pow(1 - currentCompact, 3);
 		const easedSurface = 1 - Math.pow(1 - currentSurface, 3);
 
@@ -801,8 +800,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			Math.abs(compactVelocity) > 0.0005 ||
 			Math.abs(targetSurface - currentSurface) > 0.0005 ||
 			Math.abs(surfaceVelocity) > 0.0005 ||
-			Math.abs(currentBounce) > 0.0005 ||
-			Math.abs(bounceVelocity) > 0.0005;
 			
 
 		if (!stillMoving) {
@@ -847,10 +844,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			manualNavbarOpen = false;
 
 			if (isScrollingUp) {
-				applyNavbarStateImmediately(1, 1, NAV_SURFACE_UP);
+				setNavbarTargets(1, 1, NAV_SURFACE_UP);
 				scrollToSection(target, "top");
 			} else {
-				applyNavbarStateImmediately(1, 1, 1);
+				setNavbarTargets(1, 1, 1);
 				scrollToSection(target, "down");
 			}
 
