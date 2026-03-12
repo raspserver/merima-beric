@@ -95,15 +95,6 @@
 	--nav-visible-damping-mobile: 0.85;
 	--nav-compact-stiffness-mobile: 0.035;
 	--nav-compact-damping-mobile: 0.90;
-
-	/* =========================
-	   HERO PARALLAX
-	========================= */
-	--hero-parallax-factor: -0.06;
-	--hero-parallax-stiffness: 0.04;
-	--hero-parallax-damping: 0.85;
-	--hero-scale-scroll-factor: 0.01;
-	--hero-brightness-scroll-factor: 0.06;
 	
 	/* preset defaults */
 /*
@@ -162,6 +153,62 @@
 	--nav-compact-stiffness-mobile: 0.042;
 	--nav-compact-damping-mobile: 0.87;
 */
+
+	/* =========================
+	   HERO PARALLAX
+	========================= */
+
+	/* preset defaults */
+	/*
+	--hero-parallax-factor: -0.06;
+	--hero-parallax-stiffness: 0.04;
+	--hero-parallax-damping: 0.85;
+	--hero-scale-scroll-factor: 0.01;
+	--hero-brightness-scroll-factor: 0.06;
+	*/
+
+	/* preset luxury */
+	--hero-parallax-factor: -0.05;
+	--hero-parallax-stiffness: 0.032;
+	--hero-parallax-damping: 0.88;
+	--hero-scale-scroll-factor: 0.008;
+	--hero-brightness-scroll-factor: 0.05;
+
+	/* preset balanced */
+	/*
+	--hero-parallax-factor: -0.06;
+	--hero-parallax-stiffness: 0.04;
+	--hero-parallax-damping: 0.85;
+	--hero-scale-scroll-factor: 0.01;
+	--hero-brightness-scroll-factor: 0.06;
+	*/
+
+	/* preset cinematic */
+	/*
+	--hero-parallax-factor: -0.085;
+	--hero-parallax-stiffness: 0.05;
+	--hero-parallax-damping: 0.82;
+	--hero-scale-scroll-factor: 0.014;
+	--hero-brightness-scroll-factor: 0.075;
+	*/
+
+	/* preset crisp */
+	/*
+	--hero-parallax-factor: -0.04;
+	--hero-parallax-stiffness: 0.06;
+	--hero-parallax-damping: 0.80;
+	--hero-scale-scroll-factor: 0.006;
+	--hero-brightness-scroll-factor: 0.04;
+	*/
+
+	/* preset soft */
+	/*
+	--hero-parallax-factor: -0.035;
+	--hero-parallax-stiffness: 0.026;
+	--hero-parallax-damping: 0.90;
+	--hero-scale-scroll-factor: 0.005;
+	--hero-brightness-scroll-factor: 0.035;
+	*/
 }
 
 * {

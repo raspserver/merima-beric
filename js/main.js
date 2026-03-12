@@ -53,6 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	let scrollDurationFactor = 0.6;
 	let scrollDurationMin = 700;
 	let scrollDurationMax = 1600;
+	
+	let heroParallaxFactor = -0.06;
+	let heroParallaxStiffness = 0.04;
+	let heroParallaxDamping = 0.85;
+	let heroScaleScrollFactor = 0.01;
+	let heroBrightnessScrollFactor = 0.06;
 
 	/* =========================
 	   ROOT VARIABLE HELPERS
@@ -75,6 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollDurationFactor = getRootNumber("--scroll-duration-factor", 0.6);
 		scrollDurationMin = getRootNumber("--scroll-duration-min", 700);
 		scrollDurationMax = getRootNumber("--scroll-duration-max", 1600);
+
+		heroParallaxFactor = getRootNumber("--hero-parallax-factor", -0.06);
+		heroParallaxStiffness = getRootNumber("--hero-parallax-stiffness", 0.04);
+		heroParallaxDamping = getRootNumber("--hero-parallax-damping", 0.85);
+		heroScaleScrollFactor = getRootNumber("--hero-scale-scroll-factor", 0.01);
+		heroBrightnessScrollFactor = getRootNumber("--hero-brightness-scroll-factor", 0.06);
 
 		if (isMobile) {
 			stiffness = getRootNumber("--nav-spring-stiffness-mobile", 0.06);
@@ -572,7 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	if (hero) {
 		hero.style.setProperty(
 			"--hero-brightness",
-			1 - (Math.min(window.scrollY / window.innerHeight, 1) * 0.15)
+			1 - (Math.min(window.scrollY / window.innerHeight, 1) * heroBrightnessScrollFactor)
 		);
 	}
 
@@ -769,14 +781,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			const scrollY = window.scrollY;
 			const progress = Math.min(scrollY / inertiaThreshold, 1);
 
-			hero.style.setProperty("--hero-scale", 1 - (progress * 0.01));
-			hero.style.setProperty("--hero-brightness", 1 - (progress * 0.06));
+			hero.style.setProperty("--hero-scale", 1 - (progress * heroScaleScrollFactor));
+			hero.style.setProperty("--hero-brightness", 1 - (progress * heroBrightnessScrollFactor));
 
-			const targetParallax = window.scrollY * -0.06;
-			const parallaxForce = (targetParallax - heroParallax) * 0.04;
+			const targetParallax = scrollY * heroParallaxFactor;
+			const parallaxForce = (targetParallax - heroParallax) * heroParallaxStiffness;
 
 			heroParallaxVelocity += parallaxForce;
-			heroParallaxVelocity *= 0.85;
+			heroParallaxVelocity *= heroParallaxDamping;
 			heroParallax += heroParallaxVelocity;
 
 			hero.style.setProperty("--hero-parallax", `${heroParallax}px`);
