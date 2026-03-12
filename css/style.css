@@ -205,7 +205,6 @@
 	/* =========================
 	   MASTER PRESET: soft
 	========================= */
-	/*
 	--nav-spring-stiffness-desktop: 0.068;
 	--nav-spring-damping-desktop: 0.86;
 	--nav-compact-stiffness-desktop: 0.038;
@@ -228,11 +227,11 @@
 	--hero-parallax-damping: 0.90;
 	--hero-scale-scroll-factor: 0.005;
 	--hero-brightness-scroll-factor: 0.035;
-	*/
 	
 	/* =========================
 	   ACTIVE MASTER PRESET: custom
 	========================= */
+/*
 	--nav-spring-stiffness-desktop: 0.084;
 	--nav-spring-damping-desktop: 0.81;
 	--nav-compact-stiffness-desktop: 0.048;
@@ -255,6 +254,7 @@
 	--hero-parallax-damping: 0.82;
 	--hero-scale-scroll-factor: 0.0055;
 	--hero-brightness-scroll-factor: 0.038;
+*/
 }
 
 * {
