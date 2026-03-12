@@ -214,7 +214,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (!target) return;
 
 		const isHeroTarget = target.classList?.contains("hero");
-		const navOffset = isHeroTarget ? 0 : getTargetNavOffset(navMode);
+
+		// Hero separat behandeln
+		const effectiveNavMode = isHeroTarget && navMode === "top" ? "hero-top" : navMode;
+
+		const navOffset = isHeroTarget ? 0 : getTargetNavOffset(effectiveNavMode);
 
 		const shouldInsetByOnePixel =
 			target.matches?.("#about, #gallery, #services, #pricing, #testimonials, #contact");
@@ -228,11 +232,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			inset;
 
 		programmaticScroll = true;
-		programmaticNavMode = navMode;
+		programmaticNavMode = effectiveNavMode;
 
-		if (navMode === "down") {
+		if (effectiveNavMode === "down") {
 			scrollDirection = "down";
-		} else if (navMode === "top") {
+		} else if (effectiveNavMode === "top" || effectiveNavMode === "hero-top") {
 			scrollDirection = "up";
 		}
 
@@ -249,6 +253,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					targetCompact = 1;
 					targetSurface = 1;
 				} else if (finalMode === "top") {
+					targetVisible = 1;
+					targetCompact = 1;
+					targetSurface = NAV_SURFACE_UP;
+				} else if (finalMode === "hero-top") {
 					if (finalY <= 5) {
 						targetVisible = 0;
 						targetCompact = 0;
@@ -673,6 +681,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		if (programmaticNavMode === "top") {
+			targetVisible = 1;
+			targetCompact = 1;
+			targetSurface = NAV_SURFACE_UP;
+
+			startNavbarAnimation();
+			return;
+		}
+
+		if (programmaticNavMode === "hero-top") {
 			targetVisible = 0;
 			targetCompact = 0;
 			targetSurface = 0;
