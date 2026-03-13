@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	const navLogo = document.querySelector(".nav-logo");
 	const cta = document.querySelector(".cta-button");
-	
+
 	const directionLockThreshold = 8;
 	const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
 
@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	let programmaticScroll = false;
 	let manualNavbarOpen = false;
 	let programmaticNavMode = null; // null | "down" | "up-section" | "hero-top"
-	let navbarVisibilityLockUntil = 0;
 
 	let targetVisible = 0;
 	let currentVisible = 0;
@@ -46,21 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	let navVisibleStiffness, navVisibleDamping, navCompactStiffness, navCompactDamping;
 
 	let NAV_SURFACE_UP = 0.18;
-	
+
 	let sectionScrollInset = 1;
-	
+
 	let scrollElasticDecay = 10;
 	let scrollElasticFrequency = 10;
 	let scrollElasticPhaseShift = 0.75;
 	let scrollDurationFactor = 0.6;
 	let scrollDurationMin = 700;
 	let scrollDurationMax = 1600;
-	
-	let screenBounceIntensity = 18;
-	let screenBounceDuration = 720;
-	let screenBounceReturnRatio = 0.42;
-	let screenBounceSettleRatio = 0.14;
-	
+
 	let heroParallaxFactor = -0.06;
 	let heroParallaxStiffness = 0.04;
 	let heroParallaxDamping = 0.85;
@@ -89,18 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollDurationFactor = getRootNumber("--scroll-duration-factor", 0.6);
 		scrollDurationMin = getRootNumber("--scroll-duration-min", 700);
 		scrollDurationMax = getRootNumber("--scroll-duration-max", 1600);
-		
-		screenBounceIntensity = getRootNumber("--screen-bounce-intensity", 18);
-		screenBounceDuration = getRootNumber("--screen-bounce-duration", 720);
-		screenBounceReturnRatio = getRootNumber("--screen-bounce-return-ratio", 0.42);
-		screenBounceSettleRatio = getRootNumber("--screen-bounce-settle-ratio", 0.14);
 
 		heroParallaxFactor = getRootNumber("--hero-parallax-factor", -0.06);
 		heroParallaxStiffness = getRootNumber("--hero-parallax-stiffness", 0.04);
 		heroParallaxDamping = getRootNumber("--hero-parallax-damping", 0.85);
 		heroScaleScrollFactor = getRootNumber("--hero-scale-scroll-factor", 0.01);
 		heroBrightnessScrollFactor = getRootNumber("--hero-brightness-scroll-factor", 0.06);
-	
+
 		if (isMobile) {
 			navVisibleStiffness = getRootNumber("--nav-spring-stiffness-mobile", 0.06);
 			navVisibleDamping = getRootNumber("--nav-spring-damping-mobile", 0.85);
@@ -144,88 +133,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	   CUSTOM SCREEN SCROLL
 	========================= */
 	let activeScrollAnimation = null;
-	let pageBounceAnimation = null;
 
 	function getMaxScrollY() {
 		return Math.max(
 			0,
 			document.documentElement.scrollHeight - window.innerHeight
 		);
-	}
-
-	function triggerScreenBounce(intensity = screenBounceIntensity) {
-		if (prefersReducedMotion) return;
-
-		const bounceTargets = Array.from(document.body.children).filter(el => {
-			return !el.classList.contains("navbar");
-		});
-
-		if (!bounceTargets.length) return;
-
-		if (pageBounceAnimation) {
-			pageBounceAnimation.forEach(animation => animation.cancel());
-			pageBounceAnimation = null;
-		}
-
-		const returnOffset = Math.round(intensity * screenBounceReturnRatio);
-		const settleOffset = Math.round(intensity * screenBounceSettleRatio);
-
-		/* Navbar während des Bounces sichtbar halten */
-		navbarVisibilityLockUntil = performance.now() + screenBounceDuration + 180;
-		targetVisible = 1;
-		targetCompact = 1;
-		targetSurface = 1;
-		startNavbarAnimation();
-
-		bounceTargets.forEach(el => {
-			el.style.willChange = "transform";
-		});
-
-		if (bounceTargets[0].animate) {
-			pageBounceAnimation = bounceTargets.map(el =>
-				el.animate(
-					[
-						{ transform: "translateY(0)" },
-						{ transform: `translateY(-${intensity}px)` },
-						{ transform: `translateY(${returnOffset}px)` },
-						{ transform: `translateY(-${settleOffset}px)` },
-						{ transform: "translateY(0)" }
-					],
-					{
-						duration: screenBounceDuration,
-						easing: "cubic-bezier(.16,.84,.44,1)",
-						fill: "none"
-					}
-				)
-			);
-
-			const clear = () => {
-				bounceTargets.forEach(el => {
-					el.style.willChange = "";
-				});
-				pageBounceAnimation = null;
-				handleScroll();
-			};
-
-			pageBounceAnimation[0]?.addEventListener("finish", clear, { once: true });
-			pageBounceAnimation[0]?.addEventListener("cancel", clear, { once: true });
-			return;
-		}
-
-		/* Fallback ohne WAAPI */
-		bounceTargets.forEach(el => {
-			el.classList.remove("screen-bounce");
-			void el.offsetWidth;
-			el.classList.add("screen-bounce");
-		});
-
-		window.setTimeout(() => {
-			bounceTargets.forEach(el => {
-				el.classList.remove("screen-bounce");
-				el.style.willChange = "";
-			});
-			handleScroll();
-		}, screenBounceDuration + 30);
 	}
 
 	function easeOutElastic(t) {
@@ -237,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		return Math.pow(2, -scrollElasticDecay * t) *
 			Math.sin((t * scrollElasticFrequency - scrollElasticPhaseShift) * c) + 1;
 	}
-	
+
 	function easeOutCubic(t) {
 		return 1 - Math.pow(1 - t, 3);
 	}
@@ -259,11 +172,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			onComplete?.(clampedTargetY);
 			return;
 		}
-	
+
 		const hitsBoundary =
 			clampedTargetY === maxScrollY ||
 			clampedTargetY !== targetY;
-			
+
 		const duration = prefersReducedMotion
 			? Math.min(900, Math.max(350, absDistance * 0.35))
 			: hitsBoundary
@@ -317,11 +230,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		return navbar.offsetHeight || navMax;
 	}
-	
+
 	/* =================================================
 	   CENTRAL SCROLL ENGINE
 	================================================= */
-	function scrollToSection(target, navMode = null, { bounceOnComplete = false } = {}) {
+	function scrollToSection(target, navMode = null) {
 		if (!target) return;
 
 		const isHeroTarget = target.classList?.contains("hero");
@@ -384,14 +297,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				programmaticNavMode = null;
 				startNavbarAnimation();
 				handleScroll();
-
-				if (bounceOnComplete) {
-					triggerScreenBounce();
-				}
 			}
 		});
 	}
-	
+
 	/* =========================
 	   SECTION SCROLL NAVIGATION
 	========================= */
@@ -420,11 +329,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (direction === "next") {
 			let nextTarget = null;
-			let bounceOnComplete = true;
 
 			if (sectionEl.id === "contact") {
 				nextTarget = footer;
-				bounceOnComplete = false;
 			} else {
 				nextTarget = orderedSections[currentIndex + 1] || null;
 			}
@@ -433,9 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			manualNavbarOpen = false;
 			setNavbarTargets(1, 1, 1);
-			scrollToSection(nextTarget, "down", {
-				bounceOnComplete
-			});
+			scrollToSection(nextTarget, "down");
 			startNavbarAnimation();
 			return;
 		}
@@ -529,7 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		setNavbarTargets(1, 1, 1);
 
 		const about = document.querySelector("#about");
-		scrollToSection(about, "down", { bounceOnComplete: true });
+		scrollToSection(about, "down");
 		startNavbarAnimation();
 	});
 
@@ -541,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			headSelector: ".section-scroll-head"
 		});
 	});
-	
+
 	/* scroll indicator footer click */
 	const footerToContactTrigger = document.querySelector(".footer-scroll-trigger");
 
@@ -569,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollToSection(contact, "up-section");
 		startNavbarAnimation();
 	});
-	
+
 	/* Magnetic CTA Button */
 	const magneticButtons = document.querySelectorAll(".cta-button");
 	magneticButtons.forEach(btn => {
@@ -741,8 +646,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		manualNavbarOpen = false;
 		setNavbarTargets(1, 1, 1);
 
-		const target = document.querySelector("#contact");	
-		scrollToSection(target, "down", { bounceOnComplete: true });
+		const target = document.querySelector("#contact");
+		scrollToSection(target, "down");
 		startNavbarAnimation();
 	});
 
@@ -754,11 +659,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			setNavbarTargets(1, 1, NAV_SURFACE_UP);
 
 			const heroSection = document.querySelector(".hero");
-			scrollToSection(heroSection, "up-section", { bounceOnComplete: true });
+			scrollToSection(heroSection, "up-section");
 			startNavbarAnimation();
 		});
 	}
-	
+
 	hero?.addEventListener("click", (e) => {
 		if (!navbar) return;
 
@@ -800,14 +705,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	function handleScroll() {
 		if (!navbar) return;
-
-		if (performance.now() < navbarVisibilityLockUntil) {
-			targetVisible = 1;
-			targetCompact = 1;
-			targetSurface = 1;
-			startNavbarAnimation();
-			return;
-		}
 
 		const currentY = window.scrollY;
 		const deltaY = currentY - lastScrollY;
@@ -979,7 +876,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		requestAnimationFrame(animate);
 	}
-	
+
 	handleScroll();
 
 	document.addEventListener("visibilitychange", () => {
@@ -1015,10 +912,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (isScrollingUp) {
 				setNavbarTargets(1, 1, NAV_SURFACE_UP);
-				scrollToSection(target, "up-section", { bounceOnComplete: true });	
+				scrollToSection(target, "up-section");
 			} else {
 				setNavbarTargets(1, 1, 1);
-				scrollToSection(target, "down", { bounceOnComplete: true });
+				scrollToSection(target, "down");
 			}
 
 			startNavbarAnimation();
