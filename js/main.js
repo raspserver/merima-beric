@@ -420,9 +420,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (direction === "next") {
 			let nextTarget = null;
+			let bounceOnComplete = true;
 
 			if (sectionEl.id === "contact") {
 				nextTarget = footer;
+				bounceOnComplete = false;
 			} else {
 				nextTarget = orderedSections[currentIndex + 1] || null;
 			}
@@ -430,9 +432,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!nextTarget) return;
 
 			manualNavbarOpen = false;
-			setNavbarTargets(1, 1, 1);		
+			setNavbarTargets(1, 1, 1);
 			scrollToSection(nextTarget, "down", {
-				bounceOnComplete: true
+				bounceOnComplete
 			});
 			startNavbarAnimation();
 			return;

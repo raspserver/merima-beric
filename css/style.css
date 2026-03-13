@@ -405,42 +405,62 @@
 	 * 
 	 * Merksatz: Duration = „Wie viel Zeit bekommt die Schwingung überhaupt?“
 	 * 
-	 * 5) Der sichtbare „Screen Bounce“ am Ende ist nochmal separat
+	 * 5) Der sichtbare „Screen Bounce“ am Ende ist separat von der Scroll-Elastik
 	 * 
-	 * Zusätzlich zum elastischen Scrollen hast du noch eine eigene Abschluss-Bounce-Animation:
+	 * Zusätzlich zum elastischen Scrollen gibt es am Ende eine eigene
+	 * Abschlussanimation für die gesamte Seite:
 	 * 
-	 *  function triggerScreenBounce(intensity = 18) {..
+	 *  function triggerScreenBounce(intensity = screenBounceIntensity) { ... }
 	 * 
-	 * Sie animiert die Seitenelemente so:
+	 * Diese Animation bewegt alle Seitenelemente (außer der Navbar) kurz
+	 * vertikal und erzeugt so den sichtbaren „Bounce“-Effekt.
 	 * 
-	 *  { transform: "translateY(0)" },
-	 *  { transform: `translateY(-${intensity}px)` },
-	 *  { transform: `translateY(${Math.round(intensity * 0.42)}px)` },
-	 *  { transform: `translateY(-${Math.round(intensity * 0.14)}px)` },
+	 * Die Keyframes der Bewegung sind:
+	 * 
+	 *  { transform: "translateY(0)" }
+	 *  { transform: `translateY(-${intensity}px)` }
+	 *  { transform: `translateY(${Math.round(intensity * screenBounceReturnRatio)}px)` }
+	 *  { transform: `translateY(-${Math.round(intensity * screenBounceSettleRatio)}px)` }
 	 *  { transform: "translateY(0)" }
 	 * 
-	 * mit:
+	 * Dabei steuern die Root-Variablen den Charakter des Bounces:
 	 * 
-	 *  duration: 720,
+	 *  --screen-bounce-intensity
+	 *      Grundstärke des ersten Ausschlags nach oben.
+	 *      Höherer Wert → stärkerer sichtbarer Bounce.
+	 * 
+	 *  --screen-bounce-return-ratio
+	 *      Anteil der Gegenbewegung nach dem ersten Ausschlag.
+	 *      Bestimmt, wie weit die Seite zurückfedert.
+	 * 
+	 *  --screen-bounce-settle-ratio
+	 *      Größe des letzten kleinen Gegenausschlags vor dem endgültigen
+	 *      Einpendeln.
+	 * 
+	 *  --screen-bounce-duration
+	 *      Gesamtdauer der Bounce-Animation.
+	 *      Höher → langsamer, weicher Effekt.
+	 *      Niedriger → schneller, knackiger Bounce.
+	 * 
+	 * Die Animation verwendet außerdem:
+	 * 
 	 *  easing: "cubic-bezier(.16,.84,.44,1)"
 	 * 
-	 * Das heißt:
+	 * Warum endet die Bewegung sauber?
 	 * 
-	 * Der eigentliche End-Bounce wird hier nicht über Root-Variablen gesteuert, sondern fest im JS:
-	 * 
-	 *  intensity = 18
-	 *  0.42 für den Gegenausschlag
-	 *  0.14 für den dritten kleinen Ausschlag
-	 *  duration = 720
-	 * 
-	 * Warum hält er an?
-	 * 
-	 * Weil die letzte Keyframe-Stufe wieder ist:
+	 * Weil der letzte Keyframe wieder exakt ist:
 	 * 
 	 *  transform: "translateY(0)"
 	 * 
-	 * und fill: "none" gesetzt ist.
-	 * Also: Animation endet, Transform wird verworfen, alles liegt wieder normal auf 0.
+	 * und die Animation mit
+	 * 
+	 *  fill: "none"
+	 * 
+	 * läuft.
+	 * 
+	 * Dadurch wird nach dem Ende der Animation kein Transform-Wert
+	 * beibehalten – alle Elemente kehren automatisch in ihre normale
+	 * Ausgangsposition zurück.
 	 * 
 	 *  */
 
