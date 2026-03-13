@@ -257,6 +257,147 @@
 */
 }
 
+	/* =========================
+	   SCREEN BOUNCE
+	========================= */
+	/* 
+	 * Ja — bei deinem „screen bounce“ wird das Anhalten nicht von einer einzigen Root-Konstante gesteuert,
+	 * sondern von drei Ebenen zusammen:
+	 * 
+	 *  1. die Elastik-Kurve des Scrollens,
+	 *  2. die feste Bounce-Animation am Ende,
+	 *  3. die Dauer der Bewegung.
+	 * 
+	 * Auf deiner Seite ist das Verhalten als Kombination aus JavaScript-Physik und einer kurzen
+	 * Abschlussanimation umgesetzt. Die Live-Seite nutzt genau diese Scroll-/Bounce-Mechanik
+	 * für die Abschnittsnavigation.
+	 * 
+	 * 1) Die eigentlichen Root-Konstanten für das „Nachschwingen“
+	 * 
+	 * Diese Variablen sind für die Schwingung beim Scrollen am wichtigsten:
+	 * 
+	 *  --scroll-elastic-decay
+	 *  --scroll-elastic-frequency
+	 *  --scroll-elastic-phase-shift
+	 *  --scroll-duration-factor
+	 *  --scroll-duration-min
+	 *  --scroll-duration-max
+	 * 
+	 * 2) Was jede Konstante genau macht
+	 * 
+	 *  --scroll-elastic-decay
+	 * 
+	 * Das ist der wichtigste Wert dafür, wie schnell die Schwingung stirbt. 
+	 * Dieser Teil ist die abklingende Hüllkurve.
+	 * 
+	 * Wirkung:
+	 * 
+	 *  - höherer Wert → die Schwingung wird schneller kleiner → der Screen beruhigt sich schneller
+	 *  - niedrigerer Wert → die Schwingung hält länger an → mehr „Federgefühl“
+	 * 
+	 * Merksatz: Decay = „Wie schnell hört das Wackeln auf?“
+	 * 
+	 *  --scroll-elastic-frequency
+	 * 
+	 * Das bestimmt, wie viele Schwingungen/Oszillationen in derselben Zeit stattfinden.
+	 * 
+	 * Wirkung:
+	 * 
+	 *  - höherer Wert → mehr kleine Wellen / schnelleres Zittern
+	 *  - niedrigerer Wert → weniger Wellen / ruhigeres Nachfedern
+	 * 
+	 * Merksatz: Frequency = „Wie oft schwingt es, bevor es stoppt?“
+	 * 
+	 *  --scroll-elastic-phase-shift
+	 * 
+	 * Das bestimmt, an welcher Stelle der Sinus startet.
+	 * 
+	 * Das beeinflusst vor allem:
+	 * 
+	 *  - ob der erste Ausschlag stärker oder schwächer wirkt,
+	 *  - ob die Bewegung am Ende eher „weich einrastet“ oder einen deutlich sichtbaren Overshoot macht.
+	 * 
+	 * Wirkung:
+	 * 
+	 *  - kleiner ändern = subtile Änderung des Charakters
+	 *  - ist eher Feintuning als Hauptregler
+	 * 
+	 * Merksatz: Phase Shift = „Wie setzt die Schwingung ein?“
+	 * 
+	 * 3) Warum der Screen genau „anhält“
+	 * 
+	 * Der Screen hält an, weil am Ende von animateWindowScrollTo() die Zielposition hart gesetzt wird.
+	 * Das ist sehr wichtig:
+	 * 
+	 *  - Während der Animation wird mit easeOutElastic(t) gerechnet
+	 *  - am Ende wird aber nicht die letzte Schwingung offen gelassen
+	 *  - stattdessen wird die Position exakt auf clampedTargetY gesetzt
+	 * 
+	 * Das bedeutet:
+	 * 
+	 * Die Root-Werte steuern das Gefühl des Auslaufens,
+	 * aber das eigentliche Stoppen passiert durch diesen finalen Snap auf das Ziel.
+	 * 
+	 * Ohne window.scrollTo(0, clampedTargetY); würde es je nach Kurve leicht oberhalb oder unterhalb enden.
+	 * 
+	 * 4) Die Dauer beeinflusst auch, wie „lang“ das Nachschwingen wirkt
+	 * 
+	 * Diese Werte steuern nicht direkt die Federform, aber stark den Eindruck:
+	 * 
+	 *  --scroll-duration-factor
+	 *  --scroll-duration-min
+	 *  --scroll-duration-max
+	 * 
+	 * Wirkung:
+	 * 
+	 *  - größere Dauer → Schwingung wirkt langsamer, eleganter, länger
+	 *  - kleinere Dauer → Bewegung wirkt knackiger, direkter
+	 * 
+	 * Wichtig:
+	 * 
+	 * Auch wenn decay gleich bleibt, wirkt die Schwingung bei längerer Dauer weicher und „größer“.
+	 * 
+	 * Merksatz: Duration = „Wie viel Zeit bekommt die Schwingung überhaupt?“
+	 * 
+	 * 5) Der sichtbare „Screen Bounce“ am Ende ist nochmal separat
+	 * 
+	 * Zusätzlich zum elastischen Scrollen hast du noch eine eigene Abschluss-Bounce-Animation:
+	 * 
+	 *  function triggerScreenBounce(intensity = 18) {..
+	 * 
+	 * Sie animiert die Seitenelemente so:
+	 * 
+	 *  { transform: "translateY(0)" },
+	 *  { transform: `translateY(-${intensity}px)` },
+	 *  { transform: `translateY(${Math.round(intensity * 0.42)}px)` },
+	 *  { transform: `translateY(-${Math.round(intensity * 0.14)}px)` },
+	 *  { transform: "translateY(0)" }
+	 * 
+	 * mit:
+	 * 
+	 *  duration: 720,
+	 *  easing: "cubic-bezier(.16,.84,.44,1)"
+	 * 
+	 * Das heißt:
+	 * 
+	 * Der eigentliche End-Bounce wird hier nicht über Root-Variablen gesteuert, sondern fest im JS:
+	 * 
+	 *  intensity = 18
+	 *  0.42 für den Gegenausschlag
+	 *  0.14 für den dritten kleinen Ausschlag
+	 *  duration = 720
+	 * 
+	 * Warum hält er an?
+	 * 
+	 * Weil die letzte Keyframe-Stufe wieder ist:
+	 * 
+	 *  transform: "translateY(0)"
+	 * 
+	 * und fill: "none" gesetzt ist.
+	 * Also: Animation endet, Transform wird verworfen, alles liegt wieder normal auf 0.
+	 * 
+	 *  */
+
 * {
 	margin: 0;
 	padding: 0;
