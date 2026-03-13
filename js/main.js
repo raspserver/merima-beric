@@ -225,13 +225,18 @@ document.addEventListener("DOMContentLoaded", () => {
 			Math.sin((t * scrollElasticFrequency - scrollElasticPhaseShift) * c) + 1;
 	}
 	
+	function easeOutCubic(t) {
+		return 1 - Math.pow(1 - t, 3);
+	}
+
 	function animateWindowScrollTo(targetY, { onComplete } = {}) {
 		if (activeScrollAnimation) {
 			cancelAnimationFrame(activeScrollAnimation);
 			activeScrollAnimation = null;
 		}
 
-		const clampedTargetY = Math.max(0, Math.min(targetY, getMaxScrollY()));
+		const maxScrollY = getMaxScrollY();
+		const clampedTargetY = Math.max(0, Math.min(targetY, maxScrollY));
 		const startY = window.scrollY;
 		const distance = clampedTargetY - startY;
 		const absDistance = Math.abs(distance);
@@ -251,13 +256,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const startTime = performance.now();
 
+		/* Kein Elastic-Overshoot an den Dokumentgrenzen */
+		const hitsBoundary =
+			clampedTargetY === 0 ||
+			clampedTargetY === maxScrollY ||
+			clampedTargetY !== targetY;
+
 		function frame(now) {
 			const elapsed = now - startTime;
 			const t = Math.min(elapsed / duration, 1);
 
-			const eased = prefersReducedMotion ? t : easeOutElastic(t);
+			const eased = prefersReducedMotion
+				? t
+				: hitsBoundary
+					? easeOutCubic(t)
+					: easeOutElastic(t);
+
 			const nextY = startY + distance * eased;
-			const clampedNextY = Math.max(0, Math.min(nextY, getMaxScrollY()));
+			const clampedNextY = Math.max(0, Math.min(nextY, maxScrollY));
 
 			window.scrollTo(0, clampedNextY);
 
