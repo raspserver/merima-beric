@@ -325,6 +325,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			navOffset +
 			inset;
 
+		const isFooterTarget = target.tagName?.toLowerCase() === "footer";
+		const navOffset = isHeroTarget || isFooterTarget ? 0 : getTargetNavOffset(effectiveNavMode);
+
 		programmaticScroll = true;
 		programmaticNavMode = effectiveNavMode;
 
@@ -522,9 +525,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 	
 	/* scroll indicator footer click */
-	const footerScrollTrigger = document.querySelector(".footer-scroll-trigger");
-	
-	footerScrollTrigger?.addEventListener("click", (e) => {
+	const footerToContactTrigger = document.querySelector(".footer-scroll-trigger");
+
+	footerToContactTrigger?.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -536,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		startNavbarAnimation();
 	});
 
-	footerScrollTrigger?.addEventListener("keydown", (e) => {
+	footerToContactTrigger?.addEventListener("keydown", (e) => {
 		if (e.key !== "Enter" && e.key !== " ") return;
 
 		e.preventDefault();
@@ -548,7 +551,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollToSection(contact, "up-section");
 		startNavbarAnimation();
 	});
-
+	
 	/* Magnetic CTA Button */
 	const magneticButtons = document.querySelectorAll(".cta-button");
 	magneticButtons.forEach(btn => {
