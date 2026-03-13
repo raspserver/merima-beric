@@ -37,7 +37,7 @@
 	   MASTER MOTION PRESETS
 	   Navbar + Screen Bounce + Hero
 	========================= */
-
+	
 	/* Base fallback values */
 	--nav-spring-stiffness-desktop: 0.08;
 	--nav-spring-damping-desktop: 0.82;
@@ -56,12 +56,17 @@
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
 
+	--screen-bounce-intensity: 14;
+	--screen-bounce-duration: 780;
+	--screen-bounce-return-ratio: 0.34;
+	--screen-bounce-settle-ratio: 0.11;
+
 	--hero-parallax-factor: -0.06;
 	--hero-parallax-stiffness: 0.04;
 	--hero-parallax-damping: 0.85;
 	--hero-scale-scroll-factor: 0.01;
 	--hero-brightness-scroll-factor: 0.06;
-
+	
 	/* =========================
 	   MASTER PRESET: defaults
 	========================= */
@@ -83,6 +88,11 @@
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
 
+	--screen-bounce-intensity: 14;
+	--screen-bounce-duration: 780;
+	--screen-bounce-return-ratio: 0.34;
+	--screen-bounce-settle-ratio: 0.11;
+
 	--hero-parallax-factor: -0.06;
 	--hero-parallax-stiffness: 0.04;
 	--hero-parallax-damping: 0.85;
@@ -90,10 +100,11 @@
 	--hero-brightness-scroll-factor: 0.06;
 	*/
 
+
 	/* =========================
-	   ACTIVE MASTER PRESET: luxury
+	   MASTER PRESET: luxury
 	========================= */
-/*
+	/*
 	--nav-spring-stiffness-desktop: 0.072;
 	--nav-spring-damping-desktop: 0.84;
 	--nav-compact-stiffness-desktop: 0.040;
@@ -111,12 +122,18 @@
 	--scroll-duration-min: 760;
 	--scroll-duration-max: 1750;
 
+	--screen-bounce-intensity: 12;
+	--screen-bounce-duration: 920;
+	--screen-bounce-return-ratio: 0.30;
+	--screen-bounce-settle-ratio: 0.09;
+
 	--hero-parallax-factor: -0.05;
 	--hero-parallax-stiffness: 0.032;
 	--hero-parallax-damping: 0.88;
 	--hero-scale-scroll-factor: 0.008;
 	--hero-brightness-scroll-factor: 0.05;
-*/
+	*/
+
 
 	/* =========================
 	   MASTER PRESET: balanced
@@ -139,12 +156,18 @@
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
 
+	--screen-bounce-intensity: 13;
+	--screen-bounce-duration: 820;
+	--screen-bounce-return-ratio: 0.33;
+	--screen-bounce-settle-ratio: 0.10;
+
 	--hero-parallax-factor: -0.06;
 	--hero-parallax-stiffness: 0.04;
 	--hero-parallax-damping: 0.85;
 	--hero-scale-scroll-factor: 0.01;
 	--hero-brightness-scroll-factor: 0.06;
 	*/
+
 
 	/* =========================
 	   MASTER PRESET: cinematic
@@ -167,6 +190,11 @@
 	--scroll-duration-min: 820;
 	--scroll-duration-max: 1900;
 
+	--screen-bounce-intensity: 16;
+	--screen-bounce-duration: 900;
+	--screen-bounce-return-ratio: 0.38;
+	--screen-bounce-settle-ratio: 0.14;
+
 	--hero-parallax-factor: -0.085;
 	--hero-parallax-stiffness: 0.05;
 	--hero-parallax-damping: 0.82;
@@ -174,10 +202,11 @@
 	--hero-brightness-scroll-factor: 0.075;
 	*/
 
+
 	/* =========================
 	   MASTER PRESET: crisp
 	========================= */
-/*
+	/*
 	--nav-spring-stiffness-desktop: 0.088;
 	--nav-spring-damping-desktop: 0.80;
 	--nav-compact-stiffness-desktop: 0.05;
@@ -195,16 +224,23 @@
 	--scroll-duration-min: 560;
 	--scroll-duration-max: 1250;
 
+	--screen-bounce-intensity: 10;
+	--screen-bounce-duration: 620;
+	--screen-bounce-return-ratio: 0.30;
+	--screen-bounce-settle-ratio: 0.08;
+
 	--hero-parallax-factor: -0.04;
 	--hero-parallax-stiffness: 0.06;
 	--hero-parallax-damping: 0.80;
 	--hero-scale-scroll-factor: 0.006;
 	--hero-brightness-scroll-factor: 0.04;
-*/
+	*/
+
 
 	/* =========================
 	   MASTER PRESET: soft
 	========================= */
+
 	--nav-spring-stiffness-desktop: 0.068;
 	--nav-spring-damping-desktop: 0.86;
 	--nav-compact-stiffness-desktop: 0.038;
@@ -222,39 +258,49 @@
 	--scroll-duration-min: 900;
 	--scroll-duration-max: 2100;
 
+	--screen-bounce-intensity: 11;
+	--screen-bounce-duration: 960;
+	--screen-bounce-return-ratio: 0.28;
+	--screen-bounce-settle-ratio: 0.08;
+
 	--hero-parallax-factor: -0.035;
 	--hero-parallax-stiffness: 0.026;
 	--hero-parallax-damping: 0.90;
 	--hero-scale-scroll-factor: 0.005;
 	--hero-brightness-scroll-factor: 0.035;
-	
+
 	/* =========================
-	   ACTIVE MASTER PRESET: custom
+	   MASTER PRESET: custom
 	========================= */
 /*
-	--nav-spring-stiffness-desktop: 0.084;
-	--nav-spring-damping-desktop: 0.81;
-	--nav-compact-stiffness-desktop: 0.048;
-	--nav-compact-damping-desktop: 0.87;
+	--nav-spring-stiffness-desktop: 0.08;
+	--nav-spring-damping-desktop: 0.82;
+	--nav-compact-stiffness-desktop: 0.045;
+	--nav-compact-damping-desktop: 0.88;
 
-	--nav-spring-stiffness-mobile: 0.064;
-	--nav-spring-damping-mobile: 0.84;
-	--nav-compact-stiffness-mobile: 0.037;
-	--nav-compact-damping-mobile: 0.89;
+	--nav-spring-stiffness-mobile: 0.06;
+	--nav-spring-damping-mobile: 0.85;
+	--nav-compact-stiffness-mobile: 0.035;
+	--nav-compact-damping-mobile: 0.90;
 
-	--scroll-elastic-decay: 72;
-	--scroll-elastic-frequency: 8.2;
-	--scroll-elastic-phase-shift: 0.72;
-	--scroll-duration-factor: 0.42;
-	--scroll-duration-min: 520;
-	--scroll-duration-max: 1080;
+	--scroll-elastic-decay: 10;
+	--scroll-elastic-frequency: 10;
+	--scroll-elastic-phase-shift: 0.75;
+	--scroll-duration-factor: 0.6;
+	--scroll-duration-min: 700;
+	--scroll-duration-max: 1600;
 
-	--hero-parallax-factor: -0.038;
-	--hero-parallax-stiffness: 0.055;
-	--hero-parallax-damping: 0.82;
-	--hero-scale-scroll-factor: 0.0055;
-	--hero-brightness-scroll-factor: 0.038;
-*/
+	--screen-bounce-intensity: 14;
+	--screen-bounce-duration: 780;
+	--screen-bounce-return-ratio: 0.34;
+	--screen-bounce-settle-ratio: 0.11;
+
+	--hero-parallax-factor: -0.06;
+	--hero-parallax-stiffness: 0.04;
+	--hero-parallax-damping: 0.85;
+	--hero-scale-scroll-factor: 0.01;
+	--hero-brightness-scroll-factor: 0.06;
+	*/
 }
 
 	/* =========================
@@ -1458,16 +1504,26 @@ footer a:hover {
 	}
 }
 
-@keyframes screenBounceFallback {
-	0%   { transform: translateY(0); }
-	28%  { transform: translateY(-18px); }
-	58%  { transform: translateY(8px); }
-	78%  { transform: translateY(-3px); }
-	100% { transform: translateY(0); }
+.screen-bounce {
+	animation: screenBounceFallback var(--screen-bounce-duration) cubic-bezier(.16,.84,.44,1);
 }
 
-.screen-bounce {
-	animation: screenBounceFallback 0.72s cubic-bezier(.16,.84,.44,1);
+@keyframes screenBounceFallback {
+	0% {
+		transform: translateY(0);
+	}
+	28% {
+		transform: translateY(calc(var(--screen-bounce-intensity) * -1px));
+	}
+	58% {
+		transform: translateY(calc(var(--screen-bounce-intensity) * var(--screen-bounce-return-ratio) * 1px));
+	}
+	78% {
+		transform: translateY(calc(var(--screen-bounce-intensity) * var(--screen-bounce-settle-ratio) * -1px));
+	}
+	100% {
+		transform: translateY(0);
+	}
 }
 
 .social-links {
