@@ -259,12 +259,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			onComplete?.(clampedTargetY);
 			return;
 		}
-
+	
 		const hitsBoundary =
-			clampedTargetY === 0 ||
 			clampedTargetY === maxScrollY ||
 			clampedTargetY !== targetY;
-
+			
 		const duration = prefersReducedMotion
 			? Math.min(900, Math.max(350, absDistance * 0.35))
 			: hitsBoundary
@@ -753,11 +752,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			setNavbarTargets(1, 1, NAV_SURFACE_UP);
 
 			const heroSection = document.querySelector(".hero");
-			scrollToSection(heroSection, "up-section");
+			scrollToSection(heroSection, "up-section", { bounceOnComplete: true });
 			startNavbarAnimation();
 		});
 	}
-
+	
 	hero?.addEventListener("click", (e) => {
 		if (!navbar) return;
 
