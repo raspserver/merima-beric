@@ -56,11 +56,6 @@
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
 
-	--screen-bounce-intensity: 14;
-	--screen-bounce-duration: 780;
-	--screen-bounce-return-ratio: 0.34;
-	--screen-bounce-settle-ratio: 0.11;
-
 	--hero-parallax-factor: -0.06;
 	--hero-parallax-stiffness: 0.04;
 	--hero-parallax-damping: 0.85;
@@ -87,11 +82,6 @@
 	--scroll-duration-factor: 0.6;
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
-
-	--screen-bounce-intensity: 14;
-	--screen-bounce-duration: 780;
-	--screen-bounce-return-ratio: 0.34;
-	--screen-bounce-settle-ratio: 0.11;
 
 	--hero-parallax-factor: -0.06;
 	--hero-parallax-stiffness: 0.04;
@@ -122,11 +112,6 @@
 	--scroll-duration-min: 760;
 	--scroll-duration-max: 1750;
 
-	--screen-bounce-intensity: 12;
-	--screen-bounce-duration: 920;
-	--screen-bounce-return-ratio: 0.30;
-	--screen-bounce-settle-ratio: 0.09;
-
 	--hero-parallax-factor: -0.05;
 	--hero-parallax-stiffness: 0.032;
 	--hero-parallax-damping: 0.88;
@@ -155,11 +140,6 @@
 	--scroll-duration-factor: 0.6;
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
-
-	--screen-bounce-intensity: 13;
-	--screen-bounce-duration: 820;
-	--screen-bounce-return-ratio: 0.33;
-	--screen-bounce-settle-ratio: 0.10;
 
 	--hero-parallax-factor: -0.06;
 	--hero-parallax-stiffness: 0.04;
@@ -190,11 +170,6 @@
 	--scroll-duration-min: 820;
 	--scroll-duration-max: 1900;
 
-	--screen-bounce-intensity: 16;
-	--screen-bounce-duration: 900;
-	--screen-bounce-return-ratio: 0.38;
-	--screen-bounce-settle-ratio: 0.14;
-
 	--hero-parallax-factor: -0.085;
 	--hero-parallax-stiffness: 0.05;
 	--hero-parallax-damping: 0.82;
@@ -223,11 +198,6 @@
 	--scroll-duration-factor: 0.48;
 	--scroll-duration-min: 560;
 	--scroll-duration-max: 1250;
-
-	--screen-bounce-intensity: 10;
-	--screen-bounce-duration: 620;
-	--screen-bounce-return-ratio: 0.30;
-	--screen-bounce-settle-ratio: 0.08;
 
 	--hero-parallax-factor: -0.04;
 	--hero-parallax-stiffness: 0.06;
@@ -258,11 +228,6 @@
 	--scroll-duration-min: 900;
 	--scroll-duration-max: 2100;
 
-	--screen-bounce-intensity: 11;
-	--screen-bounce-duration: 960;
-	--screen-bounce-return-ratio: 0.28;
-	--screen-bounce-settle-ratio: 0.08;
-
 	--hero-parallax-factor: -0.035;
 	--hero-parallax-stiffness: 0.026;
 	--hero-parallax-damping: 0.90;
@@ -290,11 +255,6 @@
 	--scroll-duration-min: 700;
 	--scroll-duration-max: 1600;
 
-	--screen-bounce-intensity: 14;
-	--screen-bounce-duration: 780;
-	--screen-bounce-return-ratio: 0.34;
-	--screen-bounce-settle-ratio: 0.11;
-
 	--hero-parallax-factor: -0.06;
 	--hero-parallax-stiffness: 0.04;
 	--hero-parallax-damping: 0.85;
@@ -304,165 +264,68 @@
 }
 
 	/* =========================
-	   SCREEN BOUNCE
+	   ELASTIC SCROLL VARIABLEN
 	========================= */
-	/* 
-	 * Ja — bei deinem „screen bounce“ wird das Anhalten nicht von einer einzigen Root-Konstante gesteuert,
-	 * sondern von drei Ebenen zusammen:
-	 * 
-	 *  1. die Elastik-Kurve des Scrollens,
-	 *  2. die feste Bounce-Animation am Ende,
-	 *  3. die Dauer der Bewegung.
-	 * 
-	 * Auf deiner Seite ist das Verhalten als Kombination aus JavaScript-Physik und einer kurzen
-	 * Abschlussanimation umgesetzt. Die Live-Seite nutzt genau diese Scroll-/Bounce-Mechanik
-	 * für die Abschnittsnavigation.
-	 * 
-	 * 1) Die eigentlichen Root-Konstanten für das „Nachschwingen“
-	 * 
-	 * Diese Variablen sind für die Schwingung beim Scrollen am wichtigsten:
-	 * 
-	 *  --scroll-elastic-decay
-	 *  --scroll-elastic-frequency
-	 *  --scroll-elastic-phase-shift
-	 *  --scroll-duration-factor
-	 *  --scroll-duration-min
-	 *  --scroll-duration-max
-	 * 
-	 * 2) Was jede Konstante genau macht
-	 * 
-	 *  --scroll-elastic-decay
-	 * 
-	 * Das ist der wichtigste Wert dafür, wie schnell die Schwingung stirbt. 
-	 * Dieser Teil ist die abklingende Hüllkurve.
-	 * 
-	 * Wirkung:
-	 * 
-	 *  - höherer Wert → die Schwingung wird schneller kleiner → der Screen beruhigt sich schneller
-	 *  - niedrigerer Wert → die Schwingung hält länger an → mehr „Federgefühl“
-	 * 
-	 * Merksatz: Decay = „Wie schnell hört das Wackeln auf?“
-	 * 
-	 *  --scroll-elastic-frequency
-	 * 
-	 * Das bestimmt, wie viele Schwingungen/Oszillationen in derselben Zeit stattfinden.
-	 * 
-	 * Wirkung:
-	 * 
-	 *  - höherer Wert → mehr kleine Wellen / schnelleres Zittern
-	 *  - niedrigerer Wert → weniger Wellen / ruhigeres Nachfedern
-	 * 
-	 * Merksatz: Frequency = „Wie oft schwingt es, bevor es stoppt?“
-	 * 
-	 *  --scroll-elastic-phase-shift
-	 * 
-	 * Das bestimmt, an welcher Stelle der Sinus startet.
-	 * 
-	 * Das beeinflusst vor allem:
-	 * 
-	 *  - ob der erste Ausschlag stärker oder schwächer wirkt,
-	 *  - ob die Bewegung am Ende eher „weich einrastet“ oder einen deutlich sichtbaren Overshoot macht.
-	 * 
-	 * Wirkung:
-	 * 
-	 *  - kleiner ändern = subtile Änderung des Charakters
-	 *  - ist eher Feintuning als Hauptregler
-	 * 
-	 * Merksatz: Phase Shift = „Wie setzt die Schwingung ein?“
-	 * 
-	 * 3) Warum der Screen genau „anhält“
-	 * 
-	 * Der Screen hält an, weil am Ende von animateWindowScrollTo() die Zielposition hart gesetzt wird.
-	 * Das ist sehr wichtig:
-	 * 
-	 *  - Während der Animation wird mit easeOutElastic(t) gerechnet
-	 *  - am Ende wird aber nicht die letzte Schwingung offen gelassen
-	 *  - stattdessen wird die Position exakt auf clampedTargetY gesetzt
-	 * 
-	 * Das bedeutet:
-	 * 
-	 * Die Root-Werte steuern das Gefühl des Auslaufens,
-	 * aber das eigentliche Stoppen passiert durch diesen finalen Snap auf das Ziel.
-	 * 
-	 * Ohne window.scrollTo(0, clampedTargetY); würde es je nach Kurve leicht oberhalb oder unterhalb enden.
-	 * 
-	 * 4) Die Dauer beeinflusst auch, wie „lang“ das Nachschwingen wirkt
-	 * 
-	 * Diese Werte steuern nicht direkt die Federform, aber stark den Eindruck:
-	 * 
-	 *  --scroll-duration-factor
-	 *  --scroll-duration-min
-	 *  --scroll-duration-max
-	 * 
-	 * Wirkung:
-	 * 
-	 *  - größere Dauer → Schwingung wirkt langsamer, eleganter, länger
-	 *  - kleinere Dauer → Bewegung wirkt knackiger, direkter
-	 * 
-	 * Wichtig:
-	 * 
-	 * Auch wenn decay gleich bleibt, wirkt die Schwingung bei längerer Dauer weicher und „größer“.
-	 * 
-	 * Merksatz: Duration = „Wie viel Zeit bekommt die Schwingung überhaupt?“
-	 * 
-	 * 5) Der sichtbare „Screen Bounce“ am Ende ist separat von der Scroll-Elastik
-	 * 
-	 * Zusätzlich zum elastischen Scrollen gibt es am Ende eine eigene
-	 * Abschlussanimation für die gesamte Seite:
-	 * 
-	 *  function triggerScreenBounce(intensity = screenBounceIntensity) { ... }
-	 * 
-	 * Diese Animation bewegt alle Seitenelemente (außer der Navbar) kurz
-	 * vertikal und erzeugt so den sichtbaren „Bounce“-Effekt.
-	 * 
-	 * Die Keyframes der Bewegung sind:
-	 * 
-	 *  { transform: "translateY(0)" }
-	 *  { transform: `translateY(-${intensity}px)` }
-	 *  { transform: `translateY(${Math.round(intensity * screenBounceReturnRatio)}px)` }
-	 *  { transform: `translateY(-${Math.round(intensity * screenBounceSettleRatio)}px)` }
-	 *  { transform: "translateY(0)" }
-	 * 
-	 * Dabei steuern die Root-Variablen den Charakter des Bounces:
-	 * 
-	 *  --screen-bounce-intensity
-	 *      Grundstärke des ersten Ausschlags nach oben.
-	 *      Höherer Wert → stärkerer sichtbarer Bounce.
-	 * 
-	 *  --screen-bounce-return-ratio
-	 *      Anteil der Gegenbewegung nach dem ersten Ausschlag.
-	 *      Bestimmt, wie weit die Seite zurückfedert.
-	 * 
-	 *  --screen-bounce-settle-ratio
-	 *      Größe des letzten kleinen Gegenausschlags vor dem endgültigen
-	 *      Einpendeln.
-	 * 
-	 *  --screen-bounce-duration
-	 *      Gesamtdauer der Bounce-Animation.
-	 *      Höher → langsamer, weicher Effekt.
-	 *      Niedriger → schneller, knackiger Bounce.
-	 * 
-	 * Die Animation verwendet außerdem:
-	 * 
-	 *  easing: "cubic-bezier(.16,.84,.44,1)"
-	 * 
-	 * Warum endet die Bewegung sauber?
-	 * 
-	 * Weil der letzte Keyframe wieder exakt ist:
-	 * 
-	 *  transform: "translateY(0)"
-	 * 
-	 * und die Animation mit
-	 * 
-	 *  fill: "none"
-	 * 
-	 * läuft.
-	 * 
-	 * Dadurch wird nach dem Ende der Animation kein Transform-Wert
-	 * beibehalten – alle Elemente kehren automatisch in ihre normale
-	 * Ausgangsposition zurück.
-	 * 
-	 *  */
+	/*
+	Rolle der Scroll-Variablen
+
+	1) --scroll-elastic-decay
+
+	Das ist die Dämpfung der Schwingung.
+
+	Wirkung:
+
+	- höher = Schwingung stirbt schneller ab
+	- niedriger = Schwingung bleibt länger sichtbar
+
+	2) --scroll-elastic-frequency
+
+	Das ist die Frequenz der Schwingung.
+
+	Wirkung:
+
+	- höher = mehr Oszillationen in derselben Zeit
+	- niedriger = weniger, breitere Wellen
+
+	3) --scroll-elastic-phase-shift
+
+	Das verschiebt den Startpunkt der Sinuskurve.
+
+	Wirkung:
+
+	- beeinflusst, wie der erste Overshoot einsetzt
+	- verändert das “Timing-Gefühl” der ersten elastischen Reaktion
+
+	ist eher Feintuning als Hauptregler
+
+	4) --scroll-duration-factor
+ 
+	Wirkung:
+
+	skaliert die Scroll-Dauer abhängig von der Distanz
+
+	- höher = lange Wege dauern merklich länger
+	- niedriger = direkter, knackiger
+
+	5) --scroll-duration-min
+
+	Das ist die Untergrenze der Scroll-Dauer.
+
+	Wirkung:
+
+	- verhindert, dass kurze Scrolls zu abrupt wirken
+	- je höher, desto “wertiger” und langsamer fühlt sich selbst ein kurzer Sprung an
+
+	6) --scroll-duration-max
+
+	Obergrenze der Dauer:
+
+	Wirkung:
+
+	- verhindert, dass sehr lange Scrolls zu zäh werden
+	- höher = große Sprünge dürfen mehr “cinematic” sein
+
+	 */
 
 * {
 	margin: 0;
@@ -1521,28 +1384,6 @@ footer a:hover {
 @media (prefers-reduced-motion: reduce) {
 	.footer-scroll-indicator {
 		animation: none;
-	}
-}
-
-.screen-bounce {
-	animation: screenBounceFallback var(--screen-bounce-duration) cubic-bezier(.16,.84,.44,1);
-}
-
-@keyframes screenBounceFallback {
-	0% {
-		transform: translateY(0);
-	}
-	28% {
-		transform: translateY(calc(var(--screen-bounce-intensity) * -1px));
-	}
-	58% {
-		transform: translateY(calc(var(--screen-bounce-intensity) * var(--screen-bounce-return-ratio) * 1px));
-	}
-	78% {
-		transform: translateY(calc(var(--screen-bounce-intensity) * var(--screen-bounce-settle-ratio) * -1px));
-	}
-	100% {
-		transform: translateY(0);
 	}
 }
 

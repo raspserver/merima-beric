@@ -133,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	   CUSTOM SCREEN SCROLL
 	========================= */
 	let activeScrollAnimation = null;
+	let activeScrollToken = 0;
 
 	function getMaxScrollY() {
 		return Math.max(
@@ -160,7 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			cancelAnimationFrame(activeScrollAnimation);
 			activeScrollAnimation = null;
 		}
-
+		
+		const scrollToken = ++activeScrollToken;
 		const maxScrollY = getMaxScrollY();
 		const clampedTargetY = Math.max(0, Math.min(targetY, maxScrollY));
 		const startY = window.scrollY;
@@ -192,6 +194,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		const startTime = performance.now();
 
 		function frame(now) {
+			if (scrollToken !== activeScrollToken) return;
+			
 			const elapsed = now - startTime;
 			const t = Math.min(elapsed / duration, 1);
 
