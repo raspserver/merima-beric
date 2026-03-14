@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		return 1 - Math.pow(1 - t, 3);
 	}
 
-	function animateWindowScrollTo(targetY, { onComplete } = {}) {
+	function animateWindowScrollTo(targetY, { onComplete, forceElastic = false } = {}) {
 		if (activeScrollAnimation) {
 			cancelAnimationFrame(activeScrollAnimation);
 			activeScrollAnimation = null;
@@ -200,10 +200,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			const t = Math.min(elapsed / duration, 1);
 
 			const eased = prefersReducedMotion
-				? t
-				: hitsBoundary
-					? easeOutCubic(t)
-					: easeOutElastic(t);
+			? t
+			: (forceElastic || !hitsBoundary)
+				? easeOutElastic(t)
+				: easeOutCubic(t);
 
 			const nextY = startY + distance * eased;
 			const clampedNextY = Math.max(0, Math.min(nextY, maxScrollY));
@@ -238,8 +238,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* =================================================
 	   CENTRAL SCROLL ENGINE
 	================================================= */
-	function scrollToSection(target, navMode = null) {
+	function scrollToSection(target, navMode = null, options = {}) {
 		if (!target) return;
+		
+		const { forceElastic = false } = options;
 
 		const isHeroTarget = target.classList?.contains("hero");
 		const isFooterTarget = target.tagName?.toLowerCase() === "footer";
@@ -270,8 +272,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			scrollDirection = "up";
 		}
 
+
 		animateWindowScrollTo(Math.max(0, y), {
-			onComplete: () => {
+			forceElastic,
+			onComplete: () => {			
 				const finalMode = programmaticNavMode;
 				const finalY = window.scrollY;
 
@@ -334,8 +338,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (direction === "next") {
 			let nextTarget = null;
 
+			let forceElasticToTarget = false;
+
 			if (sectionEl.id === "contact") {
 				nextTarget = footer;
+				forceElasticToTarget = true;
 			} else {
 				nextTarget = orderedSections[currentIndex + 1] || null;
 			}
@@ -343,8 +350,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!nextTarget) return;
 
 			manualNavbarOpen = false;
-			setNavbarTargets(1, 1, 1);
-			scrollToSection(nextTarget, "down");
+			setNavbarTargets(1, 1, 1);	
+			scrollToSection(nextTarget, "down", { forceElastic: forceElasticToTarget });
 			startNavbarAnimation();
 			return;
 		}
