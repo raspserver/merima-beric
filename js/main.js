@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navMenu = document.querySelector(".nav-menu");
 	const navLinks = document.querySelectorAll(".nav-menu a");
 	const navLogo = document.querySelector(".nav-logo");
+	const navDismissLayer = document.querySelector(".nav-dismiss-layer");
 	const cta = document.querySelector(".cta-button");
 
 	const directionLockThreshold = 8;
@@ -128,7 +129,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		startNavbarAnimation();
 	}
-	
+
+	/* =========================
+	   MOBILE NAV HELPERS
+	========================= */
 	function isMobileViewport() {
 		return window.innerWidth <= 968;
 	}
@@ -142,17 +146,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		navMenu.classList.remove("active");
 		navToggle.classList.remove("active");
+		navDismissLayer?.classList.remove("active");
 	}
 
-	function isMobileNavOpen() {
-		return !!(navMenu && navToggle && navMenu.classList.contains("active"));
-	}
-
-	function closeMobileNavMenu() {
+	function openMobileNavMenu() {
 		if (!navMenu || !navToggle) return;
 
-		navMenu.classList.remove("active");
-		navToggle.classList.remove("active");
+		navMenu.classList.add("active");
+		navToggle.classList.add("active");
+		navDismissLayer?.classList.add("active");
 	}
 
 	/* =========================
@@ -183,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			cancelAnimationFrame(activeScrollAnimation);
 			activeScrollAnimation = null;
 		}
-		
+
 		const scrollToken = ++activeScrollToken;
 		const maxScrollY = getMaxScrollY();
 		const clampedTargetY = Math.max(0, Math.min(targetY, maxScrollY));
@@ -230,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		activeScrollAnimation = requestAnimationFrame(frame);
 	}
-	
+
 	function getTargetNavOffset(navMode = null) {
 		if (!navbar) return 0;
 
@@ -339,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const currentIndex = getSectionIndex(sectionEl);
 		if (currentIndex === -1) return;
-	
+
 		if (direction === "next") {
 			let nextTarget = null;
 
@@ -357,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			startNavbarAnimation();
 			return;
 		}
-		
+
 		if (direction === "prev") {
 			if (!allowPrev) return;
 
@@ -492,6 +494,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	const magneticButtons = document.querySelectorAll(".cta-button");
 	magneticButtons.forEach(btn => {
 		btn.addEventListener("mousemove", (e) => {
+			if (isMobileViewport() && isMobileNavOpen()) {
+				btn.style.transform = "";
+				return;
+			}
+
 			const rect = btn.getBoundingClientRect();
 			const x = e.clientX - rect.left - rect.width / 2;
 			const y = e.clientY - rect.top - rect.height / 2;
@@ -544,7 +551,20 @@ document.addEventListener("DOMContentLoaded", () => {
 				video.currentTime = 0.01;
 			});
 
+			video.addEventListener("pointerdown", e => {
+				if (isMobileViewport() && isMobileNavOpen()) {
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			});
+
 			video.addEventListener("pointerup", e => {
+				if (isMobileViewport() && isMobileNavOpen()) {
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
 				e.stopPropagation();
 				video.paused ? safePlay(video) : video.pause();
 			});
@@ -596,20 +616,36 @@ document.addEventListener("DOMContentLoaded", () => {
 		track.style.touchAction = "pan-y";
 
 		track.addEventListener("touchstart", e => {
+			if (isMobileViewport() && isMobileNavOpen()) {
+				e.preventDefault();
+				return;
+			}
+
 			startX = e.touches[0].clientX;
 			isDragging = true;
 			track.style.transition = "none";
-		});
+		}, { passive: false });
 
 		track.addEventListener("touchmove", e => {
+			if (isMobileViewport() && isMobileNavOpen()) {
+				e.preventDefault();
+				return;
+			}
+
 			if (!isDragging) return;
 			const diff = e.touches[0].clientX - startX;
 			const videoWidth = videos[0].offsetWidth;
 			const padding = track.parentElement.offsetWidth * 0.1;
 			track.style.transform = `translateX(${-currentIndex * videoWidth + diff - padding}px)`;
-		});
+		}, { passive: false });
 
 		track.addEventListener("touchend", e => {
+			if (isMobileViewport() && isMobileNavOpen()) {
+				e.preventDefault();
+				isDragging = false;
+				return;
+			}
+
 			if (!isDragging) return;
 			const diff = e.changedTouches[0].clientX - startX;
 			if (diff > 80) moveTo(currentIndex - 1, true);
@@ -652,9 +688,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-surface", 1);
 		navbar.style.setProperty("--nav-height-progress", 1);
 	}
-	
+
 	cta?.addEventListener("click", (e) => {
 		e.preventDefault();
+
+		/* Bei offenem Mobile-Menü darf nur das Logo Super-Power haben */
+		if (isMobileViewport() && isMobileNavOpen()) {
+			closeMobileNavMenu();
+			return;
+		}
 
 		closeMobileNavMenu();
 
@@ -665,7 +707,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollToSection(target, "down");
 		startNavbarAnimation();
 	});
-	
+
 	if (navLogo) {
 		navLogo.addEventListener("click", (e) => {
 			e.preventDefault();
@@ -680,9 +722,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			startNavbarAnimation();
 		});
 	}
-	
+
 	hero?.addEventListener("click", (e) => {
 		if (!navbar) return;
+
+		if (isMobileViewport() && isMobileNavOpen()) return;
 
 		const clickedCTA = e.target.closest(".cta-button");
 		const clickedIndicator = e.target.closest(".scroll-indicator");
@@ -906,48 +950,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	/* HAMBURGER TOGGLE */
 	if (navToggle && navMenu) {
-		navToggle.addEventListener("click", () => {
-			navToggle.classList.toggle("active");
-			navMenu.classList.toggle("active");
+		navToggle.addEventListener("click", (e) => {
+			e.stopPropagation();
+
+			if (isMobileNavOpen()) {
+				closeMobileNavMenu();
+			} else {
+				openMobileNavMenu();
+			}
 		});
 	}
-	
-	document.addEventListener("click", (e) => {
-		if (!isMobileViewport() || !isMobileNavOpen()) return;
 
-		const clickedInsideMenu = e.target.closest(".nav-menu");
-		const clickedNavLogo = e.target.closest(".nav-logo");
-		const clickedNavToggle = e.target.closest(".nav-toggle");
-
-		/* Klick im Menü selbst -> normale Menülogik darf laufen */
-		if (clickedInsideMenu) return;
-
-		/* Hamburger darf normal toggeln */
-		if (clickedNavToggle) return;
-
-		/* Logo ist die einzige Ausnahme mit voller Funktionalität */
-		if (clickedNavLogo) {
-			closeMobileNavMenu();
-			return;
-		}
-
-		/* Jeder andere Klick außerhalb des Menüs:
-		   nur Menü schließen, sonst nichts */
-		closeMobileNavMenu();
+	/* DISMISS LAYER:
+	   Bei offenem Mobile-Menü soll nur das Menü schließen.
+	   Keine anderen Screen-Funktionen dürfen feuern. */
+	navDismissLayer?.addEventListener("pointerdown", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		e.stopImmediatePropagation();
-	}, true);
-	
-	document.addEventListener("click", (e) => {
-		if (!isMobileNavOpen()) return;
-
-		const clickedInsideMenu = e.target.closest(".nav-menu");
-		const clickedToggle = e.target.closest(".nav-toggle");
-
-		if (clickedInsideMenu || clickedToggle) return;
-
 		closeMobileNavMenu();
+	});
+
+	navDismissLayer?.addEventListener("click", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
 	});
 
 	/* NAV LINKS */
@@ -984,6 +1009,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	pricingTabs.forEach(tab => {
 		tab.addEventListener("click", () => {
+			if (isMobileViewport() && isMobileNavOpen()) return;
+
 			pricingTabs.forEach(t => t.classList.remove("active"));
 			pricingContents.forEach(c => c.classList.remove("active"));
 
