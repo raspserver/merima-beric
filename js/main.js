@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-	/* prefers-reduced-motion Support */
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 	/* =========================
-	   GLOBAL NAV / SCROLL STATE
+	   DOM
 	========================= */
 	const navbar = document.querySelector(".navbar");
 	const hero = document.querySelector(".hero");
@@ -13,10 +12,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	const navLogo = document.querySelector(".nav-logo");
 	const navDismissLayer = document.querySelector(".nav-dismiss-layer");
 	const cta = document.querySelector(".cta-button");
+	const footer = document.querySelector("footer");
+	const heroIndicator = document.querySelector(".hero .scroll-indicator");
+	const footerToContactTrigger = document.querySelector(".footer-scroll-trigger");
 
+	/* =========================
+	   CONFIG
+	========================= */
 	const directionLockThreshold = 8;
 	const inertiaThreshold = Math.min(document.documentElement.clientHeight * 0.6, 600);
+	const sectionNavClickDelay = 240;
 
+	/* =========================
+	   STATE
+	========================= */
 	let lastScrollY = window.scrollY;
 	let scrollVelocity = 0;
 	let scrollDirection = "down";
@@ -43,10 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	let currentSurface = 0;
 	let surfaceVelocity = 0;
 
-	let navVisibleStiffness, navVisibleDamping, navCompactStiffness, navCompactDamping;
+	let navVisibleStiffness = 0.08;
+	let navVisibleDamping = 0.82;
+	let navCompactStiffness = 0.045;
+	let navCompactDamping = 0.88;
 
 	let NAV_SURFACE_UP = 0.18;
-
 	let sectionScrollInset = 1;
 
 	let scrollElasticDecay = 10;
@@ -62,14 +73,55 @@ document.addEventListener("DOMContentLoaded", () => {
 	let heroScaleScrollFactor = 0.01;
 	let heroBrightnessScrollFactor = 0.06;
 
+	let activeScrollAnimation = null;
+	let activeScrollToken = 0;
+
 	/* =========================
-	   ROOT VARIABLE HELPERS
+	   HELPERS
 	========================= */
 	function getRootNumber(name, fallback) {
 		const value = parseFloat(
 			getComputedStyle(document.documentElement).getPropertyValue(name)
 		);
 		return Number.isFinite(value) ? value : fallback;
+	}
+
+	function isMobileViewport() {
+		return window.innerWidth <= 968;
+	}
+
+	function isMobileNavOpen() {
+		return !!(navMenu && navToggle && navMenu.classList.contains("active"));
+	}
+
+	function openMobileNavMenu() {
+		if (!navMenu || !navToggle) return;
+		navMenu.classList.add("active");
+		navToggle.classList.add("active");
+		navDismissLayer?.classList.add("active");
+	}
+
+	function closeMobileNavMenu() {
+		if (!navMenu || !navToggle) return;
+		navMenu.classList.remove("active");
+		navToggle.classList.remove("active");
+		navDismissLayer?.classList.remove("active");
+	}
+
+	function setNavbarTargets(visible, compact, surface) {
+		if (!navbar) return;
+		targetVisible = visible;
+		targetCompact = compact;
+		targetSurface = surface;
+		startNavbarAnimation();
+	}
+
+	function startNavbarAnimation() {
+		if (!animationRunning) {
+			animationRunning = true;
+			lastFrameTime = performance.now();
+			requestAnimationFrame(animate);
+		}
 	}
 
 	function updatePhysics() {
@@ -94,80 +146,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (isMobile) {
 			navVisibleStiffness = getRootNumber("--nav-spring-stiffness-mobile", 0.06);
 			navVisibleDamping = getRootNumber("--nav-spring-damping-mobile", 0.85);
-
 			navCompactStiffness = getRootNumber("--nav-compact-stiffness-mobile", 0.035);
 			navCompactDamping = getRootNumber("--nav-compact-damping-mobile", 0.90);
 		} else {
 			navVisibleStiffness = getRootNumber("--nav-spring-stiffness-desktop", 0.08);
 			navVisibleDamping = getRootNumber("--nav-spring-damping-desktop", 0.82);
-
 			navCompactStiffness = getRootNumber("--nav-compact-stiffness-desktop", 0.045);
 			navCompactDamping = getRootNumber("--nav-compact-damping-desktop", 0.88);
 		}
 	}
 
-	updatePhysics();
-	window.addEventListener("resize", updatePhysics);
-
-	/* =========================
-	   ANIMATION CORE
-	========================= */
-	function startNavbarAnimation() {
-		if (!animationRunning) {
-			animationRunning = true;
-			lastFrameTime = performance.now();
-			requestAnimationFrame(animate);
-		}
-	}
-
-	function setNavbarTargets(visible, compact, surface) {
-		if (!navbar) return;
-
-		targetVisible = visible;
-		targetCompact = compact;
-		targetSurface = surface;
-
-		startNavbarAnimation();
-	}
-
-	/* =========================
-	   MOBILE NAV HELPERS
-	========================= */
-	function isMobileViewport() {
-		return window.innerWidth <= 968;
-	}
-
-	function isMobileNavOpen() {
-		return !!(navMenu && navToggle && navMenu.classList.contains("active"));
-	}
-
-	function closeMobileNavMenu() {
-		if (!navMenu || !navToggle) return;
-
-		navMenu.classList.remove("active");
-		navToggle.classList.remove("active");
-		navDismissLayer?.classList.remove("active");
-	}
-
-	function openMobileNavMenu() {
-		if (!navMenu || !navToggle) return;
-
-		navMenu.classList.add("active");
-		navToggle.classList.add("active");
-		navDismissLayer?.classList.add("active");
-	}
-
-	/* =========================
-	   CUSTOM SCREEN SCROLL
-	========================= */
-	let activeScrollAnimation = null;
-	let activeScrollToken = 0;
-
 	function getMaxScrollY() {
-		return Math.max(
-			0,
-			document.documentElement.scrollHeight - window.innerHeight
-		);
+		return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
 	}
 
 	function easeOutElastic(t) {
@@ -175,9 +165,62 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (t === 1) return 1;
 
 		const c = (2 * Math.PI) / 3;
-
 		return Math.pow(2, -scrollElasticDecay * t) *
 			Math.sin((t * scrollElasticFrequency - scrollElasticPhaseShift) * c) + 1;
+	}
+
+	function getTargetNavOffset(navMode = null) {
+		if (!navbar) return 0;
+
+		const navMin = getRootNumber("--nav-height-min", 58);
+		const navMax = getRootNumber("--nav-height-max", 78);
+
+		if (navMode === "down" || navMode === "up-section") return navMin;
+		return navbar.offsetHeight || navMax;
+	}
+
+	function resolveTarget(targetOrSelector) {
+		if (!targetOrSelector) return null;
+		if (targetOrSelector instanceof Element) return targetOrSelector;
+
+		if (typeof targetOrSelector === "string") {
+			if (targetOrSelector === "#home") {
+				return document.querySelector("#home") || document.querySelector(".hero");
+			}
+			return document.querySelector(targetOrSelector);
+		}
+
+		return null;
+	}
+
+	function getScrollModeForTarget(target) {
+		if (!target) return "down";
+
+		const currentY = window.scrollY;
+		const targetY = target.getBoundingClientRect().top + window.pageYOffset;
+
+		if (target.classList?.contains("hero")) return "up-section";
+		return targetY < currentY ? "up-section" : "down";
+	}
+
+	function getSurfaceForMode(mode) {
+		return mode === "up-section" ? NAV_SURFACE_UP : 1;
+	}
+
+	function goToTarget(targetOrSelector, forcedMode = null) {
+		const target = resolveTarget(targetOrSelector);
+		if (!target) return;
+
+		const mode = forcedMode || getScrollModeForTarget(target);
+
+		if (isMobileViewport() && isMobileNavOpen()) {
+			closeMobileNavMenu();
+		}
+
+		manualNavbarOpen = false;
+		setNavbarTargets(1, 1, getSurfaceForMode(mode));
+		scrollToSection(target, mode);
+		startNavbarAnimation();
 	}
 
 	function animateWindowScrollTo(targetY, { onComplete } = {}) {
@@ -213,12 +256,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const elapsed = now - startTime;
 			const t = Math.min(elapsed / duration, 1);
-
 			const eased = prefersReducedMotion ? t : easeOutElastic(t);
 
 			const nextY = startY + distance * eased;
 			const clampedNextY = Math.max(0, Math.min(nextY, maxScrollY));
-
 			window.scrollTo(0, clampedNextY);
 
 			if (t < 1) {
@@ -233,22 +274,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		activeScrollAnimation = requestAnimationFrame(frame);
 	}
 
-	function getTargetNavOffset(navMode = null) {
-		if (!navbar) return 0;
-
-		const navMin = getRootNumber("--nav-height-min", 58);
-		const navMax = getRootNumber("--nav-height-max", 78);
-
-		if (navMode === "down" || navMode === "up-section") {
-			return navMin;
-		}
-
-		return navbar.offsetHeight || navMax;
-	}
-
-	/* =================================================
-	   CENTRAL SCROLL ENGINE
-	================================================= */
 	function scrollToSection(target, navMode = null) {
 		if (!target) return;
 
@@ -317,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	/* =========================
-	   SECTION SCROLL NAVIGATION
+	   SECTION NAVIGATION
 	========================= */
 	const orderedSections = [
 		document.querySelector(".hero"),
@@ -328,9 +353,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		document.querySelector("#testimonials"),
 		document.querySelector("#contact")
 	].filter(Boolean);
-
-	const footer = document.querySelector("footer");
-	const sectionNavClickDelay = 240;
 
 	function getSectionIndex(sectionEl) {
 		return orderedSections.findIndex(section => section === sectionEl);
@@ -343,33 +365,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (currentIndex === -1) return;
 
 		if (direction === "next") {
-			let nextTarget = null;
-
-			if (sectionEl.id === "contact") {
-				nextTarget = footer;
-			} else {
-				nextTarget = orderedSections[currentIndex + 1] || null;
-			}
+			const nextTarget =
+				sectionEl.id === "contact"
+					? footer
+					: orderedSections[currentIndex + 1] || null;
 
 			if (!nextTarget) return;
-
-			manualNavbarOpen = false;
-			setNavbarTargets(1, 1, 1);
-			scrollToSection(nextTarget, "down");
-			startNavbarAnimation();
+			goToTarget(nextTarget, "down");
 			return;
 		}
 
-		if (direction === "prev") {
-			if (!allowPrev) return;
-
+		if (direction === "prev" && allowPrev) {
 			const prevTarget = orderedSections[currentIndex - 1] || null;
 			if (!prevTarget) return;
-
-			manualNavbarOpen = false;
-			setNavbarTargets(1, 1, NAV_SURFACE_UP);
-			scrollToSection(prevTarget, "up-section");
-			startNavbarAnimation();
+			goToTarget(prevTarget, "up-section");
 		}
 	}
 
@@ -438,61 +447,45 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
-	/* Hero-Scroll-Indikator */
-	const heroIndicator = document.querySelector(".hero .scroll-indicator");
-
+	/* =========================
+	   HERO / FOOTER / CTA
+	========================= */
 	heroIndicator?.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		manualNavbarOpen = false;
-		setNavbarTargets(1, 1, 1);
-
-		const about = document.querySelector("#about");
-		scrollToSection(about, "down");
-		startNavbarAnimation();
+		goToTarget("#about", "down");
 	});
-
-	document.querySelectorAll("section").forEach(section => {
-		if (section.classList.contains("hero")) return;
-
-		bindSectionNavigator(section, section, {
-			allowPrev: true,
-			headSelector: ".section-scroll-head"
-		});
-	});
-
-	/* scroll indicator footer click */
-	const footerToContactTrigger = document.querySelector(".footer-scroll-trigger");
 
 	footerToContactTrigger?.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		manualNavbarOpen = false;
-		setNavbarTargets(1, 1, NAV_SURFACE_UP);
-
-		const contact = document.querySelector("#contact");
-		scrollToSection(contact, "up-section");
-		startNavbarAnimation();
+		goToTarget("#contact", "up-section");
 	});
 
 	footerToContactTrigger?.addEventListener("keydown", (e) => {
 		if (e.key !== "Enter" && e.key !== " ") return;
-
 		e.preventDefault();
-
-		manualNavbarOpen = false;
-		setNavbarTargets(1, 1, NAV_SURFACE_UP);
-
-		const contact = document.querySelector("#contact");
-		scrollToSection(contact, "up-section");
-		startNavbarAnimation();
+		goToTarget("#contact", "up-section");
 	});
 
-	/* Magnetic CTA Button */
-	const magneticButtons = document.querySelectorAll(".cta-button");
-	magneticButtons.forEach(btn => {
+	cta?.addEventListener("click", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		goToTarget("#contact", "down");
+	});
+
+	if (navLogo) {
+		navLogo.addEventListener("click", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			goToTarget(document.querySelector(".hero"), "up-section");
+		});
+	}
+
+	/* =========================
+	   MAGNETIC CTA
+	========================= */
+	document.querySelectorAll(".cta-button").forEach(btn => {
 		btn.addEventListener("mousemove", (e) => {
 			if (isMobileViewport() && isMobileNavOpen()) {
 				btn.style.transform = "";
@@ -511,7 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	/* =========================
-	   TRUE INFINITE GALLERY
+	   GALLERY
 	========================= */
 	const videoFiles = [
 		"videos/snaptik_7204469200172190982_hd.mp4",
@@ -521,6 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	];
 
 	const track = document.querySelector(".gallery-track");
+
 	if (track) {
 		let videos = [];
 		let currentIndex = 1;
@@ -532,6 +526,47 @@ document.addEventListener("DOMContentLoaded", () => {
 				[array[i], array[j]] = [array[j], array[i]];
 			}
 			return array;
+		}
+
+		function safePlay(video) {
+			const p = video.play();
+			if (p !== undefined) p.catch(() => {});
+		}
+
+		function playOnly(index) {
+			videos.forEach((v, i) => {
+				if (i === index) {
+					v.currentTime = 0;
+					safePlay(v);
+				} else {
+					v.pause();
+				}
+			});
+		}
+
+		function setPosition(index, animate = true) {
+			const videoWidth = videos[0].offsetWidth;
+			const padding = track.parentElement.offsetWidth * 0.1;
+			const offset = videoWidth * index - padding;
+
+			track.style.transition = animate
+				? "transform 0.6s cubic-bezier(.16,.84,.44,1)"
+				: "none";
+
+			track.style.transform = `translateX(-${offset}px)`;
+		}
+
+		function moveTo(index, autoPlay = false) {
+			if (isAnimating) return;
+			isAnimating = true;
+			currentIndex = index;
+			setPosition(currentIndex, true);
+
+			if (autoPlay) {
+				playOnly(currentIndex);
+			} else {
+				videos.forEach(v => v.pause());
+			}
 		}
 
 		const shuffled = shuffle([...videoFiles]);
@@ -551,14 +586,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				video.currentTime = 0.01;
 			});
 
-			video.addEventListener("pointerdown", e => {
+			video.addEventListener("pointerdown", (e) => {
 				if (isMobileViewport() && isMobileNavOpen()) {
 					e.preventDefault();
 					e.stopPropagation();
 				}
 			});
 
-			video.addEventListener("pointerup", e => {
+			video.addEventListener("pointerup", (e) => {
 				if (isMobileViewport() && isMobileNavOpen()) {
 					e.preventDefault();
 					e.stopPropagation();
@@ -576,39 +611,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			videos.push(video);
 		});
 
-		function safePlay(video) {
-			const p = video.play();
-			if (p !== undefined) p.catch(() => {});
-		}
-
-		function playOnly(index) {
-			videos.forEach((v, i) => i === index ? (v.currentTime = 0, safePlay(v)) : v.pause());
-		}
-
-		function setPosition(index, animate = true) {
-			const videoWidth = videos[0].offsetWidth;
-			const padding = track.parentElement.offsetWidth * 0.1;
-			const offset = videoWidth * index - padding;
-			track.style.transition = animate ? "transform 0.6s cubic-bezier(.16,.84,.44,1)" : "none";
-			track.style.transform = `translateX(-${offset}px)`;
-		}
-
-		function moveTo(index, autoPlay = false) {
-			if (isAnimating) return;
-			isAnimating = true;
-			currentIndex = index;
-			setPosition(currentIndex, true);
-			if (autoPlay) playOnly(currentIndex);
-			else videos.forEach(v => v.pause());
-		}
-
 		setPosition(currentIndex, false);
 		playOnly(currentIndex);
 
 		track.addEventListener("transitionend", () => {
 			isAnimating = false;
+
 			if (currentIndex === videos.length - 1) currentIndex = 1;
 			if (currentIndex === 0) currentIndex = videos.length - 2;
+
 			requestAnimationFrame(() => setPosition(currentIndex, false));
 		});
 
@@ -616,7 +627,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		let isDragging = false;
 		track.style.touchAction = "pan-y";
 
-		track.addEventListener("touchstart", e => {
+		track.addEventListener("touchstart", (e) => {
 			if (isMobileViewport() && isMobileNavOpen()) {
 				e.preventDefault();
 				return;
@@ -627,20 +638,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			track.style.transition = "none";
 		}, { passive: false });
 
-		track.addEventListener("touchmove", e => {
+		track.addEventListener("touchmove", (e) => {
 			if (isMobileViewport() && isMobileNavOpen()) {
 				e.preventDefault();
 				return;
 			}
 
 			if (!isDragging) return;
+
 			const diff = e.touches[0].clientX - startX;
 			const videoWidth = videos[0].offsetWidth;
 			const padding = track.parentElement.offsetWidth * 0.1;
+
 			track.style.transform = `translateX(${-currentIndex * videoWidth + diff - padding}px)`;
 		}, { passive: false });
 
-		track.addEventListener("touchend", e => {
+		track.addEventListener("touchend", (e) => {
 			if (isMobileViewport() && isMobileNavOpen()) {
 				e.preventDefault();
 				isDragging = false;
@@ -648,21 +661,25 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			if (!isDragging) return;
+
 			const diff = e.changedTouches[0].clientX - startX;
+
 			if (diff > 80) moveTo(currentIndex - 1, true);
 			else if (diff < -80) moveTo(currentIndex + 1, true);
 			else setPosition(currentIndex, true);
+
 			isDragging = false;
 		});
 
 		const gallerySection = document.querySelector(".gallery");
 		if (gallerySection) {
-			const observer = new IntersectionObserver(entries => {
+			const observer = new IntersectionObserver((entries) => {
 				entries.forEach(entry => {
 					if (!videos[currentIndex]) return;
 					entry.isIntersecting ? playOnly(currentIndex) : videos.forEach(v => v.pause());
 				});
 			}, { threshold: 0.4 });
+
 			observer.observe(gallerySection);
 		}
 
@@ -674,79 +691,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	/* =========================
-	   NAVBAR
+	   HERO CLICK BEHAVIOR
 	========================= */
-	if (hero) {
-		hero.style.setProperty(
-			"--hero-brightness",
-			1 - (Math.min(window.scrollY / window.innerHeight, 1) * heroBrightnessScrollFactor)
-		);
-	}
-
-	if (navbar && prefersReducedMotion) {
-		navbar.style.setProperty("--nav-visible", 1);
-		navbar.style.setProperty("--nav-compact", 1);
-		navbar.style.setProperty("--nav-surface", 1);
-		navbar.style.setProperty("--nav-height-progress", 1);
-	}
-
-	/* CTA: auch bei offenem Mobile-Menü aktiv */
-	cta?.addEventListener("click", (e) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (isMobileViewport() && isMobileNavOpen()) {
-			closeMobileNavMenu();
-		}
-
-		manualNavbarOpen = false;
-		setNavbarTargets(1, 1, 1);
-
-		const target = document.querySelector("#contact");
-		scrollToSection(target, "down");
-		startNavbarAnimation();
-	});
-
-	if (navLogo) {
-		navLogo.addEventListener("click", (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			closeMobileNavMenu();
-
-			manualNavbarOpen = false;
-			setNavbarTargets(1, 1, NAV_SURFACE_UP);
-
-			const heroSection = document.querySelector(".hero");
-			scrollToSection(heroSection, "up-section");
-			startNavbarAnimation();
-		});
-	}
-
 	hero?.addEventListener("click", (e) => {
 		if (!navbar) return;
-
 		if (isMobileViewport() && isMobileNavOpen()) return;
 
 		const clickedCTA = e.target.closest(".cta-button");
 		const clickedIndicator = e.target.closest(".scroll-indicator");
-
 		if (clickedCTA || clickedIndicator) return;
 
 		const ctaRect = cta?.getBoundingClientRect();
-
-		if (ctaRect) {
-			const clickY = e.clientY;
-
-			if (clickY > ctaRect.bottom) {
-				manualNavbarOpen = false;
-				setNavbarTargets(1, 1, 1);
-
-				const about = document.querySelector("#about");
-				scrollToSection(about, "down");
-				startNavbarAnimation();
-				return;
-			}
+		if (ctaRect && e.clientY > ctaRect.bottom) {
+			goToTarget("#about", "down");
+			return;
 		}
 
 		const visible = parseFloat(
@@ -754,16 +712,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		);
 
 		const newTarget = visible < 0.5 ? 1 : 0;
-
 		targetVisible = newTarget;
 		targetCompact = newTarget;
 		targetSurface = newTarget;
-
 		manualNavbarOpen = newTarget === 1;
 
 		startNavbarAnimation();
 	});
 
+	/* =========================
+	   NAVBAR SCROLL LOGIC
+	========================= */
 	function handleScroll() {
 		if (!navbar) return;
 
@@ -772,25 +731,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		scrollVelocity = deltaY * 0.8;
 
-		if (!programmaticScroll) {
-			if (Math.abs(deltaY) > directionLockThreshold) {
-				scrollDirection = deltaY > 0 ? "down" : "up";
-			}
+		if (!programmaticScroll && Math.abs(deltaY) > directionLockThreshold) {
+			scrollDirection = deltaY > 0 ? "down" : "up";
 		}
 
 		lastScrollY = currentY;
+		hero?.classList.toggle("scrolled", currentY > 10);
 
-		const scrollY = lastScrollY;
-		hero?.classList.toggle("scrolled", scrollY > 10);
-
-		/* =========================
-		   PROGRAMMATIC SCROLL STATE
-		========================= */
 		if (programmaticNavMode === "down") {
 			targetVisible = 1;
 			targetCompact = 1;
 			targetSurface = 1;
-
 			startNavbarAnimation();
 			return;
 		}
@@ -799,7 +750,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			targetVisible = 1;
 			targetCompact = 1;
 			targetSurface = NAV_SURFACE_UP;
-
 			startNavbarAnimation();
 			return;
 		}
@@ -808,16 +758,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			targetVisible = 0;
 			targetCompact = 0;
 			targetSurface = 0;
-
 			startNavbarAnimation();
 			return;
 		}
 
-		/* =========================
-		   MANUAL NAVBAR OPEN STATE
-		========================= */
 		if (manualNavbarOpen) {
-			if (scrollY <= 5) {
+			if (currentY <= 5) {
 				manualNavbarOpen = false;
 				targetVisible = 0;
 				targetCompact = 0;
@@ -832,10 +778,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		/* =========================
-		   NORMAL SCROLL BEHAVIOR
-		========================= */
-		if (scrollY <= 5) {
+		if (currentY <= 5) {
 			targetVisible = 0;
 			targetCompact = 0;
 			targetSurface = 0;
@@ -850,10 +793,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		startNavbarAnimation();
-	}
-
-	if (navbar) {
-		window.addEventListener("scroll", handleScroll, { passive: true });
 	}
 
 	function animate(now) {
@@ -938,35 +877,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		requestAnimationFrame(animate);
 	}
 
-	handleScroll();
-
-	document.addEventListener("visibilitychange", () => {
-		if (document.hidden) {
-			animationRunning = false;
-		} else {
-			handleScroll();
-		}
-	});
-
-	/* HAMBURGER TOGGLE */
+	/* =========================
+	   NAV EVENTS
+	========================= */
 	if (navToggle && navMenu) {
 		navToggle.addEventListener("click", (e) => {
 			e.preventDefault();
 			e.stopPropagation();
-
-			if (isMobileNavOpen()) {
-				closeMobileNavMenu();
-			} else {
-				openMobileNavMenu();
-			}
+			isMobileNavOpen() ? closeMobileNavMenu() : openMobileNavMenu();
 		});
 	}
 
-	/* CLICK AUF NAVBAR-FLÄCHE SCHLIESST OFFENES MOBILE-MENÜ
-	   Ausnahmen:
-	   - nav-link
-	   - logo
-	   - toggle */
 	navbar?.addEventListener("click", (e) => {
 		if (!isMobileViewport() || !isMobileNavOpen()) return;
 
@@ -981,9 +902,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		closeMobileNavMenu();
 	});
 
-	/* DISMISS LAYER:
-	   Bei offenem Mobile-Menü soll nur das Menü schließen.
-	   Keine anderen Screen-Funktionen dürfen feuern. */
 	navDismissLayer?.addEventListener("pointerdown", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -995,49 +913,34 @@ document.addEventListener("DOMContentLoaded", () => {
 		e.stopPropagation();
 	});
 
-	/* NAV LINKS */
 	navLinks.forEach(link => {
 		link.addEventListener("click", (e) => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			const targetId = link.getAttribute("href");
-			let target = null;
-
-			if (targetId === "#home") {
-				target = document.querySelector("#home") || document.querySelector(".hero");
-			} else {
-				target = document.querySelector(targetId);
-			}
-
+			const href = link.getAttribute("href");
+			const target = resolveTarget(href);
 			if (!target) return;
 
-			if (isMobileViewport() && isMobileNavOpen()) {
-				closeMobileNavMenu();
-			}
-
-			const currentY = window.scrollY;
-			const targetY = target.getBoundingClientRect().top + window.pageYOffset;
-			const isScrollingUp = targetY < currentY;
-
-			manualNavbarOpen = false;
-
-			if (target.classList?.contains("hero")) {
-				setNavbarTargets(1, 1, NAV_SURFACE_UP);
-				scrollToSection(target, "up-section");
-			} else if (isScrollingUp) {
-				setNavbarTargets(1, 1, NAV_SURFACE_UP);
-				scrollToSection(target, "up-section");
-			} else {
-				setNavbarTargets(1, 1, 1);
-				scrollToSection(target, "down");
-			}
-
-			startNavbarAnimation();
+			goToTarget(target);
 		});
 	});
 
-	/* Pricing Tabs */
+	/* =========================
+	   SECTION CLICK BINDINGS
+	========================= */
+	document.querySelectorAll("section").forEach(section => {
+		if (section.classList.contains("hero")) return;
+
+		bindSectionNavigator(section, section, {
+			allowPrev: true,
+			headSelector: ".section-scroll-head"
+		});
+	});
+
+	/* =========================
+	   PRICING TABS
+	========================= */
 	const pricingTabs = document.querySelectorAll(".pricing-tab");
 	const pricingContents = document.querySelectorAll(".pricing-content");
 
@@ -1054,7 +957,40 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	});
 
-	/* Jahr im Footer */
+	/* =========================
+	   INIT
+	========================= */
+	updatePhysics();
+	window.addEventListener("resize", updatePhysics);
+
+	if (hero) {
+		hero.style.setProperty(
+			"--hero-brightness",
+			1 - (Math.min(window.scrollY / window.innerHeight, 1) * heroBrightnessScrollFactor)
+		);
+	}
+
+	if (navbar && prefersReducedMotion) {
+		navbar.style.setProperty("--nav-visible", 1);
+		navbar.style.setProperty("--nav-compact", 1);
+		navbar.style.setProperty("--nav-surface", 1);
+		navbar.style.setProperty("--nav-height-progress", 1);
+	}
+
+	if (navbar) {
+		window.addEventListener("scroll", handleScroll, { passive: true });
+	}
+
+	handleScroll();
+
+	document.addEventListener("visibilitychange", () => {
+		if (document.hidden) {
+			animationRunning = false;
+		} else {
+			handleScroll();
+		}
+	});
+
 	const year = document.getElementById("year");
 	if (year) {
 		year.textContent = new Date().getFullYear();
