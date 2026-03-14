@@ -325,6 +325,95 @@
 	- höher = große Sprünge dürfen mehr “cinematic” sein
 
 	 */
+	 
+	 
+	/* =========================
+	   PARALLAX VARIABLEN
+	========================= */
+	/*
+
+	Die 5 Variablen steuern den Hero-Scroll-Effekt: also wie sich der Hero-Bereich beim Scrollen verschiebt,
+	nachfedert, minimal skaliert und abdunkelt.
+	
+	1) --hero-parallax-factor
+
+	Das ist der Ziel-Faktor für die vertikale Verschiebung des Hero-Inhalts beim Scrollen.
+
+	Wirkung
+
+	 - bestimmt, wie stark der Hero-Inhalt auf Scroll reagiert
+	 - weil der Wert negativ ist, bewegt sich der Inhalt leicht nach oben, wenn man nach unten scrollt
+	 - je größer der Betrag, desto stärker die Parallax-Bewegung
+
+	Merksatz: parallax-factor = Wie weit soll der Hero grundsätzlich wandern?
+
+	2) --hero-parallax-stiffness
+
+	Das ist die Federhärte der Parallax-Reaktion.
+	
+	Wirkung
+
+	 - bestimmt, wie aggressiv der aktuelle Wert zum Zielwert gezogen wird
+	 - höher = schnelleres Annähern
+	 - niedriger = träger, weicher, luxuriöser
+
+	Merksatz: stiffness = Wie stark zieht die Feder zum Ziel?
+	
+	3) --hero-parallax-damping
+
+	Das ist die Dämpfung der Parallax-Geschwindigkeit.
+
+	Wirkung
+
+	 - bestimmt, wie viel von der Bewegungsgeschwindigkeit pro Frame erhalten bleibt
+	 - höher = Bewegung hält länger an, wirkt flüssiger und etwas schwebender
+	 - niedriger = Bewegung wird schneller gebremst
+
+	Merksatz: damping = Wie stark wird die Bewegung beruhigt?
+
+	4) --hero-scale-scroll-factor
+
+	Das steuert, wie stark der Hero beim Scrollen minimal kleiner skaliert wird.
+
+	Wirkung
+
+	progress läuft von 0 bis 1, also wird bei dir:
+
+	 - Start: scale = 1
+	 - Maximal: scale = 1 - 0.01 = 0.99
+
+	Der Hero-Inhalt wird also höchstens auf 99 % verkleinert.
+
+	Bedeutung
+
+	Das ist ein sehr subtiler Tiefeneffekt:
+
+	 - beim Scrollen wirkt der Hero leicht „zurückweichend“
+	 - unterstützt das Premium-/Cinematic-Gefühl
+	 - sollte meistens klein bleiben
+
+	Merksatz: scale-scroll-factor = Wie stark schrumpft der Hero beim Scrollen?
+
+	5) --hero-brightness-scroll-factor
+
+	Das steuert, wie stark der Hero beim Scrollen visuell dunkler wird.
+	
+	Wirkung
+
+	 - Start: --hero-brightness = 1
+	 - Maximal: 1 - 0.06 = 0.94
+
+	Der Wert selbst dimmt nicht direkt per filter: brightness(), sondern wird von deinem Overlay benutzt.
+	
+	Das heißt:
+
+	- je kleiner --hero-brightness
+	- desto stärker wird das dunkle Overlay sichtbar
+	- dadurch wirkt der Hero beim Scrollen leicht dramatischer und ruhiger
+	
+	Merksatz: brightness-scroll-factor = Wie stark dunkelt der Hero beim Scrollen ab?
+
+	*/
 
 * {
 	margin: 0;
