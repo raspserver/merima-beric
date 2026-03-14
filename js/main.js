@@ -129,6 +129,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		startNavbarAnimation();
 	}
 	
+	function isMobileViewport() {
+		return window.innerWidth <= 968;
+	}
+
+	function isMobileNavOpen() {
+		return !!(navMenu && navToggle && navMenu.classList.contains("active"));
+	}
+
+	function closeMobileNavMenu() {
+		if (!navMenu || !navToggle) return;
+
+		navMenu.classList.remove("active");
+		navToggle.classList.remove("active");
+	}
+
 	function isMobileNavOpen() {
 		return !!(navMenu && navToggle && navMenu.classList.contains("active"));
 	}
@@ -650,7 +665,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollToSection(target, "down");
 		startNavbarAnimation();
 	});
-
+	
 	if (navLogo) {
 		navLogo.addEventListener("click", (e) => {
 			e.preventDefault();
@@ -896,6 +911,33 @@ document.addEventListener("DOMContentLoaded", () => {
 			navMenu.classList.toggle("active");
 		});
 	}
+	
+	document.addEventListener("click", (e) => {
+		if (!isMobileViewport() || !isMobileNavOpen()) return;
+
+		const clickedInsideMenu = e.target.closest(".nav-menu");
+		const clickedNavLogo = e.target.closest(".nav-logo");
+		const clickedNavToggle = e.target.closest(".nav-toggle");
+
+		/* Klick im Menü selbst -> normale Menülogik darf laufen */
+		if (clickedInsideMenu) return;
+
+		/* Hamburger darf normal toggeln */
+		if (clickedNavToggle) return;
+
+		/* Logo ist die einzige Ausnahme mit voller Funktionalität */
+		if (clickedNavLogo) {
+			closeMobileNavMenu();
+			return;
+		}
+
+		/* Jeder andere Klick außerhalb des Menüs:
+		   nur Menü schließen, sonst nichts */
+		closeMobileNavMenu();
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
+	}, true);
 	
 	document.addEventListener("click", (e) => {
 		if (!isMobileNavOpen()) return;
