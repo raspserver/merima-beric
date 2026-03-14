@@ -152,11 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			Math.sin((t * scrollElasticFrequency - scrollElasticPhaseShift) * c) + 1;
 	}
 
-	function easeOutCubic(t) {
-		return 1 - Math.pow(1 - t, 3);
-	}
-
-	function animateWindowScrollTo(targetY, { onComplete, forceElastic = false } = {}) {
+	function animateWindowScrollTo(targetY, { onComplete } = {}) {
 		if (activeScrollAnimation) {
 			cancelAnimationFrame(activeScrollAnimation);
 			activeScrollAnimation = null;
@@ -175,35 +171,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		const hitsBoundary =
-			clampedTargetY === maxScrollY ||
-			clampedTargetY !== targetY;
-
 		const duration = prefersReducedMotion
 			? Math.min(900, Math.max(350, absDistance * 0.35))
-			: hitsBoundary
-				? Math.min(
-					1350,
-					Math.max(520, absDistance * (scrollDurationFactor * 0.58))
-				)
-				: Math.min(
-					scrollDurationMax,
-					Math.max(scrollDurationMin, absDistance * scrollDurationFactor)
-				);
+			: Math.min(
+				scrollDurationMax,
+				Math.max(scrollDurationMin, absDistance * scrollDurationFactor)
+			);
 
 		const startTime = performance.now();
 
 		function frame(now) {
 			if (scrollToken !== activeScrollToken) return;
-			
+
 			const elapsed = now - startTime;
 			const t = Math.min(elapsed / duration, 1);
 
-			const eased = prefersReducedMotion
-			? t
-			: (forceElastic || !hitsBoundary)
-				? easeOutElastic(t)
-				: easeOutCubic(t);
+			const eased = prefersReducedMotion ? t : easeOutElastic(t);
 
 			const nextY = startY + distance * eased;
 			const clampedNextY = Math.max(0, Math.min(nextY, maxScrollY));
@@ -221,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		activeScrollAnimation = requestAnimationFrame(frame);
 	}
-
+	
 	function getTargetNavOffset(navMode = null) {
 		if (!navbar) return 0;
 
@@ -238,10 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* =================================================
 	   CENTRAL SCROLL ENGINE
 	================================================= */
-	function scrollToSection(target, navMode = null, options = {}) {
+	function scrollToSection(target, navMode = null) {
 		if (!target) return;
-		
-		const { forceElastic = false } = options;
 
 		const isHeroTarget = target.classList?.contains("hero");
 		const isFooterTarget = target.tagName?.toLowerCase() === "footer";
@@ -272,10 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			scrollDirection = "up";
 		}
 
-
 		animateWindowScrollTo(Math.max(0, y), {
-			forceElastic,
-			onComplete: () => {			
+			onComplete: () => {
 				const finalMode = programmaticNavMode;
 				const finalY = window.scrollY;
 
@@ -334,15 +313,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const currentIndex = getSectionIndex(sectionEl);
 		if (currentIndex === -1) return;
-
+	
 		if (direction === "next") {
 			let nextTarget = null;
 
-			let forceElasticToTarget = false;
-
 			if (sectionEl.id === "contact") {
 				nextTarget = footer;
-				forceElasticToTarget = true;
 			} else {
 				nextTarget = orderedSections[currentIndex + 1] || null;
 			}
@@ -350,12 +326,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!nextTarget) return;
 
 			manualNavbarOpen = false;
-			setNavbarTargets(1, 1, 1);	
-			scrollToSection(nextTarget, "down", { forceElastic: forceElasticToTarget });
+			setNavbarTargets(1, 1, 1);
+			scrollToSection(nextTarget, "down");
 			startNavbarAnimation();
 			return;
 		}
-
+		
 		if (direction === "prev") {
 			if (!allowPrev) return;
 
