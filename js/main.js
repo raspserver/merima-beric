@@ -562,6 +562,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (isMobileViewport() && isMobileNavOpen()) {
 					e.preventDefault();
 					e.stopPropagation();
+					closeMobileNavMenu();
 					return;
 				}
 
@@ -689,16 +690,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbar.style.setProperty("--nav-height-progress", 1);
 	}
 
+	/* CTA: auch bei offenem Mobile-Menü aktiv */
 	cta?.addEventListener("click", (e) => {
 		e.preventDefault();
+		e.stopPropagation();
 
-		/* Bei offenem Mobile-Menü darf nur das Logo Super-Power haben */
 		if (isMobileViewport() && isMobileNavOpen()) {
 			closeMobileNavMenu();
-			return;
 		}
-
-		closeMobileNavMenu();
 
 		manualNavbarOpen = false;
 		setNavbarTargets(1, 1, 1);
@@ -711,6 +710,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	if (navLogo) {
 		navLogo.addEventListener("click", (e) => {
 			e.preventDefault();
+			e.stopPropagation();
 
 			closeMobileNavMenu();
 
@@ -951,6 +951,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* HAMBURGER TOGGLE */
 	if (navToggle && navMenu) {
 		navToggle.addEventListener("click", (e) => {
+			e.preventDefault();
 			e.stopPropagation();
 
 			if (isMobileNavOpen()) {
@@ -960,6 +961,25 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 	}
+
+	/* CLICK AUF NAVBAR-FLÄCHE SCHLIESST OFFENES MOBILE-MENÜ
+	   Ausnahmen:
+	   - nav-link
+	   - logo
+	   - toggle */
+	navbar?.addEventListener("click", (e) => {
+		if (!isMobileViewport() || !isMobileNavOpen()) return;
+
+		const clickedLink = e.target.closest(".nav-menu a");
+		const clickedLogo = e.target.closest(".nav-logo");
+		const clickedToggle = e.target.closest(".nav-toggle");
+
+		if (clickedLink || clickedLogo || clickedToggle) return;
+
+		e.preventDefault();
+		e.stopPropagation();
+		closeMobileNavMenu();
+	});
 
 	/* DISMISS LAYER:
 	   Bei offenem Mobile-Menü soll nur das Menü schließen.
@@ -979,10 +999,22 @@ document.addEventListener("DOMContentLoaded", () => {
 	navLinks.forEach(link => {
 		link.addEventListener("click", (e) => {
 			e.preventDefault();
+			e.stopPropagation();
 
 			const targetId = link.getAttribute("href");
-			const target = document.querySelector(targetId);
+			let target = null;
+
+			if (targetId === "#home") {
+				target = document.querySelector("#home") || document.querySelector(".hero");
+			} else {
+				target = document.querySelector(targetId);
+			}
+
 			if (!target) return;
+
+			if (isMobileViewport() && isMobileNavOpen()) {
+				closeMobileNavMenu();
+			}
 
 			const currentY = window.scrollY;
 			const targetY = target.getBoundingClientRect().top + window.pageYOffset;
@@ -990,7 +1022,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			manualNavbarOpen = false;
 
-			if (isScrollingUp) {
+			if (target.classList?.contains("hero")) {
+				setNavbarTargets(1, 1, NAV_SURFACE_UP);
+				scrollToSection(target, "up-section");
+			} else if (isScrollingUp) {
 				setNavbarTargets(1, 1, NAV_SURFACE_UP);
 				scrollToSection(target, "up-section");
 			} else {
@@ -999,7 +1034,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			startNavbarAnimation();
-			closeMobileNavMenu();
 		});
 	});
 
