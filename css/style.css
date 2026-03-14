@@ -248,7 +248,7 @@
 	--nav-compact-stiffness-mobile: 0.035;
 	--nav-compact-damping-mobile: 0.90;
 
-	--scroll-elastic-decay: 10;
+	--scroll-elastic-decay: 30;
 	--scroll-elastic-frequency: 10;
 	--scroll-elastic-phase-shift: 0.75;
 	--scroll-duration-factor: 0.6;
