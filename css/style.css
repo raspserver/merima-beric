@@ -806,13 +806,6 @@ html, body {
 	box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
 }
 
-body.nav-menu-open .cta-button:hover {
-	background: var(--primary-color);
-	color: var(--secondary-color);
-	transform: none;
-	box-shadow: none;
-}
-
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button:hover,
 body.suppress-cta-hover .cta-button:active,
