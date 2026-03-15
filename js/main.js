@@ -1031,10 +1031,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		bindCTA() {
 
 			DOM.cta?.addEventListener("click", (e) => {
-				if (state.suppressNextCtaClick) {
-					state.suppressNextCtaClick = false;
+				if (utils.isMobileViewport() && navbarModule.isOpen()) {
 					e.preventDefault();
 					e.stopPropagation();
+					navbarModule.closeMenu();
 					return;
 				}
 
