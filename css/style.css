@@ -1603,6 +1603,8 @@ footer a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
+    z-index: 1001;
 
 	height: calc(
 		var(--nav-height-max) -
@@ -1747,7 +1749,7 @@ footer a:hover {
 			var(--nav-height-max) -
 			((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
 		));
-		z-index: 998;
+		z-index: 997;
 		display: block;
 		opacity: 0;
 		background: transparent;
@@ -1784,6 +1786,7 @@ footer a:hover {
     flex-direction: column;
     cursor: pointer;
     gap: 5px;
+    z-index: 2101;
 }
 
 .nav-toggle span {
