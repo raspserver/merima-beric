@@ -613,16 +613,40 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.closeMenu();
 			});
 
+			
+			
+			
+			
 			DOM.navDismissLayer?.addEventListener("pointerdown", (e) => {
+				
+				
+				
+				console.log("DISMISS LAYER pointerdown", e.target);
+				
+				
+				
+				
 				e.preventDefault();
 				e.stopPropagation();
 				this.closeMenu();
 			});
 
 			DOM.navDismissLayer?.addEventListener("click", (e) => {
+				
+				
+				
+				console.log("DISMISS LAYER click", e.target);
+				
+				
+				
+				
 				e.preventDefault();
 				e.stopPropagation();
 			});
+			
+			
+
+			
 
 			DOM.navLinks.forEach(link => {
 				link.addEventListener("click", (e) => {
