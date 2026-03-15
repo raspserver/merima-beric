@@ -127,6 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		programmaticScroll: false,
 		manualNavbarOpen: false,
 		programmaticNavMode: null, // null | "down" | "up-section" | "hero-top"
+		
+		suppressNextCtaClick: false,
 
 		targetVisible: 0,
 		currentVisible: 0,
@@ -673,7 +675,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				goHome();
 			});
-
+	
 			document.addEventListener("pointerdown", (e) => {
 				if (!utils.isMobileViewport() || !this.isOpen()) return;
 
@@ -683,12 +685,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				const insideMenu = target.closest(".nav-menu");
 				const onToggle = target.closest(".nav-toggle");
 				const onLogo = target.closest(".nav-logo");
+				const onCta = target.closest(".cta-button");
 
 				if (insideMenu || onToggle || onLogo) return;
 
+				if (onCta) {
+					state.suppressNextCtaClick = true;
+				}
+
 				this.closeMenu();
 			});
-
+			
 		}
 	};
 
