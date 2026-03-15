@@ -607,6 +607,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			DOM.navLinks.forEach(link => {
 				link.addEventListener("click", (e) => {
+					
+					
+					
+					
+					console.log("NAV CLICK", link);
+					
+					
+					
 					const rawHref = link.getAttribute("href");
 					if (!rawHref) return;
 
