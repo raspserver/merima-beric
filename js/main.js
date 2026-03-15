@@ -911,18 +911,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		getColumnLeft() {
-			const aboutImage = document.querySelector("#about .about-image-wrapper");
-			if (aboutImage) {
-				const rect = aboutImage.getBoundingClientRect();
+			const aboutText = document.querySelector("#about .about-text");
+			if (aboutText) {
+				const rect = aboutText.getBoundingClientRect();
 				if (Number.isFinite(rect.left)) {
-					return Math.max(12, rect.left);
+					return Math.max(12, rect.left / 2);
 				}
 			}
 
 			const aboutContainer = document.querySelector("#about .container");
 			if (aboutContainer) {
 				const rect = aboutContainer.getBoundingClientRect();
-				return Math.max(12, rect.left);
+				if (Number.isFinite(rect.left)) {
+					return Math.max(12, rect.left / 2);
+				}
 			}
 
 			return 24;
