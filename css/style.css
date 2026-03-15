@@ -1749,7 +1749,7 @@ footer a:hover {
 			var(--nav-height-max) -
 			((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
 		));
-		z-index: 997;
+		z-index: 1000;
 		display: block;
 		opacity: 0;
 		background: transparent;
@@ -1854,7 +1854,7 @@ footer a:hover {
             opacity 0.25s ease,
             visibility 0s linear 0.4s;
 
-        z-index: 999;
+        z-index: 2100;
         will-change: transform;
         backface-visibility: hidden;
     }
