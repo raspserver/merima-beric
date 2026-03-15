@@ -1749,7 +1749,7 @@ footer a:hover {
 			var(--nav-height-max) -
 			((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
 		));
-		z-index: 1000;
+		z-index: 1500;
 /*
 		display: block;
 */
