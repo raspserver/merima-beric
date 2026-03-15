@@ -2085,15 +2085,21 @@ section > .section-scroll-head + * {
 	opacity: 0;
 	filter: blur(2px);
 
-	/* Auf normalem Screen vertikal, bei +90° Geräte-Drehung horizontal lesbar */
-	transform-origin: top left;
-	transform: rotate(-90deg) translateX(-100%);
-
 	transition:
 		opacity 0.35s ease,
 		filter 0.35s ease,
 		color 0.35s ease;
 	will-change: opacity, filter, transform;
+}
+
+.scroll-section-hint-anchor--top .scroll-section-hint {
+	transform-origin: top left;
+	transform: rotate(-90deg) translateX(-100%);
+}
+
+.scroll-section-hint-anchor--bottom .scroll-section-hint {
+	transform-origin: bottom left;
+	transform: rotate(-90deg) translateY(100%);
 }
 
 .scroll-section-hints.is-visible .scroll-section-hint {
