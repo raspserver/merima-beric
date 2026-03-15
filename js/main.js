@@ -583,31 +583,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navbar?.addEventListener("click", (e) => {
 				if (!utils.isMobileViewport() || !this.isOpen()) return;
 
-
-
-
-				console.log("NAVBAR CLICK target:", e.target);
-				console.log("closest .nav-menu a:", e.target.closest?.(".nav-menu a"));
-				console.log("closest .nav-logo:", e.target.closest?.(".nav-logo"));
-				console.log("closest .nav-toggle:", e.target.closest?.(".nav-toggle"));
-
-
-
-
 				const clickedLink = e.target.closest(".nav-menu a");
 				const clickedLogo = e.target.closest(".nav-logo");
 				const clickedToggle = e.target.closest(".nav-toggle");
 
 				if (clickedLink || clickedLogo || clickedToggle) return;
-				
-				
-				
-				
-				console.log("NAVBAR closes menu");
-				
-				
-				
-
 				e.preventDefault();
 				e.stopPropagation();
 				this.closeMenu();
@@ -618,28 +598,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			
 			
 			DOM.navDismissLayer?.addEventListener("pointerdown", (e) => {
-				
-				
-				
-				console.log("DISMISS LAYER pointerdown", e.target);
-				
-				
-				
-				
 				e.preventDefault();
 				e.stopPropagation();
 				this.closeMenu();
 			});
 
 			DOM.navDismissLayer?.addEventListener("click", (e) => {
-				
-				
-				
-				console.log("DISMISS LAYER click", e.target);
-				
-				
-				
-				
 				e.preventDefault();
 				e.stopPropagation();
 			});
@@ -650,14 +614,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			DOM.navLinks.forEach(link => {
 				link.addEventListener("click", (e) => {
-					
-					
-					
-					
-					console.log("NAV CLICK", link);
-					
-					
-					
 					const rawHref = link.getAttribute("href");
 					if (!rawHref) return;
 
