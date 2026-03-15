@@ -1072,13 +1072,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		bindCTA() {
-			
 			DOM.cta?.addEventListener("click", (e) => {
+				if (utils.isMobileViewport() && navbarModule.isOpen()) {
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
 				e.preventDefault();
 				e.stopPropagation();
 				scrollEngine.goTo("#contact", "down");
 			});
-			
+
 			document.querySelectorAll(".cta-button").forEach(btn => {
 				btn.addEventListener("mousemove", (e) => {
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
