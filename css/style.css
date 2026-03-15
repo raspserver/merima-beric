@@ -799,11 +799,13 @@ html, body {
 	will-change: transform;
 }
 
-.cta-button:hover {
-	background: transparent;
-	color: var(--primary-color);
-	transform: translateY(-3px);
-	box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+@media (hover: hover) and (pointer: fine) {
+	.cta-button:hover {
+		background: transparent;
+		color: var(--primary-color);
+		transform: translateY(-3px);
+		box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+	}
 }
 
 body.suppress-cta-hover .cta-button,
