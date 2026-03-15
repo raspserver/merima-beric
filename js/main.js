@@ -862,6 +862,191 @@ document.addEventListener("DOMContentLoaded", () => {
 	};
 
 	/* =========================================================
+	   SCROLL SECTION HINT MODULE
+	========================================================= */
+	const scrollSectionHintModule = {
+		root: null,
+		topHint: null,
+		bottomHint: null,
+		hideTimer: null,
+		lastKnownScrollY: window.scrollY,
+
+		labels: {
+			about: "ÜBER MICH",
+			gallery: "VIDEO-FUN",
+			services: "LEISTUNGEN",
+			pricing: "PREISE",
+			testimonials: "BEWERTUNGEN",
+			contact: "TERMIN BUCHEN"
+		},
+
+		build() {
+			if (this.root) return;
+
+			this.root = document.createElement("div");
+			this.root.className = "scroll-section-hints";
+			this.root.setAttribute("aria-hidden", "true");
+
+			this.root.innerHTML = `
+				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--top">
+					<div class="scroll-section-hint scroll-section-hint--active"></div>
+				</div>
+				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--bottom">
+					<div class="scroll-section-hint scroll-section-hint--next"></div>
+				</div>
+			`;
+
+			document.body.appendChild(this.root);
+
+			this.topHint = this.root.querySelector(".scroll-section-hint--active");
+			this.bottomHint = this.root.querySelector(".scroll-section-hint--next");
+		},
+
+		getContentSections() {
+			return state.orderedSections.filter(section => {
+				if (!section) return false;
+				if (section.classList?.contains("hero")) return false;
+				return !!section.id && !!this.labels[section.id];
+			});
+		},
+
+		getColumnLeft() {
+			const aboutImage = document.querySelector("#about .about-image-wrapper");
+			if (aboutImage) {
+				const rect = aboutImage.getBoundingClientRect();
+				if (Number.isFinite(rect.left)) {
+					return Math.max(12, rect.left);
+				}
+			}
+
+			const aboutContainer = document.querySelector("#about .container");
+			if (aboutContainer) {
+				const rect = aboutContainer.getBoundingClientRect();
+				return Math.max(12, rect.left);
+			}
+
+			return 24;
+		},
+
+		updateColumn() {
+			if (!this.root) return;
+			this.root.style.setProperty(
+				"--scroll-hint-column-left",
+				`${this.getColumnLeft()}px`
+			);
+		},
+
+		getActiveSection() {
+			const sections = this.getContentSections();
+			if (!sections.length) return null;
+
+			const probeY = window.innerHeight * 0.5;
+
+			let active = sections.find(section => {
+				const rect = section.getBoundingClientRect();
+				return rect.top <= probeY && rect.bottom > probeY;
+			});
+
+			if (active) return active;
+
+			active = sections.reduce((best, section) => {
+				const rect = section.getBoundingClientRect();
+				const sectionCenter = rect.top + rect.height / 2;
+				const distance = Math.abs(sectionCenter - probeY);
+
+				if (!best || distance < best.distance) {
+					return { section, distance };
+				}
+				return best;
+			}, null);
+
+			return active?.section || sections[0];
+		},
+
+		getNextSection(activeSection) {
+			const sections = this.getContentSections();
+			if (!activeSection) return sections[0] || null;
+
+			const index = sections.findIndex(section => section === activeSection);
+			if (index === -1) return sections[0] || null;
+
+			return sections[index + 1] || null;
+		},
+
+		updateLabels() {
+			if (!this.topHint || !this.bottomHint) return;
+
+			const activeSection = this.getActiveSection();
+			const nextSection = this.getNextSection(activeSection);
+
+			const activeLabel = activeSection?.id ? this.labels[activeSection.id] : "";
+			const nextLabel = nextSection?.id ? this.labels[nextSection.id] : "";
+
+			this.topHint.textContent = activeLabel ? `${activeLabel} >>` : "";
+			this.bottomHint.textContent = nextLabel ? `<< ${nextLabel}` : "";
+
+			this.topHint.classList.toggle("is-empty", !activeLabel);
+			this.bottomHint.classList.toggle("is-empty", !nextLabel);
+		},
+
+		show() {
+			if (!this.root) return;
+			this.root.classList.add("is-visible");
+		},
+
+		hide() {
+			if (!this.root) return;
+			this.root.classList.remove("is-visible");
+		},
+
+		pulse() {
+			this.updateColumn();
+			this.updateLabels();
+			this.show();
+
+			if (this.hideTimer) clearTimeout(this.hideTimer);
+
+			this.hideTimer = setTimeout(() => {
+				this.hide();
+			}, 180);
+		},
+
+		handleScroll() {
+			const currentY = window.scrollY;
+			if (currentY === this.lastKnownScrollY) return;
+
+			this.lastKnownScrollY = currentY;
+			this.pulse();
+		},
+
+		bindEvents() {
+			window.addEventListener("scroll", () => this.handleScroll(), { passive: true });
+
+			window.addEventListener("resize", () => {
+				this.updateColumn();
+				this.updateLabels();
+			});
+
+			window.addEventListener("orientationchange", () => {
+				setTimeout(() => {
+					this.updateColumn();
+					this.updateLabels();
+				}, 120);
+			});
+
+			window.addEventListener("wheel", () => this.pulse(), { passive: true });
+			window.addEventListener("touchmove", () => this.pulse(), { passive: true });
+		},
+
+		init() {
+			this.build();
+			this.updateColumn();
+			this.updateLabels();
+			this.bindEvents();
+		}
+	};
+
+	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
 	const galleryModule = {
@@ -1215,6 +1400,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		navbarModule.bindEvents();
 		sectionNavigationModule.bindEvents();
+		scrollSectionHintModule.init();
 		galleryModule.init();
 
 		uiModule.bindHeroAndFooter();

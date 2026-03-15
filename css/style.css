@@ -2031,6 +2031,96 @@ section > .section-scroll-head + * {
 	}
 }
 
+/* =========================
+   SCROLL SECTION HINTS
+========================= */
+
+:root {
+	--section-hint-top-offset: calc(var(--nav-height-max) + 14px);
+	--section-hint-bottom-offset: 18px;
+	--section-hint-color: rgba(45, 45, 45, 0.78);
+	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
+	--section-hint-size: 0.82rem;
+	--section-hint-letter-spacing: 0.22em;
+}
+
+.scroll-section-hints {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 1400; /* unter Navbar, über Content */
+	--scroll-hint-column-left: 24px;
+}
+
+.scroll-section-hint-anchor {
+	position: fixed;
+	left: var(--scroll-hint-column-left);
+	width: 0;
+	height: 0;
+}
+
+.scroll-section-hint-anchor--top {
+	top: var(--section-hint-top-offset);
+}
+
+.scroll-section-hint-anchor--bottom {
+	bottom: var(--section-hint-bottom-offset);
+}
+
+.scroll-section-hint {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	white-space: nowrap;
+	font-family: 'Montserrat', sans-serif;
+	font-size: var(--section-hint-size);
+	font-weight: 500;
+	letter-spacing: var(--section-hint-letter-spacing);
+	text-transform: uppercase;
+	line-height: 1;
+	color: var(--section-hint-color);
+
+	opacity: 0;
+	filter: blur(2px);
+
+	/* Auf normalem Screen vertikal, bei +90° Geräte-Drehung horizontal lesbar */
+	transform-origin: top left;
+	transform: rotate(-90deg) translateX(-100%);
+
+	transition:
+		opacity 0.35s ease,
+		filter 0.35s ease,
+		color 0.35s ease;
+	will-change: opacity, filter, transform;
+}
+
+.scroll-section-hints.is-visible .scroll-section-hint {
+	opacity: 1;
+	filter: blur(0);
+	color: var(--section-hint-color-strong);
+}
+
+.scroll-section-hint.is-empty {
+	opacity: 0 !important;
+}
+
+@media (max-width: 768px) {
+	:root {
+		--section-hint-size: 0.72rem;
+		--section-hint-letter-spacing: 0.16em;
+		--section-hint-top-offset: calc(var(--nav-height-min) + 10px);
+		--section-hint-bottom-offset: 14px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.scroll-section-hint {
+		transition: opacity 0.2s linear;
+		filter: none;
+	}
+}
+
 /* ===============================
    GALLERY / VIDEO SLIDER OPTIMIZED
 ================================= */
