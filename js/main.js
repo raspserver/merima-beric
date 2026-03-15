@@ -702,7 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.closeMenu();
 			});
 
-		}
+		},
 
 		suppressCtaHoverTemporarily() {
 			document.body.classList.add("suppress-cta-hover");
