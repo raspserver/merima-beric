@@ -2048,13 +2048,14 @@ section > .section-scroll-head + * {
 	position: fixed;
 	inset: 0;
 	pointer-events: none;
-	z-index: 1400; /* unter Navbar, über Content */
+	z-index: 1400;
 	--scroll-hint-column-left: 24px;
+	--scroll-hint-optical-shift: 0px;
 }
 
 .scroll-section-hint-anchor {
 	position: fixed;
-	left: var(--scroll-hint-column-left);
+	left: calc(var(--scroll-hint-column-left) + var(--scroll-hint-optical-shift));
 	width: 0;
 	height: 0;
 }
