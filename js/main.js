@@ -583,6 +583,17 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navbar?.addEventListener("click", (e) => {
 				if (!utils.isMobileViewport() || !this.isOpen()) return;
 
+
+
+
+				console.log("NAVBAR CLICK target:", e.target);
+				console.log("closest .nav-menu a:", e.target.closest?.(".nav-menu a"));
+				console.log("closest .nav-logo:", e.target.closest?.(".nav-logo"));
+				console.log("closest .nav-toggle:", e.target.closest?.(".nav-toggle"));
+
+
+
+
 				const clickedLink = e.target.closest(".nav-menu a");
 				const clickedLogo = e.target.closest(".nav-logo");
 				const clickedToggle = e.target.closest(".nav-toggle");
