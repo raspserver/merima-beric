@@ -599,6 +599,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				const clickedToggle = e.target.closest(".nav-toggle");
 
 				if (clickedLink || clickedLogo || clickedToggle) return;
+				
+				
+				
+				
+				console.log("NAVBAR closes menu");
+				
+				
+				
 
 				e.preventDefault();
 				e.stopPropagation();
