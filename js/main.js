@@ -84,10 +84,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (targetOrSelector instanceof Element) return targetOrSelector;
 
 			if (typeof targetOrSelector === "string") {
-				if (targetOrSelector === "#home") {
+				let selector = targetOrSelector.trim();
+
+				if (selector === "#home") {
 					return document.querySelector("#home") || document.querySelector(".hero");
 				}
-				return document.querySelector(targetOrSelector);
+
+				if (!selector.startsWith("#")) {
+					try {
+						selector = new URL(selector, window.location.href).hash || selector;
+					} catch {}
+				}
+
+				if (!selector.startsWith("#")) return null;
+
+				return document.querySelector(selector);
 			}
 
 			return null;
