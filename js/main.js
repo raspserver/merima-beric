@@ -699,6 +699,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (onCta) {
 					this.suppressCtaHoverTemporarily();
 					state.suppressNextCtaClick = true;
+					uiModule.resetCtaMagnetic();
 				}
 
 				this.closeMenu();
@@ -1053,6 +1054,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	   UI MODULE
 	========================================================= */
 	const uiModule = {
+		resetCtaMagnetic() {
+			document.querySelectorAll(".cta-button").forEach(btn => {
+				btn.style.transform = "";
+			});
+		},
+
 		bindHeroAndFooter() {
 			DOM.heroIndicator?.addEventListener("click", (e) => {
 				e.preventDefault();
