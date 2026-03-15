@@ -593,25 +593,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.closeMenu();
 			});
 
-			
-			
-			
-			
-			DOM.navDismissLayer?.addEventListener("pointerdown", (e) => {
-				e.preventDefault();
-				e.stopPropagation();
-				this.closeMenu();
-			});
-
-			DOM.navDismissLayer?.addEventListener("click", (e) => {
-				e.preventDefault();
-				e.stopPropagation();
-			});
-			
-			
-
-			
-
 			DOM.navLinks.forEach(link => {
 				link.addEventListener("click", (e) => {
 					const rawHref = link.getAttribute("href");
@@ -705,6 +686,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				goHome();
 			});
+
+			document.addEventListener("pointerdown", (e) => {
+				if (!utils.isMobileViewport() || !this.isOpen()) return;
+
+				const target = e.target instanceof Element ? e.target : null;
+				if (!target) return;
+
+				const insideMenu = target.closest(".nav-menu");
+				const onToggle = target.closest(".nav-toggle");
+				const onLogo = target.closest(".nav-logo");
+
+				if (insideMenu || onToggle || onLogo) return;
+
+				this.closeMenu();
+			});
+
 		}
 	};
 

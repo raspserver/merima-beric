@@ -1731,54 +1731,6 @@ footer a:hover {
     width: 100%;
 }
 
-.nav-dismiss-layer {
-	display: none;
-	pointer-events: none;
-}
-
-@media (max-width: 968px) {
-	.nav-dismiss-layer {
-		position: fixed;
-		top: calc(
-			var(--nav-height-max) -
-			((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
-		);
-		left: 0;
-		width: 100vw;
-		height: calc(100dvh - (
-			var(--nav-height-max) -
-			((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
-		));
-		z-index: 1500;
-/*
-		display: block;
-*/
-		
-		
-		display: none !important;
-		
-		
-
-		opacity: 0;
-		background: transparent;
-		transition: opacity 0.2s ease;
-/*
-		pointer-events: none;
-*/
-		
-		
-		
-		pointer-events: none !important;
-		
-		
-	}
-
-	.nav-dismiss-layer.active {
-		opacity: 1;
-		pointer-events: auto;
-	}
-}
-
 .nav-cta {
     background: var(--primary-color);
     color: var(--secondary-color) !important;
