@@ -2037,7 +2037,7 @@ section > .section-scroll-head + * {
 
 :root {
 	--section-hint-top-offset: calc(var(--nav-height-max) + 14px);
-	--section-hint-bottom-offset: 18px;
+	--section-hint-bottom-offset: 64px;
 	--section-hint-color: rgba(45, 45, 45, 0.78);
 	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
 	--section-hint-size: 0.82rem;
@@ -2099,7 +2099,7 @@ section > .section-scroll-head + * {
 
 .scroll-section-hint-anchor--bottom .scroll-section-hint {
 	transform-origin: bottom left;
-	transform: rotate(-90deg) translateY(calc(100% - 8px));
+	transform: rotate(-90deg) translateY(100%);
 }
 
 .scroll-section-hints.is-visible .scroll-section-hint {
@@ -2284,6 +2284,15 @@ section > .section-scroll-head + * {
 
 	.scroll-indicator {
 		bottom: 18px;
+	}
+}
+
+@media (max-width: 768px) {
+	:root {
+		--section-hint-size: 0.72rem;
+		--section-hint-letter-spacing: 0.16em;
+		--section-hint-top-offset: calc(var(--nav-height-min) + 10px);
+		--section-hint-bottom-offset: 48px;
 	}
 }
 
