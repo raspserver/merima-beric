@@ -1731,6 +1731,7 @@ footer a:hover {
 
 .nav-dismiss-layer {
 	display: none;
+	pointer-events: none;
 }
 
 @media (max-width: 968px) {
@@ -1748,15 +1749,12 @@ footer a:hover {
 		));
 		z-index: 998;
 		display: block;
-
 		opacity: 0;
-		pointer-events: none;
 		background: transparent;
-
 		transition: opacity 0.2s ease;
+		pointer-events: none;
 	}
 
-	.nav-menu.active ~ .nav-dismiss-layer,
 	.nav-dismiss-layer.active {
 		opacity: 1;
 		pointer-events: auto;

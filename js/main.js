@@ -373,10 +373,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const mode = forcedMode || this.getModeForTarget(target);
 
-			if (utils.isMobileViewport() && navbarModule.isOpen()) {
-				navbarModule.closeMenu();
-			}
-
 			state.manualNavbarOpen = false;
 			navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
 			this.scrollToSection(target, mode);
@@ -397,6 +393,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navMenu.classList.add("active");
 			DOM.navToggle.classList.add("active");
 			DOM.navDismissLayer?.classList.add("active");
+
+			if (DOM.navDismissLayer) {
+				DOM.navDismissLayer.style.pointerEvents = "auto";
+			}
 		},
 
 		closeMenu() {
@@ -404,6 +404,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navMenu.classList.remove("active");
 			DOM.navToggle.classList.remove("active");
 			DOM.navDismissLayer?.classList.remove("active");
+
+			if (DOM.navDismissLayer) {
+				DOM.navDismissLayer.style.pointerEvents = "none";
+			}
 		},
 
 		setTargets(visible, compact, surface) {
@@ -626,30 +630,73 @@ document.addEventListener("DOMContentLoaded", () => {
 					e.stopPropagation();
 
 					const doScroll = () => {
-						const forcedMode = target.classList?.contains("hero") ? "up-section" : "down";
-						scrollEngine.goTo(target, forcedMode);
+						const mode = scrollEngine.getModeForTarget(target);
+						scrollEngine.goTo(target, mode);
 					};
 
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
+						const menu = DOM.navMenu;
+
 						navbarModule.closeMenu();
 
-						// Warten bis das Menü aus dem Viewport ist
-						requestAnimationFrame(() => {
-							requestAnimationFrame(() => {
-								doScroll();
-							});
-						});
+						let done = false;
+
+						const finish = () => {
+							if (done) return;
+							done = true;
+							menu?.removeEventListener("transitionend", onEnd);
+							doScroll();
+						};
+
+						const onEnd = (evt) => {
+							if (evt.target !== menu) return;
+							finish();
+						};
+
+						menu?.addEventListener("transitionend", onEnd, { once: true });
+
+						// Fallback, falls transitionend mal nicht feuert
+						setTimeout(finish, 450);
 						return;
 					}
 
 					doScroll();
 				});
 			});
-			
+
 			DOM.navLogo?.addEventListener("click", (e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				scrollEngine.goTo(DOM.hero, "up-section");
+
+				const goHome = () => {
+					scrollEngine.goTo(DOM.hero, "up-section");
+				};
+
+				if (utils.isMobileViewport() && this.isOpen()) {
+					const menu = DOM.navMenu;
+
+					this.closeMenu();
+
+					let done = false;
+
+					const finish = () => {
+						if (done) return;
+						done = true;
+						menu?.removeEventListener("transitionend", onEnd);
+						goHome();
+					};
+
+					const onEnd = (evt) => {
+						if (evt.target !== menu) return;
+						finish();
+					};
+
+					menu?.addEventListener("transitionend", onEnd, { once: true });
+					setTimeout(finish, 450);
+					return;
+				}
+
+				goHome();
 			});
 		}
 	};
