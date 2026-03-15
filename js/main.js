@@ -850,7 +850,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					headSelector: ".section-scroll-head"
 				});
 			});
-		}
+		},
 	};
 
 	/* =========================================================
