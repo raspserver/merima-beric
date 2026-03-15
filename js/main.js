@@ -128,6 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		manualNavbarOpen: false,
 		programmaticNavMode: null, // null | "down" | "up-section" | "hero-top"
 
+		suppressCtaHoverCleanup: null,
+
 		targetVisible: 0,
 		currentVisible: 0,
 		visibleVelocity: 0,
@@ -390,26 +392,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		openMenu() {
 			if (!DOM.navMenu || !DOM.navToggle) return;
+
 			DOM.navMenu.classList.add("active");
 			DOM.navToggle.classList.add("active");
+			document.body.classList.add("nav-menu-open");
+
 			DOM.navDismissLayer?.classList.add("active");
 
 			if (DOM.navDismissLayer) {
 				DOM.navDismissLayer.style.pointerEvents = "auto";
 			}
 		},
-
+		
 		closeMenu() {
 			if (!DOM.navMenu || !DOM.navToggle) return;
+
 			DOM.navMenu.classList.remove("active");
 			DOM.navToggle.classList.remove("active");
+			document.body.classList.remove("nav-menu-open");
+
 			DOM.navDismissLayer?.classList.remove("active");
 
 			if (DOM.navDismissLayer) {
 				DOM.navDismissLayer.style.pointerEvents = "none";
 			}
 		},
-
+		
 		setTargets(visible, compact, surface) {
 			if (!DOM.navbar) return;
 
@@ -673,7 +681,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				goHome();
 			});
-		
+					
 			document.addEventListener("pointerdown", (e) => {
 				if (!utils.isMobileViewport() || !this.isOpen()) return;
 
@@ -685,12 +693,47 @@ document.addEventListener("DOMContentLoaded", () => {
 				const onLogo = target.closest(".nav-logo");
 				const onCta = target.closest(".cta-button");
 
-				if (insideMenu || onToggle || onLogo || onCta) return;
+				if (insideMenu || onToggle || onLogo) return;
+
+				if (onCta) {
+					this.suppressCtaHoverTemporarily();
+				}
 
 				this.closeMenu();
 			});
 
 		}
+
+		suppressCtaHoverTemporarily() {
+			document.body.classList.add("suppress-cta-hover");
+
+			if (state.suppressCtaHoverCleanup) {
+				window.removeEventListener("pointerup", state.suppressCtaHoverCleanup);
+				window.removeEventListener("pointercancel", state.suppressCtaHoverCleanup);
+				clearTimeout(state.suppressCtaHoverCleanup.__timeoutId);
+			}
+
+			const cleanup = () => {
+				document.body.classList.remove("suppress-cta-hover");
+
+				window.removeEventListener("pointerup", cleanup);
+				window.removeEventListener("pointercancel", cleanup);
+
+				if (cleanup.__timeoutId) {
+					clearTimeout(cleanup.__timeoutId);
+				}
+
+				state.suppressCtaHoverCleanup = null;
+			};
+
+			cleanup.__timeoutId = setTimeout(cleanup, 400);
+
+			state.suppressCtaHoverCleanup = cleanup;
+
+			window.addEventListener("pointerup", cleanup, { once: true });
+			window.addEventListener("pointercancel", cleanup, { once: true });
+		},
+		
 	};
 
 	/* =========================================================
@@ -1029,20 +1072,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		bindCTA() {
-
+			
 			DOM.cta?.addEventListener("click", (e) => {
-				if (utils.isMobileViewport() && navbarModule.isOpen()) {
-					e.preventDefault();
-					e.stopPropagation();
-					navbarModule.closeMenu();
-					return;
-				}
-
 				e.preventDefault();
 				e.stopPropagation();
 				scrollEngine.goTo("#contact", "down");
 			});
-
+			
 			document.querySelectorAll(".cta-button").forEach(btn => {
 				btn.addEventListener("mousemove", (e) => {
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
