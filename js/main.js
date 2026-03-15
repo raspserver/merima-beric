@@ -417,6 +417,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (DOM.navDismissLayer) {
 				DOM.navDismissLayer.style.pointerEvents = "none";
 			}
+			
+			document.querySelectorAll(".cta-button").forEach(btn => {
+				btn.style.transform = "";
+			});
+
 		},
 		
 		setTargets(visible, compact, surface) {
