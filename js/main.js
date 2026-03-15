@@ -603,9 +603,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 			DOM.navLinks.forEach(link => {
 				link.addEventListener("click", (e) => {
-					e.preventDefault();
-					e.stopPropagation();
-
 					const rawHref = link.getAttribute("href");
 					if (!rawHref) return;
 
@@ -619,23 +616,48 @@ document.addEventListener("DOMContentLoaded", () => {
 						hash = rawHref.startsWith("#") ? rawHref : "";
 					}
 
+					/* Externe Links oder Links ohne Hash normal laufen lassen */
 					if (!hash) return;
 
 					const target = utils.resolveTarget(hash);
 					if (!target) return;
 
+					e.preventDefault();
+					e.stopPropagation();
+
+					const doScroll = () => {
+						const navMin = utils.getRootNumber("--nav-height-min", 58);
+						const targetY = Math.max(
+							0,
+							target.getBoundingClientRect().top + window.pageYOffset - navMin
+						);
+
+						state.programmaticScroll = true;
+						state.programmaticNavMode = "down";
+						state.manualNavbarOpen = false;
+
+						window.scrollTo({
+							top: targetY,
+							behavior: utils.prefersReducedMotion() ? "auto" : "smooth"
+						});
+
+						setTimeout(() => {
+							state.programmaticScroll = false;
+							state.programmaticNavMode = null;
+							navbarModule.handleScroll();
+						}, 700);
+					};
+
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
 						navbarModule.closeMenu();
 
-						requestAnimationFrame(() => {
-							requestAnimationFrame(() => {
-								scrollEngine.goTo(target);
-							});
-						});
+						setTimeout(() => {
+							doScroll();
+						}, 320);
 						return;
 					}
 
-					scrollEngine.goTo(target);
+					doScroll();
 				});
 			});
 
