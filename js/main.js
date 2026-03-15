@@ -129,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		programmaticNavMode: null, // null | "down" | "up-section" | "hero-top"
 
 		suppressCtaHoverCleanup: null,
+		suppressNextCtaClick: false,
 
 		targetVisible: 0,
 		currentVisible: 0,
@@ -681,7 +682,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				goHome();
 			});
-					
+		
 			document.addEventListener("pointerdown", (e) => {
 				if (!utils.isMobileViewport() || !this.isOpen()) return;
 
@@ -697,6 +698,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (onCta) {
 					this.suppressCtaHoverTemporarily();
+					state.suppressNextCtaClick = true;
 				}
 
 				this.closeMenu();
