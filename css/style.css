@@ -2099,7 +2099,7 @@ section > .section-scroll-head + * {
 
 .scroll-section-hint-anchor--bottom .scroll-section-hint {
 	transform-origin: bottom left;
-	transform: rotate(-90deg) translateY(100%);
+	transform: rotate(-90deg) translateY(calc(100% - 4px));
 }
 
 .scroll-section-hints.is-visible .scroll-section-hint {
