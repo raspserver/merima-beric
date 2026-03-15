@@ -1081,16 +1081,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		bindCTA() {
-					
 			DOM.cta?.addEventListener("click", (e) => {
 				if (state.suppressNextCtaClick) {
 					state.suppressNextCtaClick = false;
+					this.resetCtaMagnetic();
 					e.preventDefault();
 					e.stopPropagation();
 					return;
 				}
 
 				if (utils.isMobileViewport() && navbarModule.isOpen()) {
+					this.resetCtaMagnetic();
 					e.preventDefault();
 					e.stopPropagation();
 					return;
@@ -1101,9 +1102,21 @@ document.addEventListener("DOMContentLoaded", () => {
 				scrollEngine.goTo("#contact", "down");
 			});
 
+			const supportsRealHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
 			document.querySelectorAll(".cta-button").forEach(btn => {
+				if (!supportsRealHover) {
+					btn.style.transform = "";
+					return;
+				}
+
 				btn.addEventListener("mousemove", (e) => {
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
+						btn.style.transform = "";
+						return;
+					}
+
+					if (document.body.classList.contains("suppress-cta-hover")) {
 						btn.style.transform = "";
 						return;
 					}
@@ -1119,7 +1132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		},
-
+		
 		bindHeroClickBehavior() {
 			DOM.hero?.addEventListener("click", (e) => {
 				if (!DOM.navbar) return;
