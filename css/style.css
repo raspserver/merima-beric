@@ -1750,26 +1750,12 @@ footer a:hover {
 			((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
 		));
 		z-index: 1500;
-/*
 		display: block;
-*/
-		
-		
-		display: none !important;
-		
-		
+
 		opacity: 0;
 		background: transparent;
 		transition: opacity 0.2s ease;
-/*
 		pointer-events: none;
-*/
-		
-		
-		
-		pointer-events: none !important;
-		
-		
 	}
 
 	.nav-dismiss-layer.active {
