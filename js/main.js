@@ -1035,7 +1035,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		bindCTA() {
+
 			DOM.cta?.addEventListener("click", (e) => {
+				if (state.suppressNextCtaClick) {
+					state.suppressNextCtaClick = false;
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
 				e.preventDefault();
 				e.stopPropagation();
 				scrollEngine.goTo("#contact", "down");
