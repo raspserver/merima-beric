@@ -580,19 +580,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			}
 
-			DOM.navbar?.addEventListener("click", (e) => {
-				if (!utils.isMobileViewport() || !this.isOpen()) return;
-
-				const clickedLink = e.target.closest(".nav-menu a");
-				const clickedLogo = e.target.closest(".nav-logo");
-				const clickedToggle = e.target.closest(".nav-toggle");
-
-				if (clickedLink || clickedLogo || clickedToggle) return;
-				e.preventDefault();
-				e.stopPropagation();
-				this.closeMenu();
-			});
-
 			DOM.navLinks.forEach(link => {
 				link.addEventListener("click", (e) => {
 					const rawHref = link.getAttribute("href");
