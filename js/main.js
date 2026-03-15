@@ -589,15 +589,40 @@ document.addEventListener("DOMContentLoaded", () => {
 				e.preventDefault();
 				e.stopPropagation();
 			});
-
+	
 			DOM.navLinks.forEach(link => {
 				link.addEventListener("click", (e) => {
 					e.preventDefault();
 					e.stopPropagation();
 
-					const href = link.getAttribute("href");
-					const target = utils.resolveTarget(href);
+					const rawHref = link.getAttribute("href");
+					if (!rawHref) return;
+
+					let hash = "";
+
+					try {
+						hash = rawHref.startsWith("#")
+							? rawHref
+							: new URL(rawHref, window.location.href).hash;
+					} catch {
+						hash = rawHref.startsWith("#") ? rawHref : "";
+					}
+
+					if (!hash) return;
+
+					const target = utils.resolveTarget(hash);
 					if (!target) return;
+
+					if (utils.isMobileViewport() && navbarModule.isOpen()) {
+						navbarModule.closeMenu();
+
+						requestAnimationFrame(() => {
+							requestAnimationFrame(() => {
+								scrollEngine.goTo(target);
+							});
+						});
+						return;
+					}
 
 					scrollEngine.goTo(target);
 				});
