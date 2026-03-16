@@ -2082,7 +2082,7 @@ section > .section-scroll-head + * {
 	position: absolute;
 	top: 0;
 	left: 0;
-
+	display: inline-block;
 	white-space: nowrap;
 	font-family: 'Montserrat', sans-serif;
 	font-size: var(--section-hint-size);
@@ -2097,11 +2097,8 @@ section > .section-scroll-head + * {
 	transition:
 		opacity 0.35s ease,
 		filter 0.35s ease;
-	will-change: opacity, filter, transform, clip-path;
 
-	/* neu */
-	position: absolute;
-	display: inline-block;
+	will-change: opacity, filter, transform, clip-path;
 	color: transparent;
 
 	--hint-clip-top: 0px;
@@ -2113,26 +2110,28 @@ section > .section-scroll-head + * {
 }
 
 .scroll-section-hint-text {
-	position: absolute;
-	inset: 0;
 	display: block;
 	white-space: nowrap;
 	pointer-events: none;
 }
 
 .scroll-section-hint-base {
+	position: relative;
 	color: var(--section-hint-color);
 	transition: color 0.35s ease;
 }
 
-.scroll-section-hints.is-visible .scroll-section-hint-base {
-	color: var(--section-hint-color-strong);
-}
-
 .scroll-section-hint-invert {
+	position: absolute;
+	top: 0;
+	left: 0;
 	color: rgba(255, 255, 255, 0.96);
 	clip-path: inset(var(--hint-dark-clip-top) 0 var(--hint-dark-clip-bottom) 0);
 	transition: clip-path 0.08s linear;
+}
+
+.scroll-section-hints.is-visible .scroll-section-hint-base {
+	color: var(--section-hint-color-strong);
 }
 
 .scroll-section-hint.is-empty {
