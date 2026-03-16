@@ -490,6 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			} else {
 				this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
 			}
+
 		},
 
 		animate(now) {
@@ -889,13 +890,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.root.innerHTML = `
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--top">
-					<div class="scroll-section-hint scroll-section-hint--active"></div>
+					<div class="scroll-section-hint scroll-section-hint--active">
+						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
+						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
+					</div>
 				</div>
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--bottom">
-					<div class="scroll-section-hint scroll-section-hint--next"></div>
+					<div class="scroll-section-hint scroll-section-hint--next">
+						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
+						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
+					</div>
 				</div>
 			`;
-
+			
 			document.body.appendChild(this.root);
 
 			this.topHint = this.root.querySelector(".scroll-section-hint--active");
@@ -995,15 +1002,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.topHint || !this.bottomHint) return;
 
 			if (this.isHeroActive()) {
-				this.topHint.textContent = "";
-				this.bottomHint.textContent = "";
+				
+				this.setHintText(this.topHint, "");
+				this.setHintText(this.bottomHint, "");
 
 				this.topHint.classList.add("is-empty");
 				this.bottomHint.classList.add("is-empty");
 
-				this.topHint.classList.remove("is-on-dark");
-				this.bottomHint.classList.remove("is-on-dark");
-
+				this.updateHintVisuals();
+				
 				return;
 			}
 
@@ -1012,24 +1019,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const activeLabel = activeSection?.id ? this.labels[activeSection.id] : "";
 			const nextLabel = nextSection?.id ? this.labels[nextSection.id] : "";
-
-			this.topHint.textContent = activeLabel ? `${activeLabel} >>` : "";
-			this.bottomHint.textContent = nextLabel ? `<< ${nextLabel}` : "";
+			
+			this.setHintText(this.topHint, activeLabel ? `${activeLabel} >>` : "");
+			this.setHintText(this.bottomHint, nextLabel ? `<< ${nextLabel}` : "");
 
 			this.topHint.classList.toggle("is-empty", !activeLabel);
 			this.bottomHint.classList.toggle("is-empty", !nextLabel);
 
-			const darkSections = ["services", "contact"];
-
-			this.topHint.classList.toggle(
-				"is-on-dark",
-				!!activeSection?.id && darkSections.includes(activeSection.id)
-			);
-
-			this.bottomHint.classList.toggle(
-				"is-on-dark",
-				!!nextSection?.id && darkSections.includes(nextSection.id)
-			);
+			this.updateHintVisuals();
+			
 		},
 
 		show() {
@@ -1081,6 +1079,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.updateColumn();
 			this.updateLabels();
+			this.updateHintVisuals();
 		},
 
 		bindEvents() {
@@ -1089,12 +1088,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.addEventListener("resize", () => {
 				this.updateColumn();
 				this.updateLabels();
+				this.updateHintVisuals();
 			});
 
 			window.addEventListener("orientationchange", () => {
 				setTimeout(() => {
 					this.updateColumn();
 					this.updateLabels();
+					this.updateHintVisuals();
 				}, 120);
 			});
 
@@ -1105,6 +1106,91 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.addEventListener("touchmove", () => {
 				this.pulse();
 			}, { passive: true });
+		},
+
+		setHintText(hintEl, text) {
+			if (!hintEl) return;
+
+			const base = hintEl.querySelector(".scroll-section-hint-base");
+			const invert = hintEl.querySelector(".scroll-section-hint-invert");
+
+			if (base) base.textContent = text;
+			if (invert) invert.textContent = text;
+		},
+
+		getDarkSectionRects() {
+			return ["services", "contact"]
+				.map(id => document.getElementById(id))
+				.filter(Boolean)
+				.map(el => el.getBoundingClientRect());
+		},
+
+		getIntersectionSegment(rectA, rectB) {
+			const top = Math.max(rectA.top, rectB.top);
+			const bottom = Math.min(rectA.bottom, rectB.bottom);
+
+			if (bottom <= top) return null;
+
+			return { top, bottom, height: bottom - top };
+		},
+
+		updateHintVisuals() {
+			if (!this.topHint || !this.bottomHint) return;
+
+			const heroRect = DOM.hero?.getBoundingClientRect() || null;
+			const darkRects = this.getDarkSectionRects();
+
+			[this.topHint, this.bottomHint].forEach(hint => {
+				const rect = hint.getBoundingClientRect();
+				const hintHeight = rect.height || 1;
+
+				/* 1) kompletter Hint wird am Hero abgeschnitten */
+				let clipTop = 0;
+				let clipBottom = 0;
+
+				if (heroRect) {
+					const heroOverlap = this.getIntersectionSegment(rect, heroRect);
+
+					if (heroOverlap) {
+						/* bei deinem Layout relevant: Hero schneidet den oberen Bereich */
+						if (heroRect.top <= rect.top) {
+							clipTop = Math.max(0, heroOverlap.bottom - rect.top);
+						} else if (heroRect.bottom >= rect.bottom) {
+							clipBottom = Math.max(0, rect.bottom - heroOverlap.top);
+						} else {
+							/* Fallback für seltene Zwischenlage */
+							clipTop = Math.max(0, heroOverlap.top - rect.top);
+							clipBottom = Math.max(0, rect.bottom - heroOverlap.bottom);
+						}
+					}
+				}
+
+				hint.style.setProperty("--hint-clip-top", `${clipTop}px`);
+				hint.style.setProperty("--hint-clip-bottom", `${clipBottom}px`);
+
+				/* 2) weiße Version nur über dunklen Sections sichtbar */
+				let bestOverlap = null;
+
+				for (const darkRect of darkRects) {
+					const overlap = this.getIntersectionSegment(rect, darkRect);
+					if (!overlap) continue;
+
+					if (!bestOverlap || overlap.height > bestOverlap.height) {
+						bestOverlap = overlap;
+					}
+				}
+
+				if (bestOverlap) {
+					const darkClipTop = Math.max(0, bestOverlap.top - rect.top);
+					const darkClipBottom = Math.max(0, rect.bottom - bestOverlap.bottom);
+
+					hint.style.setProperty("--hint-dark-clip-top", `${darkClipTop}px`);
+					hint.style.setProperty("--hint-dark-clip-bottom", `${darkClipBottom}px`);
+				} else {
+					hint.style.setProperty("--hint-dark-clip-top", `${hintHeight}px`);
+					hint.style.setProperty("--hint-dark-clip-bottom", `0px`);
+				}
+			});
 		},
 
 		init() {

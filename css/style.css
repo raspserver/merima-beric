@@ -2090,16 +2090,53 @@ section > .section-scroll-head + * {
 	letter-spacing: var(--section-hint-letter-spacing);
 	text-transform: uppercase;
 	line-height: 1;
-	color: var(--section-hint-color);
 
 	opacity: 0;
 	filter: blur(2px);
 
 	transition:
 		opacity 0.35s ease,
-		filter 0.35s ease,
-		color 0.35s ease;
-	will-change: opacity, filter, transform;
+		filter 0.35s ease;
+	will-change: opacity, filter, transform, clip-path;
+
+	/* neu */
+	position: absolute;
+	display: inline-block;
+	color: transparent;
+
+	--hint-clip-top: 0px;
+	--hint-clip-bottom: 0px;
+	--hint-dark-clip-top: 100%;
+	--hint-dark-clip-bottom: 0px;
+
+	clip-path: inset(var(--hint-clip-top) 0 var(--hint-clip-bottom) 0);
+}
+
+.scroll-section-hint-text {
+	position: absolute;
+	inset: 0;
+	display: block;
+	white-space: nowrap;
+	pointer-events: none;
+}
+
+.scroll-section-hint-base {
+	color: var(--section-hint-color);
+	transition: color 0.35s ease;
+}
+
+.scroll-section-hints.is-visible .scroll-section-hint-base {
+	color: var(--section-hint-color-strong);
+}
+
+.scroll-section-hint-invert {
+	color: rgba(255, 255, 255, 0.96);
+	clip-path: inset(var(--hint-dark-clip-top) 0 var(--hint-dark-clip-bottom) 0);
+	transition: clip-path 0.08s linear;
+}
+
+.scroll-section-hint.is-empty {
+	opacity: 0 !important;
 }
 
 .scroll-section-hint-anchor--top .scroll-section-hint {
@@ -2115,11 +2152,6 @@ section > .section-scroll-head + * {
 .scroll-section-hints.is-visible .scroll-section-hint {
 	opacity: 1;
 	filter: blur(0);
-	color: var(--section-hint-color-strong);
-}
-
-.scroll-section-hint.is-empty {
-	opacity: 0 !important;
 }
 
 @media (max-width: 768px) {
@@ -2136,14 +2168,6 @@ section > .section-scroll-head + * {
 		transition: opacity 0.2s linear;
 		filter: none;
 	}
-}
-
-.scroll-section-hint.is-on-dark {
-	color: rgba(255, 255, 255, 0.78);
-}
-
-.scroll-section-hints.is-visible .scroll-section-hint.is-on-dark {
-	color: rgba(255, 255, 255, 0.96);
 }
 
 /* ===============================
