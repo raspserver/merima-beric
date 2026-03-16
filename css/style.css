@@ -2104,12 +2104,12 @@ section > .section-scroll-head + * {
 
 .scroll-section-hint-anchor--top .scroll-section-hint {
 	transform-origin: top left;
-	transform: translateY(100%) rotate(-90deg);
+	transform: rotate(-90deg) translateX(-100%);
 }
 
 .scroll-section-hint-anchor--bottom .scroll-section-hint {
-	transform-origin: bottom left;
-	transform: rotate(-90deg) translateY(50%);
+	transform-origin: top left;
+	transform: rotate(-90deg) translateX(-100%);
 }
 
 .scroll-section-hints.is-visible .scroll-section-hint {
