@@ -2092,13 +2092,11 @@ section > .section-scroll-head + * {
 	line-height: 1;
 
 	opacity: 0;
-	filter: blur(2px);
 
 	transition:
 		opacity 0.35s ease,
-		filter 0.35s ease;
 
-	will-change: opacity, filter, transform, clip-path;
+	will-change: opacity, transform;
 	color: transparent;
 
 	--hint-clip-top: 0px;
@@ -2150,7 +2148,6 @@ section > .section-scroll-head + * {
 
 .scroll-section-hints.is-visible .scroll-section-hint {
 	opacity: 1;
-	filter: blur(0);
 }
 
 @media (max-width: 768px) {
