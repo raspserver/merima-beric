@@ -1074,12 +1074,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.lastKnownScrollY = currentY;
 
-			/* nur Labels/Position nachführen, aber NICHT sichtbar machen */
 			if (!this.root) return;
 
 			this.updateColumn();
 			this.updateLabels();
 			this.updateHintVisuals();
+
+			if (state.programmaticScroll) return;
+
+			if (this.isHeroActive()) {
+				this.hide();
+
+				if (this.hideTimer) {
+					clearTimeout(this.hideTimer);
+					this.hideTimer = null;
+				}
+				return;
+			}
+
+			this.show();
+
+			if (this.hideTimer) {
+				clearTimeout(this.hideTimer);
+			}
+
+			this.hideTimer = setTimeout(() => {
+				this.hide();
+			}, 2000);
 		},
 
 		bindEvents() {
