@@ -1041,33 +1041,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		pulse() {
-			if (state.programmaticScroll) return;
-
-			this.updateColumn();
-			this.updateLabels();
-
-			if (this.isHeroActive()) {
-				this.hide();
-
-				if (this.hideTimer) {
-					clearTimeout(this.hideTimer);
-					this.hideTimer = null;
-				}
-
-				return;
-			}
-
-			this.show();
-
-			if (this.hideTimer) {
-				clearTimeout(this.hideTimer);
-			}
-
-			this.hideTimer = setTimeout(() => {
-				this.hide();
-			}, 2000);
+			this.revealTemporarily();
 		},
-		
+	
 		handleScroll() {
 			const currentY = window.scrollY;
 			if (currentY === this.lastKnownScrollY) return;
@@ -1076,31 +1052,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (!this.root) return;
 
-			this.updateColumn();
-			this.updateLabels();
-			this.updateHintVisuals();
-
-			if (state.programmaticScroll) return;
-
-			if (this.isHeroActive()) {
-				this.hide();
-
-				if (this.hideTimer) {
-					clearTimeout(this.hideTimer);
-					this.hideTimer = null;
-				}
-				return;
-			}
-
-			this.show();
-
-			if (this.hideTimer) {
-				clearTimeout(this.hideTimer);
-			}
-
-			this.hideTimer = setTimeout(() => {
-				this.hide();
-			}, 2000);
+			this.revealTemporarily();
 		},
 
 		bindEvents() {
@@ -1212,6 +1164,34 @@ document.addEventListener("DOMContentLoaded", () => {
 					hint.style.setProperty("--hint-dark-clip-bottom", `0px`);
 				}
 			});
+		},
+
+		revealTemporarily() {
+			if (!this.root || state.programmaticScroll) return;
+
+			this.updateColumn();
+			this.updateLabels();
+			this.updateHintVisuals();
+
+			if (this.isHeroActive()) {
+				this.hide();
+
+				if (this.hideTimer) {
+					clearTimeout(this.hideTimer);
+					this.hideTimer = null;
+				}
+				return;
+			}
+
+			this.show();
+
+			if (this.hideTimer) {
+				clearTimeout(this.hideTimer);
+			}
+
+			this.hideTimer = setTimeout(() => {
+				this.hide();
+			}, 2000);
 		},
 
 		init() {
