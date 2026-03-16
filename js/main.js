@@ -911,17 +911,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		getColumnLeft() {
-			const aboutText = document.querySelector("#about .about-text");
-			if (aboutText) {
-				const rect = aboutText.getBoundingClientRect();
+			const aboutImage =
+				document.querySelector("#about .about-image-wrapper") ||
+				document.querySelector("#about .about-image");
+
+			if (aboutImage) {
+				const rect = aboutImage.getBoundingClientRect();
+
 				if (Number.isFinite(rect.left)) {
-					return Math.max(12, rect.left / 2);
+					const viewportLeft = 0;
+					const columnCenter = viewportLeft + ((rect.left - viewportLeft) / 2);
+					return Math.max(12, columnCenter);
 				}
 			}
 
 			const aboutContainer = document.querySelector("#about .container");
 			if (aboutContainer) {
 				const rect = aboutContainer.getBoundingClientRect();
+
 				if (Number.isFinite(rect.left)) {
 					return Math.max(12, rect.left / 2);
 				}
@@ -929,7 +936,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return 24;
 		},
-
+		
 		updateColumn() {
 			if (!this.root) return;
 			this.root.style.setProperty(
