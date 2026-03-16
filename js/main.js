@@ -910,6 +910,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
+		isHeroActive() {
+			if (!DOM.hero) return false;
+
+			const rect = DOM.hero.getBoundingClientRect();
+			const probeY = window.innerHeight * 0.5;
+
+			return rect.top <= probeY && rect.bottom > probeY;
+		},
+
 		getColumnLeft() {
 			const aboutImage =
 				document.querySelector("#about .about-image-wrapper") ||
