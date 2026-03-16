@@ -2138,6 +2138,14 @@ section > .section-scroll-head + * {
 	}
 }
 
+.scroll-section-hint.is-on-dark {
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.scroll-section-hints.is-visible .scroll-section-hint.is-on-dark {
+	color: rgba(255, 255, 255, 0.96);
+}
+
 /* ===============================
    GALLERY / VIDEO SLIDER OPTIMIZED
 ================================= */

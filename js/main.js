@@ -996,8 +996,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.topHint.classList.toggle("is-empty", !activeLabel);
 			this.bottomHint.classList.toggle("is-empty", !nextLabel);
-		},
 
+			const darkSections = ["services", "contact"];
+
+			this.topHint.classList.toggle(
+				"is-on-dark",
+				!!activeSection?.id && darkSections.includes(activeSection.id)
+			);
+
+			this.bottomHint.classList.toggle(
+				"is-on-dark",
+				!!nextSection?.id && darkSections.includes(nextSection.id)
+			);
+		},
+		
 		show() {
 			if (!this.root) return;
 			this.root.classList.add("is-visible");
