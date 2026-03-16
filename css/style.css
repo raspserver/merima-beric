@@ -2104,7 +2104,7 @@ section > .section-scroll-head + * {
 
 .scroll-section-hint-anchor--top .scroll-section-hint {
 	transform-origin: top left;
-	transform: rotate(-90deg) translateX(-50%);
+	transform: rotate(-90deg) translateY(-50%);
 }
 
 .scroll-section-hint-anchor--bottom .scroll-section-hint {
