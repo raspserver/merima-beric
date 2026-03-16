@@ -1489,13 +1489,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (clickedCTA || clickedIndicator) return;
 
-				const ctaRect = DOM.cta?.getBoundingClientRect();
+				const indicatorRect = DOM.heroIndicator?.getBoundingClientRect();
 
-				if (ctaRect && e.clientY > ctaRect.bottom) {
-					scrollEngine.goTo("#about", "down");
-					return;
+				if (indicatorRect) {
+					const zoneTop = indicatorRect.top - 80;
+					const zoneBottom = indicatorRect.bottom + 80;
+
+					if (e.clientY >= zoneTop && e.clientY <= zoneBottom) {
+						scrollEngine.goTo("#about", "down");
+						return;
+					}
 				}
-
+				
 				const visible = parseFloat(
 					getComputedStyle(DOM.navbar).getPropertyValue("--nav-visible")
 				);
