@@ -994,6 +994,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		updateLabels() {
 			if (!this.topHint || !this.bottomHint) return;
 
+			if (this.isHeroActive()) {
+				this.topHint.textContent = "";
+				this.bottomHint.textContent = "";
+
+				this.topHint.classList.add("is-empty");
+				this.bottomHint.classList.add("is-empty");
+
+				this.topHint.classList.remove("is-on-dark");
+				this.bottomHint.classList.remove("is-on-dark");
+
+				return;
+			}
+
 			const activeSection = this.getActiveSection();
 			const nextSection = this.getNextSection(activeSection);
 
@@ -1018,7 +1031,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				!!nextSection?.id && darkSections.includes(nextSection.id)
 			);
 		},
-		
+
 		show() {
 			if (!this.root) return;
 			this.root.classList.add("is-visible");
@@ -1028,12 +1041,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.root) return;
 			this.root.classList.remove("is-visible");
 		},
-	
+
 		pulse() {
 			if (state.programmaticScroll) return;
 
 			this.updateColumn();
 			this.updateLabels();
+
+			if (this.isHeroActive()) {
+				this.hide();
+
+				if (this.hideTimer) {
+					clearTimeout(this.hideTimer);
+					this.hideTimer = null;
+				}
+
+				return;
+			}
+
 			this.show();
 
 			if (this.hideTimer) {
