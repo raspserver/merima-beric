@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const DOM = {
 		navbar: document.querySelector(".navbar"),
 		hero: document.querySelector(".hero"),
+		heroScrollTrigger: document.querySelector(".hero-scroll-trigger"),
 		navToggle: document.querySelector(".nav-toggle"),
 		navMenu: document.querySelector(".nav-menu"),
 		navLinks: document.querySelectorAll(".nav-menu a"),
@@ -43,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		pricingContents: document.querySelectorAll(".pricing-content"),
 		year: document.getElementById("year")
 	};
-
+	
 	/* =========================================================
 	   UTILS
 	========================================================= */
