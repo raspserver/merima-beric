@@ -2350,8 +2350,12 @@ section > .section-scroll-head + * {
 		margin-top: 0.1rem;
 	}
 
-	.scroll-indicator {
-		bottom: 18px;
+}
+
+@media (max-height:580px) {
+	.hero-scroll-trigger {
+		top: calc(var(--nav-height) + 1.5rem);
+		height: 110px;
 	}
 }
 

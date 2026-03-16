@@ -1407,6 +1407,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
+
+
+
+
+
 		bindHeroAndFooter() {
 			DOM.heroIndicator?.addEventListener("click", (e) => {
 				e.preventDefault();
@@ -1425,6 +1430,19 @@ document.addEventListener("DOMContentLoaded", () => {
 				e.preventDefault();
 				scrollEngine.goTo("#contact", "up-section");
 			});
+
+			DOM.heroScrollTrigger?.addEventListener("click", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				scrollEngine.goTo("#about", "down");
+			});
+
+			DOM.heroScrollTrigger?.addEventListener("keydown", (e) => {
+				if (e.key !== "Enter" && e.key !== " ") return;
+				e.preventDefault();
+				scrollEngine.goTo("#about", "down");
+			});
+			
 		},
 
 		bindCTA() {
@@ -1486,22 +1504,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (utils.isMobileViewport() && navbarModule.isOpen()) return;
 
 				const clickedCTA = e.target.closest(".cta-button");
-				const clickedIndicator = e.target.closest(".scroll-indicator");
+				const clickedHeroScrollTrigger = e.target.closest(".hero-scroll-trigger");
 
-				if (clickedCTA || clickedIndicator) return;
+				if (clickedCTA || clickedHeroScrollTrigger) return;
 
-				const indicatorRect = DOM.heroIndicator?.getBoundingClientRect();
-
-				if (indicatorRect) {
-					const zoneTop = indicatorRect.top - 80;
-					const zoneBottom = indicatorRect.bottom + 80;
-
-					if (e.clientY >= zoneTop && e.clientY <= zoneBottom) {
-						scrollEngine.goTo("#about", "down");
-						return;
-					}
-				}
-				
 				const visible = parseFloat(
 					getComputedStyle(DOM.navbar).getPropertyValue("--nav-visible")
 				);
@@ -1516,7 +1522,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				navbarModule.startAnimation();
 			});
 		},
-
+		
 		bindPricingTabs() {
 			DOM.pricingTabs.forEach(tab => {
 				tab.addEventListener("click", () => {
