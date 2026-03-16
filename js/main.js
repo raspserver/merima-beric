@@ -1007,25 +1007,34 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.root) return;
 			this.root.classList.remove("is-visible");
 		},
-
+	
 		pulse() {
+			if (state.programmaticScroll) return;
+
 			this.updateColumn();
 			this.updateLabels();
 			this.show();
 
-			if (this.hideTimer) clearTimeout(this.hideTimer);
+			if (this.hideTimer) {
+				clearTimeout(this.hideTimer);
+			}
 
 			this.hideTimer = setTimeout(() => {
 				this.hide();
-			}, 180);
+			}, 2000);
 		},
-
+		
 		handleScroll() {
 			const currentY = window.scrollY;
 			if (currentY === this.lastKnownScrollY) return;
 
 			this.lastKnownScrollY = currentY;
-			this.pulse();
+
+			/* nur Labels/Position nachführen, aber NICHT sichtbar machen */
+			if (!this.root) return;
+
+			this.updateColumn();
+			this.updateLabels();
 		},
 
 		bindEvents() {
@@ -1043,8 +1052,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				}, 120);
 			});
 
-			window.addEventListener("wheel", () => this.pulse(), { passive: true });
-			window.addEventListener("touchmove", () => this.pulse(), { passive: true });
+			window.addEventListener("wheel", () => {
+				this.pulse();
+			}, { passive: true });
+
+			window.addEventListener("touchmove", () => {
+				this.pulse();
+			}, { passive: true });
 		},
 
 		init() {
