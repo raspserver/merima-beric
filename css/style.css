@@ -34,6 +34,16 @@
 	--nav-surface-up: 0.10;
 
 	/* =========================
+	   SECTION BACKGROUNDS
+	========================= */
+	--section-bg-about: var(--bg-light);
+	--section-bg-gallery: var(--accent-color);
+	--section-bg-services: var(--secondary-color);
+	--section-bg-pricing: var(--bg-light);
+	--section-bg-testimonials: var(--accent-color);
+	--section-bg-contact: var(--secondary-color);
+
+	/* =========================
 	   MASTER MOTION PRESETS
 	   Navbar + Screen Bounce + Hero
 	========================= */
@@ -929,7 +939,7 @@ section .section-title:first-child {
 
 /* About Section */
 .about {
-	background: var(--bg-light);
+	background: var(--section-bg-about);
 }
 
 .about-content {
@@ -1014,7 +1024,7 @@ section .section-title:first-child {
 
 /* Services Section */
 .services {
-	background: var(--secondary-color);
+	background: var(--section-bg-services);
 	color: var(--text-light);
 }
 
@@ -1079,7 +1089,7 @@ section .section-title:first-child {
 
 /* Pricing Section */
 .pricing {
-	background: var(--bg-light);
+	background: var(--section-bg-pricing);
 }
 
 .pricing-tabs {
@@ -1214,7 +1224,7 @@ section .section-title:first-child {
 
 /* Testimonials Section */
 .testimonials {
-	background: var(--accent-color);
+	background: var(--section-bg-testimonials);
 }
 
 .testimonials-grid {
@@ -1269,7 +1279,7 @@ section .section-title:first-child {
 
 /* Contact Section */
 .contact {
-	background: var(--secondary-color);
+	background: var(--section-bg-contact);
 	color: var(--text-light);
 }
 
@@ -2133,7 +2143,7 @@ section > .section-scroll-head + * {
 ================================= */
 
 .gallery {
-	background: var(--bg-light);
+	background: var(--section-bg-gallery);
 	scroll-margin-top: calc(78px + 2rem);
 	padding: var(--section-spacing) 0;
 }
