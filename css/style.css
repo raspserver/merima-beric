@@ -1761,37 +1761,51 @@ footer a:hover {
     }
 }
 
+
+
+
+
+
+
+
 /* =========================
    SECTION SCROLL HEAD
 ========================= */
 
+/* Jede Section als Bezugspunkt */
 section {
 	position: relative;
 }
 
+/* Klickbarer Bereich oben in jeder Section */
 .section-scroll-head {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: var(--section-scroll-head-height);
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: flex-start;
+
 	padding-top: 1.25rem;
 	gap: 10px;
+
 	cursor: pointer;
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
 	z-index: 15;
 }
 
+/* Scroll-Indikator (der animierte Punkt) */
 .section-scroll-indicator {
 	position: relative;
 	animation: sectionLiquidScroll 2.2s ease-in-out infinite;
 }
 
+/* Linie unter dem Punkt */
 .section-scroll-indicator::after {
 	content: "";
 	position: absolute;
@@ -1799,70 +1813,40 @@ section {
 	left: 50%;
 	transform: translateX(-50%);
 	margin-top: 8px;
+
 	width: 1px;
 	height: 26px;
+
 	background: linear-gradient(
 		to bottom,
 		rgba(212,175,55,0.55),
 		rgba(212,175,55,0.15),
 		rgba(212,175,55,0)
 	);
+
 	pointer-events: none;
 }
 
+/* Animation */
 @keyframes sectionLiquidScroll {
-	0% {
-		transform: translateY(0) scale(1);
-	}
-
-	40% {
-		transform: translateY(10px) scale(1.35, 0.7);
-	}
-
-	60% {
-		transform: translateY(14px) scale(0.8, 1.3);
-	}
-
-	100% {
-		transform: translateY(0) scale(1);
-	}
+	0%   { transform: translateY(0) scale(1); }
+	40%  { transform: translateY(10px) scale(1.35, 0.7); }
+	60%  { transform: translateY(14px) scale(0.8, 1.3); }
+	100% { transform: translateY(0) scale(1); }
 }
 
-.section-scroll-head,
-.section-scroll-head .scroll-indicator {
-	cursor: pointer;
-}
-
-section {
-	position: relative;
-}
-
-.section-scroll-head {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: var(--section-scroll-head-height);
-
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	padding-top: 1.25rem;
-	gap: 10px;
-
-	cursor: pointer;
-	user-select: none;
-	-webkit-tap-highlight-color: transparent;
-	z-index: 15;
-}
-
-/* Echter Abstand zwischen Scroll-Head und section-title */
+/* Abstand zwischen Scroll-Head und Inhalt */
 section > .section-scroll-head + .container,
 section > .section-scroll-head + * {
 	margin-top: 0;
-	padding-top: calc(var(--section-scroll-head-height) + var(--section-head-title-gap));
+	padding-top: calc(
+		var(--section-scroll-head-height) + var(--section-head-title-gap)
+	);
 }
+
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media (max-width: 768px) {
 	:root {
@@ -1870,25 +1854,21 @@ section > .section-scroll-head + * {
 	}
 
 	.section-scroll-head {
-		top: 0;
-		height: var(--section-scroll-head-height);
 		padding-top: 0.75rem;
 		gap: 8px;
 	}
 
-	.section-scroll-head::before {
+	.section-scroll-indicator::after {
 		height: 22px;
-	}
-
-	section > .section-scroll-head + .container,
-	section > .section-scroll-head + * {
-		margin-top: 0;
-		padding-top: calc(var(--section-scroll-head-height) + var(--section-head-title-gap));
 	}
 }
 
+/* =========================
+   ACCESSIBILITY
+========================= */
+
 @media (prefers-reduced-motion: reduce) {
-	.section-scroll-head .scroll-indicator {
+	.section-scroll-indicator {
 		animation: none;
 	}
 }
@@ -2180,13 +2160,6 @@ section > .section-scroll-head + * {
 		--section-hint-letter-spacing: 0.16em;
 		--section-hint-top-offset: calc(var(--nav-height-min) + 10px);
 		--section-hint-bottom-offset: 48px;
-	}
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-	.scroll-indicator {
-		animation: none;
 	}
 }
 
