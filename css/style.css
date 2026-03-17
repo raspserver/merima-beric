@@ -836,6 +836,7 @@ html, body {
 }
 
 
+/*
 .cta-button:hover {
 		--hover-lift: -2px;
 	}
@@ -848,9 +849,9 @@ html, body {
 .cta-button:hover .cta-label {
 	color: var(--primary-color);
 }
+*/
 
 
-/*
 
 @media (hover: hover) and (pointer: fine) {
 	.cta-button:hover {
@@ -868,7 +869,7 @@ html, body {
 
 }
 
-*/
+
 
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button:hover,
