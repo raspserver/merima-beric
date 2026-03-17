@@ -785,16 +785,6 @@ html, body {
 	}
 }
 
-
-
-
-
-
-
-/* =========================
-   CTA BUTTON (MAGNETIC CLEAN)
-========================= */
-
 .cta-button {
 	display: inline-block;
 	padding: 1.2rem 3rem;
@@ -814,33 +804,42 @@ html, body {
 	animation: fadeIn 1.5s ease-out 0.9s both;
 
 	position: relative;
-	will-change: transform;
+	will-change: transform, box-shadow;
 
-	/* === MAGIC SYSTEM === */
+	/* === MAGNETIC SYSTEM === */
 	--magnetic-x: 0px;
 	--magnetic-y: 0px;
 	--hover-lift: 0px;
+	--magnetic-scale: 1;
+	--magnetic-shadow-y: 0px;
+	--magnetic-shadow-blur: 0px;
+	--magnetic-shadow-alpha: 0;
 
-	transform: translate(
-		var(--magnetic-x),
-		calc(var(--magnetic-y) + var(--hover-lift))
-	);
+	transform:
+		translate3d(
+			var(--magnetic-x),
+			calc(var(--magnetic-y) + var(--hover-lift)),
+			0
+		)
+		scale(var(--magnetic-scale));
 
 	transition:
-		transform 0.25s cubic-bezier(.2,.8,.2,1),
+		transform 0.42s cubic-bezier(.16,.84,.44,1),
 		background 0.3s ease,
 		color 0.3s ease,
-		box-shadow 0.3s ease;
+		box-shadow 0.42s cubic-bezier(.16,.84,.44,1);
+
+	box-shadow:
+		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)
+		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
 }
 
 .cta-button:hover {
 	background: transparent;
 	color: var(--primary-color);
-	--hover-lift: -3px;
-	box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+	--hover-lift: -2px;
 }
 
-/* Safety Reset (wird von deinem JS benutzt) */
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button:hover,
 body.suppress-cta-hover .cta-button:active,
@@ -851,6 +850,10 @@ body.suppress-cta-hover .cta-button:focus {
 	--magnetic-x: 0px;
 	--magnetic-y: 0px;
 	--hover-lift: 0px;
+	--magnetic-scale: 1;
+	--magnetic-shadow-y: 0px;
+	--magnetic-shadow-blur: 0px;
+	--magnetic-shadow-alpha: 0;
 
 	box-shadow: none;
 }
