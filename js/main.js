@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		navMenu: document.querySelector(".nav-menu"),
 		navLinks: document.querySelectorAll(".nav-menu a"),
 		navLogo: document.querySelector(".nav-logo"),
-		navDismissLayer: document.querySelector(".nav-dismiss-layer"),
 		cta: document.querySelector(".cta-button"),
 		footer: document.querySelector("footer"),
 		track: document.querySelector(".gallery-track"),
@@ -128,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		suppressCtaHoverCleanup: null,
 		suppressNextCtaClick: false,
+		suppressNextClick: false,
 
 		targetVisible: 0,
 		currentVisible: 0,
@@ -396,11 +396,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navToggle.classList.add("active");
 			document.body.classList.add("nav-menu-open");
 
-			DOM.navDismissLayer?.classList.add("active");
-
-			if (DOM.navDismissLayer) {
-				DOM.navDismissLayer.style.pointerEvents = "auto";
-			}
 		},
 
 		closeMenu({ keepNavbarVisible = false } = {}) {
@@ -409,12 +404,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navMenu.classList.remove("active");
 			DOM.navToggle.classList.remove("active");
 			document.body.classList.remove("nav-menu-open");
-
-			DOM.navDismissLayer?.classList.remove("active");
-
-			if (DOM.navDismissLayer) {
-				DOM.navDismissLayer.style.pointerEvents = "none";
-			}
 
 			uiModule.resetCtaMagnetic();
 
@@ -718,7 +707,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				goHome();
 			});
-
+			
 			document.addEventListener("pointerdown", (e) => {
 				if (!utils.isMobileViewport() || !this.isOpen()) return;
 
@@ -729,17 +718,39 @@ document.addEventListener("DOMContentLoaded", () => {
 				const onToggle = target.closest(".nav-toggle");
 				const onLogo = target.closest(".nav-logo");
 				const onCta = target.closest(".cta-button");
+				const onSectionScrollHead = target.closest(".section-scroll-head");
 
-				if (insideMenu || onToggle || onLogo || onCta) return;
+				if (insideMenu || onToggle || onLogo) return;
 
-				if (onCta) {
+				/* Jeder Klick außerhalb des Menüs soll nur das Menü schließen,
+				   aber keine Folgeaktion auslösen */
+				if (onCta || onSectionScrollHead) {
+					e.preventDefault();
+					e.stopPropagation();
+
+					state.suppressNextClick = true;
+					state.suppressNextCtaClick = !!onCta;
+
 					this.suppressCtaHoverTemporarily();
-					state.suppressNextCtaClick = true;
 					uiModule.resetCtaMagnetic();
+					this.closeMenu();
+					return;
 				}
 
+				e.preventDefault();
+				e.stopPropagation();
+				state.suppressNextClick = true;
 				this.closeMenu();
 			});
+
+			document.addEventListener("click", (e) => {
+				if (!state.suppressNextClick) return;
+
+				state.suppressNextClick = false;
+				e.preventDefault();
+				e.stopPropagation();
+			}, true);
+
 		},
 		
 		suppressCtaHoverTemporarily(duration = 700) {
@@ -1644,32 +1655,18 @@ document.addEventListener("DOMContentLoaded", () => {
 					return;
 				}
 
-				DOM.cta?.addEventListener("click", (e) => {
-					if (state.suppressNextCtaClick) {
-						state.suppressNextCtaClick = false;
-						this.resetCtaMagnetic();
-						e.preventDefault();
-						e.stopPropagation();
-						return;
-					}
-
-					e.preventDefault();
-					e.stopPropagation();
-
-					if (utils.isMobileViewport() && navbarModule.isOpen()) {
-						navbarModule.closeMenu();
-
-						requestAnimationFrame(() => {
-							scrollEngine.goTo("#contact", "down");
-						});
-						return;
-					}
-
-					scrollEngine.goTo("#contact", "down");
-				});
-				
 				e.preventDefault();
 				e.stopPropagation();
+
+				if (utils.isMobileViewport() && navbarModule.isOpen()) {
+					navbarModule.closeMenu();
+
+					requestAnimationFrame(() => {
+						scrollEngine.goTo("#contact", "down");
+					});
+					return;
+				}
+
 				scrollEngine.goTo("#contact", "down");
 			});
 
@@ -1893,7 +1890,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		},
-
+		
 		bindHeroClickBehavior() {
 			DOM.hero?.addEventListener("click", (e) => {
 				if (!DOM.navbar) return;
