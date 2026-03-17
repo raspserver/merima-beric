@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	const DOM = {
 		navbar: document.querySelector(".navbar"),
 		hero: document.querySelector(".hero"),
-		heroScrollTrigger: document.querySelector(".hero-scroll-trigger"),
 		navToggle: document.querySelector(".nav-toggle"),
 		navMenu: document.querySelector(".nav-menu"),
 		navLinks: document.querySelectorAll(".nav-menu a"),
@@ -37,14 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		navDismissLayer: document.querySelector(".nav-dismiss-layer"),
 		cta: document.querySelector(".cta-button"),
 		footer: document.querySelector("footer"),
-		heroIndicator: document.querySelector(".hero .scroll-indicator"),
-		footerToContactTrigger: document.querySelector(".footer-scroll-trigger"),
 		track: document.querySelector(".gallery-track"),
 		pricingTabs: document.querySelectorAll(".pricing-tab"),
 		pricingContents: document.querySelectorAll(".pricing-content"),
 		year: document.getElementById("year")
 	};
-	
+
 	/* =========================================================
 	   UTILS
 	========================================================= */
@@ -405,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.navDismissLayer.style.pointerEvents = "auto";
 			}
 		},
-		
+
 		closeMenu() {
 			if (!DOM.navMenu || !DOM.navToggle) return;
 
@@ -418,13 +415,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (DOM.navDismissLayer) {
 				DOM.navDismissLayer.style.pointerEvents = "none";
 			}
-			
+
 			document.querySelectorAll(".cta-button").forEach(btn => {
 				btn.style.transform = "";
 			});
-
 		},
-		
+
 		setTargets(visible, compact, surface) {
 			if (!DOM.navbar) return;
 
@@ -491,7 +487,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			} else {
 				this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
 			}
-
 		},
 
 		animate(now) {
@@ -611,7 +606,6 @@ document.addEventListener("DOMContentLoaded", () => {
 						hash = rawHref.startsWith("#") ? rawHref : "";
 					}
 
-					// Externe Links normal laufen lassen
 					if (!hash) return;
 
 					const target = utils.resolveTarget(hash);
@@ -646,7 +640,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 						menu?.addEventListener("transitionend", onEnd, { once: true });
 
-						// Fallback, falls transitionend mal nicht feuert
 						setTimeout(finish, 450);
 						return;
 					}
@@ -689,7 +682,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				goHome();
 			});
-		
+
 			document.addEventListener("pointerdown", (e) => {
 				if (!utils.isMobileViewport() || !this.isOpen()) return;
 
@@ -711,7 +704,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				this.closeMenu();
 			});
-
 		},
 
 		suppressCtaHoverTemporarily() {
@@ -743,7 +735,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.addEventListener("pointerup", cleanup, { once: true });
 			window.addEventListener("pointercancel", cleanup, { once: true });
 		},
-		
 	};
 
 	/* =========================================================
@@ -903,7 +894,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					</div>
 				</div>
 			`;
-			
+
 			document.body.appendChild(this.root);
 
 			this.topHint = this.root.querySelector(".scroll-section-hint--active");
@@ -953,7 +944,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return 24;
 		},
-		
+
 		updateColumn() {
 			if (!this.root) return;
 			this.root.style.setProperty(
@@ -1003,7 +994,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.topHint || !this.bottomHint) return;
 
 			if (this.isHeroActive()) {
-				
 				this.setHintText(this.topHint, "");
 				this.setHintText(this.bottomHint, "");
 
@@ -1011,7 +1001,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.bottomHint.classList.add("is-empty");
 
 				this.updateHintVisuals();
-				
+
 				return;
 			}
 
@@ -1020,7 +1010,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const activeLabel = activeSection?.id ? this.labels[activeSection.id] : "";
 			const nextLabel = nextSection?.id ? this.labels[nextSection.id] : "";
-			
+
 			this.setHintText(this.topHint, activeLabel ? `${activeLabel} >>` : "");
 			this.setHintText(this.bottomHint, nextLabel ? `<< ${nextLabel}` : "");
 
@@ -1028,7 +1018,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bottomHint.classList.toggle("is-empty", !nextLabel);
 
 			this.updateHintVisuals();
-			
 		},
 
 		show() {
@@ -1044,7 +1033,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		pulse() {
 			this.revealTemporarily();
 		},
-	
+
 		handleScroll() {
 			const currentY = window.scrollY;
 			if (currentY === this.lastKnownScrollY) return;
@@ -1118,7 +1107,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				const rect = hint.getBoundingClientRect();
 				const hintHeight = rect.height || 1;
 
-				/* 1) kompletter Hint wird am Hero abgeschnitten */
 				let clipTop = 0;
 				let clipBottom = 0;
 
@@ -1126,13 +1114,11 @@ document.addEventListener("DOMContentLoaded", () => {
 					const heroOverlap = this.getIntersectionSegment(rect, heroRect);
 
 					if (heroOverlap) {
-						/* bei deinem Layout relevant: Hero schneidet den oberen Bereich */
 						if (heroRect.top <= rect.top) {
 							clipTop = Math.max(0, heroOverlap.bottom - rect.top);
 						} else if (heroRect.bottom >= rect.bottom) {
 							clipBottom = Math.max(0, rect.bottom - heroOverlap.top);
 						} else {
-							/* Fallback für seltene Zwischenlage */
 							clipTop = Math.max(0, heroOverlap.top - rect.top);
 							clipBottom = Math.max(0, rect.bottom - heroOverlap.bottom);
 						}
@@ -1142,7 +1128,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				hint.style.setProperty("--hint-clip-top", `${clipTop}px`);
 				hint.style.setProperty("--hint-clip-bottom", `${clipBottom}px`);
 
-				/* 2) weiße Version nur über dunklen Sections sichtbar */
 				let bestOverlap = null;
 
 				for (const darkRect of darkRects) {
@@ -1407,44 +1392,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
-
-
-
-
-
-		bindHeroAndFooter() {
-			DOM.heroIndicator?.addEventListener("click", (e) => {
-				e.preventDefault();
-				e.stopPropagation();
-				scrollEngine.goTo("#about", "down");
-			});
-
-			DOM.footerToContactTrigger?.addEventListener("click", (e) => {
-				e.preventDefault();
-				e.stopPropagation();
-				scrollEngine.goTo("#contact", "up-section");
-			});
-
-			DOM.footerToContactTrigger?.addEventListener("keydown", (e) => {
-				if (e.key !== "Enter" && e.key !== " ") return;
-				e.preventDefault();
-				scrollEngine.goTo("#contact", "up-section");
-			});
-
-			DOM.heroScrollTrigger?.addEventListener("click", (e) => {
-				e.preventDefault();
-				e.stopPropagation();
-				scrollEngine.goTo("#about", "down");
-			});
-
-			DOM.heroScrollTrigger?.addEventListener("keydown", (e) => {
-				if (e.key !== "Enter" && e.key !== " ") return;
-				e.preventDefault();
-				scrollEngine.goTo("#about", "down");
-			});
-			
-		},
-
 		bindCTA() {
 			DOM.cta?.addEventListener("click", (e) => {
 				if (state.suppressNextCtaClick) {
@@ -1497,16 +1444,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		},
-		
+
 		bindHeroClickBehavior() {
 			DOM.hero?.addEventListener("click", (e) => {
 				if (!DOM.navbar) return;
 				if (utils.isMobileViewport() && navbarModule.isOpen()) return;
 
 				const clickedCTA = e.target.closest(".cta-button");
-				const clickedHeroScrollTrigger = e.target.closest(".hero-scroll-trigger");
 
-				if (clickedCTA || clickedHeroScrollTrigger) return;
+				if (clickedCTA) return;
 
 				const visible = parseFloat(
 					getComputedStyle(DOM.navbar).getPropertyValue("--nav-visible")
@@ -1522,7 +1468,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				navbarModule.startAnimation();
 			});
 		},
-		
+
 		bindPricingTabs() {
 			DOM.pricingTabs.forEach(tab => {
 				tab.addEventListener("click", () => {
@@ -1571,7 +1517,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollSectionHintModule.init();
 		galleryModule.init();
 
-		uiModule.bindHeroAndFooter();
 		uiModule.bindCTA();
 		uiModule.bindHeroClickBehavior();
 		uiModule.bindPricingTabs();
