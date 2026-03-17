@@ -835,21 +835,21 @@ html, body {
 		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
 }
 
-.cta-button:hover {
-		--hover-lift: -2px;
-	}
+.cta-button.is-hovered {
+	--hover-lift: -2px;
+}
 
-.cta-button:hover .cta-shell {
+.cta-button.is-hovered .cta-shell {
 	background: rgba(212, 175, 55, 0.06);
 	border-color: var(--primary-color);
 }
 
-.cta-button:hover .cta-label {
+.cta-button.is-hovered .cta-label {
 	color: var(--primary-color);
 }
 
 body.suppress-cta-hover .cta-button,
-body.suppress-cta-hover .cta-button:hover,
+body.suppress-cta-hover .cta-button.is-hovered,
 body.suppress-cta-hover .cta-button:active,
 body.suppress-cta-hover .cta-button:focus {
 	--magnetic-x: 0px;
@@ -881,7 +881,7 @@ body.suppress-cta-hover .cta-button:hover .cta-label {
 }
 
 body.suppress-cta-hover .cta-button .cta-shell,
-body.suppress-cta-hover .cta-button:hover .cta-shell,
+body.suppress-cta-hover .cta-button.is-hovered .cta-shell,
 body.suppress-cta-hover .cta-button:active .cta-shell,
 body.suppress-cta-hover .cta-button:focus .cta-shell,
 body.suppress-cta-hover .cta-button:focus-visible .cta-shell {
@@ -890,16 +890,15 @@ body.suppress-cta-hover .cta-button:focus-visible .cta-shell {
 }
 
 body.suppress-cta-hover .cta-button .cta-label,
-body.suppress-cta-hover .cta-button:hover .cta-label,
+body.suppress-cta-hover .cta-button.is-hovered .cta-label,
 body.suppress-cta-hover .cta-button:active .cta-label,
 body.suppress-cta-hover .cta-button:focus .cta-label,
 body.suppress-cta-hover .cta-button:focus-visible .cta-label {
 	color: var(--secondary-color);
 }
 
-/* CTA soll bei offenem Mobile-Menü nicht hover/invertieren */
 body.nav-menu-open .cta-button,
-body.nav-menu-open .cta-button:hover,
+body.nav-menu-open .cta-button.is-hovered,
 body.nav-menu-open .cta-button:active,
 body.nav-menu-open .cta-button:focus {
 	--magnetic-x: 0px;
@@ -920,7 +919,7 @@ body.nav-menu-open .cta-button:focus {
 }
 
 body.nav-menu-open .cta-button .cta-shell,
-body.nav-menu-open .cta-button:hover .cta-shell,
+body.nav-menu-open .cta-button.is-hovered .cta-shell,
 body.nav-menu-open .cta-button:active .cta-shell,
 body.nav-menu-open .cta-button:focus .cta-shell {
 	background: var(--primary-color);
@@ -928,13 +927,13 @@ body.nav-menu-open .cta-button:focus .cta-shell {
 }
 
 body.nav-menu-open .cta-button .cta-label,
-body.nav-menu-open .cta-button:hover .cta-label,
+body.nav-menu-open .cta-button.is-hovered .cta-label,
 body.nav-menu-open .cta-button:active .cta-label,
 body.nav-menu-open .cta-button:focus .cta-label {
 	color: var(--secondary-color);
 }
 
-.cta-button.is-magnetic-near:not(:hover) {
+.cta-button.is-magnetic-near:not(.is-hovered) {
 	--hover-lift: -1px;
 	box-shadow:
 		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)

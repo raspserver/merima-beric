@@ -420,6 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (DOM.cta) {
 				DOM.cta.classList.remove("is-magnetic-near");
+				DOM.cta.classList.remove("is-hovered");
 				DOM.cta.blur();
 
 				DOM.cta.style.setProperty("--magnetic-x", "0px");
@@ -1427,6 +1428,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		resetCtaMagnetic() {
 			this.ctaMagneticButtons.forEach(item => {
 				item.button.classList.remove("is-magnetic-near");
+				item.button.classList.remove("is-hovered");
 
 				item.targetX = 0;
 				item.targetY = 0;
@@ -1709,6 +1711,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const resetButtonTarget = (item) => {
 				item.isNear = false;
 				item.button.classList.remove("is-magnetic-near");
+				item.button.classList.remove("is-hovered");
 
 				item.targetX = 0;
 				item.targetY = 0;
@@ -1728,6 +1731,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const applyMagneticField = (item, clientX, clientY) => {
 				const btn = item.button;
+
+				if (document.body.classList.contains("nav-menu-open")) {
+					resetButtonTarget(item);
+					return;
+				}
 
 				if (utils.isMobileViewport() && navbarModule.isOpen()) {
 					resetButtonTarget(item);
@@ -1812,12 +1820,18 @@ document.addEventListener("DOMContentLoaded", () => {
 			};
 
 			const handlePointerMove = (e) => {
+				if (e.pointerType !== "mouse") {
+					this.ctaMagneticButtons.forEach(item => resetButtonTarget(item));
+					this.startCtaMagneticAnimation();
+					return;
+				}
+
 				this.ctaMagneticButtons.forEach(item => {
 					applyMagneticField(item, e.clientX, e.clientY);
 				});
 				this.startCtaMagneticAnimation();
 			};
-
+			
 			const handlePointerLeaveWindow = () => {
 				this.ctaMagneticButtons.forEach(item => resetButtonTarget(item));
 				this.startCtaMagneticAnimation();
@@ -1830,6 +1844,30 @@ document.addEventListener("DOMContentLoaded", () => {
 				item.button.addEventListener("blur", () => {
 					resetButtonTarget(item);
 					this.startCtaMagneticAnimation();
+				});
+			});
+
+			this.ctaMagneticButtons.forEach(item => {
+				item.button.addEventListener("pointerenter", (e) => {
+					if (e.pointerType !== "mouse") return;
+					if (document.body.classList.contains("suppress-cta-hover")) return;
+					if (document.body.classList.contains("nav-menu-open")) return;
+
+					item.button.classList.add("is-hovered");
+				});
+
+				item.button.addEventListener("pointerleave", () => {
+					item.button.classList.remove("is-hovered");
+				});
+
+				item.button.addEventListener("pointerdown", (e) => {
+					if (e.pointerType !== "mouse") {
+						item.button.classList.remove("is-hovered");
+					}
+				});
+
+				item.button.addEventListener("blur", () => {
+					item.button.classList.remove("is-hovered");
 				});
 			});
 		},
