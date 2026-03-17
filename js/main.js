@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.navDismissLayer.style.pointerEvents = "auto";
 			}
 		},
-
+	
 		closeMenu() {
 			if (!DOM.navMenu || !DOM.navToggle) return;
 
@@ -418,6 +418,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			uiModule.resetCtaMagnetic();
 
+			// Wichtig: Navbar-Zustand nach dem Schließen neu setzen
+			state.manualNavbarOpen = false;
+
+			if (window.scrollY <= 5 && !state.programmaticScroll) {
+				this.setTargets(0, 0, 0);
+			} else {
+				this.handleScroll();
+			}
 		},
 
 		setTargets(visible, compact, surface) {
