@@ -1403,7 +1403,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				btn.style.setProperty("--magnetic-shadow-alpha", "0");
 			});
 		},
-
+	
 		bindCTA() {
 			DOM.cta?.addEventListener("click", (e) => {
 				if (state.suppressNextCtaClick) {
@@ -1426,88 +1426,118 @@ document.addEventListener("DOMContentLoaded", () => {
 				scrollEngine.goTo("#contact", "down");
 			});
 
-			document.querySelectorAll(".cta-button").forEach(btn => {
-				
-				const reset = () => {
-					btn.style.setProperty("--magnetic-x", "0px");
-					btn.style.setProperty("--magnetic-y", "0px");
-					btn.style.setProperty("--magnetic-scale", "1");
-					btn.style.setProperty("--magnetic-shadow-y", "0px");
-					btn.style.setProperty("--magnetic-shadow-blur", "0px");
-					btn.style.setProperty("--magnetic-shadow-alpha", "0");
-				};
+			const buttons = [...document.querySelectorAll(".cta-button")];
 
-				btn.addEventListener("mousemove", (e) => {
-					if (utils.isMobileViewport() && navbarModule.isOpen()) {
-						reset();
-						return;
-					}
+			const resetButton = (btn) => {
+				btn.style.setProperty("--magnetic-x", "0px");
+				btn.style.setProperty("--magnetic-y", "0px");
+				btn.style.setProperty("--magnetic-scale", "1");
+				btn.style.setProperty("--magnetic-shadow-y", "0px");
+				btn.style.setProperty("--magnetic-shadow-blur", "0px");
+				btn.style.setProperty("--magnetic-shadow-alpha", "0");
+			};
 
-					if (document.body.classList.contains("suppress-cta-hover")) {
-						reset();
-						return;
-					}
+			const applyMagneticField = (btn, clientX, clientY) => {
+				if (utils.isMobileViewport() && navbarModule.isOpen()) {
+					resetButton(btn);
+					return;
+				}
 
-					const rect = btn.getBoundingClientRect();
+				if (document.body.classList.contains("suppress-cta-hover")) {
+					resetButton(btn);
+					return;
+				}
 
-					const localX = e.clientX - rect.left;
-					const localY = e.clientY - rect.top;
+				const rect = btn.getBoundingClientRect();
 
-					const centerX = rect.width / 2;
-					const centerY = rect.height / 2;
+				const centerX = rect.left + rect.width / 2;
+				const centerY = rect.top + rect.height / 2;
 
-					const dx = localX - centerX;
-					const dy = localY - centerY;
+				const dx = clientX - centerX;
+				const dy = clientY - centerY;
 
-					/* Radius normieren (Ellipse statt harter Kreis) */
-					const nx = dx / centerX;
-					const ny = dy / centerY;
-					const distance = Math.min(Math.sqrt(nx * nx + ny * ny), 1);
+				/* Elliptischer outer interaction radius */
+				const outerRadiusX = rect.width * 0.95;
+				const outerRadiusY = rect.height * 1.6;
 
-					/* Apple-artiger Falloff:
-					   - in der Mitte fast ruhig
-					   - dann sanft anziehend
-					   - außen stärker, aber weich
-					*/
-					const eased = 1 - Math.pow(1 - distance, 3);   // easeOutCubic
-					const falloff = Math.pow(eased, 1.45);
+				const nx = dx / outerRadiusX;
+				const ny = dy / outerRadiusY;
 
-					/* Maximale Verschiebung abhängig von Buttongröße */
-					const maxShiftX = Math.min(rect.width * 0.12, 15);
-					const maxShiftY = Math.min(rect.height * 0.26, 11);
+				const rawDistance = Math.sqrt(nx * nx + ny * ny);
+				const distance = Math.min(rawDistance, 1.25);
 
-					/* Richtung beibehalten, Stärke über Radius steuern */
-					const dirX = distance > 0 ? dx / Math.sqrt(dx * dx + dy * dy || 1) : 0;
-					const dirY = distance > 0 ? dy / Math.sqrt(dx * dx + dy * dy || 1) : 0;
+				/* Nur innerhalb des outer field reagieren */
+				if (rawDistance > 1) {
+					resetButton(btn);
+					return;
+				}
 
-					const offsetX = dirX * maxShiftX * falloff;
-					const offsetY = dirY * maxShiftY * falloff;
+				/* Feldstärke:
+				   am äußeren Rand fast 0,
+				   Richtung Zentrum weich stärker,
+				   im Kern nicht linear, sondern luxuriös verdichtet.
+				*/
+				const proximity = 1 - rawDistance;                 // 0 außen, 1 im Zentrum
+				const eased = 1 - Math.pow(1 - proximity, 3);     // easeOutCubic
+				const shaped = Math.pow(eased, 1.6);              // radius shaping
 
-					/* Feines Premium-Tuning */
-					const scale = 1 + (falloff * 0.014);	
-					const shadowY = 10 + (falloff * 12);
-					const shadowBlur = 30 + (falloff * 18);
-					const shadowAlpha = 0.16 + (falloff * 0.16);
+				/* Inner zone boost:
+				   wenn Cursor wirklich über dem Button ist,
+				   bekommt der Effekt mehr Autorität.
+				*/
+				const innerNX = dx / (rect.width / 2);
+				const innerNY = dy / (rect.height / 2);
+				const innerDistance = Math.sqrt(innerNX * innerNX + innerNY * innerNY);
+				const insideButton = innerDistance <= 1;
 
-					btn.style.setProperty("--magnetic-x", `${offsetX.toFixed(2)}px`);
-					btn.style.setProperty("--magnetic-y", `${offsetY.toFixed(2)}px`);
-					btn.style.setProperty("--magnetic-scale", scale.toFixed(4));
-					btn.style.setProperty("--magnetic-shadow-y", `${shadowY.toFixed(2)}px`);
-					btn.style.setProperty("--magnetic-shadow-blur", `${shadowBlur.toFixed(2)}px`);
-					btn.style.setProperty("--magnetic-shadow-alpha", shadowAlpha.toFixed(3));
-				});
-				
-				btn.addEventListener("mouseenter", () => {
-					reset();
-				});
+				const innerProximity = insideButton ? (1 - innerDistance) : 0;
+				const innerBoost = insideButton
+					? Math.pow(1 - Math.pow(1 - innerProximity, 3), 1.15)
+					: 0;
 
-				btn.addEventListener("mouseleave", () => {
-					reset();
-				});
+				const combinedStrength = Math.min(
+					0.38 * shaped + 0.62 * innerBoost,
+					1
+				);
 
-				btn.addEventListener("blur", () => {
-					reset();
-				});
+				const length = Math.hypot(dx, dy) || 1;
+				const dirX = dx / length;
+				const dirY = dy / length;
+
+				/* Feines Premium-Tuning */
+				const maxShiftX = Math.min(rect.width * 0.12, 15);
+				const maxShiftY = Math.min(rect.height * 0.26, 11);
+
+				const offsetX = dirX * maxShiftX * combinedStrength;
+				const offsetY = dirY * maxShiftY * combinedStrength;
+
+				const scale = 1 + (combinedStrength * 0.014);
+				const shadowY = 10 + (combinedStrength * 12);
+				const shadowBlur = 28 + (combinedStrength * 20);
+				const shadowAlpha = 0.12 + (combinedStrength * 0.18);
+
+				btn.style.setProperty("--magnetic-x", `${offsetX.toFixed(2)}px`);
+				btn.style.setProperty("--magnetic-y", `${offsetY.toFixed(2)}px`);
+				btn.style.setProperty("--magnetic-scale", scale.toFixed(4));
+				btn.style.setProperty("--magnetic-shadow-y", `${shadowY.toFixed(2)}px`);
+				btn.style.setProperty("--magnetic-shadow-blur", `${shadowBlur.toFixed(2)}px`);
+				btn.style.setProperty("--magnetic-shadow-alpha", shadowAlpha.toFixed(3));
+			};
+
+			const handlePointerMove = (e) => {
+				buttons.forEach(btn => applyMagneticField(btn, e.clientX, e.clientY));
+			};
+
+			const handlePointerLeaveWindow = () => {
+				buttons.forEach(resetButton);
+			};
+
+			window.addEventListener("pointermove", handlePointerMove, { passive: true });
+			window.addEventListener("pointerleave", handlePointerLeaveWindow);
+
+			buttons.forEach(btn => {
+				btn.addEventListener("mouseleave", () => resetButton(btn));
+				btn.addEventListener("blur", () => resetButton(btn));
 			});
 		},
 

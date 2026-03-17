@@ -806,7 +806,6 @@ html, body {
 	position: relative;
 	will-change: transform, box-shadow;
 
-	/* === MAGNETIC SYSTEM === */
 	--magnetic-x: 0px;
 	--magnetic-y: 0px;
 	--hover-lift: 0px;
@@ -824,10 +823,10 @@ html, body {
 		scale(var(--magnetic-scale));
 
 	transition:
-		transform 0.42s cubic-bezier(.16,.84,.44,1),
+		transform 0.52s cubic-bezier(.16,.84,.44,1),
 		background 0.3s ease,
 		color 0.3s ease,
-		box-shadow 0.42s cubic-bezier(.16,.84,.44,1);
+		box-shadow 0.52s cubic-bezier(.16,.84,.44,1);
 
 	box-shadow:
 		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)
