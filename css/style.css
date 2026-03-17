@@ -880,6 +880,23 @@ body.suppress-cta-hover .cta-button:hover .cta-label {
 	color: var(--secondary-color);
 }
 
+body.suppress-cta-hover .cta-button .cta-shell,
+body.suppress-cta-hover .cta-button:hover .cta-shell,
+body.suppress-cta-hover .cta-button:active .cta-shell,
+body.suppress-cta-hover .cta-button:focus .cta-shell,
+body.suppress-cta-hover .cta-button:focus-visible .cta-shell {
+	background: var(--primary-color);
+	border-color: var(--primary-color);
+}
+
+body.suppress-cta-hover .cta-button .cta-label,
+body.suppress-cta-hover .cta-button:hover .cta-label,
+body.suppress-cta-hover .cta-button:active .cta-label,
+body.suppress-cta-hover .cta-button:focus .cta-label,
+body.suppress-cta-hover .cta-button:focus-visible .cta-label {
+	color: var(--secondary-color);
+}
+
 /* CTA soll bei offenem Mobile-Menü nicht hover/invertieren */
 body.nav-menu-open .cta-button,
 body.nav-menu-open .cta-button:hover,

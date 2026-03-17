@@ -429,13 +429,18 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.cta.style.setProperty("--magnetic-shadow-y", "0px");
 				DOM.cta.style.setProperty("--magnetic-shadow-blur", "0px");
 				DOM.cta.style.setProperty("--magnetic-shadow-alpha", "0");
+
 				DOM.cta.style.setProperty("--label-x", "0px");
 				DOM.cta.style.setProperty("--label-y", "0px");
 				DOM.cta.style.setProperty("--label-scale", "1");
+
 				DOM.cta.style.setProperty("--gloss-x", "50%");
 				DOM.cta.style.setProperty("--gloss-y", "50%");
 				DOM.cta.style.setProperty("--gloss-opacity", "0");
 			}
+
+			// wichtig: Touch-Hover kurz unterdrücken
+			this.suppressCtaHoverTemporarily(700);
 
 			state.manualNavbarOpen = false;
 
@@ -445,7 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.handleScroll();
 			}
 		},
-		
+
 		setTargets(visible, compact, surface) {
 			if (!DOM.navbar) return;
 
@@ -730,8 +735,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.closeMenu();
 			});
 		},
-
-		suppressCtaHoverTemporarily() {
+		
+		suppressCtaHoverTemporarily(duration = 400) {
 			document.body.classList.add("suppress-cta-hover");
 
 			if (state.suppressCtaHoverCleanup) {
@@ -753,13 +758,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.suppressCtaHoverCleanup = null;
 			};
 
-			cleanup.__timeoutId = setTimeout(cleanup, 400);
+			cleanup.__timeoutId = setTimeout(cleanup, duration);
 
 			state.suppressCtaHoverCleanup = cleanup;
 
 			window.addEventListener("pointerup", cleanup, { once: true });
 			window.addEventListener("pointercancel", cleanup, { once: true });
 		},
+		
 	};
 
 	/* =========================================================
