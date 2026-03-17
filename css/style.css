@@ -841,7 +841,6 @@ html, body {
 }
 
 /* Safety Reset (wird von deinem JS benutzt) */
-/*
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button:hover,
 body.suppress-cta-hover .cta-button:active,
@@ -854,7 +853,6 @@ body.suppress-cta-hover .cta-button:focus {
 	--hover-lift: 0px;
 
 	box-shadow: none;
-*/
 }
 
 .scroll-dot {
