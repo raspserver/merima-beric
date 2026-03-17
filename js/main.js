@@ -417,6 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 			
 			document.querySelectorAll(".cta-button").forEach(btn => {
+				btn.classList.remove("is-magnetic-near");
 				btn.style.setProperty("--magnetic-x", "0px");
 				btn.style.setProperty("--magnetic-y", "0px");
 				btn.style.setProperty("--magnetic-scale", "1");
@@ -1395,6 +1396,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		resetCtaMagnetic() {
 			document.querySelectorAll(".cta-button").forEach(btn => {
+				btn.classList.remove("is-magnetic-near");
 				btn.style.setProperty("--magnetic-x", "0px");
 				btn.style.setProperty("--magnetic-y", "0px");
 				btn.style.setProperty("--magnetic-scale", "1");
@@ -1403,7 +1405,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				btn.style.setProperty("--magnetic-shadow-alpha", "0");
 			});
 		},
-	
+
 		bindCTA() {
 			DOM.cta?.addEventListener("click", (e) => {
 				if (state.suppressNextCtaClick) {
@@ -1429,6 +1431,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const buttons = [...document.querySelectorAll(".cta-button")];
 
 			const resetButton = (btn) => {
+				btn.classList.remove("is-magnetic-near");
 				btn.style.setProperty("--magnetic-x", "0px");
 				btn.style.setProperty("--magnetic-y", "0px");
 				btn.style.setProperty("--magnetic-scale", "1");
@@ -1468,9 +1471,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				/* Nur innerhalb des outer field reagieren */
 				if (rawDistance > 1) {
+					btn.classList.remove("is-magnetic-near");
 					resetButton(btn);
 					return;
 				}
+
+				btn.classList.add("is-magnetic-near");
 
 				/* Feldstärke:
 				   am äußeren Rand fast 0,
@@ -1534,11 +1540,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			window.addEventListener("pointermove", handlePointerMove, { passive: true });
 			window.addEventListener("pointerleave", handlePointerLeaveWindow);
-
+			
 			buttons.forEach(btn => {
-				btn.addEventListener("mouseleave", () => resetButton(btn));
 				btn.addEventListener("blur", () => resetButton(btn));
 			});
+
 		},
 
 		bindHeroClickBehavior() {

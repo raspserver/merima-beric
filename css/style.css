@@ -857,6 +857,13 @@ body.suppress-cta-hover .cta-button:focus {
 	box-shadow: none;
 }
 
+.cta-button.is-magnetic-near:not(:hover) {
+	--hover-lift: -1px;
+	box-shadow:
+		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)
+		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
+}
+
 .scroll-dot {
 	width: 8px;
 	height: 8px;
