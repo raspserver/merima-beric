@@ -416,11 +416,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.navDismissLayer.style.pointerEvents = "none";
 			}
 
-			// CTA visuell komplett zurücksetzen
 			uiModule.resetCtaMagnetic();
 
 			if (DOM.cta) {
 				DOM.cta.classList.remove("is-magnetic-near");
+				DOM.cta.blur();
 
 				DOM.cta.style.setProperty("--magnetic-x", "0px");
 				DOM.cta.style.setProperty("--magnetic-y", "0px");
@@ -429,17 +429,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.cta.style.setProperty("--magnetic-shadow-y", "0px");
 				DOM.cta.style.setProperty("--magnetic-shadow-blur", "0px");
 				DOM.cta.style.setProperty("--magnetic-shadow-alpha", "0");
-
 				DOM.cta.style.setProperty("--label-x", "0px");
 				DOM.cta.style.setProperty("--label-y", "0px");
 				DOM.cta.style.setProperty("--label-scale", "1");
-
 				DOM.cta.style.setProperty("--gloss-x", "50%");
 				DOM.cta.style.setProperty("--gloss-y", "50%");
 				DOM.cta.style.setProperty("--gloss-opacity", "0");
-
-				// optional, hilft gegen visuelles "Hängen"
-				void DOM.cta.offsetHeight;
 			}
 
 			state.manualNavbarOpen = false;
@@ -450,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.handleScroll();
 			}
 		},
-
+		
 		setTargets(visible, compact, surface) {
 			if (!DOM.navbar) return;
 
