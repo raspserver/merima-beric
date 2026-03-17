@@ -736,20 +736,20 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 		
-		suppressCtaHoverTemporarily(duration = 400) {
+		suppressCtaHoverTemporarily(duration = 700) {
 			document.body.classList.add("suppress-cta-hover");
 
 			if (state.suppressCtaHoverCleanup) {
-				window.removeEventListener("pointerup", state.suppressCtaHoverCleanup);
-				window.removeEventListener("pointercancel", state.suppressCtaHoverCleanup);
+				window.removeEventListener("pointermove", state.suppressCtaHoverCleanup);
 				clearTimeout(state.suppressCtaHoverCleanup.__timeoutId);
 			}
 
-			const cleanup = () => {
-				document.body.classList.remove("suppress-cta-hover");
+			const cleanup = (e) => {
+				/* Nur echte Mausbewegung darf Hover wieder freigeben */
+				if (e && e.pointerType && e.pointerType !== "mouse") return;
 
-				window.removeEventListener("pointerup", cleanup);
-				window.removeEventListener("pointercancel", cleanup);
+				document.body.classList.remove("suppress-cta-hover");
+				window.removeEventListener("pointermove", cleanup);
 
 				if (cleanup.__timeoutId) {
 					clearTimeout(cleanup.__timeoutId);
@@ -758,14 +758,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.suppressCtaHoverCleanup = null;
 			};
 
-			cleanup.__timeoutId = setTimeout(cleanup, duration);
+			cleanup.__timeoutId = setTimeout(() => {
+				document.body.classList.remove("suppress-cta-hover");
+				window.removeEventListener("pointermove", cleanup);
+				state.suppressCtaHoverCleanup = null;
+			}, duration);
 
 			state.suppressCtaHoverCleanup = cleanup;
 
-			window.addEventListener("pointerup", cleanup, { once: true });
-			window.addEventListener("pointercancel", cleanup, { once: true });
+			window.addEventListener("pointermove", cleanup);
 		},
-		
+
 	};
 
 	/* =========================================================
