@@ -1419,16 +1419,19 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			document.querySelectorAll(".cta-button").forEach(btn => {
+				const reset = () => {
+					btn.style.setProperty("--magnetic-x", "0px");
+					btn.style.setProperty("--magnetic-y", "0px");
+				};
+
 				btn.addEventListener("mousemove", (e) => {
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
-						btn.style.setProperty("--magnetic-x", "0px");
-						btn.style.setProperty("--magnetic-y", "0px");
+						reset();
 						return;
 					}
 
 					if (document.body.classList.contains("suppress-cta-hover")) {
-						btn.style.setProperty("--magnetic-x", "0px");
-						btn.style.setProperty("--magnetic-y", "0px");
+						reset();
 						return;
 					}
 
@@ -1440,12 +1443,18 @@ document.addEventListener("DOMContentLoaded", () => {
 					btn.style.setProperty("--magnetic-y", `${y * 0.18}px`);
 				});
 
+				btn.addEventListener("mouseenter", () => {
+					reset();
+				});
+
 				btn.addEventListener("mouseleave", () => {
-					btn.style.setProperty("--magnetic-x", "0px");
-					btn.style.setProperty("--magnetic-y", "0px");
+					reset();
+				});
+
+				btn.addEventListener("blur", () => {
+					reset();
 				});
 			});
-
 		},
 
 		bindHeroClickBehavior() {
