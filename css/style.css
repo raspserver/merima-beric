@@ -492,9 +492,7 @@ html, body {
 	transition: filter 0.8s ease;
 	transform-origin: center center;
 	will-change: transform;
-/*
 	contain: paint;
-*/
 	backface-visibility: hidden;
 }
 
