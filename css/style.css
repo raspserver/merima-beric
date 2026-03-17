@@ -454,6 +454,7 @@ html, body {
 
 .hero {
 	position: relative;
+	z-index: 5;
 	min-height: 100svh;
 	height: 100svh;
 
@@ -784,7 +785,8 @@ html, body {
 }
 
 .cta-button {
-	display: inline-block;
+	position: relative;
+	z-index: 6;
 	padding: 0;
 	margin-top: 0.9rem;
 
@@ -1002,6 +1004,8 @@ section {
 
 .hero + section {
 	margin-top: 0;
+	position: relative;
+	z-index: 1;
 }
 
 .container {
