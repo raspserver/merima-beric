@@ -24,8 +24,6 @@
 	--section-scroll-head-height: 60px;
 	--section-scroll-inset: 5;
 	--brand-sub-ratio: 0.25;
-	
-	--hero-scroll-indicator-top: calc(var(--nav-height) + 7rem);
 
 	/* =========================
 	   NAVBAR STRUCTURE
