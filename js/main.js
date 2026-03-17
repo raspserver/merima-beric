@@ -415,16 +415,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (DOM.navDismissLayer) {
 				DOM.navDismissLayer.style.pointerEvents = "none";
 			}
-			
-			document.querySelectorAll(".cta-button").forEach(btn => {
-				btn.classList.remove("is-magnetic-near");
-				btn.style.setProperty("--magnetic-x", "0px");
-				btn.style.setProperty("--magnetic-y", "0px");
-				btn.style.setProperty("--magnetic-scale", "1");
-				btn.style.setProperty("--magnetic-shadow-y", "0px");
-				btn.style.setProperty("--magnetic-shadow-blur", "0px");
-				btn.style.setProperty("--magnetic-shadow-alpha", "0");
-			});
+
+			uiModule.resetCtaMagnetic();
 
 		},
 
@@ -1393,17 +1385,129 @@ document.addEventListener("DOMContentLoaded", () => {
 	   UI MODULE
 	========================================================= */
 	const uiModule = {
-		
+		ctaMagneticButtons: [],
+		ctaMagneticRunning: false,
+		ctaMagneticLastFrame: 0,
+
 		resetCtaMagnetic() {
-			document.querySelectorAll(".cta-button").forEach(btn => {
-				btn.classList.remove("is-magnetic-near");
-				btn.style.setProperty("--magnetic-x", "0px");
-				btn.style.setProperty("--magnetic-y", "0px");
-				btn.style.setProperty("--magnetic-scale", "1");
-				btn.style.setProperty("--magnetic-shadow-y", "0px");
-				btn.style.setProperty("--magnetic-shadow-blur", "0px");
-				btn.style.setProperty("--magnetic-shadow-alpha", "0");
+			this.ctaMagneticButtons.forEach(item => {
+				item.button.classList.remove("is-magnetic-near");
+
+				item.targetX = 0;
+				item.targetY = 0;
+				item.targetScale = 1;
+				item.targetShadowY = 0;
+				item.targetShadowBlur = 0;
+				item.targetShadowAlpha = 0;
+
+				item.currentX = 0;
+				item.currentY = 0;
+				item.currentScale = 1;
+				item.currentShadowY = 0;
+				item.currentShadowBlur = 0;
+				item.currentShadowAlpha = 0;
+
+				item.velocityX = 0;
+				item.velocityY = 0;
+				item.velocityScale = 0;
+				item.velocityShadowY = 0;
+				item.velocityShadowBlur = 0;
+				item.velocityShadowAlpha = 0;
+
+				item.button.style.setProperty("--magnetic-x", "0px");
+				item.button.style.setProperty("--magnetic-y", "0px");
+				item.button.style.setProperty("--magnetic-scale", "1");
+				item.button.style.setProperty("--magnetic-shadow-y", "0px");
+				item.button.style.setProperty("--magnetic-shadow-blur", "0px");
+				item.button.style.setProperty("--magnetic-shadow-alpha", "0");
 			});
+		},
+
+		startCtaMagneticAnimation() {
+			if (this.ctaMagneticRunning) return;
+
+			this.ctaMagneticRunning = true;
+			this.ctaMagneticLastFrame = performance.now();
+			requestAnimationFrame(this.animateCtaMagnetic.bind(this));
+		},
+
+		animateCtaMagnetic(now) {
+			this.ctaMagneticRunning = true;
+
+			let delta = (now - this.ctaMagneticLastFrame) / 16.67;
+			this.ctaMagneticLastFrame = now;
+			delta = Math.min(delta, 2);
+
+			let hasMotion = false;
+
+			this.ctaMagneticButtons.forEach(item => {
+				const spring = item.isNear ? 0.16 : 0.11;
+				const damping = item.isNear ? 0.78 : 0.82;
+
+				const stepSpring = (current, target, velocity) => {
+					const force = (target - current) * spring;
+					velocity += force * delta;
+					velocity *= Math.pow(damping, delta);
+					current += velocity * delta;
+					return { current, velocity };
+				};
+
+				let result;
+
+				result = stepSpring(item.currentX, item.targetX, item.velocityX);
+				item.currentX = result.current;
+				item.velocityX = result.velocity;
+
+				result = stepSpring(item.currentY, item.targetY, item.velocityY);
+				item.currentY = result.current;
+				item.velocityY = result.velocity;
+
+				result = stepSpring(item.currentScale, item.targetScale, item.velocityScale);
+				item.currentScale = result.current;
+				item.velocityScale = result.velocity;
+
+				result = stepSpring(item.currentShadowY, item.targetShadowY, item.velocityShadowY);
+				item.currentShadowY = result.current;
+				item.velocityShadowY = result.velocity;
+
+				result = stepSpring(item.currentShadowBlur, item.targetShadowBlur, item.velocityShadowBlur);
+				item.currentShadowBlur = result.current;
+				item.velocityShadowBlur = result.velocity;
+
+				result = stepSpring(item.currentShadowAlpha, item.targetShadowAlpha, item.velocityShadowAlpha);
+				item.currentShadowAlpha = result.current;
+				item.velocityShadowAlpha = result.velocity;
+
+				item.button.style.setProperty("--magnetic-x", `${item.currentX.toFixed(2)}px`);
+				item.button.style.setProperty("--magnetic-y", `${item.currentY.toFixed(2)}px`);
+				item.button.style.setProperty("--magnetic-scale", item.currentScale.toFixed(4));
+				item.button.style.setProperty("--magnetic-shadow-y", `${item.currentShadowY.toFixed(2)}px`);
+				item.button.style.setProperty("--magnetic-shadow-blur", `${item.currentShadowBlur.toFixed(2)}px`);
+				item.button.style.setProperty("--magnetic-shadow-alpha", item.currentShadowAlpha.toFixed(3));
+
+				const moving =
+					Math.abs(item.targetX - item.currentX) > 0.01 ||
+					Math.abs(item.targetY - item.currentY) > 0.01 ||
+					Math.abs(item.targetScale - item.currentScale) > 0.001 ||
+					Math.abs(item.targetShadowY - item.currentShadowY) > 0.01 ||
+					Math.abs(item.targetShadowBlur - item.currentShadowBlur) > 0.01 ||
+					Math.abs(item.targetShadowAlpha - item.currentShadowAlpha) > 0.001 ||
+					Math.abs(item.velocityX) > 0.01 ||
+					Math.abs(item.velocityY) > 0.01 ||
+					Math.abs(item.velocityScale) > 0.001 ||
+					Math.abs(item.velocityShadowY) > 0.01 ||
+					Math.abs(item.velocityShadowBlur) > 0.01 ||
+					Math.abs(item.velocityShadowAlpha) > 0.001;
+
+				if (moving) hasMotion = true;
+			});
+
+			if (!hasMotion) {
+				this.ctaMagneticRunning = false;
+				return;
+			}
+
+			requestAnimationFrame(this.animateCtaMagnetic.bind(this));
 		},
 
 		bindCTA() {
@@ -1430,24 +1534,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const buttons = [...document.querySelectorAll(".cta-button")];
 
-			const resetButton = (btn) => {
-				btn.classList.remove("is-magnetic-near");
-				btn.style.setProperty("--magnetic-x", "0px");
-				btn.style.setProperty("--magnetic-y", "0px");
-				btn.style.setProperty("--magnetic-scale", "1");
-				btn.style.setProperty("--magnetic-shadow-y", "0px");
-				btn.style.setProperty("--magnetic-shadow-blur", "0px");
-				btn.style.setProperty("--magnetic-shadow-alpha", "0");
+			this.ctaMagneticButtons = buttons.map(button => ({
+				button,
+				isNear: false,
+
+				targetX: 0,
+				targetY: 0,
+				targetScale: 1,
+				targetShadowY: 0,
+				targetShadowBlur: 0,
+				targetShadowAlpha: 0,
+
+				currentX: 0,
+				currentY: 0,
+				currentScale: 1,
+				currentShadowY: 0,
+				currentShadowBlur: 0,
+				currentShadowAlpha: 0,
+
+				velocityX: 0,
+				velocityY: 0,
+				velocityScale: 0,
+				velocityShadowY: 0,
+				velocityShadowBlur: 0,
+				velocityShadowAlpha: 0
+			}));
+
+			const resetButtonTarget = (item) => {
+				item.isNear = false;
+				item.button.classList.remove("is-magnetic-near");
+
+				item.targetX = 0;
+				item.targetY = 0;
+				item.targetScale = 1;
+				item.targetShadowY = 0;
+				item.targetShadowBlur = 0;
+				item.targetShadowAlpha = 0;
 			};
 
-			const applyMagneticField = (btn, clientX, clientY) => {
+			const applyMagneticField = (item, clientX, clientY) => {
+				const btn = item.button;
+
 				if (utils.isMobileViewport() && navbarModule.isOpen()) {
-					resetButton(btn);
+					resetButtonTarget(item);
 					return;
 				}
 
 				if (document.body.classList.contains("suppress-cta-hover")) {
-					resetButton(btn);
+					resetButtonTarget(item);
 					return;
 				}
 
@@ -1459,38 +1593,25 @@ document.addEventListener("DOMContentLoaded", () => {
 				const dx = clientX - centerX;
 				const dy = clientY - centerY;
 
-				/* Elliptischer outer interaction radius */
-				const outerRadiusX = rect.width * 0.95;
-				const outerRadiusY = rect.height * 1.6;
+				const outerRadiusX = rect.width * 1.15;
+				const outerRadiusY = rect.height * 1.9;
 
 				const nx = dx / outerRadiusX;
 				const ny = dy / outerRadiusY;
-
 				const rawDistance = Math.sqrt(nx * nx + ny * ny);
-				const distance = Math.min(rawDistance, 1.25);
 
-				/* Nur innerhalb des outer field reagieren */
 				if (rawDistance > 1) {
-					btn.classList.remove("is-magnetic-near");
-					resetButton(btn);
+					resetButtonTarget(item);
 					return;
 				}
 
+				item.isNear = true;
 				btn.classList.add("is-magnetic-near");
 
-				/* Feldstärke:
-				   am äußeren Rand fast 0,
-				   Richtung Zentrum weich stärker,
-				   im Kern nicht linear, sondern luxuriös verdichtet.
-				*/
-				const proximity = 1 - rawDistance;                 // 0 außen, 1 im Zentrum
-				const eased = 1 - Math.pow(1 - proximity, 3);     // easeOutCubic
-				const shaped = Math.pow(eased, 1.6);              // radius shaping
+				const proximity = 1 - rawDistance;
+				const eased = 1 - Math.pow(1 - proximity, 3);
+				const shaped = Math.pow(eased, 1.6);
 
-				/* Inner zone boost:
-				   wenn Cursor wirklich über dem Button ist,
-				   bekommt der Effekt mehr Autorität.
-				*/
 				const innerNX = dx / (rect.width / 2);
 				const innerNY = dy / (rect.height / 2);
 				const innerDistance = Math.sqrt(innerNX * innerNX + innerNY * innerNY);
@@ -1501,50 +1622,46 @@ document.addEventListener("DOMContentLoaded", () => {
 					? Math.pow(1 - Math.pow(1 - innerProximity, 3), 1.15)
 					: 0;
 
-				const combinedStrength = Math.min(
-					0.38 * shaped + 0.62 * innerBoost,
-					1
-				);
+				const combinedStrength = insideButton
+					? Math.min(0.32 * shaped + 0.68 * innerBoost, 1)
+					: Math.min(0.62 * shaped, 0.5);
 
 				const length = Math.hypot(dx, dy) || 1;
 				const dirX = dx / length;
 				const dirY = dy / length;
 
-				/* Feines Premium-Tuning */
 				const maxShiftX = Math.min(rect.width * 0.12, 15);
 				const maxShiftY = Math.min(rect.height * 0.26, 11);
 
-				const offsetX = dirX * maxShiftX * combinedStrength;
-				const offsetY = dirY * maxShiftY * combinedStrength;
-
-				const scale = 1 + (combinedStrength * 0.014);
-				const shadowY = 10 + (combinedStrength * 12);
-				const shadowBlur = 28 + (combinedStrength * 20);
-				const shadowAlpha = 0.12 + (combinedStrength * 0.18);
-
-				btn.style.setProperty("--magnetic-x", `${offsetX.toFixed(2)}px`);
-				btn.style.setProperty("--magnetic-y", `${offsetY.toFixed(2)}px`);
-				btn.style.setProperty("--magnetic-scale", scale.toFixed(4));
-				btn.style.setProperty("--magnetic-shadow-y", `${shadowY.toFixed(2)}px`);
-				btn.style.setProperty("--magnetic-shadow-blur", `${shadowBlur.toFixed(2)}px`);
-				btn.style.setProperty("--magnetic-shadow-alpha", shadowAlpha.toFixed(3));
+				item.targetX = dirX * maxShiftX * combinedStrength;
+				item.targetY = dirY * maxShiftY * combinedStrength;
+				item.targetScale = 1 + (combinedStrength * 0.014);
+				item.targetShadowY = 10 + (combinedStrength * 12);
+				item.targetShadowBlur = 28 + (combinedStrength * 20);
+				item.targetShadowAlpha = 0.12 + (combinedStrength * 0.18);
 			};
 
 			const handlePointerMove = (e) => {
-				buttons.forEach(btn => applyMagneticField(btn, e.clientX, e.clientY));
+				this.ctaMagneticButtons.forEach(item => {
+					applyMagneticField(item, e.clientX, e.clientY);
+				});
+				this.startCtaMagneticAnimation();
 			};
 
 			const handlePointerLeaveWindow = () => {
-				buttons.forEach(resetButton);
+				this.ctaMagneticButtons.forEach(item => resetButtonTarget(item));
+				this.startCtaMagneticAnimation();
 			};
 
 			window.addEventListener("pointermove", handlePointerMove, { passive: true });
 			window.addEventListener("pointerleave", handlePointerLeaveWindow);
-			
-			buttons.forEach(btn => {
-				btn.addEventListener("blur", () => resetButton(btn));
-			});
 
+			this.ctaMagneticButtons.forEach(item => {
+				item.button.addEventListener("blur", () => {
+					resetButtonTarget(item);
+					this.startCtaMagneticAnimation();
+				});
+			});
 		},
 
 		bindHeroClickBehavior() {
