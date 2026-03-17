@@ -1386,12 +1386,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	   UI MODULE
 	========================================================= */
 	const uiModule = {
+		
 		resetCtaMagnetic() {
 			document.querySelectorAll(".cta-button").forEach(btn => {
-				btn.style.transform = "";
+				btn.style.setProperty("--magnetic-x", "0px");
+				btn.style.setProperty("--magnetic-y", "0px");
 			});
 		},
-
+		
 		bindCTA() {
 			DOM.cta?.addEventListener("click", (e) => {
 				if (state.suppressNextCtaClick) {
@@ -1418,29 +1420,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			document.querySelectorAll(".cta-button").forEach(btn => {
 				if (!supportsRealHover) {
-					btn.style.transform = "";
+					btn.style.setProperty("--magnetic-x", "0px");
+					btn.style.setProperty("--magnetic-y", "0px");
 					return;
 				}
 
 				btn.addEventListener("mousemove", (e) => {
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
-						btn.style.transform = "";
+						btn.style.setProperty("--magnetic-x", "0px");
+						btn.style.setProperty("--magnetic-y", "0px");
 						return;
 					}
 
 					if (document.body.classList.contains("suppress-cta-hover")) {
-						btn.style.transform = "";
+						btn.style.setProperty("--magnetic-x", "0px");
+						btn.style.setProperty("--magnetic-y", "0px");
 						return;
 					}
 
 					const rect = btn.getBoundingClientRect();
+
 					const x = e.clientX - rect.left - rect.width / 2;
 					const y = e.clientY - rect.top - rect.height / 2;
-					btn.style.transform = `translate(${x * 0.18}px, ${y * 0.18}px)`;
+
+					btn.style.setProperty("--magnetic-x", `${x * 0.18}px`);
+					btn.style.setProperty("--magnetic-y", `${y * 0.18}px`);
 				});
 
 				btn.addEventListener("mouseleave", () => {
-					btn.style.transform = "";
+					btn.style.setProperty("--magnetic-x", "0px");
+					btn.style.setProperty("--magnetic-y", "0px");
 				});
 			});
 		},
