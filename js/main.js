@@ -415,10 +415,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (DOM.navDismissLayer) {
 				DOM.navDismissLayer.style.pointerEvents = "none";
 			}
-
+			
 			document.querySelectorAll(".cta-button").forEach(btn => {
-				btn.style.transform = "";
+				btn.style.setProperty("--magnetic-x", "0px");
+				btn.style.setProperty("--magnetic-y", "0px");
 			});
+			
 		},
 
 		setTargets(visible, compact, surface) {
@@ -1416,15 +1418,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				scrollEngine.goTo("#contact", "down");
 			});
 
-			const supportsRealHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-
 			document.querySelectorAll(".cta-button").forEach(btn => {
-				if (!supportsRealHover) {
-					btn.style.setProperty("--magnetic-x", "0px");
-					btn.style.setProperty("--magnetic-y", "0px");
-					return;
-				}
-
 				btn.addEventListener("mousemove", (e) => {
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
 						btn.style.setProperty("--magnetic-x", "0px");
@@ -1439,7 +1433,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					}
 
 					const rect = btn.getBoundingClientRect();
-
 					const x = e.clientX - rect.left - rect.width / 2;
 					const y = e.clientY - rect.top - rect.height / 2;
 
@@ -1452,6 +1445,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					btn.style.setProperty("--magnetic-y", "0px");
 				});
 			});
+
 		},
 
 		bindHeroClickBehavior() {

@@ -833,15 +833,11 @@ html, body {
 		box-shadow 0.3s ease;
 }
 
-/* Hover nur visuell, NICHT transform direkt */
-@media (hover: hover) and (pointer: fine) {
-	.cta-button:hover {
-		background: transparent;
-		color: var(--primary-color);
-		--hover-lift: -3px;
-
-		box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
-	}
+.cta-button:hover {
+	background: transparent;
+	color: var(--primary-color);
+	--hover-lift: -3px;
+	box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
 }
 
 /* Safety Reset (wird von deinem JS benutzt) */
