@@ -492,9 +492,7 @@ html, body {
 	transition: filter 0.8s ease;
 	transform-origin: center center;
 	will-change: transform;
-/*
 	contain: paint;
-*/
 	backface-visibility: hidden;
 }
 
@@ -837,6 +835,23 @@ html, body {
 		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
 }
 
+
+.cta-button:hover {
+		--hover-lift: -2px;
+	}
+
+	.cta-button:hover .cta-shell {
+		background: rgba(212, 175, 55, 0.06);
+		border-color: var(--primary-color);
+	}
+
+	.cta-button:hover .cta-label {
+		color: var(--primary-color);
+	}
+
+
+/*
+
 @media (hover: hover) and (pointer: fine) {
 	.cta-button:hover {
 		--hover-lift: -2px;
@@ -852,6 +867,8 @@ html, body {
 	}
 
 }
+
+*/
 
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button:hover,
