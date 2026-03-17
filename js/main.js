@@ -1470,11 +1470,11 @@ document.addEventListener("DOMContentLoaded", () => {
 					   - außen stärker, aber weich
 					*/
 					const eased = 1 - Math.pow(1 - distance, 3);   // easeOutCubic
-					const falloff = Math.pow(eased, 1.35);
+					const falloff = Math.pow(eased, 1.45);
 
 					/* Maximale Verschiebung abhängig von Buttongröße */
-					const maxShiftX = Math.min(rect.width * 0.14, 18);
-					const maxShiftY = Math.min(rect.height * 0.32, 14);
+					const maxShiftX = Math.min(rect.width * 0.12, 15);
+					const maxShiftY = Math.min(rect.height * 0.26, 11);
 
 					/* Richtung beibehalten, Stärke über Radius steuern */
 					const dirX = distance > 0 ? dx / Math.sqrt(dx * dx + dy * dy || 1) : 0;
@@ -1484,7 +1484,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					const offsetY = dirY * maxShiftY * falloff;
 
 					/* Feines Premium-Tuning */
-					const scale = 1 + (falloff * 0.018);
+					const scale = 1 + (falloff * 0.014);	
 					const shadowY = 10 + (falloff * 12);
 					const shadowBlur = 30 + (falloff * 18);
 					const shadowAlpha = 0.16 + (falloff * 0.16);
