@@ -725,7 +725,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				const onLogo = target.closest(".nav-logo");
 				const onCta = target.closest(".cta-button");
 
-				if (insideMenu || onToggle || onLogo) return;
+				if (insideMenu || onToggle || onLogo || onCta) return;
 
 				if (onCta) {
 					this.suppressCtaHoverTemporarily();
@@ -1639,13 +1639,30 @@ document.addEventListener("DOMContentLoaded", () => {
 					return;
 				}
 
-				if (utils.isMobileViewport() && navbarModule.isOpen()) {
-					this.resetCtaMagnetic();
+				DOM.cta?.addEventListener("click", (e) => {
+					if (state.suppressNextCtaClick) {
+						state.suppressNextCtaClick = false;
+						this.resetCtaMagnetic();
+						e.preventDefault();
+						e.stopPropagation();
+						return;
+					}
+
 					e.preventDefault();
 					e.stopPropagation();
-					return;
-				}
 
+					if (utils.isMobileViewport() && navbarModule.isOpen()) {
+						navbarModule.closeMenu();
+
+						requestAnimationFrame(() => {
+							scrollEngine.goTo("#contact", "down");
+						});
+						return;
+					}
+
+					scrollEngine.goTo("#contact", "down");
+				});
+				
 				e.preventDefault();
 				e.stopPropagation();
 				scrollEngine.goTo("#contact", "down");
