@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.navDismissLayer.style.pointerEvents = "auto";
 			}
 		},
-	
+		
 		closeMenu() {
 			if (!DOM.navMenu || !DOM.navToggle) return;
 
@@ -416,9 +416,27 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.navDismissLayer.style.pointerEvents = "none";
 			}
 
+			// 👉 CTA komplett "resetten"
 			uiModule.resetCtaMagnetic();
 
-			// Wichtig: Navbar-Zustand nach dem Schließen neu setzen
+			// Force Reflow → verhindert visuelles "Hängenbleiben"
+			void DOM.cta?.offsetHeight;
+
+			// optional: alle Inline-Variablen wirklich nullen (extra sicher)
+			if (DOM.cta) {
+				DOM.cta.style.removeProperty("--magnetic-x");
+				DOM.cta.style.removeProperty("--magnetic-y");
+				DOM.cta.style.removeProperty("--magnetic-scale");
+				DOM.cta.style.removeProperty("--magnetic-shadow-y");
+				DOM.cta.style.removeProperty("--magnetic-shadow-blur");
+				DOM.cta.style.removeProperty("--magnetic-shadow-alpha");
+				DOM.cta.style.removeProperty("--label-x");
+				DOM.cta.style.removeProperty("--label-y");
+				DOM.cta.style.removeProperty("--label-scale");
+				DOM.cta.style.removeProperty("--gloss-opacity");
+			}
+
+			// 👉 Navbar-State fix (wie vorher)
 			state.manualNavbarOpen = false;
 
 			if (window.scrollY <= 5 && !state.programmaticScroll) {
@@ -427,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.handleScroll();
 			}
 		},
-
+		
 		setTargets(visible, compact, surface) {
 			if (!DOM.navbar) return;
 
