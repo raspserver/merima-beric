@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.navDismissLayer.style.pointerEvents = "auto";
 			}
 		},
-		
+
 		closeMenu() {
 			if (!DOM.navMenu || !DOM.navToggle) return;
 
@@ -416,27 +416,32 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.navDismissLayer.style.pointerEvents = "none";
 			}
 
-			// 👉 CTA komplett "resetten"
+			// CTA visuell komplett zurücksetzen
 			uiModule.resetCtaMagnetic();
 
-			// Force Reflow → verhindert visuelles "Hängenbleiben"
-			void DOM.cta?.offsetHeight;
-
-			// optional: alle Inline-Variablen wirklich nullen (extra sicher)
 			if (DOM.cta) {
-				DOM.cta.style.removeProperty("--magnetic-x");
-				DOM.cta.style.removeProperty("--magnetic-y");
-				DOM.cta.style.removeProperty("--magnetic-scale");
-				DOM.cta.style.removeProperty("--magnetic-shadow-y");
-				DOM.cta.style.removeProperty("--magnetic-shadow-blur");
-				DOM.cta.style.removeProperty("--magnetic-shadow-alpha");
-				DOM.cta.style.removeProperty("--label-x");
-				DOM.cta.style.removeProperty("--label-y");
-				DOM.cta.style.removeProperty("--label-scale");
-				DOM.cta.style.removeProperty("--gloss-opacity");
+				DOM.cta.classList.remove("is-magnetic-near");
+
+				DOM.cta.style.setProperty("--magnetic-x", "0px");
+				DOM.cta.style.setProperty("--magnetic-y", "0px");
+				DOM.cta.style.setProperty("--hover-lift", "0px");
+				DOM.cta.style.setProperty("--magnetic-scale", "1");
+				DOM.cta.style.setProperty("--magnetic-shadow-y", "0px");
+				DOM.cta.style.setProperty("--magnetic-shadow-blur", "0px");
+				DOM.cta.style.setProperty("--magnetic-shadow-alpha", "0");
+
+				DOM.cta.style.setProperty("--label-x", "0px");
+				DOM.cta.style.setProperty("--label-y", "0px");
+				DOM.cta.style.setProperty("--label-scale", "1");
+
+				DOM.cta.style.setProperty("--gloss-x", "50%");
+				DOM.cta.style.setProperty("--gloss-y", "50%");
+				DOM.cta.style.setProperty("--gloss-opacity", "0");
+
+				// optional, hilft gegen visuelles "Hängen"
+				void DOM.cta.offsetHeight;
 			}
 
-			// 👉 Navbar-State fix (wie vorher)
 			state.manualNavbarOpen = false;
 
 			if (window.scrollY <= 5 && !state.programmaticScroll) {
@@ -445,7 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.handleScroll();
 			}
 		},
-		
+
 		setTargets(visible, compact, surface) {
 			if (!DOM.navbar) return;
 
