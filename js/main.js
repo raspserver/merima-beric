@@ -403,7 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
-		closeMenu() {
+		closeMenu({ keepNavbarVisible = false } = {}) {
 			if (!DOM.navMenu || !DOM.navToggle) return;
 
 			DOM.navMenu.classList.remove("active");
@@ -440,10 +440,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.cta.style.setProperty("--gloss-opacity", "0");
 			}
 
-			// wichtig: Touch-Hover kurz unterdrücken
 			this.suppressCtaHoverTemporarily(700);
-
 			state.manualNavbarOpen = false;
+
+			if (keepNavbarVisible) {
+				this.setTargets(1, 1, 1);
+				this.startAnimation();
+				return;
+			}
 
 			if (window.scrollY <= 5 && !state.programmaticScroll) {
 				this.setTargets(0, 0, 0);
@@ -651,9 +655,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					};
 
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
+						
 						const menu = DOM.navMenu;
 
-						navbarModule.closeMenu();
+						navbarModule.closeMenu({ keepNavbarVisible: true });
 
 						let done = false;
 
@@ -690,7 +695,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (utils.isMobileViewport() && this.isOpen()) {
 					const menu = DOM.navMenu;
 
-					this.closeMenu();
+					this.closeMenu({ keepNavbarVisible: true });
 
 					let done = false;
 
