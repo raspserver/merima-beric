@@ -785,46 +785,77 @@ html, body {
 	}
 }
 
+
+
+
+
+
+
+/* =========================
+   CTA BUTTON (MAGNETIC CLEAN)
+========================= */
+
 .cta-button {
 	display: inline-block;
 	padding: 1.2rem 3rem;
 	margin-top: 0.9rem;
+
 	background: var(--primary-color);
 	color: var(--secondary-color);
 	text-decoration: none;
+
 	font-weight: 500;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
 	font-size: 0.9rem;
+
+	border: 2px solid var(--primary-color);
+
+	animation: fadeIn 1.5s ease-out 0.9s both;
+
+	position: relative;
+	will-change: transform;
+
+	/* === MAGIC SYSTEM === */
+	--magnetic-x: 0px;
+	--magnetic-y: 0px;
+	--hover-lift: 0px;
+
+	transform: translate(
+		var(--magnetic-x),
+		calc(var(--magnetic-y) + var(--hover-lift))
+	);
+
 	transition:
-		transform 0.3s ease,
+		transform 0.25s cubic-bezier(.2,.8,.2,1),
 		background 0.3s ease,
 		color 0.3s ease,
 		box-shadow 0.3s ease;
-	border: 2px solid var(--primary-color);
-	animation: fadeIn 1.5s ease-out 0.9s both;
-
-	/* Magnetic CTA Button */
-	position: relative;
-	will-change: transform;
 }
 
+/* Hover nur visuell, NICHT transform direkt */
 @media (hover: hover) and (pointer: fine) {
 	.cta-button:hover {
 		background: transparent;
 		color: var(--primary-color);
-		transform: translateY(-3px);
+		--hover-lift: -3px;
+
 		box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
 	}
 }
 
+/* Safety Reset (wird von deinem JS benutzt) */
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button:hover,
 body.suppress-cta-hover .cta-button:active,
 body.suppress-cta-hover .cta-button:focus {
 	background: var(--primary-color);
 	color: var(--secondary-color);
-	transform: none;
+
+	--magnetic-x: 0px;
+	--magnetic-y: 0px;
+	--hover-lift: 0px;
+
 	box-shadow: none;
 }
 
