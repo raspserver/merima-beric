@@ -828,73 +828,47 @@ body.suppress-cta-hover .cta-button:focus {
 	box-shadow: none;
 }
 
-.scroll-indicator {
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-
+.scroll-dot {
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
-
 	background: var(--primary-color);
-
 	box-shadow:
-	0 0 12px rgba(212,175,55,0.6),
-	0 0 30px rgba(212,175,55,0.3);
-
-	animation: liquidScroll 2.2s ease-in-out infinite;
+		0 0 12px rgba(212,175,55,0.6),
+		0 0 30px rgba(212,175,55,0.3);
 }
 
 .hero-scroll-trigger {
 	position: absolute;
-	left: 0;
-	right: 0;
-	top: calc(var(--nav-height) + 3.5rem);
-	height: 160px;
-
+	inset: 0;
 	z-index: 3;
 	cursor: pointer;
 	-webkit-tap-highlight-color: transparent;
 }
 
-.hero-scroll-trigger .scroll-indicator {
+.hero-scroll-indicator {
 	position: absolute;
 	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-
-	background: var(--primary-color);
-
-	box-shadow:
-		0 0 12px rgba(212,175,55,0.6),
-		0 0 30px rgba(212,175,55,0.3);
-
+	top: calc(var(--nav-height) + 7rem);
+	transform: translateX(-50%);
 	animation: liquidScroll 2.2s ease-in-out infinite;
 }
 
-.hero-scroll-trigger .scroll-indicator::after {
+.hero-scroll-indicator::after {
 	content: "";
 	position: absolute;
 	top: 100%;
 	left: 50%;
 	transform: translateX(-50%);
 	margin-top: 8px;
-
 	width: 1px;
 	height: 26px;
-
 	background: linear-gradient(
 		to bottom,
 		rgba(212,175,55,0.55),
 		rgba(212,175,55,0.15),
 		rgba(212,175,55,0)
 	);
-
 	pointer-events: none;
 }
 
@@ -1451,35 +1425,11 @@ footer a:hover {
 	opacity: 0.7;
 }
 
-.footer-scroll-trigger {
-	position: relative;
-	margin-top: 2rem;
-	padding-top: 2.25rem;
-	padding-bottom: 0.25rem;
-
-	/* klickbarer Bereich bis zu den Bildschirmrändern */
-	width: 100vw;
-	left: 50%;
-	transform: translateX(-50%);
-
-	display: flex;
-	justify-content: center;
-	align-items: flex-end;
-
-	cursor: pointer;
-	-webkit-tap-highlight-color: transparent;
-	user-select: none;
-}
-
 .footer-scroll-indicator {
 	position: relative;
-	left: auto;
-	bottom: auto;
-	transform: none;
 	animation: footerLiquidScroll 2.2s ease-in-out infinite;
 }
 
-/* Linie ÜBER dem Tropfen */
 .footer-scroll-indicator::before {
 	content: "";
 	position: absolute;
@@ -1487,23 +1437,15 @@ footer a:hover {
 	left: 50%;
 	transform: translateX(-50%);
 	margin-bottom: 8px;
-
 	width: 1px;
 	height: 26px;
-
 	background: linear-gradient(
 		to top,
 		rgba(212,175,55,0.55),
 		rgba(212,175,55,0.15),
 		rgba(212,175,55,0)
 	);
-
 	pointer-events: none;
-}
-
-/* eventuell vorhandene Linie unter dem Tropfen deaktivieren */
-.footer-scroll-indicator::after {
-	display: none;
 }
 
 @keyframes footerLiquidScroll {
@@ -1937,52 +1879,39 @@ section {
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 60px;
-
+	height: var(--section-scroll-head-height);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: flex-start;
 	padding-top: 1.25rem;
 	gap: 10px;
-
 	cursor: pointer;
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
 	z-index: 15;
 }
 
-.section-scroll-head::before {
-	display: none;
-}
-
-.section-scroll-head .scroll-indicator {
+.section-scroll-indicator {
 	position: relative;
-	left: auto;
-	bottom: auto;
-	margin: 0 auto;
-	transform: translateY(0);
 	animation: sectionLiquidScroll 2.2s ease-in-out infinite;
 }
 
-.section-scroll-head .scroll-indicator::after {
+.section-scroll-indicator::after {
 	content: "";
 	position: absolute;
 	top: 100%;
 	left: 50%;
 	transform: translateX(-50%);
 	margin-top: 8px;
-
 	width: 1px;
 	height: 26px;
-
 	background: linear-gradient(
 		to bottom,
 		rgba(212,175,55,0.55),
 		rgba(212,175,55,0.15),
 		rgba(212,175,55,0)
 	);
-
 	pointer-events: none;
 }
 
