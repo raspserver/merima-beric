@@ -1420,6 +1420,39 @@ document.addEventListener("DOMContentLoaded", () => {
 				item.button.style.setProperty("--magnetic-shadow-y", "0px");
 				item.button.style.setProperty("--magnetic-shadow-blur", "0px");
 				item.button.style.setProperty("--magnetic-shadow-alpha", "0");
+				
+				item.targetLabelX = 0;
+				item.targetLabelY = 0;
+				item.targetLabelScale = 1;
+
+				item.currentLabelX = 0;
+				item.currentLabelY = 0;
+				item.currentLabelScale = 1;
+
+				item.velocityLabelX = 0;
+				item.velocityLabelY = 0;
+				item.velocityLabelScale = 0;
+
+				item.targetGlossX = 50;
+				item.targetGlossY = 50;
+				item.targetGlossOpacity = 0;
+
+				item.currentGlossX = 50;
+				item.currentGlossY = 50;
+				item.currentGlossOpacity = 0;
+
+				item.velocityGlossX = 0;
+				item.velocityGlossY = 0;
+				item.velocityGlossOpacity = 0;
+
+				item.button.style.setProperty("--label-x", "0px");
+				item.button.style.setProperty("--label-y", "0px");
+				item.button.style.setProperty("--label-scale", "1");
+
+				item.button.style.setProperty("--gloss-x", "50%");
+				item.button.style.setProperty("--gloss-y", "50%");
+				item.button.style.setProperty("--gloss-opacity", "0");
+				
 			});
 		},
 
@@ -1478,12 +1511,44 @@ document.addEventListener("DOMContentLoaded", () => {
 				item.currentShadowAlpha = result.current;
 				item.velocityShadowAlpha = result.velocity;
 
+				result = stepSpring(item.currentLabelX, item.targetLabelX, item.velocityLabelX);
+				item.currentLabelX = result.current;
+				item.velocityLabelX = result.velocity;
+
+				result = stepSpring(item.currentLabelY, item.targetLabelY, item.velocityLabelY);
+				item.currentLabelY = result.current;
+				item.velocityLabelY = result.velocity;
+
+				result = stepSpring(item.currentLabelScale, item.targetLabelScale, item.velocityLabelScale);
+				item.currentLabelScale = result.current;
+				item.velocityLabelScale = result.velocity;
+
+				result = stepSpring(item.currentGlossX, item.targetGlossX, item.velocityGlossX);
+				item.currentGlossX = result.current;
+				item.velocityGlossX = result.velocity;
+
+				result = stepSpring(item.currentGlossY, item.targetGlossY, item.velocityGlossY);
+				item.currentGlossY = result.current;
+				item.velocityGlossY = result.velocity;
+
+				result = stepSpring(item.currentGlossOpacity, item.targetGlossOpacity, item.velocityGlossOpacity);
+				item.currentGlossOpacity = result.current;
+				item.velocityGlossOpacity = result.velocity;
+
 				item.button.style.setProperty("--magnetic-x", `${item.currentX.toFixed(2)}px`);
 				item.button.style.setProperty("--magnetic-y", `${item.currentY.toFixed(2)}px`);
 				item.button.style.setProperty("--magnetic-scale", item.currentScale.toFixed(4));
 				item.button.style.setProperty("--magnetic-shadow-y", `${item.currentShadowY.toFixed(2)}px`);
 				item.button.style.setProperty("--magnetic-shadow-blur", `${item.currentShadowBlur.toFixed(2)}px`);
 				item.button.style.setProperty("--magnetic-shadow-alpha", item.currentShadowAlpha.toFixed(3));
+				
+				item.button.style.setProperty("--label-x", `${item.currentLabelX.toFixed(2)}px`);
+				item.button.style.setProperty("--label-y", `${item.currentLabelY.toFixed(2)}px`);
+				item.button.style.setProperty("--label-scale", item.currentLabelScale.toFixed(4));
+
+				item.button.style.setProperty("--gloss-x", `${item.currentGlossX.toFixed(2)}%`);
+				item.button.style.setProperty("--gloss-y", `${item.currentGlossY.toFixed(2)}%`);
+				item.button.style.setProperty("--gloss-opacity", item.currentGlossOpacity.toFixed(3));
 
 				const moving =
 					Math.abs(item.targetX - item.currentX) > 0.01 ||
@@ -1492,12 +1557,29 @@ document.addEventListener("DOMContentLoaded", () => {
 					Math.abs(item.targetShadowY - item.currentShadowY) > 0.01 ||
 					Math.abs(item.targetShadowBlur - item.currentShadowBlur) > 0.01 ||
 					Math.abs(item.targetShadowAlpha - item.currentShadowAlpha) > 0.001 ||
+
+					Math.abs(item.targetLabelX - item.currentLabelX) > 0.01 ||
+					Math.abs(item.targetLabelY - item.currentLabelY) > 0.01 ||
+					Math.abs(item.targetLabelScale - item.currentLabelScale) > 0.001 ||
+
+					Math.abs(item.targetGlossX - item.currentGlossX) > 0.01 ||
+					Math.abs(item.targetGlossY - item.currentGlossY) > 0.01 ||
+					Math.abs(item.targetGlossOpacity - item.currentGlossOpacity) > 0.001 ||
+
 					Math.abs(item.velocityX) > 0.01 ||
 					Math.abs(item.velocityY) > 0.01 ||
 					Math.abs(item.velocityScale) > 0.001 ||
 					Math.abs(item.velocityShadowY) > 0.01 ||
 					Math.abs(item.velocityShadowBlur) > 0.01 ||
-					Math.abs(item.velocityShadowAlpha) > 0.001;
+					Math.abs(item.velocityShadowAlpha) > 0.001 ||
+
+					Math.abs(item.velocityLabelX) > 0.01 ||
+					Math.abs(item.velocityLabelY) > 0.01 ||
+					Math.abs(item.velocityLabelScale) > 0.001 ||
+
+					Math.abs(item.velocityGlossX) > 0.01 ||
+					Math.abs(item.velocityGlossY) > 0.01 ||
+					Math.abs(item.velocityGlossOpacity) > 0.001;
 
 				if (moving) hasMotion = true;
 			});
@@ -1533,11 +1615,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			const buttons = [...document.querySelectorAll(".cta-button")];
-
+		
 			this.ctaMagneticButtons = buttons.map(button => ({
 				button,
+				label: button.querySelector(".cta-label"),
+				gloss: button.querySelector(".cta-gloss"),
 				isNear: false,
 
+				/* OUTER */
 				targetX: 0,
 				targetY: 0,
 				targetScale: 1,
@@ -1557,9 +1642,35 @@ document.addEventListener("DOMContentLoaded", () => {
 				velocityScale: 0,
 				velocityShadowY: 0,
 				velocityShadowBlur: 0,
-				velocityShadowAlpha: 0
-			}));
+				velocityShadowAlpha: 0,
 
+				/* INNER LABEL */
+				targetLabelX: 0,
+				targetLabelY: 0,
+				targetLabelScale: 1,
+
+				currentLabelX: 0,
+				currentLabelY: 0,
+				currentLabelScale: 1,
+
+				velocityLabelX: 0,
+				velocityLabelY: 0,
+				velocityLabelScale: 0,
+
+				/* GLOSS */
+				targetGlossX: 50,
+				targetGlossY: 50,
+				targetGlossOpacity: 0,
+
+				currentGlossX: 50,
+				currentGlossY: 50,
+				currentGlossOpacity: 0,
+
+				velocityGlossX: 0,
+				velocityGlossY: 0,
+				velocityGlossOpacity: 0
+			}));
+			
 			const resetButtonTarget = (item) => {
 				item.isNear = false;
 				item.button.classList.remove("is-magnetic-near");
@@ -1570,6 +1681,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				item.targetShadowY = 0;
 				item.targetShadowBlur = 0;
 				item.targetShadowAlpha = 0;
+				
+				item.targetLabelX = 0;
+				item.targetLabelY = 0;
+				item.targetLabelScale = 1;
+
+				item.targetGlossX = 50;
+				item.targetGlossY = 50;
+				item.targetGlossOpacity = 0;
 			};
 
 			const applyMagneticField = (item, clientX, clientY) => {
@@ -1639,6 +1758,22 @@ document.addEventListener("DOMContentLoaded", () => {
 				item.targetShadowY = 10 + (combinedStrength * 12);
 				item.targetShadowBlur = 28 + (combinedStrength * 20);
 				item.targetShadowAlpha = 0.12 + (combinedStrength * 0.18);
+				
+				const labelShiftX = Math.min(rect.width * 0.065, 10);
+				const labelShiftY = Math.min(rect.height * 0.11, 6);
+
+				item.targetLabelX = dirX * labelShiftX * Math.min(combinedStrength * 1.18, 1);
+				item.targetLabelY = dirY * labelShiftY * Math.min(combinedStrength * 1.18, 1);
+				item.targetLabelScale = 1 + (combinedStrength * 0.01);
+
+				/* Pointerposition relativ im Button -> Gloss */
+				const localX = ((clientX - rect.left) / rect.width) * 100;
+				const localY = ((clientY - rect.top) / rect.height) * 100;
+
+				item.targetGlossX = Math.max(0, Math.min(localX, 100));
+				item.targetGlossY = Math.max(0, Math.min(localY, 100));
+				item.targetGlossOpacity = 0.18 + (combinedStrength * 0.24);
+
 			};
 
 			const handlePointerMove = (e) => {
