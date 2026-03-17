@@ -419,8 +419,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			document.querySelectorAll(".cta-button").forEach(btn => {
 				btn.style.setProperty("--magnetic-x", "0px");
 				btn.style.setProperty("--magnetic-y", "0px");
+				btn.style.setProperty("--magnetic-scale", "1");
+				btn.style.setProperty("--magnetic-shadow-y", "0px");
+				btn.style.setProperty("--magnetic-shadow-blur", "0px");
+				btn.style.setProperty("--magnetic-shadow-alpha", "0");
 			});
-			
+
 		},
 
 		setTargets(visible, compact, surface) {
@@ -1393,9 +1397,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			document.querySelectorAll(".cta-button").forEach(btn => {
 				btn.style.setProperty("--magnetic-x", "0px");
 				btn.style.setProperty("--magnetic-y", "0px");
+				btn.style.setProperty("--magnetic-scale", "1");
+				btn.style.setProperty("--magnetic-shadow-y", "0px");
+				btn.style.setProperty("--magnetic-shadow-blur", "0px");
+				btn.style.setProperty("--magnetic-shadow-alpha", "0");
 			});
 		},
-		
+
 		bindCTA() {
 			DOM.cta?.addEventListener("click", (e) => {
 				if (state.suppressNextCtaClick) {
@@ -1419,9 +1427,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			document.querySelectorAll(".cta-button").forEach(btn => {
+				
 				const reset = () => {
 					btn.style.setProperty("--magnetic-x", "0px");
 					btn.style.setProperty("--magnetic-y", "0px");
+					btn.style.setProperty("--magnetic-scale", "1");
+					btn.style.setProperty("--magnetic-shadow-y", "0px");
+					btn.style.setProperty("--magnetic-shadow-blur", "0px");
+					btn.style.setProperty("--magnetic-shadow-alpha", "0");
 				};
 
 				btn.addEventListener("mousemove", (e) => {
@@ -1436,13 +1449,54 @@ document.addEventListener("DOMContentLoaded", () => {
 					}
 
 					const rect = btn.getBoundingClientRect();
-					const x = e.clientX - rect.left - rect.width / 2;
-					const y = e.clientY - rect.top - rect.height / 2;
 
-					btn.style.setProperty("--magnetic-x", `${x * 0.18}px`);
-					btn.style.setProperty("--magnetic-y", `${y * 0.18}px`);
+					const localX = e.clientX - rect.left;
+					const localY = e.clientY - rect.top;
+
+					const centerX = rect.width / 2;
+					const centerY = rect.height / 2;
+
+					const dx = localX - centerX;
+					const dy = localY - centerY;
+
+					/* Radius normieren (Ellipse statt harter Kreis) */
+					const nx = dx / centerX;
+					const ny = dy / centerY;
+					const distance = Math.min(Math.sqrt(nx * nx + ny * ny), 1);
+
+					/* Apple-artiger Falloff:
+					   - in der Mitte fast ruhig
+					   - dann sanft anziehend
+					   - außen stärker, aber weich
+					*/
+					const eased = 1 - Math.pow(1 - distance, 3);   // easeOutCubic
+					const falloff = Math.pow(eased, 1.35);
+
+					/* Maximale Verschiebung abhängig von Buttongröße */
+					const maxShiftX = Math.min(rect.width * 0.14, 18);
+					const maxShiftY = Math.min(rect.height * 0.32, 14);
+
+					/* Richtung beibehalten, Stärke über Radius steuern */
+					const dirX = distance > 0 ? dx / Math.sqrt(dx * dx + dy * dy || 1) : 0;
+					const dirY = distance > 0 ? dy / Math.sqrt(dx * dx + dy * dy || 1) : 0;
+
+					const offsetX = dirX * maxShiftX * falloff;
+					const offsetY = dirY * maxShiftY * falloff;
+
+					/* Feines Premium-Tuning */
+					const scale = 1 + (falloff * 0.018);
+					const shadowY = 10 + (falloff * 12);
+					const shadowBlur = 30 + (falloff * 18);
+					const shadowAlpha = 0.16 + (falloff * 0.16);
+
+					btn.style.setProperty("--magnetic-x", `${offsetX.toFixed(2)}px`);
+					btn.style.setProperty("--magnetic-y", `${offsetY.toFixed(2)}px`);
+					btn.style.setProperty("--magnetic-scale", scale.toFixed(4));
+					btn.style.setProperty("--magnetic-shadow-y", `${shadowY.toFixed(2)}px`);
+					btn.style.setProperty("--magnetic-shadow-blur", `${shadowBlur.toFixed(2)}px`);
+					btn.style.setProperty("--magnetic-shadow-alpha", shadowAlpha.toFixed(3));
 				});
-
+				
 				btn.addEventListener("mouseenter", () => {
 					reset();
 				});
