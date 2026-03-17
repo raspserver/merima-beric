@@ -880,6 +880,43 @@ body.suppress-cta-hover .cta-button:hover .cta-label {
 	color: var(--secondary-color);
 }
 
+/* CTA soll bei offenem Mobile-Menü nicht hover/invertieren */
+body.nav-menu-open .cta-button,
+body.nav-menu-open .cta-button:hover,
+body.nav-menu-open .cta-button:active,
+body.nav-menu-open .cta-button:focus {
+	--magnetic-x: 0px;
+	--magnetic-y: 0px;
+	--hover-lift: 0px;
+	--magnetic-scale: 1;
+	--magnetic-shadow-y: 0px;
+	--magnetic-shadow-blur: 0px;
+	--magnetic-shadow-alpha: 0;
+
+	--label-x: 0px;
+	--label-y: 0px;
+	--label-scale: 1;
+
+	--gloss-opacity: 0;
+
+	box-shadow: none;
+}
+
+body.nav-menu-open .cta-button .cta-shell,
+body.nav-menu-open .cta-button:hover .cta-shell,
+body.nav-menu-open .cta-button:active .cta-shell,
+body.nav-menu-open .cta-button:focus .cta-shell {
+	background: var(--primary-color);
+	border-color: var(--primary-color);
+}
+
+body.nav-menu-open .cta-button .cta-label,
+body.nav-menu-open .cta-button:hover .cta-label,
+body.nav-menu-open .cta-button:active .cta-label,
+body.nav-menu-open .cta-button:focus .cta-label {
+	color: var(--secondary-color);
+}
+
 .cta-button.is-magnetic-near:not(:hover) {
 	--hover-lift: -1px;
 	box-shadow:
