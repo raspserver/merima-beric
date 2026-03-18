@@ -455,8 +455,12 @@ html, body {
 .hero {
 	position: relative;
 	z-index: 5;
+/*
 	min-height: 100svh;
+*/
 	height: 100svh;
+	
+	min-height: 110svh;
 
 	display: grid;
 	place-items: center;
@@ -492,9 +496,7 @@ html, body {
 	transition: filter 0.8s ease;
 	transform-origin: center center;
 	will-change: transform;
-/*
 	contain: paint;
-*/
 	backface-visibility: hidden;
 }
 
