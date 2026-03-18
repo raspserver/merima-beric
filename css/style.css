@@ -2010,6 +2010,7 @@ section {
 	animation: sectionLiquidScroll 2.2s ease-in-out infinite;
 }
 
+/*
 .scroll-dot {
 	width: var(--section-indicator-dot-size);
 	height: var(--section-indicator-dot-size);
@@ -2019,7 +2020,7 @@ section {
 		0 0 12px rgba(212,175,55,0.6),
 		0 0 30px rgba(212,175,55,0.3);
 }
-
+*/
 
 
 
@@ -2051,13 +2052,36 @@ section {
 	pointer-events: none;
 }
 
-/* Animation */
 @keyframes sectionLiquidScroll {
-	0%   { transform: translateY(0) scale(1); }
-	40%  { transform: translateY(10px) scale(1.35, 0.7); }
-	60%  { transform: translateY(14px) scale(0.8, 1.3); }
-	100% { transform: translateY(0) scale(1); }
+	0%   { transform: translateY(0); }
+	40%  { transform: translateY(10px); }
+	60%  { transform: translateY(14px); }
+	100% { transform: translateY(0); }
 }
+
+
+
+@keyframes sectionDotSquash {
+	0%   { transform: scale(1); }
+	40%  { transform: scale(1.35, 0.7); }
+	60%  { transform: scale(0.8, 1.3); }
+	100% { transform: scale(1); }
+}
+
+.scroll-dot {
+	width: var(--section-indicator-dot-size);
+	height: var(--section-indicator-dot-size);
+	border-radius: 50%;
+	background: var(--primary-color);
+	box-shadow:
+		0 0 12px rgba(212,175,55,0.6),
+		0 0 30px rgba(212,175,55,0.3);
+	animation: sectionDotSquash 2.2s ease-in-out infinite;
+}
+
+
+
+
 
 section > .section-scroll-head + .container,
 section > .section-scroll-head + * {
