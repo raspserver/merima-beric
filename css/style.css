@@ -456,14 +456,8 @@ html, body {
 	position: relative;
 	z-index: 5;
 	
-/*
 	height: 100svh;
 	min-height: 100svh;
-*/
-	
-	
-	height: calc(100svh + 80px);
-	min-height: calc(100svh + 80px);
 
 	display: grid;
 	place-items: center;
