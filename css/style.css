@@ -23,10 +23,16 @@
 	--section-scroll-head-height: 60px;
 	--section-scroll-inset: 5;
 	--brand-sub-ratio: 0.25;
-	--hero-stack-gap: clamp(0.8rem, 3.00vh, 2.00rem);	/* clamp(MIN, BEVORZUGT, MAX); */
-														/* viewport 952 × 442 (Desktop): */
-														/* viewport 384 × 701 (Galaxy A34):	*/
-														/* viewport 375 x 552 (iPhone7):	*/
+	--hero-stack-gap: clamp(0.8rem, 3.00vh, 2.00rem);	
+	/* ------------------------------------------------------------------------------------------------ */
+	/* clamp(MIN, BEVORZUGT, MAX);		min						bevorzugt				max				*/
+	/* viewport 952 × 442 (Desktop):	0.8x16px = 12.8px		3x442x0.01 = 13.26px	2.0x16px = 32px	*/
+	/* viewport 384 × 701 (Galaxy A34):	0.8x16px = 12.8px		3x701x0.01 = 21.03px	2.0x16px = 32px	*/
+	/* viewport 375 x 552 (iPhone7):	0.8x16px = 12.8px		3x552x0.01 = 16.56px	2.0x16px = 32px	*/
+	/* ------------------------------------------------------------------------------------------------ */
+	
+	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
+	
 	/* =========================
 	   NAVBAR STRUCTURE
 	========================= */
@@ -1008,6 +1014,17 @@ body.nav-menu-open .cta-button:focus .cta-label {
 		0 0 30px rgba(212,175,55,0.3);
 }
 
+/* =========================
+   SECTION HEADER STACK
+========================= */
+
+.section-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--section-stack-gap);
+}
+
 /* Section Styles */
 section {
 	padding: 0 2rem;
@@ -1030,7 +1047,7 @@ section {
 	font-weight: 400;
 	text-align: center;
 	margin-top: 0;
-	margin-bottom: 0.7rem;
+	margin-bottom: 0;
 	padding-top: 0;
 	color: var(--secondary-color);
 	position: relative;
@@ -2007,13 +2024,10 @@ section {
 	100% { transform: translateY(0) scale(1); }
 }
 
-/* Abstand zwischen Scroll-Head und Inhalt */
 section > .section-scroll-head + .container,
 section > .section-scroll-head + * {
 	margin-top: 0;
-	padding-top: calc(
-		var(--section-scroll-head-height) + var(--section-head-title-gap)
-	);
+	padding-top: var(--section-scroll-head-height);
 }
 
 /* =========================
