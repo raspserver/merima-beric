@@ -19,7 +19,6 @@
 	   LAYOUT / SPACING
 	========================= */
 	--section-spacing: 8rem;
-	--section-head-title-gap: 1rem;
 	--section-scroll-head-height: 60px;
 	--section-scroll-inset: 5;
 	--brand-sub-ratio: 0.25;
@@ -32,6 +31,12 @@
 	/* ------------------------------------------------------------------------------------------------ */
 	
 	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
+	/* ------------------------------------------------------------------------------------------------ */
+	/* clamp(MIN, BEVORZUGT, MAX);		min						bevorzugt				max				*/
+	/* viewport 952 × 442 (Desktop):	x16px = px		x442x0.01 = px	x16px = px	*/
+	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
+	/* viewport 375 x 552 (iPhone7):	x16px = px		x552x0.01 = px	x16px = px	*/
+	/* ------------------------------------------------------------------------------------------------ */
 	
 	/* =========================
 	   NAVBAR STRUCTURE
