@@ -18,9 +18,6 @@
 	/* =========================
 	   LAYOUT / SPACING
 	========================= */
-	--section-spacing: 1rem;
-	--section-scroll-head-height: 60px;
-	--section-scroll-inset: 5;
 	--brand-sub-ratio: 0.25;
 	--hero-stack-gap: clamp(0.8rem, 3.00vh, 2.00rem);	
 	/* ------------------------------------------------------------------------------------------------ */
@@ -42,9 +39,11 @@
 	--section-indicator-bounce-max-y: 14px;
 	--section-indicator-boundary-gap: 1px;
 	
+	--section-spacing: 1rem;
+	--section-scroll-head-height: 60px;
 	--section-scroll-hit-offset: 50px;
-	--section-scroll-hit-height: 100px;		/* 50px über + 50px unter der Grenze */
-	
+	--section-scroll-hit-height: 100px;
+	--section-scroll-inset: 5;
 	
 	/* =========================
 	   NAVBAR STRUCTURE
@@ -1971,7 +1970,6 @@ section {
 	top: calc(-1 * var(--section-scroll-hit-offset));
 	left: 50%;
 	transform: translateX(-50%);
-
 	width: 100vw;
 	height: var(--section-scroll-hit-height);
 
@@ -1986,9 +1984,9 @@ section {
 	left: 50%;
 	transform: translateX(-50%);
 
-	/* Unterkante des Dots bei max. Bounce = 1px über Sektionsgrenze */
+	/* Sektionsgrenze liegt 50px unter dem oberen Rand der Hit-Area */
 	top: calc(
-		-1 * (
+		var(--section-scroll-hit-offset) - (
 			var(--section-indicator-dot-size) +
 			var(--section-indicator-bounce-max-y) +
 			var(--section-indicator-boundary-gap)
