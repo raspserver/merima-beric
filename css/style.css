@@ -19,7 +19,6 @@
 	   LAYOUT / SPACING
 	========================= */
 	--section-spacing: 8rem;
-	--hero-bottom-space: 0px;
 	--section-head-title-gap: 1rem;
 	--section-scroll-head-height: 60px;
 	--section-scroll-inset: 5;
@@ -463,7 +462,7 @@ html, body {
 	place-items: center;
 
 	padding-top: var(--nav-height);
-	padding-bottom: calc(var(--hero-bottom-space) + 6vh);
+	padding-bottom: 0;
 
 	margin: 0;
 
