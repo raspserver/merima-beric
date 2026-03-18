@@ -126,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		programmaticNavMode: null, // null | "down" | "up-section" | "hero-top"
 
 		suppressCtaHoverCleanup: null,
-		suppressNextCtaClick: false,
 		suppressNextClick: false,
 
 		targetVisible: 0,
@@ -729,7 +728,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					e.stopPropagation();
 
 					state.suppressNextClick = true;
-					state.suppressNextCtaClick = !!onCta;
 
 					this.suppressCtaHoverTemporarily();
 					uiModule.resetCtaMagnetic();
@@ -1647,14 +1645,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		bindCTA() {
 			DOM.cta?.addEventListener("click", (e) => {
-				if (state.suppressNextCtaClick) {
-					state.suppressNextCtaClick = false;
-					this.resetCtaMagnetic();
-					e.preventDefault();
-					e.stopPropagation();
-					return;
-				}
-
 				e.preventDefault();
 				e.stopPropagation();
 
