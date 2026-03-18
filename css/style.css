@@ -38,6 +38,11 @@
 	/* viewport 375 x 552 (iPhone7):	x16px = px		x552x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 	
+	--section-indicator-dot-size: 8px;
+	--section-indicator-bounce-max-y: 14px;
+	--section-indicator-boundary-gap: 1px;
+	
+	
 	/* =========================
 	   NAVBAR STRUCTURE
 	========================= */
@@ -1009,16 +1014,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	will-change: opacity, background;
 }
 
-.scroll-dot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--primary-color);
-	box-shadow:
-		0 0 12px rgba(212,175,55,0.6),
-		0 0 30px rgba(212,175,55,0.3);
-}
-
 /* =========================
    SECTION HEADER STACK
 ========================= */
@@ -1974,7 +1969,9 @@ section {
 	position: relative;
 }
 
-/* Klickbarer Bereich oben in jeder Section */
+
+
+
 .section-scroll-head {
 	position: absolute;
 	top: 0;
@@ -1987,7 +1984,7 @@ section {
 	align-items: center;
 	justify-content: flex-start;
 
-	padding-top: 1.25rem;
+	padding-top: 0;
 	gap: 10px;
 
 	cursor: pointer;
@@ -1996,11 +1993,41 @@ section {
 	z-index: 15;
 }
 
-/* Scroll-Indikator (der animierte Punkt) */
 .section-scroll-indicator {
 	position: relative;
+
+	/* Dot so hochziehen, dass sein tiefster Punkt 1px über der Grenze endet */
+	top: calc(
+		-1 * (
+			var(--section-indicator-dot-size) +
+			var(--section-indicator-bounce-max-y) +
+			var(--section-indicator-boundary-gap)
+		)
+	);
+}
+
+.section-scroll-indicator-motion {
 	animation: sectionLiquidScroll 2.2s ease-in-out infinite;
 }
+
+.scroll-dot {
+	width: var(--section-indicator-dot-size);
+	height: var(--section-indicator-dot-size);
+	border-radius: 50%;
+	background: var(--primary-color);
+	box-shadow:
+		0 0 12px rgba(212,175,55,0.6),
+		0 0 30px rgba(212,175,55,0.3);
+}
+
+
+
+
+
+
+
+
+
 
 /* Linie unter dem Punkt */
 .section-scroll-indicator::after {
