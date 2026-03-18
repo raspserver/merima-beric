@@ -42,6 +42,9 @@
 	--section-indicator-bounce-max-y: 14px;
 	--section-indicator-boundary-gap: 1px;
 	
+	--section-scroll-hit-offset: 50px;
+	--section-scroll-hit-height: 100px;		/* 50px über + 50px unter der Grenze */
+	
 	
 	/* =========================
 	   NAVBAR STRUCTURE
@@ -1020,6 +1023,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 
 /* Section Styles */
 section {
+	position: relative;
 	padding: var(--section-spacing) 2rem;
 	margin: 0;
 }
@@ -1964,10 +1968,12 @@ section {
 
 .section-scroll-head {
 	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: var(--section-scroll-head-height);
+	top: calc(-1 * var(--section-scroll-hit-offset));
+	left: 50%;
+	transform: translateX(-50%);
+
+	width: 100vw;
+	height: var(--section-scroll-hit-height);
 
 	cursor: pointer;
 	user-select: none;
@@ -2041,20 +2047,10 @@ section {
 	animation: sectionDotSquash 2.2s ease-in-out infinite;
 }
 
-
-
-
-
-
-
-
-
-
-
 section > .section-scroll-head + .container,
 section > .section-scroll-head + * {
 	margin-top: 0;
-	padding-top: var(--section-scroll-head-height);
+	padding-top: 0;
 }
 
 /* =========================
