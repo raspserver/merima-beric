@@ -1025,15 +1025,17 @@ body.nav-menu-open .cta-button:focus .cta-label {
 
 /* Section Styles */
 section {
-	padding: 0 2rem;
-	margin: 8rem 0;
+	padding: var(--section-spacing) 2rem;
+	margin: 0;
 }
 
+/*
 .hero + section {
 	margin-top: 0;
 	position: relative;
 	z-index: 1;
 }
+*/
 
 .container {
 	max-width: 1200px;
