@@ -27,7 +27,7 @@
 	/* viewport 375 x 552 (iPhone7):	0.8x16px = 12.8px		3x552x0.01 = 16.56px	2.0x16px = 32px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 	
-	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
+	--section-stack-gap: clamp(3.8rem, 2.4vh, 1.4rem);
 	/* ------------------------------------------------------------------------------------------------ */
 	/* clamp(MIN, BEVORZUGT, MAX);		min						bevorzugt				max				*/
 	/* viewport 952 × 442 (Desktop):	x16px = px		x442x0.01 = px	x16px = px	*/
