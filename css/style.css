@@ -23,6 +23,7 @@
 	--section-scroll-head-height: 60px;
 	--section-scroll-inset: 5;
 	--brand-sub-ratio: 0.25;
+	--hero-stack-gap: clamp(0.9rem, 1.8vh, 1.25rem);
 
 	/* =========================
 	   NAVBAR STRUCTURE
@@ -439,8 +440,6 @@ body {
 	font-family: 'Montserrat', sans-serif;
 	color: var(--text-dark);
 	background-color: var(--bg-light);
-	overflow-x: hidden;						/* Windows Desktop Browser haben oft sichtbare Scrollbars, die Layout verschieben. */
-											/* Das verhindert, dass Layout springt wenn Scrollbar erscheint. */
 	line-height: 1.6;
 	margin: 0;
 }
@@ -454,24 +453,20 @@ html, body {
 .hero {
 	position: relative;
 	z-index: 5;
-	
-	height: 100svh;
+
 	min-height: 100svh;
+	height: 100svh;
 
 	display: grid;
 	place-items: center;
 
-	padding-top: var(--nav-height);
-	padding-bottom: 0;
-
+	padding: 2rem;
 	margin: 0;
 
 	overflow-x: hidden;
 	overflow-y: visible;
 
-	background: linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);
-	padding-left: 2rem;
-	padding-right: 2rem;
+	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 
 	isolation: isolate;
 
@@ -492,7 +487,6 @@ html, body {
 	transition: filter 0.8s ease;
 	transform-origin: center center;
 	will-change: transform;
-	contain: paint;
 	backface-visibility: hidden;
 }
 
@@ -535,10 +529,10 @@ html, body {
 }
 
 .hero-content {
-    position: relative;
-    z-index: 2;
+	position: relative;
+	z-index: 2;
 
-    display: flex;
+	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
@@ -546,11 +540,12 @@ html, body {
 	text-align: center;
 
 	max-width: 800px;
+	width: 100%;
 	margin: 0 auto;
 
-	gap: clamp(1rem,2.2vh,1.4rem);
+	gap: var(--hero-stack-gap);
 
-    animation: fadeInUp 1.2s ease-out;
+	animation: fadeInUp 1.2s ease-out;
 }
 
 @keyframes fadeInUp {
@@ -570,7 +565,7 @@ html, body {
 	font-weight: 400;
 	color: var(--text-light);
 	line-height: 1.1;
-	margin-bottom: 1.5rem;
+	margin: 0;
 	text-shadow: 0 0 30px rgba(212,175,55,0.15);
 }
 
@@ -580,7 +575,7 @@ html, body {
 	font-weight: 300;
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
-	margin-bottom: 2rem;
+	margin: 0;
 	animation: fadeIn 1.5s ease-out 0.3s both;
 }
 
@@ -593,7 +588,7 @@ html, body {
 	font-size: 1.1rem;
 	color: rgba(255, 255, 255, 0.8);
 	max-width: 600px;
-	margin-bottom: 1.2rem;
+	margin: 0;
 	animation: fadeIn 1.5s ease-out 0.6s both;
 }
 
@@ -784,11 +779,12 @@ html, body {
 	}
 }
 
+
 .cta-button {
 	position: relative;
 	z-index: 6;
 	padding: 0;
-	margin-top: 0.9rem;
+	margin: 0;
 
 	background: transparent;
 	color: var(--secondary-color);
@@ -2304,28 +2300,10 @@ section > .section-scroll-head + * {
 	}
 }
 
-/* hero Höhe Optimierung */
-@media (max-height:580px) {
-	.hero {
-		padding-bottom: calc(var(--hero-bottom-space) * 0.65);
-	}
-
+@media (max-height: 580px) {
 	.hero-content {
 		gap: 0.7rem;
 	}
-
-	.hero-subtitle {
-		margin-bottom: 0.9rem;
-	}
-
-	.hero-description {
-		margin-bottom: 0.4rem;
-	}
-
-	.cta-button {
-		margin-top: 0.1rem;
-	}
-
 }
 
 @media (max-width: 768px) {
