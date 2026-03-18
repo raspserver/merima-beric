@@ -43,7 +43,7 @@
 	--section-scroll-head-height: 60px;
 	--section-scroll-hit-offset: 50px;
 	--section-scroll-hit-height: 100px;
-	--section-scroll-inset: 40;
+	--section-scroll-inset: 0;
 	
 	/* =========================
 	   NAVBAR STRUCTURE
