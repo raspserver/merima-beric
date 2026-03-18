@@ -23,7 +23,7 @@
 	--section-scroll-head-height: 60px;
 	--section-scroll-inset: 5;
 	--brand-sub-ratio: 0.25;
-	--hero-stack-gap: clamp(0.9rem, 2.2vh, 1.25rem);
+	--hero-stack-gap: clamp(0.9rem, 2.2vh, 3.00rem);
 
 	/* =========================
 	   NAVBAR STRUCTURE
