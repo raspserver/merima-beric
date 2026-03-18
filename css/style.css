@@ -1023,13 +1023,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
    SECTION HEADER STACK
 ========================= */
 
-.section-header {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: var(--section-stack-gap);
-}
-
 /* Section Styles */
 section {
 	padding: 0 2rem;
@@ -1070,8 +1063,16 @@ section .section-title:first-child {
 	font-size: 0.9rem;
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
-	margin-bottom: 1.8rem;
+	margin: 0;
 	font-weight: 500;
+}
+
+.section-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--section-stack-gap);
+	margin-bottom: 1.8rem;
 }
 
 /* About Section */
