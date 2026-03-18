@@ -2300,11 +2300,15 @@ section > .section-scroll-head + * {
 	}
 }
 
+
+
+/*
 @media (max-height: 580px) {
 	.hero-content {
 		gap: 0.7rem;
 	}
 }
+*/
 
 @media (max-width: 768px) {
 	:root {
