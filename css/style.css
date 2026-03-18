@@ -40,8 +40,8 @@
 	--section-indicator-boundary-gap: 1px;
 	
 	--section-spacing: 3rem;
-	--section-scroll-hit-offset: 50px;
-	--section-scroll-hit-height: 100px;
+	--section-scroll-hit-offset: 40px;
+	--section-scroll-hit-height: 80px;
 	--section-scroll-inset: 0;
 	
 	/* =========================
