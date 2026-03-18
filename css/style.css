@@ -1953,13 +1953,6 @@ footer a:hover {
     }
 }
 
-
-
-
-
-
-
-
 /* =========================
    SECTION SCROLL HEAD
 ========================= */
@@ -1969,23 +1962,12 @@ section {
 	position: relative;
 }
 
-
-
-
 .section-scroll-head {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: var(--section-scroll-head-height);
-
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-
-	padding-top: 0;
-	gap: 10px;
 
 	cursor: pointer;
 	user-select: none;
@@ -1994,9 +1976,11 @@ section {
 }
 
 .section-scroll-indicator {
-	position: relative;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 
-	/* Dot so hochziehen, dass sein tiefster Punkt 1px über der Grenze endet */
+	/* Unterkante des Dots bei max. Bounce = 1px über Sektionsgrenze */
 	top: calc(
 		-1 * (
 			var(--section-indicator-dot-size) +
@@ -2004,16 +1988,6 @@ section {
 			var(--section-indicator-boundary-gap)
 		)
 	);
-}
-
-.section-scroll-indicator-motion {
-	animation: sectionLiquidScroll 2.2s ease-in-out infinite;
-}
-
-
-
-.section-scroll-indicator::after {
-	content: none;
 }
 
 .section-scroll-indicator-motion {
@@ -2042,18 +2016,12 @@ section {
 	pointer-events: none;
 }
 
-
-
-
-
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateY(0); }
 	40%  { transform: translateY(10px); }
-	60%  { transform: translateY(14px); }
+	60%  { transform: translateY(var(--section-indicator-bounce-max-y)); }
 	100% { transform: translateY(0); }
 }
-
-
 
 @keyframes sectionDotSquash {
 	0%   { transform: scale(1); }
@@ -2072,6 +2040,12 @@ section {
 		0 0 30px rgba(212,175,55,0.3);
 	animation: sectionDotSquash 2.2s ease-in-out infinite;
 }
+
+
+
+
+
+
 
 
 
