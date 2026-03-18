@@ -2010,28 +2010,18 @@ section {
 	animation: sectionLiquidScroll 2.2s ease-in-out infinite;
 }
 
-/*
-.scroll-dot {
-	width: var(--section-indicator-dot-size);
-	height: var(--section-indicator-dot-size);
-	border-radius: 50%;
-	background: var(--primary-color);
-	box-shadow:
-		0 0 12px rgba(212,175,55,0.6),
-		0 0 30px rgba(212,175,55,0.3);
-}
-*/
 
 
-
-
-
-
-
-
-
-/* Linie unter dem Punkt */
 .section-scroll-indicator::after {
+	content: none;
+}
+
+.section-scroll-indicator-motion {
+	position: relative;
+	animation: sectionLiquidScroll 2.2s ease-in-out infinite;
+}
+
+.section-scroll-indicator-motion::after {
 	content: "";
 	position: absolute;
 	top: 100%;
@@ -2051,6 +2041,10 @@ section {
 
 	pointer-events: none;
 }
+
+
+
+
 
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateY(0); }
