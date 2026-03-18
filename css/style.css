@@ -23,7 +23,7 @@
 	--section-scroll-head-height: 60px;
 	--section-scroll-inset: 5;
 	--brand-sub-ratio: 0.25;
-	--hero-stack-gap: clamp(1.00rem, 4.00vh, 2.00rem);	/* clamp(MIN, BEVORZUGT, MAX); */
+	--hero-stack-gap: clamp(1.00rem, 4.00vh, 1.20rem);	/* clamp(MIN, BEVORZUGT, MAX); */
 														/* viewport 952 × 442 (Desktop): */
 														/* viewport 384 × 701 (Galaxy A34):	*/
 														/* viewport 375 x 552 (iPhone7):	*/
