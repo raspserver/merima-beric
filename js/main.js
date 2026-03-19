@@ -973,7 +973,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			});
 		},
-
+	
 		bindEvents() {
 			document.querySelectorAll("section").forEach(section => {
 				if (section.classList.contains("hero")) return;
@@ -983,8 +983,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					headSelector: ".section-scroll-head"
 				});
 			});
+
+			this.bindDirectScrollTargets();
 		},
-		
+
 		bindDirectScrollTargets() {
 			document.querySelectorAll("[data-scroll-target]").forEach(triggerEl => {
 				const targetSelector = triggerEl.getAttribute("data-scroll-target");
