@@ -1831,11 +1831,19 @@ footer a:hover {
 }
 
 .nav-toggle {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-    gap: 5px;
-    z-index: 2101;
+	display: none;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	gap: 5px;
+	z-index: 2101;
+
+	min-width: 48px;
+	min-height: 48px;
+	padding: 12px;
+	-webkit-tap-highlight-color: transparent;
+	touch-action: manipulation;
 }
 
 .nav-toggle span {
