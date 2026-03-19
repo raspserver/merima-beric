@@ -322,7 +322,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			const isFooterTarget = target.tagName?.toLowerCase() === "footer";
 
 			const effectiveNavMode =
-				isHeroTarget && navMode === "up-section" ? "hero-top" : navMode;
+				isHeroTarget && (navMode === "up-section" || navMode === "hero-top")
+					? "hero-top"
+					: navMode;
 
 			const navOffset =
 				isHeroTarget || isFooterTarget ? 0 : this.getTargetNavOffset(effectiveNavMode);
@@ -338,11 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				  window.pageYOffset -
 				  navOffset +
 				  inset;
-
-			const effectiveNavMode =
-				isHeroTarget && (navMode === "up-section" || navMode === "hero-top")
-					? "hero-top"
-					: navMode;
 
 			state.programmaticScroll = true;
 			state.programmaticNavMode = effectiveNavMode;
