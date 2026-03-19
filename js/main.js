@@ -395,7 +395,26 @@ document.addEventListener("DOMContentLoaded", () => {
 					navbarModule.handleScroll();
 				}
 			});
-		},	
+		},
+		
+		cancelActiveScroll({ keepPosition = true } = {}) {
+			if (state.activeScrollAnimation) {
+				cancelAnimationFrame(state.activeScrollAnimation);
+				state.activeScrollAnimation = null;
+			}
+
+			state.activeScrollToken++;
+			state.programmaticScroll = false;
+			state.programmaticNavMode = null;
+
+			if (keepPosition) {
+				window.scrollTo(0, window.scrollY);
+			}
+
+			state.lastScrollY = window.scrollY;
+			navbarModule.handleScroll();
+		},
+
 	};
 
 	/* =========================================================
@@ -2074,6 +2093,19 @@ document.addEventListener("DOMContentLoaded", () => {
 	};
 
 	/* =========================================================
+	   USER SCROLL INTERRUPT
+	========================================================= */
+	function bindUserScrollInterrupts() {
+		const interrupt = () => {
+			scrollEngine.cancelActiveScroll();
+		};
+
+		window.addEventListener("wheel", interrupt, { passive: true });
+		window.addEventListener("touchstart", interrupt, { passive: true });
+		window.addEventListener("pointerdown", interrupt, { passive: true });
+	}
+
+	/* =========================================================
 	   INIT
 	========================================================= */
 	function init() {
@@ -2089,6 +2121,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		uiModule.bindHeroClickBehavior();
 		uiModule.bindPricingTabs();
 		uiModule.setInitialVisualState();
+		
+		bindUserScrollInterrupts();
 
 		if (DOM.navbar) {
 			window.addEventListener("scroll", () => navbarModule.handleScroll(), { passive: true });
