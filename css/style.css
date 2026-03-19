@@ -1516,12 +1516,6 @@ footer {
 	text-align: center;
 }
 
-.footer-content {
-	position: relative;
-	max-width: 1200px;
-	margin: 0 auto;
-}
-
 .footer-brand {
 	display: inline-block;
 	text-align: right;
@@ -2078,33 +2072,61 @@ section {
 
 .footer-copy-wrap {
 	position: relative;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+	display: inline-block;
 	margin-top: 1.25rem;
+	padding-bottom: calc(
+		26px +
+		var(--section-indicator-bounce-max-y) +
+		var(--section-indicator-boundary-gap) +
+		0.35rem
+	);
 }
 
-.section-scroll-head--footer {
+.footer-copy {
+	margin-bottom: 0;
 	position: relative;
+	z-index: 2;
+	text-align: center;
+}
+
+/* Trigger geometrisch exakt auf Copyright-Mitte */
+.section-scroll-head--footer {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
+
 	width: 32px;
 	height: calc(
 		26px +
 		var(--section-indicator-bounce-max-y) +
 		var(--section-indicator-boundary-gap)
 	);
-	margin-top: 0.35rem;
+
+	margin: 0;
 	pointer-events: auto;
 	z-index: 10;
 }
 
 .section-scroll-head--footer .section-scroll-indicator {
-	position: relative;
-	left: auto;
-	bottom: auto;
-	transform: none;
+	position: absolute;
+	left: 0;
+	bottom: 0;
 	width: 32px;
 	height: 100%;
+	transform: none;
 	pointer-events: none;
+}
+
+/* große Hit-Area */
+.section-scroll-head--footer::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
+	width: max(56px, 100vw);
+	height: var(--section-scroll-hit-height);
 }
 
 .section-scroll-line-motion--footer {
@@ -2113,28 +2135,6 @@ section {
 	top: 0;
 	transform: translateX(-50%);
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
-}
-
-.footer-copy {
-	margin-bottom: 0;
-	position: relative;
-	z-index: 2;
-}
-
-/* sichtbar nur solange Footer im Viewport ist */
-footer:not(:hover) .section-scroll-head--footer .section-scroll-indicator {
-	/* leer lassen, nur Struktur */
-}
-
-/* große Hit-Area */
-.section-scroll-head--footer .section-scroll-indicator::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	bottom: 0;
-	transform: translateX(-50%);
-	width: max(56px, 100vw);
-	height: var(--section-scroll-hit-height);
 }
 
 .section-scroll-line-motion--footer .section-scroll-line {
