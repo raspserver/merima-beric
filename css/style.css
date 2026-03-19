@@ -2066,6 +2066,69 @@ section {
 	);
 }
 
+/* =========================
+   FOOTER SCROLL LINE
+========================= */
+
+.footer-copy {
+	margin-bottom: 0.35rem;
+}
+
+.section-scroll-head--footer {
+	position: relative;
+	top: auto;
+	left: auto;
+	transform: none;
+
+	width: min(100vw, 100%);
+	height: var(--section-scroll-hit-height);
+
+	margin: 0.2rem auto 0;
+
+	display: block;
+	cursor: pointer;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	z-index: 15;
+}
+
+.section-scroll-head--footer .section-scroll-indicator {
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 32px;
+	height: calc(26px + var(--section-indicator-bounce-max-y));
+	pointer-events: none;
+}
+
+.section-scroll-indicator--line-only .section-scroll-line-motion {
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
+}
+
+.section-scroll-line-motion--footer .section-scroll-line {
+	width: 1px;
+	height: 26px;
+	background: linear-gradient(
+		to bottom,
+		rgba(212,175,55,0.75),
+		rgba(212,175,55,0.22),
+		rgba(212,175,55,0)
+	);
+}
+
+.section-scroll-head--footer:focus-visible {
+	outline: none;
+}
+
+.section-scroll-head--footer:focus-visible .section-scroll-line {
+	box-shadow:
+		0 0 0 6px rgba(212,175,55,0.10),
+		0 0 14px rgba(212,175,55,0.35);
+}
+
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
 	40%  { transform: translateX(-50%) translateY(10px); }
