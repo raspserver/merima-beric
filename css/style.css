@@ -2076,42 +2076,56 @@ section {
 	margin: 0 auto;
 }
 
+
+
+
+
+
+
+
 .footer-copy-wrap {
 	position: relative;
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	align-items: center;
 	margin-top: 1.25rem;
 }
 
-.footer-copy {
-	margin-bottom: 0;
-	position: relative;
-	z-index: 2;
-}
-
-/* Bezug jetzt NUR auf den Copyright-Block */
 .section-scroll-head--footer {
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	z-index: 10;
-}
-
-/* Sticky-Element exakt mittig unter dem Copyright-Text */
-.section-scroll-head--footer .section-scroll-indicator {
-	position: fixed;
-	left: 50%;
-	bottom: var(--section-indicator-boundary-gap);
-	transform: translateX(-50%);
-
+	position: relative;
 	width: 32px;
 	height: calc(
 		26px +
 		var(--section-indicator-bounce-max-y) +
 		var(--section-indicator-boundary-gap)
 	);
-
+	margin-top: 0.35rem;
 	pointer-events: auto;
+	z-index: 10;
+}
+
+.section-scroll-head--footer .section-scroll-indicator {
+	position: relative;
+	left: auto;
+	bottom: auto;
+	transform: none;
+	width: 32px;
+	height: 100%;
+	pointer-events: none;
+}
+
+.section-scroll-line-motion--footer {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
+}
+
+.footer-copy {
+	margin-bottom: 0;
+	position: relative;
+	z-index: 2;
 }
 
 /* sichtbar nur solange Footer im Viewport ist */
@@ -2128,15 +2142,6 @@ footer:not(:hover) .section-scroll-head--footer .section-scroll-indicator {
 	transform: translateX(-50%);
 	width: max(56px, 100vw);
 	height: var(--section-scroll-hit-height);
-}
-
-/* Bewegte Linie */
-.section-scroll-line-motion--footer {
-	position: absolute;
-	left: 50%;
-	top: 0;
-	transform: translateX(-50%);
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
 
 .section-scroll-line-motion--footer .section-scroll-line {
