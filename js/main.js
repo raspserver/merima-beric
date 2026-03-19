@@ -382,13 +382,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!target) return;
 
 			const mode = forcedMode || this.getModeForTarget(target);
+			const isHeroTarget = target.classList?.contains("hero");
+			const alreadyAtTop = window.scrollY <= 5;
 
 			state.manualNavbarOpen = false;
-			navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
+
+			if (isHeroTarget && alreadyAtTop) {
+				navbarModule.setTargets(0, 0, 0);
+			} else {
+				navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
+			}
+
 			this.scrollToSection(target, mode);
 			navbarModule.startAnimation();
 		},
-		
+
 		scrollToPageBottom() {
 			state.programmaticScroll = true;
 			state.programmaticNavMode = "down";
@@ -690,10 +698,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					};
 
 					if (utils.isMobileViewport() && navbarModule.isOpen()) {
-						
 						const menu = DOM.navMenu;
+						const isHeroTarget = target.classList?.contains("hero");
 
-						navbarModule.closeMenu({ keepNavbarVisible: true });
+						navbarModule.closeMenu({ keepNavbarVisible: !isHeroTarget });
 
 						let done = false;
 
@@ -730,7 +738,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (utils.isMobileViewport() && this.isOpen()) {
 					const menu = DOM.navMenu;
 
-					this.closeMenu({ keepNavbarVisible: true });
+					this.closeMenu({ keepNavbarVisible: false });
 
 					let done = false;
 
