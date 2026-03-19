@@ -834,26 +834,20 @@ document.addEventListener("DOMContentLoaded", () => {
 			const maxScrollY = utils.getMaxScrollY();
 			return Math.max(0, Math.min(rawY, maxScrollY));
 		},
+		
+		isAtOwnSectionHomePosition(sectionEl, tolerance = 4) {
+			if (!sectionEl) return false;
 
-		isAtSectionHomePosition(tolerance = 4) {
 			const currentY = window.scrollY;
+			const downHomeY = this.getSectionHomeY(sectionEl, "down");
+			const upHomeY = this.getSectionHomeY(sectionEl, "up-section");
 
-			return state.orderedSections.some(section => {
-				if (!section) return false;
-
-				const downHomeY = this.getSectionHomeY(section, "down");
-				const upHomeY =
-					section.classList?.contains("hero")
-						? this.getSectionHomeY(section, "up-section")
-						: this.getSectionHomeY(section, "up-section");
-
-				return (
-					Math.abs(currentY - downHomeY) <= tolerance ||
-					Math.abs(currentY - upHomeY) <= tolerance
-				);
-			});
+			return (
+				Math.abs(currentY - downHomeY) <= tolerance ||
+				Math.abs(currentY - upHomeY) <= tolerance
+			);
 		},
-
+		
 		navigateToSectionHome(sectionEl) {
 			if (!sectionEl) return;
 
@@ -928,7 +922,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					/* FALL 2:
 					   Bildschirm ist NICHT auf einer y-section-home-position
 					   -> Einfach-Click navigiert zur aktuellen Sektion */
-					if (!this.isAtSectionHomePosition()) {
+					if (!this.isAtOwnSectionHomePosition(sectionEl)) {
 						this.navigateToSectionHome(sectionEl);
 						return;
 					}
@@ -953,8 +947,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 
 				/* Doppelclick nur dann, wenn wir auf einer home-position sind */
-				if (!this.isAtSectionHomePosition()) return;
-
+				if (!this.isAtOwnSectionHomePosition(sectionEl)) return;
+				
 				this.navigateSection(sectionEl, "prev", allowPrev);
 			});
 
@@ -963,12 +957,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (e.key === "Enter" || e.key === " ") {
 					e.preventDefault();
-
-					if (!this.isAtSectionHomePosition()) {
+		
+					if (!this.isAtOwnSectionHomePosition(sectionEl)) {
 						this.navigateToSectionHome(sectionEl);
 						return;
 					}
-
+					
 					this.navigateSection(sectionEl, "next", allowPrev);
 				}
 			});
