@@ -38,6 +38,7 @@
 	--section-indicator-dot-size: 8px;
 	--section-indicator-bounce-max-y: 14px;
 	--section-indicator-boundary-gap: 1px;
+	--footer-copy-gap: 1.25rem;
 	
 	--section-spacing: 2.5rem;
 	--section-scroll-hit-offset: 40px;
@@ -2083,14 +2084,8 @@ footer {
 .footer-copy-wrap {
 	position: relative;
 	display: inline-block;
-	margin-top: 1.25rem;
-
-	/* Platz für die Bounce-Line */
-	padding-bottom: calc(
-		26px +
-		var(--section-indicator-bounce-max-y) +
-		10px
-	);
+	margin-top: var(--footer-copy-gap);
+	padding-bottom: var(--footer-copy-gap);
 }
 
 .footer-copy {
