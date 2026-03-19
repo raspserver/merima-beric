@@ -2063,55 +2063,10 @@ section {
 /* =========================
    FOOTER SCROLL LINE
 ========================= */
-
 .footer-content {
 	position: relative;
 	max-width: 1200px;
 	margin: 0 auto;
-}
-
-.footer-copy-wrap {
-	position: relative;
-	display: inline-block;
-	margin-top: 1.25rem;
-
-	/* kein Platz mehr für eine absolut darunter liegende Linie reservieren */
-	padding-bottom: 0;
-}
-
-.footer-copy {
-	margin-bottom: 0;
-	position: relative;
-	z-index: 2;
-	text-align: center;
-}
-
-/* Footer-Indikator am unteren Bildschirmrand fixieren */
-.section-scroll-head--footer {
-	position: fixed;
-	left: 50%;
-	bottom: var(--section-indicator-boundary-gap);
-	transform: translateX(-50%);
-
-	width: 32px;
-	height: calc(
-		26px +
-		var(--section-indicator-bounce-max-y)
-	);
-
-	margin: 0;
-	pointer-events: auto;
-	z-index: 10;
-}
-
-.section-scroll-head--footer .section-scroll-indicator {
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	width: 32px;
-	height: 100%;
-	transform: none;
-	pointer-events: none;
 }
 
 /* große Hit-Area */
@@ -2125,6 +2080,42 @@ section {
 	height: var(--section-scroll-hit-height);
 }
 
+.footer-copy-wrap {
+	position: relative;
+	display: inline-block;
+	margin-top: 1.25rem;
+	padding-bottom: 0;
+}
+
+.footer-copy {
+	margin: 0;
+	position: relative;
+	z-index: 2;
+	text-align: center;
+}
+
+.section-scroll-head--footer {
+	position: fixed;
+	left: 50%;
+	bottom: var(--section-indicator-boundary-gap);
+	transform: translateX(-50%);
+	width: 32px;
+	height: calc(26px + var(--section-indicator-bounce-max-y));
+	margin: 0;
+	pointer-events: auto;
+	z-index: 20;
+}
+
+.section-scroll-head--footer .section-scroll-indicator {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
+	width: 32px;
+	height: 100%;
+	pointer-events: none;
+}
+
 .section-scroll-line-motion--footer {
 	position: absolute;
 	left: 50%;
@@ -2135,6 +2126,7 @@ section {
 }
 
 .section-scroll-line-motion--footer .section-scroll-line {
+	display: block;
 	width: 1px;
 	height: 26px;
 	background: linear-gradient(
