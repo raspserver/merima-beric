@@ -788,7 +788,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	/* =========================================================
 	   SECTION NAVIGATION MODULE
-	========================================================= */
+	========================================================= */	
 	const sectionNavigationModule = {
 		buildOrderedSections() {
 			state.orderedSections = [
@@ -804,6 +804,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		getSectionIndex(sectionEl) {
 			return state.orderedSections.findIndex(section => section === sectionEl);
+		},
+
+		getSectionHomeY(sectionEl, navMode = "down") {
+			if (!sectionEl) return 0;
+
+			const isHeroTarget = sectionEl.classList?.contains("hero");
+			const isFooterTarget = sectionEl.tagName?.toLowerCase() === "footer";
+
+			const effectiveNavMode =
+				isHeroTarget && navMode === "up-section" ? "hero-top" : navMode;
+
+			const navOffset =
+				isHeroTarget || isFooterTarget
+					? 0
+					: scrollEngine.getTargetNavOffset(effectiveNavMode);
+
+			const shouldInsetByOnePixel =
+				sectionEl.matches?.("#about, #gallery, #services, #pricing, #testimonials, #contact");
+
+			const inset = shouldInsetByOnePixel ? physics.values.sectionScrollInset : 0;
+
+			const rawY =
+				sectionEl.getBoundingClientRect().top +
+				window.pageYOffset -
+				navOffset +
+				inset;
+
+			const maxScrollY = utils.getMaxScrollY();
+			return Math.max(0, Math.min(rawY, maxScrollY));
+		},
+
+		isAtSectionHomePosition(tolerance = 4) {
+			const currentY = window.scrollY;
+
+			return state.orderedSections.some(section => {
+				if (!section) return false;
+
+				const downHomeY = this.getSectionHomeY(section, "down");
+				const upHomeY =
+					section.classList?.contains("hero")
+						? this.getSectionHomeY(section, "up-section")
+						: this.getSectionHomeY(section, "up-section");
+
+				return (
+					Math.abs(currentY - downHomeY) <= tolerance ||
+					Math.abs(currentY - upHomeY) <= tolerance
+				);
+			});
+		},
+
+		navigateToSectionHome(sectionEl) {
+			if (!sectionEl) return;
+
+			const currentY = window.scrollY;
+			const downHomeY = this.getSectionHomeY(sectionEl, "down");
+			const upHomeY = this.getSectionHomeY(sectionEl, "up-section");
+
+			const distanceToDown = Math.abs(currentY - downHomeY);
+			const distanceToUp = Math.abs(currentY - upHomeY);
+
+			const mode = distanceToUp < distanceToDown ? "up-section" : "down";
+			scrollEngine.goTo(sectionEl, mode);
 		},
 
 		navigateSection(sectionEl, direction, allowPrev = true) {
@@ -862,6 +924,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				clickTimer = setTimeout(() => {
 					clickTimer = null;
+
+					/* FALL 2:
+					   Bildschirm ist NICHT auf einer y-section-home-position
+					   -> Einfach-Click navigiert zur aktuellen Sektion */
+					if (!this.isAtSectionHomePosition()) {
+						this.navigateToSectionHome(sectionEl);
+						return;
+					}
+
+					/* FALL 1a:
+					   Bildschirm ist auf einer y-section-home-position
+					   -> Einfach-Click navigiert zur nachfolgenden Sektion */
 					this.navigateSection(sectionEl, "next", allowPrev);
 				}, SETTINGS.thresholds.sectionNavClickDelay);
 			});
@@ -878,6 +952,9 @@ document.addEventListener("DOMContentLoaded", () => {
 					clickTimer = null;
 				}
 
+				/* Doppelclick nur dann, wenn wir auf einer home-position sind */
+				if (!this.isAtSectionHomePosition()) return;
+
 				this.navigateSection(sectionEl, "prev", allowPrev);
 			});
 
@@ -886,6 +963,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (e.key === "Enter" || e.key === " ") {
 					e.preventDefault();
+
+					if (!this.isAtSectionHomePosition()) {
+						this.navigateToSectionHome(sectionEl);
+						return;
+					}
+
 					this.navigateSection(sectionEl, "next", allowPrev);
 				}
 			});
