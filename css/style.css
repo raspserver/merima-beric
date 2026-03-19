@@ -2072,32 +2072,37 @@ section {
 
 .footer-content {
 	position: relative;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.footer-copy-wrap {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	margin-top: 1.25rem;
 }
 
 .footer-copy {
 	margin-bottom: 0;
+	position: relative;
+	z-index: 2;
 }
 
-/* Gehört zum Footer, nicht zum Viewport */
+/* Bezug jetzt NUR auf den Copyright-Block */
 .section-scroll-head--footer {
 	position: absolute;
-	left: 50%;
-	top: 0;
-	transform: translateX(-50%);
-
-	width: 100%;
-	height: 100%;
+	inset: 0;
 	pointer-events: none;
 	z-index: 10;
 }
 
-/* Sticky-Container: bleibt am unteren Viewportrand,
-   aber nur solange der Footer sichtbar ist */
+/* Sticky-Element exakt mittig unter dem Copyright-Text */
 .section-scroll-head--footer .section-scroll-indicator {
-	position: sticky;
+	position: fixed;
 	left: 50%;
-	transform: translateX(-50%);
 	bottom: var(--section-indicator-boundary-gap);
+	transform: translateX(-50%);
 
 	width: 32px;
 	height: calc(
@@ -2109,19 +2114,24 @@ section {
 	pointer-events: auto;
 }
 
-/* große Hit-Area optional */
+/* sichtbar nur solange Footer im Viewport ist */
+footer:not(:hover) .section-scroll-head--footer .section-scroll-indicator {
+	/* leer lassen, nur Struktur */
+}
+
+/* große Hit-Area */
 .section-scroll-head--footer .section-scroll-indicator::before {
 	content: "";
 	position: absolute;
 	left: 50%;
-	bottom: calc(-1 * var(--section-indicator-boundary-gap));
+	bottom: 0;
 	transform: translateX(-50%);
 	width: max(56px, 100vw);
 	height: var(--section-scroll-hit-height);
 }
 
-/* Bounce-Element */
-.section-scroll-indicator--line-only .section-scroll-line-motion {
+/* Bewegte Linie */
+.section-scroll-line-motion--footer {
 	position: absolute;
 	left: 50%;
 	top: 0;
