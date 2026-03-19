@@ -2074,12 +2074,9 @@ section {
 	position: relative;
 	display: inline-block;
 	margin-top: 1.25rem;
-	padding-bottom: calc(
-		26px +
-		var(--section-indicator-bounce-max-y) +
-		var(--section-indicator-boundary-gap) +
-		0.35rem
-	);
+
+	/* kein Platz mehr für eine absolut darunter liegende Linie reservieren */
+	padding-bottom: 0;
 }
 
 .footer-copy {
@@ -2089,18 +2086,17 @@ section {
 	text-align: center;
 }
 
-/* Trigger geometrisch exakt auf Copyright-Mitte */
+/* Footer-Indikator am unteren Bildschirmrand fixieren */
 .section-scroll-head--footer {
-	position: absolute;
+	position: fixed;
 	left: 50%;
-	bottom: 0;
+	bottom: var(--section-indicator-boundary-gap);
 	transform: translateX(-50%);
 
 	width: 32px;
 	height: calc(
 		26px +
-		var(--section-indicator-bounce-max-y) +
-		var(--section-indicator-boundary-gap)
+		var(--section-indicator-bounce-max-y)
 	);
 
 	margin: 0;
@@ -2132,20 +2128,28 @@ section {
 .section-scroll-line-motion--footer {
 	position: absolute;
 	left: 50%;
-	top: 0;
+	bottom: 0;
+	top: auto;
 	transform: translateX(-50%);
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
+	animation: footerLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
 
 .section-scroll-line-motion--footer .section-scroll-line {
 	width: 1px;
 	height: 26px;
 	background: linear-gradient(
-		to bottom,
+		to top,
 		rgba(212,175,55,0.75),
 		rgba(212,175,55,0.22),
 		rgba(212,175,55,0)
 	);
+}
+
+@keyframes footerLiquidScroll {
+	0%   { transform: translateX(-50%) translateY(0); }
+	40%  { transform: translateX(-50%) translateY(-10px); }
+	60%  { transform: translateX(-50%) translateY(calc(-1 * var(--section-indicator-bounce-max-y))); }
+	100% { transform: translateX(-50%) translateY(0); }
 }
 
 @keyframes sectionLiquidScroll {
