@@ -2071,49 +2071,66 @@ section {
 ========================= */
 
 .footer-copy {
-	margin-bottom: 0.0rem;
+	margin-bottom: 0;
 }
 
+/* Footer-Trigger fest an die Viewport-Unterkante koppeln */
 .section-scroll-head--footer {
-	position: relative;
-	top: auto;
-	left: auto;
-	transform: none;
+	position: fixed;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
 
 	width: 32px;
-	height: calc(26px + var(--section-indicator-bounce-max-y));
-	margin: 0.2rem auto 0;
+	height: calc(
+		26px +
+		var(--section-indicator-bounce-max-y) +
+		var(--section-indicator-boundary-gap)
+	);
 
+	margin: 0;
 	display: block;
 	cursor: pointer;
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
-	z-index: 15;
+	z-index: 1500;
 }
 
+/* große Hit-Area */
 .section-scroll-head--footer::before {
 	content: "";
 	position: absolute;
 	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
+	bottom: 0;
+	transform: translateX(-50%);
 	width: max(56px, 100vw);
 	height: var(--section-scroll-hit-height);
 }
 
+/* Container exakt bis zur Boundary */
 .section-scroll-head--footer .section-scroll-indicator {
-	top: 0;
+	position: absolute;
 	left: 50%;
+	bottom: 0;
 	transform: translateX(-50%);
+
 	width: 32px;
-	height: calc(26px + var(--section-indicator-bounce-max-y));
+	height: calc(
+		26px +
+		var(--section-indicator-bounce-max-y) +
+		var(--section-indicator-boundary-gap)
+	);
+
 	pointer-events: none;
 }
 
+/* Startposition so berechnen, dass der tiefste Bounce-Punkt exakt auf boundary-gap endet */
 .section-scroll-indicator--line-only .section-scroll-line-motion {
-	top: calc(var(--section-indicator-bounce-max-y) * 0.5);
+	position: absolute;
 	left: 50%;
+	top: 0;
 	transform: translateX(-50%);
+
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
 
