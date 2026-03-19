@@ -378,6 +378,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.scrollToSection(target, mode);
 			navbarModule.startAnimation();
 		}
+		
+		scrollToPageBottom() {
+			state.programmaticScroll = true;
+			state.programmaticNavMode = "down";
+			state.scrollDirection = "down";
+
+			this.animateWindowScrollTo(utils.getMaxScrollY(), {
+				onComplete: () => {
+					state.programmaticScroll = false;
+					state.programmaticNavMode = null;
+					state.lastScrollY = window.scrollY;
+
+					navbarModule.setTargets(1, 1, 1);
+					navbarModule.startAnimation();
+					navbarModule.handleScroll();
+				}
+			});
+		},	
 	};
 
 	/* =========================================================
@@ -869,12 +887,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (currentIndex === -1) return;
 
 			if (direction === "next") {
-				const nextTarget =
-					sectionEl.id === "contact"
-						? DOM.footer
-						: state.orderedSections[currentIndex + 1] || null;
+				if (sectionEl.id === "contact") {
+					scrollEngine.scrollToPageBottom();
+					return;
+				}
 
+				const nextTarget = state.orderedSections[currentIndex + 1] || null;
 				if (!nextTarget) return;
+
 				scrollEngine.goTo(nextTarget, "down");
 				return;
 			}
