@@ -377,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
 			this.scrollToSection(target, mode);
 			navbarModule.startAnimation();
-		}
+		},
 		
 		scrollToPageBottom() {
 			state.programmaticScroll = true;
