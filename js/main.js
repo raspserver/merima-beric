@@ -906,7 +906,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				const rect = head.getBoundingClientRect();
 				return event.clientY >= rect.top && event.clientY <= rect.bottom;
 			};
-
+			
 			triggerEl.addEventListener("click", (e) => {
 				if (isInteractiveElement(e.target)) return;
 				if (!isInsideHeadArea(e)) return;
@@ -914,26 +914,32 @@ document.addEventListener("DOMContentLoaded", () => {
 				e.preventDefault();
 				e.stopPropagation();
 
+				const isAtOwnHome = this.isAtOwnSectionHomePosition(sectionEl);
+
+				/* FALL 2:
+				   Nicht auf eigener y-section-home-position
+				   -> keine Doppelclick-Logik, also sofort navigieren */
+				if (!isAtOwnHome) {
+					if (clickTimer) {
+						clearTimeout(clickTimer);
+						clickTimer = null;
+					}
+
+					this.navigateToSectionHome(sectionEl);
+					return;
+				}
+
+				/* FALL 1:
+				   Auf eigener y-section-home-position
+				   -> Single-/Double-Click unterscheiden */
 				if (clickTimer) clearTimeout(clickTimer);
 
 				clickTimer = setTimeout(() => {
 					clickTimer = null;
-
-					/* FALL 2:
-					   Bildschirm ist NICHT auf einer y-section-home-position
-					   -> Einfach-Click navigiert zur aktuellen Sektion */
-					if (!this.isAtOwnSectionHomePosition(sectionEl)) {
-						this.navigateToSectionHome(sectionEl);
-						return;
-					}
-
-					/* FALL 1a:
-					   Bildschirm ist auf einer y-section-home-position
-					   -> Einfach-Click navigiert zur nachfolgenden Sektion */
 					this.navigateSection(sectionEl, "next", allowPrev);
 				}, SETTINGS.thresholds.sectionNavClickDelay);
 			});
-
+			
 			triggerEl.addEventListener("dblclick", (e) => {
 				if (isInteractiveElement(e.target)) return;
 				if (!isInsideHeadArea(e)) return;
