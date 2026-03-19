@@ -2070,70 +2070,62 @@ section {
    FOOTER SCROLL LINE
 ========================= */
 
+.footer-content {
+	position: relative;
+}
+
 .footer-copy {
 	margin-bottom: 0;
 }
 
-/* Footer-Trigger fest an die Viewport-Unterkante koppeln */
+/* Gehört zum Footer, nicht zum Viewport */
 .section-scroll-head--footer {
-	position: fixed;
-	top: auto;       /* wichtig */
-	bottom: 0;       /* wichtig */
-	left: 50%;
-	right: auto;     /* sauber neutralisieren */
-	transform: translateX(-50%);
-
-	width: 32px;
-	height: calc(
-		26px +
-		var(--section-indicator-bounce-max-y) +
-		var(--section-indicator-boundary-gap)
-	);
-
-	margin: 0;
-	display: block;
-	cursor: pointer;
-	user-select: none;
-	-webkit-tap-highlight-color: transparent;
-	z-index: 1500;
-}
-
-/* große Hit-Area */
-.section-scroll-head--footer::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	bottom: 0;
-	transform: translateX(-50%);
-	width: max(56px, 100vw);
-	height: var(--section-scroll-hit-height);
-}
-
-/* Container exakt bis zur Boundary */
-.section-scroll-head--footer .section-scroll-indicator {
-	position: absolute;
-	top: auto;       /* wichtig */
-	bottom: 0;       /* wichtig */
-	left: 50%;
-	transform: translateX(-50%);
-
-	width: 32px;
-	height: calc(
-		26px +
-		var(--section-indicator-bounce-max-y) +
-		var(--section-indicator-boundary-gap)
-	);
-
-	pointer-events: none;
-}
-
-/* Startposition so berechnen, dass der tiefste Bounce-Punkt exakt auf boundary-gap endet */
-.section-scroll-indicator--line-only .section-scroll-line-motion {
 	position: absolute;
 	left: 50%;
 	top: 0;
 	transform: translateX(-50%);
 
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 10;
+}
+
+/* Sticky-Container: bleibt am unteren Viewportrand,
+   aber nur solange der Footer sichtbar ist */
+.section-scroll-head--footer .section-scroll-indicator {
+	position: sticky;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: var(--section-indicator-boundary-gap);
+
+	width: 32px;
+	height: calc(
+		26px +
+		var(--section-indicator-bounce-max-y) +
+		var(--section-indicator-boundary-gap)
+	);
+
+	pointer-events: auto;
+}
+
+/* große Hit-Area optional */
+.section-scroll-head--footer .section-scroll-indicator::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: calc(-1 * var(--section-indicator-boundary-gap));
+	transform: translateX(-50%);
+	width: max(56px, 100vw);
+	height: var(--section-scroll-hit-height);
+}
+
+/* Bounce-Element */
+.section-scroll-indicator--line-only .section-scroll-line-motion {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
 
@@ -2146,16 +2138,6 @@ section {
 		rgba(212,175,55,0.22),
 		rgba(212,175,55,0)
 	);
-}
-
-.section-scroll-head--footer:focus-visible {
-	outline: none;
-}
-
-.section-scroll-head--footer:focus-visible .section-scroll-line {
-	box-shadow:
-		0 0 0 6px rgba(212,175,55,0.10),
-		0 0 14px rgba(212,175,55,0.35);
 }
 
 @keyframes sectionLiquidScroll {
