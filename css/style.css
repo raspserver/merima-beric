@@ -2080,9 +2080,8 @@ section {
 	left: auto;
 	transform: none;
 
-	width: min(100vw, 100%);
-	height: var(--section-scroll-hit-height);
-
+	width: 32px;
+	height: calc(26px + var(--section-indicator-bounce-max-y));
 	margin: 0.2rem auto 0;
 
 	display: block;
@@ -2090,6 +2089,16 @@ section {
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
 	z-index: 15;
+}
+
+.section-scroll-head--footer::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: max(56px, 100vw);
+	height: var(--section-scroll-hit-height);
 }
 
 .section-scroll-head--footer .section-scroll-indicator {
