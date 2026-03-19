@@ -266,8 +266,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			const distance = clampedTargetY - startY;
 			const absDistance = Math.abs(distance);
 
+			const hardSnap = (y) => {
+				window.scrollTo(0, y);
+				requestAnimationFrame(() => {
+					window.scrollTo(0, y);
+				});
+			};
+
 			if (absDistance < 1) {
-				window.scrollTo(0, clampedTargetY);
+				hardSnap(clampedTargetY);
 				onComplete?.(clampedTargetY);
 				return;
 			}
@@ -299,7 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (t < 1) {
 					state.activeScrollAnimation = requestAnimationFrame(frame);
 				} else {
-					window.scrollTo(0, clampedTargetY);
+					hardSnap(clampedTargetY);
 					state.activeScrollAnimation = null;
 					onComplete?.(clampedTargetY);
 				}
@@ -307,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			state.activeScrollAnimation = requestAnimationFrame(frame);
 		},
-
+		
 		scrollToSection(target, navMode = null) {
 			if (!target) return;
 
@@ -325,11 +332,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const inset = shouldInsetByOnePixel ? physics.values.sectionScrollInset : 0;
 
-			const y =
-				target.getBoundingClientRect().top +
-				window.pageYOffset -
-				navOffset +
-				inset;
+			const y = isHeroTarget
+				? 0
+				: target.getBoundingClientRect().top +
+				  window.pageYOffset -
+				  navOffset +
+				  inset;
+
+			const effectiveNavMode =
+				isHeroTarget && (navMode === "up-section" || navMode === "hero-top")
+					? "hero-top"
+					: navMode;
 
 			state.programmaticScroll = true;
 			state.programmaticNavMode = effectiveNavMode;
@@ -366,7 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			});
 		},
-
+		
 		goTo(targetOrSelector, forcedMode = null) {
 			const target = utils.resolveTarget(targetOrSelector);
 			if (!target) return;
@@ -714,7 +727,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				e.stopPropagation();
 
 				const goHome = () => {
-					scrollEngine.goTo(DOM.hero, "up-section");
+					scrollEngine.goTo(DOM.hero, "hero-top");
 				};
 
 				if (utils.isMobileViewport() && this.isOpen()) {
