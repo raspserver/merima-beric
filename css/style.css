@@ -2061,30 +2061,36 @@ section {
 }
 
 /* =========================
-   FOOTER SCROLL LINE
+   FOOTER BASE
 ========================= */
+footer {
+	background: #0d0d0d;
+	color: rgba(255, 255, 255, 0.6);
+	padding: 3rem 2rem;
+	text-align: center;
+	position: relative;
+}
+
 .footer-content {
 	position: relative;
 	max-width: 1200px;
 	margin: 0 auto;
 }
 
-/* große Hit-Area */
-.section-scroll-head--footer::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	bottom: 0;
-	transform: translateX(-50%);
-	width: max(56px, 100vw);
-	height: var(--section-scroll-hit-height);
-}
-
+/* =========================
+   FOOTER COPY + ANCHOR
+========================= */
 .footer-copy-wrap {
 	position: relative;
 	display: inline-block;
 	margin-top: 1.25rem;
-	padding-bottom: 0;
+
+	/* Platz für die Bounce-Line */
+	padding-bottom: calc(
+		26px +
+		var(--section-indicator-bounce-max-y) +
+		10px
+	);
 }
 
 .footer-copy {
@@ -2094,37 +2100,57 @@ section {
 	text-align: center;
 }
 
+/* =========================
+   FOOTER SCROLL INDICATOR
+========================= */
 .section-scroll-head--footer {
-	position: fixed;
+	position: absolute;
 	left: 50%;
-	bottom: var(--section-indicator-boundary-gap);
+	top: 100%;
 	transform: translateX(-50%);
+
 	width: 32px;
-	height: calc(26px + var(--section-indicator-bounce-max-y));
-	margin: 0;
+	height: calc(
+		26px +
+		var(--section-indicator-bounce-max-y)
+	);
+
 	pointer-events: auto;
-	z-index: 20;
+	z-index: 25;
 }
 
+/* Hit Area (größer für bessere Klickbarkeit) */
+.section-scroll-head--footer::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	width: max(56px, 100vw);
+	height: 100%;
+}
+
+/* Container für Animation */
 .section-scroll-head--footer .section-scroll-indicator {
 	position: absolute;
 	left: 50%;
-	bottom: 0;
+	top: 0;
 	transform: translateX(-50%);
 	width: 32px;
 	height: 100%;
 	pointer-events: none;
 }
 
+/* Linie (Bewegung) */
 .section-scroll-line-motion--footer {
 	position: absolute;
 	left: 50%;
-	bottom: 0;
-	top: auto;
+	top: 0;
 	transform: translateX(-50%);
 	animation: footerLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
 
+/* Linie (Visual) */
 .section-scroll-line-motion--footer .section-scroll-line {
 	display: block;
 	width: 1px;
@@ -2137,12 +2163,22 @@ section {
 	);
 }
 
+/* Animation */
 @keyframes footerLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
 	40%  { transform: translateX(-50%) translateY(-10px); }
 	60%  { transform: translateX(-50%) translateY(calc(-1 * var(--section-indicator-bounce-max-y))); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
+
+
+
+
+
+
+
+
+
 
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
