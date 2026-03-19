@@ -2111,7 +2111,7 @@ section {
 }
 
 .section-scroll-indicator--line-only .section-scroll-line-motion {
-	top: calc(var(--section-indicator-bounce-max-y) * -0.5);
+	top: calc(var(--section-indicator-bounce-max-y) * 0.5);
 	left: 50%;
 	transform: translateX(-50%);
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
