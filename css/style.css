@@ -19,12 +19,12 @@
 	   LAYOUT / SPACING
 	========================= */
 	--brand-sub-ratio: 0.25;
-	--hero-stack-gap: clamp(1.0rem, 3.0vh, 1.5rem);	
+	--hero-stack-gap: clamp(1.0rem, 3.5vh, 2.0rem);	
 	/* ---------------------------------------------------------------------------------------------------- */
 	/* clamp(MIN, BEVORZUGT, MAX);	min					bevorzugt				max					Result.	*/
-	/* vp 952 × 442 (Desktop):		1.0x16px = 16.0px	3.0x442x0.01 = 13.26px	1.5x16px = 24px		16.00px	*/
-	/* vp 375 x 552 (iPhone7):		1.0x16px = 16.0px	3.0x552x0.01 = 16.56px	1.5x16px = 24px		16.56px	*/
-	/* vp 384 × 701 (Galaxy A34):	1.0x16px = 16.0px	3.0x701x0.01 = 21.03px	1.5x16px = 24px		21.03px	*/
+	/* vp 952 × 442 (Desktop):		1.0x16px = 16.0px	3.5x442x0.01 = 15.47px	2.0x16px = 32px		16.00px	*/
+	/* vp 375 x 552 (iPhone7):		1.0x16px = 16.0px	3.5x552x0.01 = 19.32px	2.0x16px = 32px		19.32px	*/
+	/* vp 384 × 701 (Galaxy A34):	1.0x16px = 16.0px	3.5x701x0.01 = 24.54px	2.0x16px = 32px		24.54px	*/
 	/* ---------------------------------------------------------------------------------------------------- */
 	
 	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
