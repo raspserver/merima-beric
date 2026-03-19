@@ -2077,8 +2077,10 @@ section {
 /* Footer-Trigger fest an die Viewport-Unterkante koppeln */
 .section-scroll-head--footer {
 	position: fixed;
+	top: auto;       /* wichtig */
+	bottom: 0;       /* wichtig */
 	left: 50%;
-	bottom: 0;
+	right: auto;     /* sauber neutralisieren */
 	transform: translateX(-50%);
 
 	width: 32px;
@@ -2110,8 +2112,9 @@ section {
 /* Container exakt bis zur Boundary */
 .section-scroll-head--footer .section-scroll-indicator {
 	position: absolute;
+	top: auto;       /* wichtig */
+	bottom: 0;       /* wichtig */
 	left: 50%;
-	bottom: 0;
 	transform: translateX(-50%);
 
 	width: 32px;
