@@ -1821,24 +1821,6 @@ footer a:hover {
     width: 100%;
 }
 
-.nav-cta {
-    background: var(--primary-color);
-    color: var(--secondary-color) !important;
-    padding: 0.8rem 1.8rem;
-    border-radius: 2px;
-    font-weight: 500;
-    border: 2px solid var(--primary-color);
-}
-
-.nav-cta::after {
-    display: none;
-}
-
-.nav-cta:hover {
-    background: transparent !important;
-    color: var(--primary-color) !important;
-}
-
 .nav-toggle {
 	display: none;
 	flex-direction: column;
