@@ -2255,6 +2255,7 @@ section > .section-scroll-head + * {
 	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
 	--section-hint-size: 0.82rem;
 	--section-hint-letter-spacing: 0.22em;
+	--section-hint-boundary-gap: 1ch; /* eine Buchstabenbreite Abstand */
 }
 
 .scroll-section-hints {
@@ -2278,7 +2279,7 @@ section > .section-scroll-head + * {
 }
 
 .scroll-section-hint-anchor--bottom {
-	bottom: var(--section-hint-bottom-offset);
+	top: 0;
 }
 
 .scroll-section-hint {
@@ -2293,12 +2294,7 @@ section > .section-scroll-head + * {
 	letter-spacing: var(--section-hint-letter-spacing);
 	text-transform: uppercase;
 	line-height: 1;
-
 	opacity: 0;
-
-	transition:
-		opacity 0.35s ease,
-
 	will-change: opacity, transform;
 	color: transparent;
 
@@ -2306,8 +2302,18 @@ section > .section-scroll-head + * {
 	--hint-clip-bottom: 0px;
 	--hint-dark-clip-top: 100%;
 	--hint-dark-clip-bottom: 0px;
+	--hint-y: 0px;
 
 	clip-path: inset(var(--hint-clip-top) 0 var(--hint-clip-bottom) 0);
+}
+
+.scroll-section-hint-anchor--top .scroll-section-hint,
+.scroll-section-hint-anchor--bottom .scroll-section-hint {
+	transform-origin: top left;
+	transform:
+		translateY(var(--hint-y))
+		rotate(-90deg)
+		translateX(-100%);
 }
 
 .scroll-section-hint-text {
@@ -2319,7 +2325,7 @@ section > .section-scroll-head + * {
 .scroll-section-hint-base {
 	position: relative;
 	color: var(--section-hint-color);
-	transition: color 0.35s ease;
+	transition: color 0.2s ease;
 }
 
 .scroll-section-hint-invert {
