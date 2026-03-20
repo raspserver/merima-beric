@@ -1637,7 +1637,7 @@ footer a:hover {
 
 
 
-/*
+
 .navbar::before {
     content: "";
     position: absolute;
@@ -1672,11 +1672,11 @@ footer a:hover {
             rgba(255,255,255,0.03)
         );
 }
-*/
 
 
 
 
+/*
 .navbar::before {
     content: "";
     position: absolute;
@@ -1705,7 +1705,7 @@ footer a:hover {
         rgba(255,255,255,0.015)
     );
 }
-
+*/
 
 
 
