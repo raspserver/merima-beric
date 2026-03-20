@@ -1184,13 +1184,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.root.innerHTML = `
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--top">
-					<div class="scroll-section-hint scroll-section-hint--active">
+					<div class="scroll-section-hint scroll-section-hint--top-primary">
+						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
+						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
+					</div>
+
+					<div class="scroll-section-hint scroll-section-hint--top-incoming">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
 					</div>
 				</div>
+
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--bottom">
-					<div class="scroll-section-hint scroll-section-hint--next">
+					<div class="scroll-section-hint scroll-section-hint--bottom-primary">
+						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
+						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
+					</div>
+
+					<div class="scroll-section-hint scroll-section-hint--bottom-swap">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
 					</div>
@@ -1199,10 +1210,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			document.body.appendChild(this.root);
 
-			this.topHint = this.root.querySelector(".scroll-section-hint--active");
-			this.bottomHint = this.root.querySelector(".scroll-section-hint--next");
+			this.topPrimary = this.root.querySelector(".scroll-section-hint--top-primary");
+			this.topIncoming = this.root.querySelector(".scroll-section-hint--top-incoming");
+			this.bottomPrimary = this.root.querySelector(".scroll-section-hint--bottom-primary");
+			this.bottomSwap = this.root.querySelector(".scroll-section-hint--bottom-swap");
 		},
-
+		
 		getContentSections() {
 			return state.orderedSections.filter(section => {
 				if (!section) return false;
@@ -1352,14 +1365,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			window.addEventListener("resize", () => {
 				this.updateColumn();
-				this.updateLabels();
+				this.updateBoundaryScene();
 				this.updateHintVisuals();
 			});
 
 			window.addEventListener("orientationchange", () => {
 				setTimeout(() => {
 					this.updateColumn();
-					this.updateLabels();
+					this.updateBoundaryScene();
 					this.updateHintVisuals();
 				}, 120);
 			});
@@ -1458,7 +1471,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.root || state.programmaticScroll) return;
 
 			this.updateColumn();
-			this.updateLabels();
+			this.updateBoundaryScene();
 			this.updateHintVisuals();
 
 			if (this.isHeroActive()) {
@@ -1485,8 +1498,216 @@ document.addEventListener("DOMContentLoaded", () => {
 		init() {
 			this.build();
 			this.updateColumn();
-			this.updateLabels();
+			this.updateBoundaryScene();
 			this.bindEvents();
+		},
+		
+		setHintText(hintEl, text) {
+			if (!hintEl) return;
+
+			const base = hintEl.querySelector(".scroll-section-hint-base");
+			const invert = hintEl.querySelector(".scroll-section-hint-invert");
+
+			if (base) base.textContent = text;
+			if (invert) invert.textContent = text;
+		},
+
+		setHintState(hintEl, {
+			text = "",
+			y = 0,
+			opacity = 0
+		} = {}) {
+			if (!hintEl) return;
+
+			this.setHintText(hintEl, text);
+			hintEl.style.setProperty("--hint-y", `${y}px`);
+			hintEl.style.opacity = `${opacity}`;
+			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
+		},
+
+		clamp01(value) {
+			return Math.max(0, Math.min(1, value));
+		},
+
+		lerp(a, b, t) {
+			return a + (b - a) * t;
+		},
+
+		measureHint(hintEl, text) {
+			if (!hintEl) return { width: 0, height: 0 };
+
+			const base = hintEl.querySelector(".scroll-section-hint-base");
+			if (!base) return { width: 0, height: 0 };
+
+			const prev = base.textContent;
+			base.textContent = text || " ";
+			const rect = hintEl.getBoundingClientRect();
+			base.textContent = prev;
+
+			return {
+				width: rect.width || 0,
+				height: rect.height || 0
+			};
+		},
+
+		getSectionRect(id) {
+			const el = document.getElementById(id);
+			return el ? el.getBoundingClientRect() : null;
+		},
+
+		getBoundaryY(upperId, lowerId) {
+			const upper = document.getElementById(upperId);
+			const lower = document.getElementById(lowerId);
+			if (!upper || !lower) return null;
+
+			const upperRect = upper.getBoundingClientRect();
+			const lowerRect = lower.getBoundingClientRect();
+
+			/* identische Grenze */
+			return (upperRect.bottom + lowerRect.top) * 0.5;
+		},
+		
+		updateBoundaryScene() {
+			if (!this.root) return;
+
+			if (this.isHeroActive()) {
+				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
+				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
+				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
+				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
+				this.updateHintVisuals();
+				return;
+			}
+
+			const viewportH = window.innerHeight;
+			const topDockY = utils.getRootNumber("--nav-height-max", 78) + 14;
+			const bottomDockY = viewportH - utils.getRootNumber("--section-hint-bottom-offset", 48);
+
+			/* Wir betrachten speziell die Pricing-Szene */
+			const pricingRect = this.getSectionRect("pricing");
+			const servicesPricingBoundaryY = this.getBoundaryY("services", "pricing");
+			const pricingTestimonialsBoundaryY = this.getBoundaryY("pricing", "testimonials");
+
+			if (!pricingRect || servicesPricingBoundaryY === null || pricingTestimonialsBoundaryY === null) {
+				return;
+			}
+
+			/* Szene ist relevant, wenn pricing ungefähr im Fokus ist */
+			const pricingProbe = viewportH * 0.5;
+			const pricingActive =
+				pricingRect.top <= pricingProbe &&
+				pricingRect.bottom > pricingProbe;
+
+			/* oder wenn eine der beiden Grenzen sichtbar wird */
+			const topBoundaryRelevant =
+				servicesPricingBoundaryY > -120 &&
+				servicesPricingBoundaryY < viewportH + 120;
+
+			const bottomBoundaryRelevant =
+				pricingTestimonialsBoundaryY > -120 &&
+				pricingTestimonialsBoundaryY < viewportH + 120;
+
+			if (!pricingActive && !topBoundaryRelevant && !bottomBoundaryRelevant) {
+				/* Fallback auf einfaches Verhalten */
+				const activeSection = this.getActiveSection();
+				const nextSection = this.getNextSection(activeSection);
+
+				const activeLabel = activeSection?.id ? this.labels[activeSection.id] : "";
+				const nextLabel = nextSection?.id ? this.labels[nextSection.id] : "";
+
+				this.setHintState(this.topPrimary, {
+					text: activeLabel ? `${activeLabel} >>` : "",
+					y: topDockY,
+					opacity: activeLabel ? 1 : 0
+				});
+
+				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
+
+				this.setHintState(this.bottomPrimary, {
+					text: nextLabel ? `<< ${nextLabel}` : "",
+					y: bottomDockY,
+					opacity: nextLabel ? 1 : 0
+				});
+
+				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
+				this.updateHintVisuals();
+				return;
+			}
+
+			/* ------------------------------
+			   PHASEN FÜR #pricing
+			------------------------------ */
+
+			const topText = "PREISE >>";
+			const incomingTopText = "LEISTUNGEN >>";
+			const bottomText = "<< BEWERTUNGEN";
+			const bottomSwapText = "<< PREISE";
+
+			const topMetrics = this.measureHint(this.topPrimary, topText);
+			const topHeight = topMetrics.height || 120; /* wegen Rotation eher robust */
+
+			const gap = Math.max(8, topHeight * 0.15); /* optischer 1ch-Ersatz vertikal */
+			const boundaryTrackY = servicesPricingBoundaryY + gap;
+
+			const midline = viewportH * 0.5;
+			const lowerThird = viewportH * (2 / 3);
+
+			/* A) PREISE >> oben: erst docked an Grenze, dann runter */
+			const topPrimaryY = Math.max(topDockY, boundaryTrackY);
+
+			/* B) Wenn Unterkante von PREISE >> die Mitte erreicht -> bottom hint läuft raus */
+			const topPrimaryBottom = topPrimaryY + topHeight;
+			const bottomExitProgress = this.clamp01((topPrimaryBottom - midline) / (lowerThird - midline));
+
+			/* C) LEISTUNGEN >> kommt synchron von oben rein */
+			const incomingRevealProgress = bottomExitProgress;
+			const incomingHiddenY = topDockY - (topHeight + 40);
+			const incomingShownY = topDockY;
+			const incomingY = this.lerp(incomingHiddenY, incomingShownY, incomingRevealProgress);
+
+			/* D) Wenn PREISE >> Unterkante unteres Drittel erreicht -> swap zu << PREISE */
+			const swapProgress = this.clamp01((topPrimaryBottom - lowerThird) / Math.max(80, viewportH * 0.18));
+
+			const topPrimaryOpacity = 1 - swapProgress;
+			const bottomPrimaryOpacity = 1 - bottomExitProgress;
+
+			/* << PREISE hängt oberhalb der services/pricing-Grenze */
+			let bottomSwapY = servicesPricingBoundaryY - gap - topHeight;
+
+			/* Wenn Grenze unten raus ist, bleibt << PREISE unten stehen */
+			if (servicesPricingBoundaryY >= bottomDockY) {
+				bottomSwapY = bottomDockY;
+			} else {
+				bottomSwapY = Math.min(bottomDockY, bottomSwapY);
+			}
+
+			const bottomSwapOpacity = swapProgress;
+
+			this.setHintState(this.topPrimary, {
+				text: topText,
+				y: topPrimaryY,
+				opacity: topPrimaryOpacity
+			});
+
+			this.setHintState(this.topIncoming, {
+				text: incomingTopText,
+				y: incomingY,
+				opacity: incomingRevealProgress
+			});
+
+			this.setHintState(this.bottomPrimary, {
+				text: bottomText,
+				y: bottomDockY + (bottomExitProgress * (topHeight + 40)),
+				opacity: bottomPrimaryOpacity
+			});
+
+			this.setHintState(this.bottomSwap, {
+				text: bottomSwapText,
+				y: bottomSwapY,
+				opacity: bottomSwapOpacity
+			});
+
+			this.updateHintVisuals();
 		}
 	};
 
