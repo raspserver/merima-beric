@@ -36,6 +36,7 @@
 	/* ------------------------------------------------------------------------------------------------ */
 	
 	--section-indicator-dot-size: 8px;
+	--section-indicator-line-width: 5px;
 	--section-indicator-bounce-max-y: 14px;
 	--section-indicator-boundary-gap: 1px;
 	--footer-copy-gap: 1.25rem;
@@ -2067,7 +2068,7 @@ section {
 
 .section-scroll-line {
 	display: block;
-	width: 1px;
+	width: var(--section-indicator-line-width);
 	height: 26px;
 	background: linear-gradient(
 		to bottom,
@@ -2164,7 +2165,7 @@ footer {
 /* Linie (Visual) */
 .section-scroll-line-motion--footer .section-scroll-line {
 	display: block;
-	width: 1px;
+	width: var(--section-indicator-line-width);
 	height: 26px;
 	background: linear-gradient(
 		to top,
