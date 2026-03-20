@@ -19,7 +19,7 @@
 	   LAYOUT / SPACING
 	========================= */
 	--brand-sub-ratio: 0.25;
-	--hero-stack-gap: clamp(1.0rem, 3.0vh, 2.0rem);
+	--hero-stack-gap: clamp(3.0rem, 3.0vh, 3.5rem);
 	/* ---------------------------------------------------------------------------------------------------- */
 	/* clamp(MIN, BEVORZUGT, MAX);	min					bevorzugt				max					Result.	*/
 	/* vp 952 × 442 (Desktop):		1.0x16px = 16.0px	3.0x442x0.01 = 13.26px	2.0x16px = 32px		16.00px	*/
@@ -473,11 +473,7 @@ html, body {
 	-webkit-touch-callout: none;
 }
 
-/*
-@media (max-height: 580px) {
-	--hero-stack-gap: clamp(1.0rem, 3.0vh, 2.0rem);
-}
-*/
+
 
 .hero {
 	position: relative;
@@ -575,6 +571,12 @@ html, body {
 	gap: var(--hero-stack-gap);
 
 	animation: fadeInUp 1.2s ease-out;
+}
+
+@media (max-height: 580px) {
+	.hero-content {
+		gap: clamp(1.0rem, 3.0vh, 2.0rem);
+	}
 }
 
 @keyframes fadeInUp {
