@@ -142,6 +142,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		activeScrollAnimation: null,
 		activeScrollToken: 0,
+		
+		topSettleRaf: null,
+		topSettleTimeout: null,
 
 		orderedSections: []
 	};
@@ -271,25 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				requestAnimationFrame(() => {
 					window.scrollTo(0, y);
-
-					if (y === 0) {
-						setTimeout(() => {
-							window.scrollTo(0, 0);
-						}, 40);
-
-						setTimeout(() => {
-							window.scrollTo(0, 0);
-						}, 120);
-
-						setTimeout(() => {
-							if (window.scrollY !== 0) {
-								window.scrollTo(0, 0);
-							}
-						}, 220);
-					}
 				});
 			};
-
+			
 			if (absDistance < 1) {
 				hardSnap(clampedTargetY);
 				onComplete?.(clampedTargetY);
@@ -378,28 +365,24 @@ document.addEventListener("DOMContentLoaded", () => {
 					if (finalMode === "down") {
 						navbarModule.setTargets(1, 1, 1);
 					} else if (finalMode === "up-section") {
-						navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-									
+						navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);	
 					} else if (finalMode === "hero-top") {
-						const enforceTop = () => {
-							window.scrollTo(0, 0);
-							state.lastScrollY = window.scrollY;
+						scrollEngine.settleToTop({
+							onDone: () => {
+								state.lastScrollY = window.scrollY;
 
-							if (window.scrollY <= 5) {
-								navbarModule.setTargets(0, 0, 0);
-							} else {
-								navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+								if (window.scrollY <= 5) {
+									navbarModule.setTargets(0, 0, 0);
+								} else {
+									navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+								}
+
+								navbarModule.startAnimation();
+								navbarModule.handleScroll();
 							}
-
-							navbarModule.startAnimation();
-						};
-
-						enforceTop();
-						requestAnimationFrame(enforceTop);
-						setTimeout(enforceTop, 40);
-						setTimeout(enforceTop, 120);
+						});
 					}
-
+					
 					state.programmaticNavMode = null;
 					navbarModule.startAnimation();
 					navbarModule.handleScroll();
@@ -446,6 +429,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 		
 		cancelActiveScroll({ keepPosition = true } = {}) {
+			this.clearTopSettle();
+			
 			const hadActiveScroll = !!state.activeScrollAnimation || state.programmaticScroll;
 
 			if (!hadActiveScroll) return;
@@ -466,7 +451,72 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.lastScrollY = window.scrollY;
 			navbarModule.handleScroll();
 		},
+		
+		clearTopSettle() {
+			if (state.topSettleRaf) {
+				cancelAnimationFrame(state.topSettleRaf);
+				state.topSettleRaf = null;
+			}
 
+			if (state.topSettleTimeout) {
+				clearTimeout(state.topSettleTimeout);
+				state.topSettleTimeout = null;
+			}
+		},
+
+		settleToTop({ onDone } = {}) {
+			this.clearTopSettle();
+
+			let stableFrames = 0;
+			let lastY = -1;
+			const startedAt = performance.now();
+
+			const tick = () => {
+				window.scrollTo(0, 0);
+
+				const y = window.scrollY;
+
+				/* wirklich oben oder praktisch oben */
+				if (y <= 0) {
+					if (lastY === 0) {
+						stableFrames++;
+					} else {
+						stableFrames = 1;
+					}
+				} else {
+					stableFrames = 0;
+				}
+
+				lastY = y;
+
+				/* 3 stabile Frames am Stück = fertig */
+				if (stableFrames >= 3) {
+					this.clearTopSettle();
+					onDone?.();
+					return;
+				}
+
+				/* Sicherheitsgrenze für sehr schwache Geräte */
+				if (performance.now() - startedAt > 1200) {
+					window.scrollTo(0, 0);
+					this.clearTopSettle();
+					onDone?.();
+					return;
+				}
+
+				state.topSettleRaf = requestAnimationFrame(tick);
+			};
+
+			/* zusätzlich harter Fallback */
+			state.topSettleTimeout = setTimeout(() => {
+				window.scrollTo(0, 0);
+				this.clearTopSettle();
+				onDone?.();
+			}, 1400);
+
+			state.topSettleRaf = requestAnimationFrame(tick);
+		},
+		
 	};
 
 	/* =========================================================
