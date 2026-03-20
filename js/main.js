@@ -416,6 +416,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 		
 		cancelActiveScroll({ keepPosition = true } = {}) {
+			const hadActiveScroll = !!state.activeScrollAnimation || state.programmaticScroll;
+
+			if (!hadActiveScroll) return;
+
 			if (state.activeScrollAnimation) {
 				cancelAnimationFrame(state.activeScrollAnimation);
 				state.activeScrollAnimation = null;
