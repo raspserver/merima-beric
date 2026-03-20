@@ -272,13 +272,21 @@ document.addEventListener("DOMContentLoaded", () => {
 				requestAnimationFrame(() => {
 					window.scrollTo(0, y);
 
-					setTimeout(() => {
-						window.scrollTo(0, y);
-					}, 40);
+					if (y === 0) {
+						setTimeout(() => {
+							window.scrollTo(0, 0);
+						}, 40);
 
-					setTimeout(() => {
-						window.scrollTo(0, y);
-					}, 120);
+						setTimeout(() => {
+							window.scrollTo(0, 0);
+						}, 120);
+
+						setTimeout(() => {
+							if (window.scrollY !== 0) {
+								window.scrollTo(0, 0);
+							}
+						}, 220);
+					}
 				});
 			};
 
@@ -371,12 +379,25 @@ document.addEventListener("DOMContentLoaded", () => {
 						navbarModule.setTargets(1, 1, 1);
 					} else if (finalMode === "up-section") {
 						navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+									
 					} else if (finalMode === "hero-top") {
-						if (finalY <= 5) {
-							navbarModule.setTargets(0, 0, 0);
-						} else {
-							navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-						}
+						const enforceTop = () => {
+							window.scrollTo(0, 0);
+							state.lastScrollY = window.scrollY;
+
+							if (window.scrollY <= 5) {
+								navbarModule.setTargets(0, 0, 0);
+							} else {
+								navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+							}
+
+							navbarModule.startAnimation();
+						};
+
+						enforceTop();
+						requestAnimationFrame(enforceTop);
+						setTimeout(enforceTop, 40);
+						setTimeout(enforceTop, 120);
 					}
 
 					state.programmaticNavMode = null;
