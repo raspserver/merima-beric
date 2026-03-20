@@ -1635,9 +1635,6 @@ footer a:hover {
         rgba(0,0,0, calc(0.45 * var(--nav-surface)));
 }
 
-
-
-
 .navbar::before {
     content: "";
     position: absolute;
@@ -1672,43 +1669,6 @@ footer a:hover {
             rgba(255,255,255,0.03)
         );
 }
-
-
-
-
-/*
-.navbar::before {
-    content: "";
-    position: absolute;
-    top: -16px;
-    left: 0;
-    right: 0;
-    bottom: -16px;
-    z-index: -1;
-
-    backdrop-filter: blur(
-        calc(10px + (6px * var(--nav-surface)) + (1px * var(--nav-velocity-blur)))
-    );
-    -webkit-backdrop-filter: blur(
-        calc(10px + (6px * var(--nav-surface)) + (1px * var(--nav-velocity-blur)))
-    );
-
-    pointer-events: none;
-    will-change: backdrop-filter;
-
-	background:
-    linear-gradient(
-        120deg,
-        rgba(255,255,255,0.025),
-        rgba(255,255,255,0.01) 40%,
-        rgba(255,255,255,0.035) 60%,
-        rgba(255,255,255,0.015)
-    );
-}
-*/
-
-
-
 
 .navbar::after {
     content: "";
@@ -2559,6 +2519,7 @@ section > .section-scroll-head + * {
 	}
 }
 
+/*
 @media (max-width: 968px) {
     .navbar::before {
         backdrop-filter: none;
@@ -2566,3 +2527,4 @@ section > .section-scroll-head + * {
         background: rgba(26,26,26,0.92);
     }
 }
+*/
