@@ -265,11 +265,20 @@ document.addEventListener("DOMContentLoaded", () => {
 			const startY = window.scrollY;
 			const distance = clampedTargetY - startY;
 			const absDistance = Math.abs(distance);
-
+			
 			const hardSnap = (y) => {
 				window.scrollTo(0, y);
+
 				requestAnimationFrame(() => {
 					window.scrollTo(0, y);
+
+					setTimeout(() => {
+						window.scrollTo(0, y);
+					}, 40);
+
+					setTimeout(() => {
+						window.scrollTo(0, y);
+					}, 120);
 				});
 			};
 
