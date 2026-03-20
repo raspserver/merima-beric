@@ -2204,7 +2204,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		window.addEventListener("wheel", interrupt, { passive: true });
 		window.addEventListener("touchstart", interrupt, { passive: true });
-		window.addEventListener("pointerdown", interrupt, { passive: true });
 	}
 
 	/* =========================================================
