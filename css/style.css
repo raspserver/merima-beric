@@ -2254,6 +2254,7 @@ section > .section-scroll-head + * {
 	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
 	--section-hint-size: 0.82rem;
 	--section-hint-letter-spacing: 0.22em;
+	--section-hint-boundary-gap: 0.3rem;
 }
 
 @media (max-width: 768px) {
@@ -2289,8 +2290,6 @@ section > .section-scroll-head + * {
 	top: auto;
 	bottom: var(--section-hint-bottom-offset);
 }
-
-
 
 .scroll-section-hint {
 	position: absolute;

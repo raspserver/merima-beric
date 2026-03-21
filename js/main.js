@@ -104,7 +104,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		safePlay(video) {
 			const p = video.play();
 			if (p !== undefined) p.catch(() => {});
+		},
+		
+		getRootRemPx(name, fallbackPx) {
+			const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+			if (!raw) return fallbackPx;
+
+			if (raw.endsWith("rem")) {
+				const rem = parseFloat(raw);
+				const rootFont = parseFloat(getComputedStyle(document.documentElement).fontSize);
+				return Number.isFinite(rem) && Number.isFinite(rootFont) ? rem * rootFont : fallbackPx;
+			}
+
+			const px = parseFloat(raw);
+			return Number.isFinite(px) ? px : fallbackPx;
 		}
+		
 	};
 
 	/* =========================================================
@@ -1633,18 +1648,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
 			const hintHeight = topMetrics.height || 120;
-			const gap = Math.max(8, hintHeight * 0.15);
-
+			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+			
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
 			   oben: current -> above
 			   unten: below bleibt sichtbar
 			========================= */
-			if (upperBoundaryVisible && above) {	
-				const boundaryTrackY = upperBoundaryY + gap;
+			if (upperBoundaryVisible && above) {		
+				const boundaryTrackY = upperBoundaryY - boundaryGap;
 				const topPrimaryY = Math.max(topDockY, boundaryTrackY);
-	
+
 				const topPrimaryBottom = topPrimaryY + hintHeight;
 
 				const revealProgress = this.clamp01(
