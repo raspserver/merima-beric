@@ -1708,33 +1708,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				this.updateHintVisuals();
 				return;
-			}
-
+			}	
+			
 			/* =========================
 			   FALL 2B:
 			   sichtbare Grenze current | below
 			   oben: current bleibt sichtbar
-			   unten: below -> current
+			   unten: below blendet aus
 			========================= */
 			if (lowerBoundaryVisible && below) {
-				const bottomExitProgress = this.clamp01(
+				const exitProgress = this.clamp01(
 					(midline - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
 				);
 
-				const swapProgress = this.clamp01(
-					(lowerThird - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
-				);
-
 				const bottomPrimaryY = this.clampBottomHintY(
-					bottomExitProgress * (hintHeight + 40),
+					exitProgress * (hintHeight + 40),
 					this.bottomPrimary,
 					belowBottomText
-				);
-
-				let bottomSwapY = this.clampBottomHintY(	
-					-(hintHeight * (1 - swapProgress)),
-					this.bottomSwap,
-					currentBottomText
 				);
 
 				this.setHintState(this.topPrimary, {
@@ -1752,13 +1742,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHintState(this.bottomPrimary, {
 					text: belowBottomText,
 					y: bottomPrimaryY,
-					opacity: belowBottomText ? (1 - swapProgress) : 0
+					opacity: belowBottomText ? (1 - exitProgress) : 0
 				});
 
 				this.setHintState(this.bottomSwap, {
-					text: currentBottomText,
-					y: bottomSwapY,
-					opacity: currentBottomText ? swapProgress : 0
+					text: "",
+					y: 0,
+					opacity: 0
 				});
 
 				this.updateHintVisuals();
