@@ -1172,7 +1172,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			services: "LEISTUNGEN",
 			pricing: "PREISE",
 			testimonials: "BEWERTUNGEN",
-			contact: "TERMIN BUCHEN"
+			contact: "KONTAKT"
 		},
 
 		build() {
