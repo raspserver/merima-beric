@@ -1166,10 +1166,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		hideTimer: null,
 		lastKnownScrollY: window.scrollY,
 		
-		bottomSwapLatched: false,
-		bottomSwapLatchedY: 0,
-		bottomSwapLatchedText: "",
-
 		labels: {
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
@@ -1504,16 +1500,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.updateColumn();
 			this.updateBoundaryScene();
 			this.bindEvents();
-		},
-		
-		setHintText(hintEl, text) {
-			if (!hintEl) return;
-
-			const base = hintEl.querySelector(".scroll-section-hint-base");
-			const invert = hintEl.querySelector(".scroll-section-hint-invert");
-
-			if (base) base.textContent = text;
-			if (invert) invert.textContent = text;
 		},
 
 		setHintState(hintEl, {
