@@ -1737,9 +1737,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				opacity: incomingRevealProgress
 			});
 
+			const bottomPrimaryY = this.clampBottomHintY(
+				0 + (bottomExitProgress * (topHeight + 40)),
+				this.bottomPrimary,
+				bottomText
+			);
+
 			this.setHintState(this.bottomPrimary, {
 				text: bottomText,
-				y: 0 + (bottomExitProgress * (topHeight + 40)),
+				y: bottomPrimaryY,
 				opacity: bottomPrimaryOpacity
 			});
 
@@ -1751,17 +1757,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.updateHintVisuals();
 		},
+	
 		
 		clampBottomHintY(y, hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
 			const visualHeight = metrics.height || 120;
 
-			/* Anchor sitzt bereits bottom: 0.3rem.
-			   Der Hint darf also nicht weiter nach unten geschoben werden als 0. */
+			/* bottom-anchor sitzt schon korrekt bei 0.3rem */
 			const maxY = 0;
 
-			/* Nach oben darf er höchstens so weit, dass er komplett sichtbar bleibt */
-			const minY = -Math.max(0, window.innerHeight - visualHeight - utils.getRootNumber("--section-hint-bottom-offset", 4.8));
+			/* maximal nach oben, aber vollständig sichtbar */
+			const minY = -Math.max(0, visualHeight);
 
 			return Math.max(minY, Math.min(maxY, y));
 		}
