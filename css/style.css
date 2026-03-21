@@ -2358,15 +2358,6 @@ section > .section-scroll-head + * {
 	opacity: 1;
 }
 
-@media (max-width: 768px) {
-	:root {
-		--section-hint-size: 0.72rem;
-		--section-hint-letter-spacing: 0.16em;
-		--section-hint-top-offset: calc(var(--nav-height-min) + 10px);
-		--section-hint-bottom-offset: 14px;
-	}
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.scroll-section-hint {
 		transition: opacity 0.2s linear;
@@ -2506,15 +2497,6 @@ section > .section-scroll-head + * {
 @media (max-width:768px) {
 	.hero h1 {
 		line-height: 1.2;
-	}
-}
-
-@media (max-width: 768px) {
-	:root {
-		--section-hint-size: 0.72rem;
-		--section-hint-letter-spacing: 0.16em;
-		--section-hint-top-offset: calc(var(--nav-height-min) + 10px);
-		--section-hint-bottom-offset: 48px;
 	}
 }
 
