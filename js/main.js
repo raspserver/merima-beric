@@ -707,6 +707,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navbar.style.setProperty("--nav-compact", easedCompact);
 			DOM.navbar.style.setProperty("--nav-surface", easedSurface);
 			DOM.navbar.style.setProperty("--nav-height-progress", easedCompact);
+			
+			scrollSectionHintModule.updateViewportOffsets();
 
 			const velocityFactor = Math.round(Math.min(Math.abs(state.scrollVelocity) * 0.15, 6));
 			DOM.navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
