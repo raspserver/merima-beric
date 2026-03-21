@@ -1585,179 +1585,191 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const viewportH = window.innerHeight;
 			const topDockY = 0;
-			const bottomDockY = 0;
-			
-			const bottomAnchorY = viewportH - utils.getRootNumber("--section-hint-bottom-offset", 4.8);
+			const lowerThird = viewportH * (2 / 3);
+			const midline = viewportH * 0.5;
 
-			/* Wir betrachten speziell die Pricing-Szene */
-			const pricingRect = this.getSectionRect("pricing");
-			const servicesPricingBoundaryY = this.getBoundaryY("services", "pricing");
-			const pricingTestimonialsBoundaryY = this.getBoundaryY("pricing", "testimonials");
-
-			if (!pricingRect || servicesPricingBoundaryY === null || pricingTestimonialsBoundaryY === null) {
-				return;
-			}
-
-			/* Szene ist relevant, wenn pricing ungefähr im Fokus ist */
-			const pricingProbe = viewportH * 0.5;
-			const pricingActive =
-				pricingRect.top <= pricingProbe &&
-				pricingRect.bottom > pricingProbe;
-
-			/* oder wenn eine der beiden Grenzen sichtbar wird */
-			const topBoundaryRelevant =
-				servicesPricingBoundaryY > -120 &&
-				servicesPricingBoundaryY < viewportH + 120;
-
-			const bottomBoundaryRelevant =
-				pricingTestimonialsBoundaryY > -120 &&
-				pricingTestimonialsBoundaryY < viewportH + 120;
-
-			if (!pricingActive && !topBoundaryRelevant && !bottomBoundaryRelevant) {
-				/* Fallback auf einfaches Verhalten */
-				const activeSection = this.getActiveSection();
-				const nextSection = this.getNextSection(activeSection);
-
-				const activeLabel = activeSection?.id ? this.labels[activeSection.id] : "";
-				const nextLabel = nextSection?.id ? this.labels[nextSection.id] : "";
-
-				this.setHintState(this.topPrimary, {
-					text: activeLabel ? `${activeLabel} >>` : "",
-					y: topDockY,
-					opacity: activeLabel ? 1 : 0
-				});
-
+			const current = this.getActiveSection();
+			if (!current) {
+				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
 				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
-				
-				this.setHintState(this.bottomPrimary, {
-					text: nextLabel ? `<< ${nextLabel}` : "",
-					y: 0,
-					opacity: nextLabel ? 1 : 0
-				});
-				
+				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
 				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
 				this.updateHintVisuals();
 				return;
 			}
 
-			/* ------------------------------
-			   PHASEN FÜR #pricing
-			------------------------------ */
+			const sections = this.getContentSections();
+			const currentIndex = sections.findIndex(section => section === current);
 
-			const topText = "PREISE >>";
-			const incomingTopText = "LEISTUNGEN >>";
-			const bottomText = "<< BEWERTUNGEN";
-			const bottomSwapText = "<< PREISE";
+			const above = currentIndex > 0 ? sections[currentIndex - 1] : null;
+			const below = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : null;
 
-			const topMetrics = this.measureHint(this.topPrimary, topText);
-			const topHeight = topMetrics.height || 120; /* wegen Rotation eher robust */
+			const currentText = current?.id ? this.labels[current.id] : "";
+			const aboveText = above?.id ? this.labels[above.id] : "";
+			const belowText = below?.id ? this.labels[below.id] : "";
 
-			const gap = Math.max(8, topHeight * 0.15); /* optischer 1ch-Ersatz vertikal */
-			const boundaryTrackY = servicesPricingBoundaryY + gap;
+			const currentTopText = currentText ? `${currentText} >>` : "";
+			const aboveTopText = aboveText ? `${aboveText} >>` : "";
+			const belowBottomText = belowText ? `<< ${belowText}` : "";
+			const currentBottomText = currentText ? `<< ${currentText}` : "";
 
-			const midline = viewportH * 0.5;
-			const lowerThird = viewportH * (2 / 3);
+			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
+			const lowerBoundaryY = below ? this.getBoundaryY(current.id, below.id) : null;
 
-			/* A) PREISE >> oben: erst docked an Grenze, dann runter */
-			const topPrimaryY = Math.max(topDockY, boundaryTrackY);
+			const boundaryVisibilityMargin = 120;
 
-			/* B) Wenn Unterkante von PREISE >> die Mitte erreicht -> bottom hint läuft raus */
-			const topPrimaryBottom = topPrimaryY + topHeight;
-			const bottomExitProgress = this.clamp01((topPrimaryBottom - midline) / (lowerThird - midline));
+			const upperBoundaryVisible =
+				upperBoundaryY !== null &&
+				upperBoundaryY > -boundaryVisibilityMargin &&
+				upperBoundaryY < viewportH + boundaryVisibilityMargin;
 
-			/* C) LEISTUNGEN >> kommt synchron von oben rein */
-			const incomingRevealProgress = bottomExitProgress;
-			const incomingHiddenY = topDockY - (topHeight + 40);
-			const incomingShownY = topDockY;
-			const incomingY = this.lerp(incomingHiddenY, incomingShownY, incomingRevealProgress);
+			const lowerBoundaryVisible =
+				lowerBoundaryY !== null &&
+				lowerBoundaryY > -boundaryVisibilityMargin &&
+				lowerBoundaryY < viewportH + boundaryVisibilityMargin;
 
-			/* D) Wenn PREISE >> Unterkante unteres Drittel erreicht -> swap zu << PREISE */
-			const swapProgress = this.clamp01((topPrimaryBottom - lowerThird) / Math.max(80, viewportH * 0.18));
+			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
+			const hintHeight = topMetrics.height || 120;
+			const gap = Math.max(8, hintHeight * 0.15);
 
-			const topPrimaryOpacity = 1 - swapProgress;
-			const bottomPrimaryOpacity = 1 - bottomExitProgress;
+			/* =========================
+			   FALL 2A:
+			   sichtbare Grenze above | current
+			   oben: current -> above
+			   unten: below bleibt sichtbar
+			========================= */
+			if (upperBoundaryVisible && above) {
+				const boundaryTrackY = upperBoundaryY + gap;
+				const topPrimaryY = Math.max(topDockY, boundaryTrackY);
+				const topPrimaryBottom = topPrimaryY + hintHeight;
 
-			/* << PREISE hängt oberhalb der services/pricing-Grenze */
-			let bottomSwapY = (servicesPricingBoundaryY - gap - topHeight) - bottomAnchorY;		
+				const revealProgress = this.clamp01(
+					(topPrimaryBottom - midline) / Math.max(1, lowerThird - midline)
+				);
 
-			/* Wenn Grenze unten raus ist, bleibt << PREISE unten stehen */
-			const bottomDockViewportY = bottomAnchorY;
+				const swapProgress = this.clamp01(
+					(topPrimaryBottom - lowerThird) / Math.max(80, viewportH * 0.18)
+				);
 
-			if (servicesPricingBoundaryY >= bottomDockViewportY) {
-				bottomSwapY = 0;
-			} else {
-				bottomSwapY = Math.min(0, bottomSwapY - bottomAnchorY);
+				const incomingHiddenY = topDockY - (hintHeight + 40);
+				const incomingShownY = topDockY;
+				const incomingY = this.lerp(incomingHiddenY, incomingShownY, revealProgress);
+
+				this.setHintState(this.topPrimary, {
+					text: currentTopText,
+					y: topPrimaryY,
+					opacity: 1 - swapProgress
+				});
+
+				this.setHintState(this.topIncoming, {
+					text: aboveTopText,
+					y: incomingY,
+					opacity: revealProgress
+				});
+
+				this.setHintState(this.bottomPrimary, {
+					text: belowBottomText,
+					y: 0,
+					opacity: belowBottomText ? 1 : 0
+				});
+
+				this.setHintState(this.bottomSwap, {
+					text: "",
+					y: 0,
+					opacity: 0
+				});
+
+				this.updateHintVisuals();
+				return;
 			}
-					
-			let clampedBottomSwapY = this.clampBottomHintY(bottomSwapY, this.bottomSwap, bottomSwapText);
 
-			/* Wenn der Swap einmal sichtbar war, beim Scrollen nach oben nicht sofort wieder verschwinden */
-			if (swapProgress > 0.02) {
-				this.bottomSwapLatched = true;
-				this.bottomSwapLatchedY = clampedBottomSwapY;
-				this.bottomSwapLatchedText = bottomSwapText;
+			/* =========================
+			   FALL 2B:
+			   sichtbare Grenze current | below
+			   oben: current bleibt sichtbar
+			   unten: below -> current
+			========================= */
+			if (lowerBoundaryVisible && below) {
+				const bottomExitProgress = this.clamp01(
+					(midline - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
+				);
+
+				const swapProgress = this.clamp01(
+					(lowerThird - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
+				);
+
+				const bottomPrimaryY = this.clampBottomHintY(
+					bottomExitProgress * (hintHeight + 40),
+					this.bottomPrimary,
+					belowBottomText
+				);
+
+				let bottomSwapY = this.clampBottomHintY(
+					-(hintHeight * (1 - swapProgress)),
+					this.bottomSwap,
+					currentBottomText
+				);
+
+				this.setHintState(this.topPrimary, {
+					text: currentTopText,
+					y: topDockY,
+					opacity: currentTopText ? 1 : 0
+				});
+
+				this.setHintState(this.topIncoming, {
+					text: "",
+					y: 0,
+					opacity: 0
+				});
+
+				this.setHintState(this.bottomPrimary, {
+					text: belowBottomText,
+					y: bottomPrimaryY,
+					opacity: belowBottomText ? (1 - swapProgress) : 0
+				});
+
+				this.setHintState(this.bottomSwap, {
+					text: currentBottomText,
+					y: bottomSwapY,
+					opacity: currentBottomText ? swapProgress : 0
+				});
+
+				this.updateHintVisuals();
+				return;
 			}
 
-			const isScrollingUp = state.scrollDirection === "up";
-
-			/* Latched sichtbar halten, solange wir noch in der Pricing-Szene sind */
-			const keepLatchedBottomSwap =
-				isScrollingUp &&
-				this.bottomSwapLatched &&
-				(pricingActive || topBoundaryRelevant || bottomBoundaryRelevant);
-
-			const effectiveBottomSwapText = keepLatchedBottomSwap
-				? this.bottomSwapLatchedText
-				: bottomSwapText;
-
-			const effectiveBottomSwapY = keepLatchedBottomSwap
-				? this.bottomSwapLatchedY
-				: clampedBottomSwapY;
-
-			const effectiveBottomSwapOpacity = keepLatchedBottomSwap
-				? 1
-				: swapProgress;
-
-			/* Reset erst wenn Pricing-Szene wirklich verlassen wurde */
-			if (!pricingActive && !topBoundaryRelevant && !bottomBoundaryRelevant) {
-				this.bottomSwapLatched = false;
-				this.bottomSwapLatchedY = 0;
-				this.bottomSwapLatchedText = "";
-			}
-
+			/* =========================
+			   FALL 1:
+			   keine Grenze sichtbar
+			   oben: current
+			   unten: below
+			========================= */
 			this.setHintState(this.topPrimary, {
-				text: topText,
-				y: topPrimaryY,
-				opacity: topPrimaryOpacity
+				text: currentTopText,
+				y: topDockY,
+				opacity: currentTopText ? 1 : 0
 			});
 
 			this.setHintState(this.topIncoming, {
-				text: incomingTopText,
-				y: incomingY,
-				opacity: incomingRevealProgress
+				text: "",
+				y: 0,
+				opacity: 0
 			});
 
-			const bottomPrimaryY = this.clampBottomHintY(
-				0 + (bottomExitProgress * (topHeight + 40)),
-				this.bottomPrimary,
-				bottomText
-			);
-
 			this.setHintState(this.bottomPrimary, {
-				text: bottomText,
-				y: bottomPrimaryY,
-				opacity: bottomPrimaryOpacity
+				text: belowBottomText,
+				y: 0,
+				opacity: belowBottomText ? 1 : 0
 			});
 
 			this.setHintState(this.bottomSwap, {
-				text: effectiveBottomSwapText,
-				y: effectiveBottomSwapY,
-				opacity: effectiveBottomSwapOpacity
+				text: "",
+				y: 0,
+				opacity: 0
 			});
 
 			this.updateHintVisuals();
 		},
-	
 		
 		clampBottomHintY(y, hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
