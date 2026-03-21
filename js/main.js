@@ -1695,7 +1695,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				this.updateHintVisuals();
 				return;
-			}
+			},
 			
 			
 			
