@@ -1652,46 +1652,25 @@ document.addEventListener("DOMContentLoaded", () => {
 			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
 			const hintHeight = topMetrics.height || 120;
 			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-					
+			
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
-			   oben: current -> above
+			   oben: current bleibt sichtbar
 			   unten: below bleibt sichtbar
+			   KEIN Einblenden der Sektion oberhalb
 			========================= */
 			if (upperBoundaryVisible && above) {
-				const topAnchorRect = this.topPrimary.parentElement.getBoundingClientRect();
-				const topAnchorTop = topAnchorRect.top;
-
-				/* sichtbare Oberkante des rotierten Hints soll 0.3rem unter der Sektionsgrenze liegen */
-				const boundaryTrackY = topDockY + (upperBoundaryY + boundaryGap - topAnchorTop);
-				const topPrimaryY = Math.max(topDockY, boundaryTrackY);
-
-				const topPrimaryBottom = topPrimaryY + hintHeight;
-
-				const revealProgress = this.clamp01(
-					(topPrimaryBottom - midline) / Math.max(1, lowerThird - midline)
-				);
-
-				const swapProgress = this.clamp01(
-					(topPrimaryBottom - lowerThird) / Math.max(80, viewportH * 0.18)
-				);
-				
-				const incomingHiddenY = topDockY - (hintHeight + 40);
-				const incomingShownY = topDockY;	
-				
-				const incomingY = this.lerp(incomingHiddenY, incomingShownY, revealProgress);	
-
 				this.setHintState(this.topPrimary, {
 					text: currentTopText,
-					y: topPrimaryY,
-					opacity: 1 - swapProgress
+					y: topDockY,
+					opacity: currentTopText ? 1 : 0
 				});
 
 				this.setHintState(this.topIncoming, {
-					text: aboveTopText,
-					y: incomingY,
-					opacity: revealProgress
+					text: "",
+					y: 0,
+					opacity: 0
 				});
 
 				this.setHintState(this.bottomPrimary, {
@@ -1709,6 +1688,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 				return;
 			}
+			
+			
+			
+			
 			
 			/* =========================
 			   FALL 2B:
