@@ -1592,12 +1592,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			const currentText = current?.id ? this.labels[current.id] : "";
 			const aboveText = above?.id ? this.labels[above.id] : "";
 			const belowText = below?.id ? this.labels[below.id] : "";
-
-			const currentTopText = currentText ? `${currentText} >>` : "";
-			const aboveTopText = aboveText ? `${aboveText} >>` : "";
-			const belowBottomText = belowText ? `<< ${belowText}` : "";
-			const currentBottomText = currentText ? `<< ${currentText}` : "";
-					
+		
+			const currentTopText = currentText ? `>> ${currentText} >>` : "";
+			const aboveTopText = aboveText ? `>> ${aboveText} >>` : "";
+			const belowBottomText = belowText ? `<< ${belowText} <<` : "";
+			const currentBottomText = currentText ? `<< ${currentText} <<` : "";
+						
 			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
 
 			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
