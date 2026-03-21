@@ -1582,6 +1582,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const viewportH = window.innerHeight;
 			const topDockY = 0;
 			const bottomDockY = 0;
+			
+			const bottomAnchorY = viewportH - utils.getRootNumber("--section-hint-bottom-offset", 4.8);
 
 			/* Wir betrachten speziell die Pricing-Szene */
 			const pricingRect = this.getSectionRect("pricing");
@@ -1622,13 +1624,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 
 				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
-
+				
 				this.setHintState(this.bottomPrimary, {
 					text: nextLabel ? `<< ${nextLabel}` : "",
-					y: bottomDockY,
+					y: 0,
 					opacity: nextLabel ? 1 : 0
 				});
-
+				
 				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
 				this.updateHintVisuals();
 				return;
@@ -1675,10 +1677,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			let bottomSwapY = servicesPricingBoundaryY - gap - topHeight;
 
 			/* Wenn Grenze unten raus ist, bleibt << PREISE unten stehen */
-			if (servicesPricingBoundaryY >= bottomDockY) {
-				bottomSwapY = bottomDockY;
+			const bottomDockViewportY = bottomAnchorY;
+
+			if (servicesPricingBoundaryY >= bottomDockViewportY) {
+				bottomSwapY = 0;
 			} else {
-				bottomSwapY = Math.min(bottomDockY, bottomSwapY);
+				bottomSwapY = Math.min(0, bottomSwapY - bottomAnchorY);
 			}
 
 			const bottomSwapOpacity = swapProgress;
@@ -1694,10 +1698,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				y: incomingY,
 				opacity: incomingRevealProgress
 			});
-
+			
 			this.setHintState(this.bottomPrimary, {
 				text: bottomText,
-				y: bottomDockY + (bottomExitProgress * (topHeight + 40)),
+				y: 0 + (bottomExitProgress * (topHeight + 40)),
 				opacity: bottomPrimaryOpacity
 			});
 
