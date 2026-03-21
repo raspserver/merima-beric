@@ -1635,8 +1635,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			   unten: below bleibt sichtbar
 			========================= */
 			if (upperBoundaryVisible && above) {
-				const boundaryTrackY = upperBoundaryY + gap;
-				const topPrimaryY = Math.max(topDockY, boundaryTrackY);
+				const boundaryTrackY = this.snapPx(upperBoundaryY + gap);
+				const topPrimaryY = this.snapPx(Math.max(topDockY, boundaryTrackY));
+	
 				const topPrimaryBottom = topPrimaryY + hintHeight;
 
 				const revealProgress = this.clamp01(
