@@ -1710,16 +1710,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			/* =========================
 			   FALL 2B:
 			   sichtbare Grenze current | below
