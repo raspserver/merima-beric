@@ -1652,7 +1652,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
 			const hintHeight = topMetrics.height || 120;
 			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-			
+					
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
@@ -1708,7 +1708,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				this.updateHintVisuals();
 				return;
-			}	
+			}
 			
 			/* =========================
 			   FALL 2B:
