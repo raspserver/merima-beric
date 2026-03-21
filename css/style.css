@@ -2319,11 +2319,10 @@ section > .section-scroll-head + * {
 
 .scroll-section-hint-anchor--top .scroll-section-hint,
 .scroll-section-hint-anchor--bottom .scroll-section-hint {
-	transform-origin: top left;
+	transform-origin: left top;
 	transform:
 		translateY(var(--hint-y))
-		rotate(-90deg)
-		translateX(-100%);
+		rotate(-90deg);
 }
 
 .scroll-section-hint-text {
