@@ -1472,13 +1472,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			});
 		},
-
+	
 		revealTemporarily() {
 			if (!this.root || state.programmaticScroll) return;
 
-			this.updateColumn();
-			this.updateBoundaryScene();
-			this.updateHintVisuals();
+			this.scheduleBoundarySceneUpdate();
 
 			if (this.isHeroActive()) {
 				this.hide();
