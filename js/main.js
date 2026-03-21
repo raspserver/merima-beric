@@ -1232,7 +1232,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return rect.top <= probeY && rect.bottom > probeY;
 		},
-
+		
 		getColumnLeft() {
 			const aboutImage =
 				document.querySelector("#about .about-image-wrapper") ||
@@ -1242,9 +1242,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				const rect = aboutImage.getBoundingClientRect();
 
 				if (Number.isFinite(rect.left)) {
-					const viewportLeft = 0;
-					const columnCenter = viewportLeft + ((rect.left - viewportLeft) / 2);
-					return Math.max(12, columnCenter);
+					const columnCenter = rect.left / 2;
+
+					/* Rotierter Hint ist visuell noch etwas rechts vom Anchor,
+					   deshalb halbe Hint-Dicke nach links korrigieren */
+					const hintThickness = this.measureHint(this.topPrimary, ">> ÜBER MICH >>").height || 16;
+
+					return Math.max(12, columnCenter - (hintThickness / 2));
 				}
 			}
 
@@ -1253,7 +1257,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				const rect = aboutContainer.getBoundingClientRect();
 
 				if (Number.isFinite(rect.left)) {
-					return Math.max(12, rect.left / 2);
+					const columnCenter = rect.left / 2;
+					const hintThickness = this.measureHint(this.topPrimary, ">> ÜBER MICH >>").height || 16;
+
+					return Math.max(12, columnCenter - (hintThickness / 2));
 				}
 			}
 
