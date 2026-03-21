@@ -1591,6 +1591,200 @@ document.addEventListener("DOMContentLoaded", () => {
 			return (upperRect.bottom + lowerRect.top) * 0.5;
 		},
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		updateBoundaryScene() {
+			if (!this.root) return;
+
+			if (this.isHeroActive()) {
+				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
+				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
+				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
+				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
+				this.updateHintVisuals();
+				return;
+			}
+			
+			const viewportH = window.innerHeight;
+			const lowerThird = viewportH * (2 / 3);
+			const midline = viewportH * 0.5;
+
+			const current = this.getActiveSection();
+			if (!current) {
+				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
+				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
+				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
+				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
+				this.updateHintVisuals();
+				return;
+			}
+
+			const sections = this.getContentSections();
+			const currentIndex = sections.findIndex(section => section === current);
+
+			const above = currentIndex > 0 ? sections[currentIndex - 1] : null;
+			const below = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : null;
+
+			const currentText = current?.id ? this.labels[current.id] : "";
+			const aboveText = above?.id ? this.labels[above.id] : "";
+			const belowText = below?.id ? this.labels[below.id] : "";
+		
+			const currentTopText = currentText ? `>> ${currentText} >>` : "";
+			const aboveTopText = aboveText ? `>> ${aboveText} >>` : "";
+			const belowBottomText = belowText ? `<< ${belowText} <<` : "";
+			const currentBottomText = currentText ? `<< ${currentText} <<` : "";
+						
+			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
+
+			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
+			const lowerBoundaryY = below ? this.getBoundaryY(current.id, below.id) : null;
+
+			const boundaryVisibilityMargin = 120;
+
+			const upperBoundaryVisible =
+				upperBoundaryY !== null &&
+				upperBoundaryY > -boundaryVisibilityMargin &&
+				upperBoundaryY < viewportH + boundaryVisibilityMargin;
+
+			const lowerBoundaryVisible =
+				lowerBoundaryY !== null &&
+				lowerBoundaryY > -boundaryVisibilityMargin &&
+				lowerBoundaryY < viewportH + boundaryVisibilityMargin;
+
+			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
+			const hintHeight = topMetrics.height || 120;
+			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+			
+			/* =========================
+			   FALL 2A:
+			   sichtbare Grenze above | current
+			   oben: current bleibt sichtbar
+			   unten: below bleibt sichtbar
+			   KEIN Einblenden der Sektion oberhalb
+			========================= */
+			if (upperBoundaryVisible && above) {
+				this.setHintState(this.topPrimary, {
+					text: currentTopText,
+					y: topDockY,
+					opacity: currentTopText ? 1 : 0
+				});
+
+				this.setHintState(this.topIncoming, {
+					text: "",
+					y: 0,
+					opacity: 0
+				});
+
+				this.setHintState(this.bottomPrimary, {
+					text: belowBottomText,
+					y: 0,
+					opacity: belowBottomText ? 1 : 0
+				});
+
+				this.setHintState(this.bottomSwap, {
+					text: "",
+					y: 0,
+					opacity: 0
+				});
+
+				this.updateHintVisuals();
+				return;
+			}
+			
+			
+			
+			
+			
+			/* =========================
+			   FALL 2B:
+			   sichtbare Grenze current | below
+			   oben: current bleibt sichtbar
+			   unten: below blendet aus
+			========================= */
+			if (lowerBoundaryVisible && below) {
+				const exitProgress = this.clamp01(
+					(midline - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
+				);
+
+				const bottomPrimaryY = this.clampBottomHintY(
+					exitProgress * (hintHeight + 40),
+					this.bottomPrimary,
+					belowBottomText
+				);
+
+				this.setHintState(this.topPrimary, {
+					text: currentTopText,
+					y: topDockY,
+					opacity: currentTopText ? 1 : 0
+				});
+
+				this.setHintState(this.topIncoming, {
+					text: "",
+					y: 0,
+					opacity: 0
+				});
+
+				this.setHintState(this.bottomPrimary, {
+					text: belowBottomText,
+					y: bottomPrimaryY,
+					opacity: belowBottomText ? (1 - exitProgress) : 0
+				});
+
+				this.setHintState(this.bottomSwap, {
+					text: "",
+					y: 0,
+					opacity: 0
+				});
+
+				this.updateHintVisuals();
+				return;
+			}
+
+			/* =========================
+			   FALL 1:
+			   keine Grenze sichtbar
+			   oben: current
+			   unten: below
+			========================= */
+			this.setHintState(this.topPrimary, {
+				text: currentTopText,
+				y: topDockY,
+				opacity: currentTopText ? 1 : 0
+			});
+
+			this.setHintState(this.topIncoming, {
+				text: "",
+				y: 0,
+				opacity: 0
+			});
+
+			this.setHintState(this.bottomPrimary, {
+				text: belowBottomText,
+				y: 0,
+				opacity: belowBottomText ? 1 : 0
+			});
+
+			this.setHintState(this.bottomSwap, {
+				text: "",
+				y: 0,
+				opacity: 0
+			});
+
+			this.updateHintVisuals();
+		},
+		
+		
+		
+		
+		
+		
+		
 		updateBoundaryScene() {
 			if (!this.root) return;
 
@@ -1626,28 +1820,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			const belowBottomText = belowText ? `<< ${belowText} <<` : "";
 
 			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
-			let topY = topDockY;
-
-			// Wenn es eine nächste Section gibt:
-			// Grenze zwischen current und below bestimmen
-			if (below && current.id && below.id) {
-				const boundaryY = this.getBoundaryY(current.id, below.id);
-
-				if (boundaryY !== null) {
-					const topAnchorY = utils.getRootRemPx("--section-hint-boundary-gap", 4.8)
-						+ (DOM.navbar?.getBoundingClientRect().bottom || 0);
-
-					// Sobald die Grenze unterhalb des Top-Ankers erscheint,
-					// soll der aktuelle Hint mit der Grenze nach unten laufen.
-					if (boundaryY > topAnchorY) {
-						topY = this.snapPx(boundaryY);
-					}
-				}
-			}
 
 			this.setHintState(this.topPrimary, {
 				text: currentTopText,
-				y: topY,
+				y: topDockY,
 				opacity: currentTopText ? 1 : 0
 			});
 
@@ -1670,7 +1846,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			this.updateHintVisuals();
-		},
+		}
 		
 		getTopHintDockY(hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
