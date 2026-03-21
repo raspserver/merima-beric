@@ -29,7 +29,7 @@
 	/* clamp(MIN, BEVORZUGT, MAX);	min					bevorzugt				max					Result.	*/
 	/* vp 952 × 442 (Desktop):		1.0x16px = 16.0px	3.0x442x0.01 = 13.26px	2.0x16px = 32px		16.00px	*/
 	/* vp 375 x 552 (iPhone7):		1.0x16px = 16.0px	3.0x552x0.01 = 16.56px	2.0x16px = 32px		16.56px	*/
-	/* vp 384 × 701 (Galaxy A34):	1.0x16px = 16.0px	3.0x701x0.01 = 21.03px	2.0x16px = 32px		21.03px	*/
+	/* vp 384 × 701 (Galaxy A34):	3.0x16px = 48.0px	7.0x701x0.01 = 49.07px	3.5x16px = 56px		49.07px	*/
 	/* ---------------------------------------------------------------------------------------------------- */
 	
 	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
@@ -2290,6 +2290,8 @@ section > .section-scroll-head + * {
 	bottom: var(--section-hint-bottom-offset);
 }
 
+
+
 .scroll-section-hint {
 	position: absolute;
 	top: 0;
@@ -2303,7 +2305,6 @@ section > .section-scroll-head + * {
 	text-transform: uppercase;
 	line-height: 1;
 	opacity: 0;
-	will-change: opacity, transform;
 	color: transparent;
 
 	--hint-clip-top: 0px;
@@ -2313,14 +2314,34 @@ section > .section-scroll-head + * {
 	--hint-y: 0px;
 
 	clip-path: inset(var(--hint-clip-top) 0 var(--hint-clip-bottom) 0);
+
+	will-change: transform, opacity;
+	backface-visibility: hidden;
+	transform-style: preserve-3d;
+	contain: layout paint style;
 }
 
 .scroll-section-hint-anchor--top .scroll-section-hint,
 .scroll-section-hint-anchor--bottom .scroll-section-hint {
 	transform-origin: left top;
 	transform:
-		translateY(var(--hint-y))
+		translate3d(0, var(--hint-y), 0)
 		rotate(-90deg);
+}
+
+.scroll-section-hint-measurer {
+	position: fixed;
+	left: -99999px;
+	top: -99999px;
+	visibility: hidden;
+	pointer-events: none;
+	white-space: nowrap;
+	font-family: 'Montserrat', sans-serif;
+	font-size: var(--section-hint-size);
+	font-weight: 500;
+	letter-spacing: var(--section-hint-letter-spacing);
+	text-transform: uppercase;
+	line-height: 1;
 }
 
 .scroll-section-hint-text {

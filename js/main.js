@@ -1160,6 +1160,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	   SCROLL SECTION HINT MODULE
 	========================================================= */
 	const scrollSectionHintModule = {
+		measurer: null,
+		metricsCache: new Map(),
+		
 		root: null,
 		topHint: null,
 		bottomHint: null,
@@ -1211,6 +1214,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			`;
 
 			document.body.appendChild(this.root);
+			
+			this.measurer = document.createElement("span");
+			this.measurer.className = "scroll-section-hint-measurer";
+			document.body.appendChild(this.measurer);
 
 			this.topPrimary = this.root.querySelector(".scroll-section-hint--top-primary");
 			this.topIncoming = this.root.querySelector(".scroll-section-hint--top-incoming");
@@ -1374,11 +1381,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.addEventListener("scroll", () => this.handleScroll(), { passive: true });
 
 			window.addEventListener("resize", () => {
+				this.metricsCache.clear();
 				this.scheduleBoundarySceneUpdate();
 			});
 
 			window.addEventListener("orientationchange", () => {
 				setTimeout(() => {
+					this.metricsCache.clear();
 					this.scheduleBoundarySceneUpdate();
 				}, 120);
 			});
@@ -1390,6 +1399,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.addEventListener("touchmove", () => {
 				this.pulse();
 			}, { passive: true });	
+			
 		},
 
 		setHintText(hintEl, text) {
@@ -1514,7 +1524,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!hintEl) return;
 
 			this.setHintText(hintEl, text);
-			hintEl.style.setProperty("--hint-y", `${this.snapPx(y)}px`);
+			hintEl.style.setProperty("--hint-y", `${y}px`);
 			hintEl.style.opacity = `${opacity}`;
 			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
 		},
@@ -1528,22 +1538,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		measureHint(hintEl, text) {
-			if (!hintEl) return { width: 0, height: 0 };
+			if (!this.measurer) return { width: 0, height: 0 };
 
-			const base = hintEl.querySelector(".scroll-section-hint-base");
-			if (!base) return { width: 0, height: 0 };
+			const key = text || " ";
+			const cached = this.metricsCache.get(key);
+			if (cached) return cached;
 
-			const prev = base.textContent;
-			base.textContent = text || " ";
-			const rect = hintEl.getBoundingClientRect();
-			base.textContent = prev;
+			this.measurer.textContent = key;
+			const rect = this.measurer.getBoundingClientRect();
 
-			return {
+			const metrics = {
 				width: rect.width || 0,
 				height: rect.height || 0
 			};
-		},
 
+			this.metricsCache.set(key, metrics);
+			return metrics;
+		},
+		
 		getSectionRect(id) {
 			const el = document.getElementById(id);
 			return el ? el.getBoundingClientRect() : null;
@@ -1629,9 +1641,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			   oben: current -> above
 			   unten: below bleibt sichtbar
 			========================= */
-			if (upperBoundaryVisible && above) {
-				const boundaryTrackY = this.snapPx(upperBoundaryY + gap);
-				const topPrimaryY = this.snapPx(Math.max(topDockY, boundaryTrackY));
+			if (upperBoundaryVisible && above) {	
+				const boundaryTrackY = upperBoundaryY + gap;
+				const topPrimaryY = Math.max(topDockY, boundaryTrackY);
 	
 				const topPrimaryBottom = topPrimaryY + hintHeight;
 
@@ -1646,9 +1658,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				const incomingHiddenY = topDockY - (hintHeight + 40);
 				const incomingShownY = topDockY;	
 				
-				const incomingY = this.snapPx(
-					this.lerp(incomingHiddenY, incomingShownY, revealProgress)
-				);
+				const incomingY = this.lerp(incomingHiddenY, incomingShownY, revealProgress);	
 
 				this.setHintState(this.topPrimary, {
 					text: currentTopText,
@@ -1694,13 +1704,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				);
 
 				const bottomPrimaryY = this.clampBottomHintY(
-					this.snapPx(bottomExitProgress * (hintHeight + 40)),
+					bottomExitProgress * (hintHeight + 40),
 					this.bottomPrimary,
 					belowBottomText
 				);
 
-				let bottomSwapY = this.clampBottomHintY(
-					this.snapPx(-(hintHeight * (1 - swapProgress))),
+				let bottomSwapY = this.clampBottomHintY(	
+					-(hintHeight * (1 - swapProgress)),
 					this.bottomSwap,
 					currentBottomText
 				);
@@ -1768,26 +1778,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		getTopHintDockY(hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
-
-			/* Nach rotate(-90deg) ist die sichtbare vertikale Ausdehnung
-			   im Bounding-Rect die height, nicht die width. */
-			const visualExtent = metrics.height || 120;
-
-			/* Top-Anchor liegt bereits bei nav + 0.3rem.
-			   Deshalb den Hint genau um seine sichtbare Höhe nach unten schieben. */
+			const visualExtent = metrics.width || 120;
 			return Math.max(0, visualExtent);
 		},
 		
 		clampBottomHintY(y, hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
-
-			/* Bei rotate(-90deg) ist die vertikale Ausdehnung effektiv die Breite */
 			const visualExtent = metrics.width || 120;
 
-			/* bottom-anchor sitzt bereits bei 0.3rem */
 			const maxY = 0;
-
-			/* so weit nach oben, dass der komplette Hint sichtbar bleibt */
 			const minY = -Math.max(0, visualExtent);
 
 			return Math.max(minY, Math.min(maxY, y));
