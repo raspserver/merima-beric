@@ -1652,7 +1652,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			this.updateHintVisuals();
-		}
+		},
 		
 		getTopHintDockY(hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
