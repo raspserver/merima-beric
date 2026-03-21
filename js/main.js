@@ -1762,12 +1762,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		getTopHintDockY(hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
 
-			/* Bei rotate(-90deg) ist die vertikale Ausdehnung effektiv die Breite */
-			const visualExtent = metrics.width || 120;
+			/* Nach rotate(-90deg) ist die sichtbare vertikale Ausdehnung
+			   im Bounding-Rect die height, nicht die width. */
+			const visualExtent = metrics.height || 120;
 
-			/* Der Top-Anchor sitzt bereits unter der Navbar.
-			   Damit die Oberkante des rotierten Hints genau dort beginnt,
-			   muss der Hint um seine visuelle Ausdehnung nach unten verschoben werden. */
+			/* Top-Anchor liegt bereits bei nav + 0.3rem.
+			   Deshalb den Hint genau um seine sichtbare Höhe nach unten schieben. */
 			return Math.max(0, visualExtent);
 		},
 		
