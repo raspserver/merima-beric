@@ -1695,7 +1695,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				this.updateHintVisuals();
 				return;
-			},
+			}
 			
 			
 			
@@ -1785,69 +1785,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		
 		
-		updateBoundaryScene() {
-			if (!this.root) return;
-
-			if (this.isHeroActive()) {
-				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
-				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
-				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
-				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
-				this.updateHintVisuals();
-				return;
-			}
-
-			const current = this.getActiveSection();
-			if (!current) {
-				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
-				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
-				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
-				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
-				this.updateHintVisuals();
-				return;
-			}
-
-			const sections = this.getContentSections();
-			const currentIndex = sections.findIndex(section => section === current);
-			const below = currentIndex >= 0 && currentIndex < sections.length - 1
-				? sections[currentIndex + 1]
-				: null;
-
-			const currentText = current?.id ? this.labels[current.id] : "";
-			const belowText = below?.id ? this.labels[below.id] : "";
-
-			const currentTopText = currentText ? `>> ${currentText} >>` : "";
-			const belowBottomText = belowText ? `<< ${belowText} <<` : "";
-
-			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
-
-			this.setHintState(this.topPrimary, {
-				text: currentTopText,
-				y: topDockY,
-				opacity: currentTopText ? 1 : 0
-			});
-
-			this.setHintState(this.topIncoming, {
-				text: "",
-				y: 0,
-				opacity: 0
-			});
-
-			this.setHintState(this.bottomPrimary, {
-				text: belowBottomText,
-				y: 0,
-				opacity: belowBottomText ? 1 : 0
-			});
-
-			this.setHintState(this.bottomSwap, {
-				text: "",
-				y: 0,
-				opacity: 0
-			});
-
-			this.updateHintVisuals();
-		}
 		
+		
+		
+		
+		
+
 		getTopHintDockY(hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
 			const visualExtent = metrics.width || 120;
