@@ -1568,9 +1568,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 				return;
 			}
-
+			
 			const viewportH = window.innerHeight;
-			const topDockY = 0;
 			const lowerThird = viewportH * (2 / 3);
 			const midline = viewportH * 0.5;
 
@@ -1598,6 +1597,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const aboveTopText = aboveText ? `${aboveText} >>` : "";
 			const belowBottomText = belowText ? `<< ${belowText}` : "";
 			const currentBottomText = currentText ? `<< ${currentText}` : "";
+					
+			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
 
 			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
 			const lowerBoundaryY = below ? this.getBoundaryY(current.id, below.id) : null;
@@ -1636,9 +1637,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				const swapProgress = this.clamp01(
 					(topPrimaryBottom - lowerThird) / Math.max(80, viewportH * 0.18)
 				);
-
+				
 				const incomingHiddenY = topDockY - (hintHeight + 40);
-				const incomingShownY = topDockY;
+				const incomingShownY = topDockY;	
+				
 				const incomingY = this.lerp(incomingHiddenY, incomingShownY, revealProgress);
 
 				this.setHintState(this.topPrimary, {
@@ -1755,6 +1757,18 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			this.updateHintVisuals();
+		},
+
+		getTopHintDockY(hintEl, text) {
+			const metrics = this.measureHint(hintEl, text);
+
+			/* Bei rotate(-90deg) ist die vertikale Ausdehnung effektiv die Breite */
+			const visualExtent = metrics.width || 120;
+
+			/* Der Top-Anchor sitzt bereits unter der Navbar.
+			   Damit die Oberkante des rotierten Hints genau dort beginnt,
+			   muss der Hint um seine visuelle Ausdehnung nach unten verschoben werden. */
+			return Math.max(0, visualExtent);
 		},
 		
 		clampBottomHintY(y, hintEl, text) {
