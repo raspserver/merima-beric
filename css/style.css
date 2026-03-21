@@ -2255,7 +2255,6 @@ section > .section-scroll-head + * {
 	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
 	--section-hint-size: 0.82rem;
 	--section-hint-letter-spacing: 0.22em;
-	--section-hint-boundary-gap: 1ch;
 }
 
 @media (max-width: 768px) {
