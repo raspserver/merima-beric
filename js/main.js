@@ -1759,13 +1759,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		clampBottomHintY(y, hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
-			const visualHeight = metrics.height || 120;
 
-			/* bottom-anchor sitzt schon korrekt bei 0.3rem */
+			/* Bei rotate(-90deg) ist die vertikale Ausdehnung effektiv die Breite */
+			const visualExtent = metrics.width || 120;
+
+			/* bottom-anchor sitzt bereits bei 0.3rem */
 			const maxY = 0;
 
-			/* maximal nach oben, aber vollständig sichtbar */
-			const minY = -Math.max(0, visualHeight);
+			/* so weit nach oben, dass der komplette Hint sichtbar bleibt */
+			const minY = -Math.max(0, visualExtent);
 
 			return Math.max(minY, Math.min(maxY, y));
 		}
