@@ -1656,8 +1656,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			   oben: current -> above
 			   unten: below bleibt sichtbar
 			========================= */
-			if (upperBoundaryVisible && above) {		
-				const boundaryTrackY = upperBoundaryY - boundaryGap;
+			if (upperBoundaryVisible && above) {
+				const topAnchorRect = this.topPrimary.parentElement.getBoundingClientRect();
+				const topAnchorTop = topAnchorRect.top;
+
+				/* sichtbare Oberkante des rotierten Hints soll 0.3rem über der Sektionsgrenze liegen */
+				const boundaryTrackY = topDockY + (upperBoundaryY - boundaryGap - topAnchorTop);
 				const topPrimaryY = Math.max(topDockY, boundaryTrackY);
 
 				const topPrimaryBottom = topPrimaryY + hintHeight;
