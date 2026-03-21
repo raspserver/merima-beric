@@ -1810,12 +1810,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return Math.max(minY, Math.min(maxY, y));
 		},
-		
+			
 		scheduleBoundarySceneUpdate() {
 			if (state.hintRaf) return;
 
 			state.hintRaf = requestAnimationFrame(() => {
 				state.hintRaf = null;
+				this.updateViewportOffsets();
 				this.updateColumn();
 				this.updateBoundaryScene();
 				this.updateHintVisuals();
@@ -1824,6 +1825,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		snapPx(value) {
 			return Math.round(value);
+		},
+		
+		updateViewportOffsets() {
+			const gapPx = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+
+			const navRect = DOM.navbar?.getBoundingClientRect();
+			const navBottom = navRect ? Math.max(0, navRect.bottom) : 0;
+
+			document.documentElement.style.setProperty(
+				"--section-hint-top-offset-current",
+				`${Math.round(navBottom + gapPx)}px`
+			);
+
+			document.documentElement.style.setProperty(
+				"--section-hint-bottom-offset-current",
+				`${Math.round(gapPx)}px`
+			);
 		}
 		
 	};
