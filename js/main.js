@@ -1626,10 +1626,28 @@ document.addEventListener("DOMContentLoaded", () => {
 			const belowBottomText = belowText ? `<< ${belowText} <<` : "";
 
 			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
+			let topY = topDockY;
+
+			// Wenn es eine nächste Section gibt:
+			// Grenze zwischen current und below bestimmen
+			if (below && current.id && below.id) {
+				const boundaryY = this.getBoundaryY(current.id, below.id);
+
+				if (boundaryY !== null) {
+					const topAnchorY = utils.getRootRemPx("--section-hint-boundary-gap", 4.8)
+						+ (DOM.navbar?.getBoundingClientRect().bottom || 0);
+
+					// Sobald die Grenze unterhalb des Top-Ankers erscheint,
+					// soll der aktuelle Hint mit der Grenze nach unten laufen.
+					if (boundaryY > topAnchorY) {
+						topY = this.snapPx(boundaryY);
+					}
+				}
+			}
 
 			this.setHintState(this.topPrimary, {
 				text: currentTopText,
-				y: topDockY,
+				y: topY,
 				opacity: currentTopText ? 1 : 0
 			});
 
