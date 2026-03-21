@@ -2345,16 +2345,6 @@ section > .section-scroll-head + * {
 	opacity: 0 !important;
 }
 
-.scroll-section-hint-anchor--top .scroll-section-hint {
-	transform-origin: top left;
-	transform: rotate(-90deg) translateX(-100%);
-}
-
-.scroll-section-hint-anchor--bottom .scroll-section-hint {
-	transform-origin: top left;
-	transform: rotate(-90deg) translateX(-100%);
-}
-
 .scroll-section-hints.is-visible .scroll-section-hint {
 	opacity: 1;
 }
