@@ -1526,6 +1526,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		init() {
 			this.build();
+			this.updateViewportOffsets();
 			this.updateColumn();
 			this.updateBoundaryScene();
 			this.bindEvents();
