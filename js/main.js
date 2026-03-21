@@ -1674,7 +1674,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const bottomPrimaryOpacity = 1 - bottomExitProgress;
 
 			/* << PREISE hängt oberhalb der services/pricing-Grenze */
-			let bottomSwapY = servicesPricingBoundaryY - gap - topHeight;
+			let bottomSwapY = (servicesPricingBoundaryY - gap - topHeight) - bottomAnchorY;		
 
 			/* Wenn Grenze unten raus ist, bleibt << PREISE unten stehen */
 			const bottomDockViewportY = bottomAnchorY;
