@@ -2394,7 +2394,10 @@ section > .section-scroll-head + * {
 	overflow: hidden;          /* nur Track scrollt */
 	width: 100%;
 	max-width: 1200px;
+/*
 	margin: 0 auto;
+*/
+	margin: 0 auto 40rem; /* unten mehr Abstand */
 	padding: 0 5%;             /* für Peek-Effekt */
 	box-sizing: border-box;
 }
