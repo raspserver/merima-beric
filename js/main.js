@@ -1366,23 +1366,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (!this.root) return;
 
+			this.scheduleBoundarySceneUpdate();
 			this.revealTemporarily();
 		},
-
+				
 		bindEvents() {
 			window.addEventListener("scroll", () => this.handleScroll(), { passive: true });
 
 			window.addEventListener("resize", () => {
-				this.updateColumn();
-				this.updateBoundaryScene();
-				this.updateHintVisuals();
+				this.scheduleBoundarySceneUpdate();
 			});
 
 			window.addEventListener("orientationchange", () => {
 				setTimeout(() => {
-					this.updateColumn();
-					this.updateBoundaryScene();
-					this.updateHintVisuals();
+					this.scheduleBoundarySceneUpdate();
 				}, 120);
 			});
 
@@ -1392,7 +1389,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			window.addEventListener("touchmove", () => {
 				this.pulse();
-			}, { passive: true });
+			}, { passive: true });	
 		},
 
 		setHintText(hintEl, text) {
@@ -1651,7 +1648,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				const incomingHiddenY = topDockY - (hintHeight + 40);
 				const incomingShownY = topDockY;	
 				
-				const incomingY = this.lerp(incomingHiddenY, incomingShownY, revealProgress);
+				const incomingY = this.snapPx(
+					this.lerp(incomingHiddenY, incomingShownY, revealProgress)
+				);
 
 				this.setHintState(this.topPrimary, {
 					text: currentTopText,
@@ -1697,13 +1696,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				);
 
 				const bottomPrimaryY = this.clampBottomHintY(
-					bottomExitProgress * (hintHeight + 40),
+					this.snapPx(bottomExitProgress * (hintHeight + 40)),
 					this.bottomPrimary,
 					belowBottomText
 				);
 
 				let bottomSwapY = this.clampBottomHintY(
-					-(hintHeight * (1 - swapProgress)),
+					this.snapPx(-(hintHeight * (1 - swapProgress))),
 					this.bottomSwap,
 					currentBottomText
 				);
