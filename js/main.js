@@ -1165,6 +1165,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		bottomHint: null,
 		hideTimer: null,
 		lastKnownScrollY: window.scrollY,
+		
+		bottomSwapLatched: false,
+		bottomSwapLatchedY: 0,
+		bottomSwapLatchedText: "",
 
 		labels: {
 			about: "ÜBER MICH",
@@ -1684,8 +1688,42 @@ document.addEventListener("DOMContentLoaded", () => {
 			} else {
 				bottomSwapY = Math.min(0, bottomSwapY - bottomAnchorY);
 			}
+					
+			let clampedBottomSwapY = this.clampBottomHintY(bottomSwapY, this.bottomSwap, bottomSwapText);
 
-			const bottomSwapOpacity = swapProgress;
+			/* Wenn der Swap einmal sichtbar war, beim Scrollen nach oben nicht sofort wieder verschwinden */
+			if (swapProgress > 0.02) {
+				this.bottomSwapLatched = true;
+				this.bottomSwapLatchedY = clampedBottomSwapY;
+				this.bottomSwapLatchedText = bottomSwapText;
+			}
+
+			const isScrollingUp = state.scrollDirection === "up";
+
+			/* Latched sichtbar halten, solange wir noch in der Pricing-Szene sind */
+			const keepLatchedBottomSwap =
+				isScrollingUp &&
+				this.bottomSwapLatched &&
+				(pricingActive || topBoundaryRelevant || bottomBoundaryRelevant);
+
+			const effectiveBottomSwapText = keepLatchedBottomSwap
+				? this.bottomSwapLatchedText
+				: bottomSwapText;
+
+			const effectiveBottomSwapY = keepLatchedBottomSwap
+				? this.bottomSwapLatchedY
+				: clampedBottomSwapY;
+
+			const effectiveBottomSwapOpacity = keepLatchedBottomSwap
+				? 1
+				: swapProgress;
+
+			/* Reset erst wenn Pricing-Szene wirklich verlassen wurde */
+			if (!pricingActive && !topBoundaryRelevant && !bottomBoundaryRelevant) {
+				this.bottomSwapLatched = false;
+				this.bottomSwapLatchedY = 0;
+				this.bottomSwapLatchedText = "";
+			}
 
 			this.setHintState(this.topPrimary, {
 				text: topText,
@@ -1698,7 +1736,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				y: incomingY,
 				opacity: incomingRevealProgress
 			});
-			
+
 			this.setHintState(this.bottomPrimary, {
 				text: bottomText,
 				y: 0 + (bottomExitProgress * (topHeight + 40)),
@@ -1706,12 +1744,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 
 			this.setHintState(this.bottomSwap, {
-				text: bottomSwapText,
-				y: bottomSwapY,
-				opacity: bottomSwapOpacity
+				text: effectiveBottomSwapText,
+				y: effectiveBottomSwapY,
+				opacity: effectiveBottomSwapOpacity
 			});
 
 			this.updateHintVisuals();
+		},
+		
+		clampBottomHintY(y, hintEl, text) {
+			const metrics = this.measureHint(hintEl, text);
+			const visualHeight = metrics.height || 120;
+
+			/* Anchor sitzt bereits bottom: 0.3rem.
+			   Der Hint darf also nicht weiter nach unten geschoben werden als 0. */
+			const maxY = 0;
+
+			/* Nach oben darf er höchstens so weit, dass er komplett sichtbar bleibt */
+			const minY = -Math.max(0, window.innerHeight - visualHeight - utils.getRootNumber("--section-hint-bottom-offset", 4.8));
+
+			return Math.max(minY, Math.min(maxY, y));
 		}
 	};
 

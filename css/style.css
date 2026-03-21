@@ -2288,7 +2288,8 @@ section > .section-scroll-head + * {
 }
 
 .scroll-section-hint-anchor--bottom {
-	top: calc(100vh - var(--section-hint-bottom-offset));
+	top: auto;
+	bottom: var(--section-hint-bottom-offset);
 }
 
 .scroll-section-hint {
