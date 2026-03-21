@@ -1660,8 +1660,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				const topAnchorRect = this.topPrimary.parentElement.getBoundingClientRect();
 				const topAnchorTop = topAnchorRect.top;
 
-				/* sichtbare Oberkante des rotierten Hints soll 0.3rem über der Sektionsgrenze liegen */
-				const boundaryTrackY = topDockY + (upperBoundaryY - boundaryGap - topAnchorTop);
+				/* sichtbare Oberkante des rotierten Hints soll 0.3rem unter der Sektionsgrenze liegen */
+				const boundaryTrackY = topDockY + (upperBoundaryY + boundaryGap - topAnchorTop);
 				const topPrimaryY = Math.max(topDockY, boundaryTrackY);
 
 				const topPrimaryBottom = topPrimaryY + hintHeight;
