@@ -2249,13 +2249,22 @@ section > .section-scroll-head + * {
 ========================= */
 
 :root {
-	--section-hint-top-offset: calc(var(--nav-height-max) + 14px);
-	--section-hint-bottom-offset: 64px;
+	--section-hint-top-offset: calc(var(--nav-height-max) + 0.3rem);
+	--section-hint-bottom-offset: 0.3rem;
 	--section-hint-color: rgba(45, 45, 45, 0.78);
 	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
 	--section-hint-size: 0.82rem;
 	--section-hint-letter-spacing: 0.22em;
-	--section-hint-boundary-gap: 1ch; /* eine Buchstabenbreite Abstand */
+	--section-hint-boundary-gap: 1ch;
+}
+
+@media (max-width: 768px) {
+	:root {
+		--section-hint-size: 0.72rem;
+		--section-hint-letter-spacing: 0.16em;
+		--section-hint-top-offset: calc(var(--nav-height-min) + 0.3rem);
+		--section-hint-bottom-offset: 0.3rem;
+	}
 }
 
 .scroll-section-hints {
@@ -2279,7 +2288,7 @@ section > .section-scroll-head + * {
 }
 
 .scroll-section-hint-anchor--bottom {
-	top: 0;
+	top: calc(100vh - var(--section-hint-bottom-offset));
 }
 
 .scroll-section-hint {

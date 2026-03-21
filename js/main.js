@@ -1580,8 +1580,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			const viewportH = window.innerHeight;
-			const topDockY = utils.getRootNumber("--nav-height-max", 78) + 14;
-			const bottomDockY = viewportH - utils.getRootNumber("--section-hint-bottom-offset", 48);
+			const topDockY = 0;
+			const bottomDockY = 0;
 
 			/* Wir betrachten speziell die Pricing-Szene */
 			const pricingRect = this.getSectionRect("pricing");
