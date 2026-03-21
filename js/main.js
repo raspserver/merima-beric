@@ -1166,6 +1166,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		hideTimer: null,
 		lastKnownScrollY: window.scrollY,
 		
+		hintRaf: null,
+		
 		labels: {
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
@@ -1508,7 +1510,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.updateBoundaryScene();
 			this.bindEvents();
 		},
-
+		
 		setHintState(hintEl, {
 			text = "",
 			y = 0,
@@ -1517,11 +1519,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!hintEl) return;
 
 			this.setHintText(hintEl, text);
-			hintEl.style.setProperty("--hint-y", `${y}px`);
+			hintEl.style.setProperty("--hint-y", `${this.snapPx(y)}px`);
 			hintEl.style.opacity = `${opacity}`;
 			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
 		},
-
+		
 		clamp01(value) {
 			return Math.max(0, Math.min(1, value));
 		},
@@ -1791,7 +1793,23 @@ document.addEventListener("DOMContentLoaded", () => {
 			const minY = -Math.max(0, visualExtent);
 
 			return Math.max(minY, Math.min(maxY, y));
+		},
+		
+		scheduleBoundarySceneUpdate() {
+			if (state.hintRaf) return;
+
+			state.hintRaf = requestAnimationFrame(() => {
+				state.hintRaf = null;
+				this.updateColumn();
+				this.updateBoundaryScene();
+				this.updateHintVisuals();
+			});
+		},
+
+		snapPx(value) {
+			return Math.round(value);
 		}
+		
 	};
 
 	/* =========================================================
