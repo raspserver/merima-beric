@@ -1428,7 +1428,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			hintEl.style.opacity = `${safeOpacity}`;
 			hintEl.classList.toggle("is-empty", !text || safeOpacity <= 0.001);
 		},
-
+		
 		animateHintState(targets) {
 			const m = this.motion;
 
@@ -1437,70 +1437,34 @@ document.addEventListener("DOMContentLoaded", () => {
 				m.raf = null;
 			}
 
-			const step = () => {
-				const lerp = (a, b, t) => a + (b - a) * t;
+			m.topPrimaryY = targets.topPrimaryY;
+			m.topIncomingY = targets.topIncomingY;
+			m.bottomPrimaryY = targets.bottomPrimaryY;
 
-				m.topPrimaryY = lerp(m.topPrimaryY, targets.topPrimaryY, 0.18);
-				m.topIncomingY = lerp(m.topIncomingY, targets.topIncomingY, 0.18);
-				m.bottomPrimaryY = lerp(m.bottomPrimaryY, targets.bottomPrimaryY, 0.18);
+			m.topPrimaryOpacity = targets.topPrimaryOpacity;
+			m.topIncomingOpacity = targets.topIncomingOpacity;
+			m.bottomPrimaryOpacity = targets.bottomPrimaryOpacity;
 
-				m.topPrimaryOpacity = lerp(m.topPrimaryOpacity, targets.topPrimaryOpacity, 0.16);
-				m.topIncomingOpacity = lerp(m.topIncomingOpacity, targets.topIncomingOpacity, 0.16);
-				m.bottomPrimaryOpacity = lerp(m.bottomPrimaryOpacity, targets.bottomPrimaryOpacity, 0.16);
+			this.setHintState(this.topPrimary, {
+				text: targets.topPrimaryText,
+				y: targets.topPrimaryY,
+				opacity: targets.topPrimaryOpacity
+			});
 
-				this.setHintState(this.topPrimary, {
-					text: targets.topPrimaryText,
-					y: m.topPrimaryY,
-					opacity: m.topPrimaryOpacity
-				});
+			this.setHintState(this.topIncoming, {
+				text: targets.topIncomingText,
+				y: targets.topIncomingY,
+				opacity: targets.topIncomingOpacity
+			});
 
-				this.setHintState(this.topIncoming, {
-					text: targets.topIncomingText,
-					y: m.topIncomingY,
-					opacity: m.topIncomingOpacity
-				});
-
-				this.setHintState(this.bottomPrimary, {
-					text: targets.bottomPrimaryText,
-					y: m.bottomPrimaryY,
-					opacity: m.bottomPrimaryOpacity
-				});
-
-				const done =
-					Math.abs(m.topPrimaryY - targets.topPrimaryY) < 0.25 &&
-					Math.abs(m.topIncomingY - targets.topIncomingY) < 0.25 &&
-					Math.abs(m.bottomPrimaryY - targets.bottomPrimaryY) < 0.25 &&
-					Math.abs(m.topPrimaryOpacity - targets.topPrimaryOpacity) < 0.01 &&
-					Math.abs(m.topIncomingOpacity - targets.topIncomingOpacity) < 0.01 &&
-					Math.abs(m.bottomPrimaryOpacity - targets.bottomPrimaryOpacity) < 0.01;
-
-				if (!done) {
-					m.raf = requestAnimationFrame(step);
-				} else {
-					m.raf = null;
-
-					this.setHintState(this.topPrimary, {
-						text: targets.topPrimaryText,
-						y: targets.topPrimaryY,
-						opacity: targets.topPrimaryOpacity
-					});
-
-					this.setHintState(this.topIncoming, {
-						text: targets.topIncomingText,
-						y: targets.topIncomingY,
-						opacity: targets.topIncomingOpacity
-					});
-
-					this.setHintState(this.bottomPrimary, {
-						text: targets.bottomPrimaryText,
-						y: targets.bottomPrimaryY,
-						opacity: targets.bottomPrimaryOpacity
-					});
-				}
-			};
-
-			m.raf = requestAnimationFrame(step);
+			this.setHintState(this.bottomPrimary, {
+				text: targets.bottomPrimaryText,
+				y: targets.bottomPrimaryY,
+				opacity: targets.bottomPrimaryOpacity
+			});
 		},
+		
+		
 
 		clamp01(value) {
 			return Math.max(0, Math.min(1, value));
