@@ -1687,41 +1687,68 @@ document.addEventListener("DOMContentLoaded", () => {
 			const hintHeight = topMetrics.height || 120;
 			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
 
+			/* Hilfswert vor upperBoundaryVisible / lowerBoundaryVisible ergänzen */
+			const boundaryVisibilityMargin = hintHeight + 24;
+
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
-			   oben: current -> above
+			   oben: current bewegt sich mit der oberen Boundary abwärts
+			   oben incoming: above blendet positionsbasiert ein
 			   unten: below bleibt sichtbar
 			========================= */
 			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
-				const boundaryKey = `${above.id}->${current.id}`;
-				const currentDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
-				const revealDockY = this.getTopHintRevealDockY(this.topIncoming, aboveTopText || " ");
+				this.upperRevealState.key = null;
+				this.upperRevealState.startTime = 0;
+				this.upperRevealState.active = false;
 
-				const moveProgress = this.clamp01(
-					(viewportH - upperBoundaryY) / Math.max(1, viewportH - revealStartLine)
+				const navbarBottom = this.getNavbarBottom();
+				const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+
+				/* Start direkt unter Navbar */
+				const followStartLine = navbarBottom + boundaryGap;
+
+				/* Bis etwa zum oberen Drittel mitlaufen */
+				const followEndLine = upperThird;
+
+				const travel = hintHeight + 40;
+
+				/* Boundary kommt von oben ins Bild und wandert nach unten */
+				const boundaryFollowProgress = this.clamp01(
+					(upperBoundaryY - followStartLine) / Math.max(1, followEndLine - followStartLine)
 				);
 
-				const currentY = this.lerp(currentDockY, revealDockY, moveProgress);
-
-				const fadeProgress = this.getUpperRevealProgress(
-					boundaryKey,
-					upperBoundaryY,
-					revealStartLine
+				/* current-Hint läuft mit der Boundary nach unten */
+				const topPrimaryY = this.lerp(
+					topDockY,
+					topDockY + travel,
+					boundaryFollowProgress
 				);
 
-				const incomingY = revealDockY;
+				/* above-Hint erscheint ebenfalls positionsbasiert */
+				const fadeStartLine = upperThird;
+				const fadeEndLine = midline;
+
+				const incomingProgress = this.clamp01(
+					(upperBoundaryY - fadeStartLine) / Math.max(1, fadeEndLine - fadeStartLine)
+				);
+
+				const topIncomingY = this.lerp(
+					topDockY,
+					topDockY + travel,
+					boundaryFollowProgress
+				);
 
 				this.setHintState(this.topPrimary, {
 					text: currentTopText,
-					y: currentY,
-					opacity: currentTopText ? (1 - fadeProgress) : 0
+					y: topPrimaryY,
+					opacity: currentTopText ? (1 - incomingProgress) : 0
 				});
 
 				this.setHintState(this.topIncoming, {
 					text: aboveTopText,
-					y: incomingY,
-					opacity: aboveTopText ? fadeProgress : 0
+					y: topIncomingY,
+					opacity: aboveTopText ? incomingProgress : 0
 				});
 
 				this.setHintState(this.bottomPrimary, {
