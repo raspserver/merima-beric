@@ -1505,14 +1505,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hide();
 			}, 2000);
 		},
-
+		
 		init() {
 			this.build();
+			this.updateTopAnchor();
 			this.updateColumn();
 			this.updateBoundaryScene();
 			this.bindEvents();
-		},
-		
+		}
+
 		setHintState(hintEl, {
 			text = "",
 			y = 0,
@@ -1745,7 +1746,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			   sichtbare Grenze current | below
 			   oben: current bleibt sichtbar
 			   unten: below blendet aus
-			========================= */
+			========================= */	
 			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
 				this.upperRevealState.key = null;
 				this.upperRevealState.startTime = 0;
@@ -1755,15 +1756,19 @@ document.addEventListener("DOMContentLoaded", () => {
 					(midline - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
 				);
 
+				const travel = hintHeight + 40;
+
+				const topPrimaryY = topDockY + (exitProgress * travel);
+
 				const bottomPrimaryY = this.clampBottomHintY(
-					exitProgress * (hintHeight + 40),
+					exitProgress * travel,
 					this.bottomPrimary,
 					belowBottomText
 				);
 
 				this.setHintState(this.topPrimary, {
 					text: currentTopText,
-					y: topDockY,
+					y: topPrimaryY,
 					opacity: currentTopText ? 1 : 0
 				});
 
@@ -1847,6 +1852,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			state.hintRaf = requestAnimationFrame(() => {
 				state.hintRaf = null;
+				this.updateTopAnchor();
 				this.updateColumn();
 				this.updateBoundaryScene();
 				this.updateHintVisuals();
