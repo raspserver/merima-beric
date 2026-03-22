@@ -1697,13 +1697,19 @@ document.addEventListener("DOMContentLoaded", () => {
 				const boundaryKey = `${above.id}->${current.id}`;
 				const currentDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
 				const revealDockY = this.getTopHintRevealDockY(this.topIncoming, aboveTopText || " ");
+
+				const moveProgress = this.clamp01(
+					(viewportH - upperBoundaryY) / Math.max(1, viewportH - revealStartLine)
+				);
+
+				const currentY = this.lerp(currentDockY, revealDockY, moveProgress);
+
 				const fadeProgress = this.getUpperRevealProgress(
 					boundaryKey,
 					upperBoundaryY,
 					revealStartLine
 				);
 
-				const currentY = fadeProgress > 0 ? revealDockY : currentDockY;
 				const incomingY = revealDockY;
 
 				this.setHintState(this.topPrimary, {
