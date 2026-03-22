@@ -1179,8 +1179,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		metricsCache: new Map(),
 		
 		root: null,
-		topHint: null,
-		bottomHint: null,
 		hideTimer: null,
 		lastKnownScrollY: window.scrollY,
 		
@@ -1336,36 +1334,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			return sections[index + 1] || null;
 		},
 
-		updateLabels() {
-			if (!this.topHint || !this.bottomHint) return;
-
-			if (this.isHeroActive()) {
-				this.setHintText(this.topHint, "");
-				this.setHintText(this.bottomHint, "");
-
-				this.topHint.classList.add("is-empty");
-				this.bottomHint.classList.add("is-empty");
-
-				this.updateHintVisuals();
-
-				return;
-			}
-
-			const activeSection = this.getActiveSection();
-			const nextSection = this.getNextSection(activeSection);
-
-			const activeLabel = activeSection?.id ? this.labels[activeSection.id] : "";
-			const nextLabel = nextSection?.id ? this.labels[nextSection.id] : "";
-
-			this.setHintText(this.topHint, activeLabel ? `${activeLabel} >>` : "");
-			this.setHintText(this.bottomHint, nextLabel ? `<< ${nextLabel}` : "");
-
-			this.topHint.classList.toggle("is-empty", !activeLabel);
-			this.bottomHint.classList.toggle("is-empty", !nextLabel);
-
-			this.updateHintVisuals();
-		},
-
 		show() {
 			if (!this.root) return;
 			this.root.classList.add("is-visible");
@@ -1442,14 +1410,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return { top, bottom, height: bottom - top };
 		},
-
+			
 		updateHintVisuals() {
-			if (!this.topHint || !this.bottomHint) return;
+			const hints = [
+				this.topPrimary,
+				this.topIncoming,
+				this.bottomPrimary,
+				this.bottomSwap
+			].filter(Boolean);
+
+			if (!hints.length) return;
 
 			const heroRect = DOM.hero?.getBoundingClientRect() || null;
 			const darkRects = this.getDarkSectionRects();
 
-			[this.topHint, this.bottomHint].forEach(hint => {
+			hints.forEach(hint => {
+
 				const rect = hint.getBoundingClientRect();
 				const hintHeight = rect.height || 1;
 
