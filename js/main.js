@@ -1512,7 +1512,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.updateColumn();
 			this.updateBoundaryScene();
 			this.bindEvents();
-		}
+		},
 
 		setHintState(hintEl, {
 			text = "",
