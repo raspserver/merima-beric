@@ -1437,14 +1437,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				m.raf = null;
 			}
 
-			m.topPrimaryY = targets.topPrimaryY;
-			m.topIncomingY = targets.topIncomingY;
-			m.bottomPrimaryY = targets.bottomPrimaryY;
+			m.topPrimaryY = lerp(m.topPrimaryY, targets.topPrimaryY, 0.55);
+			m.topIncomingY = lerp(m.topIncomingY, targets.topIncomingY, 0.55);
+			m.bottomPrimaryY = lerp(m.bottomPrimaryY, targets.bottomPrimaryY, 0.55);
 
-			m.topPrimaryOpacity = targets.topPrimaryOpacity;
-			m.topIncomingOpacity = targets.topIncomingOpacity;
-			m.bottomPrimaryOpacity = targets.bottomPrimaryOpacity;
-
+			m.topPrimaryOpacity = lerp(m.topPrimaryOpacity, targets.topPrimaryOpacity, 0.45);
+			m.topIncomingOpacity = lerp(m.topIncomingOpacity, targets.topIncomingOpacity, 0.45);
+			m.bottomPrimaryOpacity = lerp(m.bottomPrimaryOpacity, targets.bottomPrimaryOpacity, 0.45);
+			
 			this.setHintState(this.topPrimary, {
 				text: targets.topPrimaryText,
 				y: targets.topPrimaryY,
