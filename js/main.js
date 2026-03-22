@@ -1544,8 +1544,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				const visualExtent = topMetrics.width || 120;
 
-				/* Unterkante des rotierten Hints soll boundaryGap über der Boundary liegen */
-				const topPrimaryY = upperBoundaryY - anchorTop - boundaryGap - visualExtent;
+				const dockY = topDockY;
+
+				/* sichtbare Oberkante des rotierten Hints soll
+				   boundaryGap über der Boundary liegen */
+				const boundaryFollowY =
+					upperBoundaryY - anchorTop - boundaryGap + visualExtent;
+
+				const topPrimaryY = Math.max(dockY, boundaryFollowY);
 				const topIncomingY = topPrimaryY;
 
 				const fadeStartLine = upperThird;
