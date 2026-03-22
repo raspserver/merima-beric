@@ -1649,7 +1649,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
 			const hintHeight = topMetrics.height || 120;
 			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-					
+						
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
@@ -1660,9 +1660,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				const topAnchorRect = this.topPrimary.parentElement.getBoundingClientRect();
 				const topAnchorTop = topAnchorRect.top;
 
+				const currentDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
+				const incomingDockY = this.getTopHintDockY(this.topIncoming, aboveTopText || " ");
+
 				/* sichtbare Oberkante des rotierten Hints soll 0.3rem unter der Sektionsgrenze liegen */
-				const boundaryTrackY = topDockY + (upperBoundaryY + boundaryGap - topAnchorTop);
-				const topPrimaryY = Math.max(topDockY, boundaryTrackY);
+				const boundaryTrackY = currentDockY + (upperBoundaryY + boundaryGap - topAnchorTop);
+				const topPrimaryY = Math.max(currentDockY, boundaryTrackY);
 
 				const topPrimaryBottom = topPrimaryY + hintHeight;
 
@@ -1673,11 +1676,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				const swapProgress = this.clamp01(
 					(topPrimaryBottom - lowerThird) / Math.max(80, viewportH * 0.18)
 				);
-				
-				const incomingHiddenY = topDockY - (hintHeight + 40);
-				const incomingShownY = topDockY;	
-				
-				const incomingY = this.lerp(incomingHiddenY, incomingShownY, revealProgress);	
+
+				const incomingHiddenY = incomingDockY - (hintHeight + 40);
+				const incomingShownY = incomingDockY;
+
+				const incomingY = this.lerp(incomingHiddenY, incomingShownY, revealProgress);
 
 				this.setHintState(this.topPrimary, {
 					text: currentTopText,
@@ -1706,7 +1709,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 				return;
 			}
-			
+
 			/* =========================
 			   FALL 2B:
 			   sichtbare Grenze current | below
