@@ -1533,24 +1533,32 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
-			   oben: current bewegt sich 1:1 mit der oberen Boundary abwärts
+			   oben: current bewegt sich mit der oberen Boundary abwärts
+			   und hält zur Boundary immer den Gap ein
 			   oben incoming: above blendet positionsbasiert ein
 			   unten: below bleibt sichtbar
 			========================= */
 			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
 				const navbarBottom = this.getNavbarBottom();
+				const anchorTop = navbarBottom + boundaryGap;
 
-				/* Ab hier beginnt das Mitziehen:
-				   sobald die Boundary oben im sichtbaren Bereich erscheint */
-				const followStartLine = navbarBottom + boundaryGap;
+				/* vertikale Ausdehnung des rotierten Hints */
+				const visualExtent = topMetrics.width || 120;
 
-				/* 1:1-Bewegung: Boundary-Distanz seit Eintritt */
-				const boundaryDelta = Math.max(0, upperBoundaryY - followStartLine);
+				/* Dock-Position: Hint-Unterkante liegt am Anchor */
+				const dockY = topDockY;
 
-				const topPrimaryY = topDockY + boundaryDelta;
-				const topIncomingY = topDockY + boundaryDelta;
+				/* Boundary-Folge:
+				   Unterkante des Hints = upperBoundaryY - boundaryGap
+				   => topY = boundaryY - gap - hintHeight
+				*/
+				const boundaryFollowY = upperBoundaryY - anchorTop - boundaryGap - visualExtent;
 
-				/* Fade wie bisher über den mittleren Bereich */
+				/* erst andocken, dann 1:1 mit der Boundary nach unten laufen */
+				const topPrimaryY = Math.max(dockY, boundaryFollowY);
+				const topIncomingY = topPrimaryY;
+
+				/* Fade wie bisher */
 				const fadeStartLine = upperThird;
 				const fadeEndLine = midline;
 
