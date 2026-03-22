@@ -1571,22 +1571,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			return rect.bottom;
 		},
 
-		getTopHintRevealDockY(hintEl, text) {
-			if (!hintEl) return 0;
-
-			const metrics = this.measureHint(hintEl, text);
-			const visualExtent = metrics.width || 120;
-
-			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-			const navbarBottom = this.getNavbarBottom();
-			const anchorTop = hintEl.parentElement?.getBoundingClientRect().top || 0;
-
-			return Math.max(
-				0,
-				visualExtent + ((navbarBottom + boundaryGap) - anchorTop)
-			);
-		},
-
 		updateBoundaryScene() {
 			if (!this.root) return;
 
@@ -1605,10 +1589,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const upperThird = viewportH * (1 / 3);
 			const midline = viewportH * 0.5;
 			const lowerThird = viewportH * (2 / 3);
-
-			/* Reveal-Bereich für obere Boundary-Szene */		
-			const revealStartRatio = utils.getRootNumber("--section-hint-upper-reveal-start", 0.4);
-			const revealStartLine = viewportH * revealStartRatio;
 
 			const sections = this.getContentSections();
 
@@ -1663,31 +1643,23 @@ document.addEventListener("DOMContentLoaded", () => {
 			   unten: below bleibt sichtbar
 			========================= */
 			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
-
 				const navbarBottom = this.getNavbarBottom();
 				const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
 
-				/* Start direkt unter Navbar */
 				const followStartLine = navbarBottom + boundaryGap;
-
-				/* Bis etwa zum oberen Drittel mitlaufen */
 				const followEndLine = upperThird;
-
 				const travel = hintHeight + 40;
 
-				/* Boundary kommt von oben ins Bild und wandert nach unten */
 				const boundaryFollowProgress = this.clamp01(
 					(upperBoundaryY - followStartLine) / Math.max(1, followEndLine - followStartLine)
 				);
 
-				/* current-Hint läuft mit der Boundary nach unten */
 				const topPrimaryY = this.lerp(
 					topDockY,
 					topDockY + travel,
 					boundaryFollowProgress
 				);
 
-				/* above-Hint erscheint ebenfalls positionsbasiert */
 				const fadeStartLine = upperThird;
 				const fadeEndLine = midline;
 
@@ -1728,7 +1700,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 				return;
 			}
-	
+
 			/* =========================
 			   FALL 2B:
 			   sichtbare Grenze current | below
