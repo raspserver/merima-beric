@@ -1495,6 +1495,47 @@ document.addEventListener("DOMContentLoaded", () => {
 			const el = document.getElementById(id);
 			return el ? el.getBoundingClientRect() : null;
 		},
+		
+		getBoundaryPairs() {
+			const sections = this.getContentSections();
+
+			return sections
+				.map((section, index) => {
+					const upper = sections[index];
+					const lower = sections[index + 1];
+
+					if (!upper || !lower) return null;
+
+					const y = this.getBoundaryY(upper.id, lower.id);
+					if (y === null) return null;
+
+					return { upper, lower, y, index };
+				})
+				.filter(Boolean);
+		},
+
+		getRelevantUpwardBoundaryPair({ margin = 0, switchLine = 0 } = {}) {
+			const navbarBottom = this.getNavbarBottom();
+
+			const candidates = this.getBoundaryPairs().filter(pair => {
+				return (
+					pair.y >= navbarBottom - margin &&
+					pair.y <= window.innerHeight + margin
+				);
+			});
+
+			if (!candidates.length) return null;
+
+			/* Nimm die Boundary, die dem Wechselbereich am nächsten ist */
+			return candidates.reduce((best, pair) => {
+				if (!best) return pair;
+
+				const bestDist = Math.abs(best.y - switchLine);
+				const pairDist = Math.abs(pair.y - switchLine);
+
+				return pairDist < bestDist ? pair : best;
+			}, null);
+		},
 
 		getBoundaryY(upperId, lowerId) {
 			const upper = document.getElementById(upperId);
@@ -1605,42 +1646,67 @@ document.addEventListener("DOMContentLoaded", () => {
 			let topIncomingOpacity = 0;
 			let bottomPrimaryOpacity = 0;
 		
-			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
+			const upwardPair =
+				state.scrollDirection === "up"
+					? this.getRelevantUpwardBoundaryPair({
+						margin: boundaryVisibilityMargin,
+						switchLine
+					})
+					: null;
+
+			if (upwardPair) {
+				const upperSection = upwardPair.upper;
+				const lowerSection = upwardPair.lower;
+				const boundaryY = upwardPair.y;
+
+				const upperLabel = upperSection?.id ? this.labels[upperSection.id] : "";
+				const lowerLabel = lowerSection?.id ? this.labels[lowerSection.id] : "";
+
+				const upperTopText = upperLabel ? `>> ${upperLabel} >>` : "";
+				const lowerTopText = lowerLabel ? `>> ${lowerLabel} >>` : "";
+
 				const navbarBottom = this.getNavbarBottom();
 				const anchorTop = navbarBottom + boundaryGap;
 
-				const visualExtent = topMetrics.width || 120;
-				const dockY = topDockY;
-
-				const boundaryFollowY =
-					upperBoundaryY - anchorTop + boundaryGap + visualExtent;
-
-				const nextTopPrimaryY = Math.max(dockY, boundaryFollowY);
-				const nextTopIncomingY = nextTopPrimaryY;
-
-				const incomingProgress = this.clamp01(
-					(upperBoundaryY - upperThird) / Math.max(1, switchLine - upperThird)
+				const progress = this.clamp01(
+					(boundaryY - upperThird) / Math.max(1, switchLine - upperThird)
 				);
 
-				const hasSwitched = upperBoundaryY >= switchLine;
+				const hasSwitched = boundaryY >= switchLine;
 
-				topPrimaryText = hasSwitched ? aboveTopText : currentTopText;
-				topIncomingText = hasSwitched ? "" : aboveTopText;
-				bottomPrimaryText = belowBottomText;
+				/* Wichtig:
+				   Bis zum Threshold bleibt LOWER logisch aktiv.
+				   Erst am Threshold wird direkt auf UPPER umgeschaltet. */
+				const activeTopText = hasSwitched ? upperTopText : lowerTopText;
+				const activeMetrics = this.measureHint(this.topPrimary, activeTopText || " ");
+				const activeExtent = activeMetrics.width || 120;
+				const activeDockY = Math.max(0, activeExtent);
 
-				topPrimaryY = nextTopPrimaryY;
-				topIncomingY = nextTopIncomingY;
+				const boundaryFollowY =
+					boundaryY - anchorTop + boundaryGap + activeExtent;
+
+				const followY = Math.max(activeDockY, boundaryFollowY);
+
+				topPrimaryText = hasSwitched ? upperTopText : lowerTopText;
+				topIncomingText = hasSwitched ? "" : upperTopText;
+
+				topPrimaryY = followY;
+				topIncomingY = followY;
+
+				topPrimaryOpacity = hasSwitched
+					? (upperTopText ? 1 : 0)
+					: (lowerTopText ? (1 - progress) : 0);
+
+				topIncomingOpacity = hasSwitched
+					? 0
+					: (upperTopText ? progress : 0);
+
+				/* Ganz wichtig:
+				   Beim Aufwärtsswitch KEIN Bottom-Hint für die alte/current Section,
+				   sonst erscheint sie unten am Rand. */
+				bottomPrimaryText = "";
 				bottomPrimaryY = 0;
-
-				if (hasSwitched) {
-					topPrimaryOpacity = aboveTopText ? 1 : 0;
-					topIncomingOpacity = 0;
-				} else {
-					topPrimaryOpacity = currentTopText ? (1 - incomingProgress) : 0;
-					topIncomingOpacity = aboveTopText ? incomingProgress : 0;
-				}
-
-				bottomPrimaryOpacity = belowBottomText ? 1 : 0;
+				bottomPrimaryOpacity = 0;
 
 				this.animateHintState({
 					topPrimaryText,
