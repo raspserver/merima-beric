@@ -1593,33 +1593,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			);
 		},
 
-		getUpperRevealProgress(boundaryKey, upperBoundaryY, revealStartLine) {
-			const crossed =
-				!!boundaryKey &&
-				upperBoundaryY !== null &&
-				upperBoundaryY <= revealStartLine;
-
-			if (!crossed) {
-				this.upperRevealState.key = null;
-				this.upperRevealState.startTime = 0;
-				this.upperRevealState.active = false;
-				return 0;
-			}
-
-			if (
-				!this.upperRevealState.active ||
-				this.upperRevealState.key !== boundaryKey
-			) {
-				this.upperRevealState.key = boundaryKey;
-				this.upperRevealState.startTime = performance.now();
-				this.upperRevealState.active = true;
-			}
-
-			return this.clamp01(
-				(performance.now() - this.upperRevealState.startTime) / 1000
-			);
-		},
-
 		updateBoundaryScene() {
 			if (!this.root) return;
 
@@ -1672,6 +1645,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
 			const lowerBoundaryY = below ? this.getBoundaryY(current.id, below.id) : null;
+		
+			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
+			const hintHeight = topMetrics.height || 120;
+			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+			const boundaryVisibilityMargin = hintHeight + 24;
 
 			const upperBoundaryVisible =
 				upperBoundaryY !== null &&
@@ -1682,14 +1660,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				lowerBoundaryY !== null &&
 				lowerBoundaryY > -boundaryVisibilityMargin &&
 				lowerBoundaryY < viewportH + boundaryVisibilityMargin;
-
-			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
-			const hintHeight = topMetrics.height || 120;
-			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-
-			/* Hilfswert vor upperBoundaryVisible / lowerBoundaryVisible ergänzen */
-			const boundaryVisibilityMargin = hintHeight + 24;
-
+			
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
