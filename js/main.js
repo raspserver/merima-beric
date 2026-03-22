@@ -1427,7 +1427,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			hintEl.style.setProperty("--hint-y", `${snappedY}px`);
 			hintEl.style.opacity = `${safeOpacity}`;
 			hintEl.classList.toggle("is-empty", !text || safeOpacity <= 0.001);
-		},
+		},	
 		
 		animateHintState(targets) {
 			const m = this.motion;
@@ -1437,34 +1437,32 @@ document.addEventListener("DOMContentLoaded", () => {
 				m.raf = null;
 			}
 
-			m.topPrimaryY = lerp(m.topPrimaryY, targets.topPrimaryY, 0.55);
-			m.topIncomingY = lerp(m.topIncomingY, targets.topIncomingY, 0.55);
-			m.bottomPrimaryY = lerp(m.bottomPrimaryY, targets.bottomPrimaryY, 0.55);
+			m.topPrimaryY = this.lerp(m.topPrimaryY, targets.topPrimaryY, 0.55);
+			m.topIncomingY = this.lerp(m.topIncomingY, targets.topIncomingY, 0.55);
+			m.bottomPrimaryY = this.lerp(m.bottomPrimaryY, targets.bottomPrimaryY, 0.55);
 
-			m.topPrimaryOpacity = lerp(m.topPrimaryOpacity, targets.topPrimaryOpacity, 0.45);
-			m.topIncomingOpacity = lerp(m.topIncomingOpacity, targets.topIncomingOpacity, 0.45);
-			m.bottomPrimaryOpacity = lerp(m.bottomPrimaryOpacity, targets.bottomPrimaryOpacity, 0.45);
-			
+			m.topPrimaryOpacity = this.lerp(m.topPrimaryOpacity, targets.topPrimaryOpacity, 0.45);
+			m.topIncomingOpacity = this.lerp(m.topIncomingOpacity, targets.topIncomingOpacity, 0.45);
+			m.bottomPrimaryOpacity = this.lerp(m.bottomPrimaryOpacity, targets.bottomPrimaryOpacity, 0.45);
+
 			this.setHintState(this.topPrimary, {
 				text: targets.topPrimaryText,
-				y: targets.topPrimaryY,
-				opacity: targets.topPrimaryOpacity
+				y: m.topPrimaryY,
+				opacity: m.topPrimaryOpacity
 			});
 
 			this.setHintState(this.topIncoming, {
 				text: targets.topIncomingText,
-				y: targets.topIncomingY,
-				opacity: targets.topIncomingOpacity
+				y: m.topIncomingY,
+				opacity: m.topIncomingOpacity
 			});
 
 			this.setHintState(this.bottomPrimary, {
 				text: targets.bottomPrimaryText,
-				y: targets.bottomPrimaryY,
-				opacity: targets.bottomPrimaryOpacity
+				y: m.bottomPrimaryY,
+				opacity: m.bottomPrimaryOpacity
 			});
 		},
-		
-		
 
 		clamp01(value) {
 			return Math.max(0, Math.min(1, value));
