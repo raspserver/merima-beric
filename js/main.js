@@ -1563,7 +1563,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* identische Grenze */
 			return (upperRect.bottom + lowerRect.top) * 0.5;
 		},
-		
+
 		updateBoundaryScene() {
 			if (!this.root) return;
 
@@ -1575,11 +1575,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 				return;
 			}
-			
+
 			const viewportH = window.innerHeight;
-			
-			const revealStartLine = viewportH * 0.4; // 60% von unten
-			const revealEndLine = viewportH * (2 / 3);
+
+			/* zentrale Referenzlinien */
+			const upperThird = viewportH * (1 / 3);
+			const midline = viewportH * 0.5;
+			const lowerThird = viewportH * (2 / 3);
+
+			/* Reveal-Bereich für obere Boundary-Szene */
+			const revealStartLine = viewportH * 0.4;
+			const revealEndLine = lowerThird;
 
 			const current = this.getActiveSection();
 			if (!current) {
@@ -1600,12 +1606,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			const currentText = current?.id ? this.labels[current.id] : "";
 			const aboveText = above?.id ? this.labels[above.id] : "";
 			const belowText = below?.id ? this.labels[below.id] : "";
-		
+
 			const currentTopText = currentText ? `>> ${currentText} >>` : "";
 			const aboveTopText = aboveText ? `>> ${aboveText} >>` : "";
 			const belowBottomText = belowText ? `<< ${belowText} <<` : "";
 			const currentBottomText = currentText ? `<< ${currentText} <<` : "";
-						
+
 			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
 
 			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
@@ -1626,7 +1632,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
 			const hintHeight = topMetrics.height || 120;
 			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-			
+
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
@@ -1644,17 +1650,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				const boundaryTrackY = currentDockY + (upperBoundaryY + boundaryGap - topAnchorTop);
 				const topPrimaryY = Math.max(currentDockY, boundaryTrackY);
 
-				/* 
-				   WICHTIG:
-				   Reveal / Swap direkt an die echte Sektionsgrenze koppeln,
-				   nicht mehr an topPrimaryBottom.
-				*/
 				const revealProgress = this.clamp01(
 					(upperBoundaryY - revealStartLine) / Math.max(1, revealEndLine - revealStartLine)
 				);
 
 				const swapStartLine = viewportH * 0.52;
-				const swapEndLine = viewportH * 0.68;
+				const swapEndLine = lowerThird;
 
 				const swapProgress = this.clamp01(
 					(upperBoundaryY - swapStartLine) / Math.max(1, swapEndLine - swapStartLine)
@@ -1692,7 +1693,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 				return;
 			}
-			
+
 			/* =========================
 			   FALL 2B:
 			   sichtbare Grenze current | below
@@ -1700,8 +1701,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			   unten: below blendet aus
 			========================= */
 			if (lowerBoundaryVisible && below) {
-				const midline = viewportH * 0.5;
-
 				const exitProgress = this.clamp01(
 					(midline - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
 				);
@@ -1739,7 +1738,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 				return;
 			}
-			
+
 			/* =========================
 			   FALL 1:
 			   keine Grenze sichtbar
@@ -1772,7 +1771,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.updateHintVisuals();
 		},
-
+		
 		getTopHintDockY(hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
 			const visualExtent = metrics.width || 120;
