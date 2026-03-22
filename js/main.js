@@ -1761,11 +1761,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				);
 
 				const travel = hintHeight + 40;
-
-				/* aktueller Hint soll NICHT nach oben springen,
-				   sondern der unteren Boundary nach unten folgen */
+		
 				const boundaryFollowProgress = this.clamp01(
-					(lowerBoundaryY - lowerThird) / Math.max(1, viewportH - lowerThird)
+					(viewportH - lowerBoundaryY) / Math.max(1, viewportH - lowerThird)
 				);
 
 				const topPrimaryY = this.lerp(
