@@ -1184,6 +1184,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		hintRaf: null,
 		
+		upperRevealState: {
+			key: null,
+			startTime: 0,
+			active: false
+		},
+		
 		labels: {
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
@@ -1563,6 +1569,55 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* identische Grenze */
 			return (upperRect.bottom + lowerRect.top) * 0.5;
 		},
+		
+		getNavbarBottom() {
+			if (!DOM.navbar) return 0;
+			const rect = DOM.navbar.getBoundingClientRect();
+			return rect.bottom;
+		},
+
+		getTopHintRevealDockY(hintEl, text) {
+			if (!hintEl) return 0;
+
+			const metrics = this.measureHint(hintEl, text);
+			const visualExtent = metrics.width || 120;
+
+			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+			const navbarBottom = this.getNavbarBottom();
+			const anchorTop = hintEl.parentElement?.getBoundingClientRect().top || 0;
+
+			return Math.max(
+				0,
+				visualExtent + ((navbarBottom + boundaryGap) - anchorTop)
+			);
+		},
+
+		getUpperRevealProgress(boundaryKey, upperBoundaryY, revealStartLine) {
+			const crossed =
+				!!boundaryKey &&
+				upperBoundaryY !== null &&
+				upperBoundaryY <= revealStartLine;
+
+			if (!crossed) {
+				this.upperRevealState.key = null;
+				this.upperRevealState.startTime = 0;
+				this.upperRevealState.active = false;
+				return 0;
+			}
+
+			if (
+				!this.upperRevealState.active ||
+				this.upperRevealState.key !== boundaryKey
+			) {
+				this.upperRevealState.key = boundaryKey;
+				this.upperRevealState.startTime = performance.now();
+				this.upperRevealState.active = true;
+			}
+
+			return this.clamp01(
+				(performance.now() - this.upperRevealState.startTime) / 1000
+			);
+		},
 
 		updateBoundaryScene() {
 			if (!this.root) return;
@@ -1583,9 +1638,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			const midline = viewportH * 0.5;
 			const lowerThird = viewportH * (2 / 3);
 
-			/* Reveal-Bereich für obere Boundary-Szene */
-			const revealStartLine = viewportH * 0.4;
-			const revealEndLine = lowerThird;
+			/* Reveal-Bereich für obere Boundary-Szene */		
+			const revealStartRatio = utils.getRootNumber("--section-hint-upper-reveal-start", 0.4);
+			const revealStartLine = viewportH * revealStartRatio;
 
 			const current = this.getActiveSection();
 			if (!current) {
@@ -1639,42 +1694,28 @@ document.addEventListener("DOMContentLoaded", () => {
 			   unten: below bleibt sichtbar
 			========================= */
 			if (upperBoundaryVisible && above) {
-				const topAnchorRect = this.topPrimary.parentElement.getBoundingClientRect();
-				const topAnchorTop = topAnchorRect.top;
-
+				const boundaryKey = `${above.id}->${current.id}`;
 				const currentDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
-				const incomingDockY = this.getTopHintDockY(this.topIncoming, aboveTopText || " ");
-
-				/* sichtbare Oberkante des rotierten Hints soll 0.3rem unter der Sektionsgrenze liegen */
-				const boundaryTrackY = currentDockY + (upperBoundaryY + boundaryGap - topAnchorTop);
-				const topPrimaryY = Math.max(currentDockY, boundaryTrackY);
-
-				const revealProgress = this.clamp01(
-					(upperBoundaryY - revealStartLine) / Math.max(1, revealEndLine - revealStartLine)
+				const revealDockY = this.getTopHintRevealDockY(this.topIncoming, aboveTopText || " ");
+				const fadeProgress = this.getUpperRevealProgress(
+					boundaryKey,
+					upperBoundaryY,
+					revealStartLine
 				);
 
-				const swapStartLine = viewportH * 0.52;
-				const swapEndLine = lowerThird;
-
-				const swapProgress = this.clamp01(
-					(upperBoundaryY - swapStartLine) / Math.max(1, swapEndLine - swapStartLine)
-				);
-
-				const incomingHiddenY = incomingDockY - (hintHeight + 40);
-				const incomingShownY = incomingDockY;
-
-				const incomingY = this.lerp(incomingHiddenY, incomingShownY, revealProgress);
+				const currentY = fadeProgress > 0 ? revealDockY : currentDockY;
+				const incomingY = revealDockY;
 
 				this.setHintState(this.topPrimary, {
 					text: currentTopText,
-					y: topPrimaryY,
-					opacity: 1 - swapProgress
+					y: currentY,
+					opacity: currentTopText ? (1 - fadeProgress) : 0
 				});
 
 				this.setHintState(this.topIncoming, {
 					text: aboveTopText,
 					y: incomingY,
-					opacity: revealProgress
+					opacity: aboveTopText ? fadeProgress : 0
 				});
 
 				this.setHintState(this.bottomPrimary, {
@@ -1700,6 +1741,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			   unten: below blendet aus
 			========================= */
 			if (lowerBoundaryVisible && below) {
+				this.upperRevealState.key = null;
+				this.upperRevealState.startTime = 0;
+				this.upperRevealState.active = false;
+
 				const exitProgress = this.clamp01(
 					(midline - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
 				);
@@ -1744,6 +1789,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			   oben: current
 			   unten: below
 			========================= */
+			this.upperRevealState.key = null;
+			this.upperRevealState.startTime = 0;
+			this.upperRevealState.active = false;
+			
 			this.setHintState(this.topPrimary, {
 				text: currentTopText,
 				y: topDockY,
