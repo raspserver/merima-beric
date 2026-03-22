@@ -51,6 +51,16 @@
 	--section-indicator-phase-shift: 0.22s;
 	
 	/* =========================
+	   SCROLL SECTION HINTS
+	========================= */
+
+	--section-hint-boundary-gap: 0.3rem;
+	--section-hint-color: rgba(45, 45, 45, 0.78);
+	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
+	--section-hint-size: 0.82rem;
+	--section-hint-letter-spacing: 0.22em;
+	
+	/* =========================
 	   NAVBAR STRUCTURE
 	========================= */
 	--nav-height: 78px;
@@ -2245,17 +2255,7 @@ section > .section-scroll-head + * {
 	}
 }
 
-/* =========================
-   SCROLL SECTION HINTS
-========================= */
 
-:root {
-	--section-hint-boundary-gap: 0.3rem;
-	--section-hint-color: rgba(45, 45, 45, 0.78);
-	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
-	--section-hint-size: 0.82rem;
-	--section-hint-letter-spacing: 0.22em;
-}
 
 .scroll-section-hints {
 	position: fixed;
