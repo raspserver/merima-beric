@@ -1318,16 +1318,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			return active?.section || sections[0];
 		},
 
-		getNextSection(activeSection) {
-			const sections = this.getContentSections();
-			if (!activeSection) return sections[0] || null;
-
-			const index = sections.findIndex(section => section === activeSection);
-			if (index === -1) return sections[0] || null;
-
-			return sections[index + 1] || null;
-		},
-
 		show() {
 			if (!this.root) return;
 			this.root.classList.add("is-visible");
