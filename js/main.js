@@ -1199,24 +1199,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.root = document.createElement("div");
 			this.root.className = "scroll-section-hints";
 			this.root.setAttribute("aria-hidden", "true");
-
+			
 			this.root.innerHTML = `
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--top">
 					<div class="scroll-section-hint scroll-section-hint--top-primary">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
-						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
 					</div>
 
 					<div class="scroll-section-hint scroll-section-hint--top-incoming">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
-						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
 					</div>
 				</div>
 
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--bottom">
 					<div class="scroll-section-hint scroll-section-hint--bottom-primary">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
-						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
 					</div>
 				</div>
 			`;
@@ -1368,93 +1365,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			}, { passive: true });	
 			
 		},
-
+		
 		setHintText(hintEl, text) {
 			if (!hintEl) return;
 
 			const base = hintEl.querySelector(".scroll-section-hint-base");
-			const invert = hintEl.querySelector(".scroll-section-hint-invert");
-
 			if (base) base.textContent = text;
-			if (invert) invert.textContent = text;
-		},
-
-		getDarkSectionRects() {
-			return ["services", "contact"]
-				.map(id => document.getElementById(id))
-				.filter(Boolean)
-				.map(el => el.getBoundingClientRect());
-		},
-
-		getIntersectionSegment(rectA, rectB) {
-			const top = Math.max(rectA.top, rectB.top);
-			const bottom = Math.min(rectA.bottom, rectB.bottom);
-
-			if (bottom <= top) return null;
-
-			return { top, bottom, height: bottom - top };
-		},
-			
-		updateHintVisuals() {
-			const hints = [
-				this.topPrimary,
-				this.topIncoming,
-				this.bottomPrimary,
-			].filter(Boolean);
-
-			if (!hints.length) return;
-
-			const heroRect = DOM.hero?.getBoundingClientRect() || null;
-			const darkRects = this.getDarkSectionRects();
-
-			hints.forEach(hint => {
-
-				const rect = hint.getBoundingClientRect();
-				const hintHeight = rect.height || 1;
-
-				let clipTop = 0;
-				let clipBottom = 0;
-
-				if (heroRect) {
-					const heroOverlap = this.getIntersectionSegment(rect, heroRect);
-
-					if (heroOverlap) {
-						if (heroRect.top <= rect.top) {
-							clipTop = Math.max(0, heroOverlap.bottom - rect.top);
-						} else if (heroRect.bottom >= rect.bottom) {
-							clipBottom = Math.max(0, rect.bottom - heroOverlap.top);
-						} else {
-							clipTop = Math.max(0, heroOverlap.top - rect.top);
-							clipBottom = Math.max(0, rect.bottom - heroOverlap.bottom);
-						}
-					}
-				}
-
-				hint.style.setProperty("--hint-clip-top", `${clipTop}px`);
-				hint.style.setProperty("--hint-clip-bottom", `${clipBottom}px`);
-
-				let bestOverlap = null;
-
-				for (const darkRect of darkRects) {
-					const overlap = this.getIntersectionSegment(rect, darkRect);
-					if (!overlap) continue;
-
-					if (!bestOverlap || overlap.height > bestOverlap.height) {
-						bestOverlap = overlap;
-					}
-				}
-
-				if (bestOverlap) {
-					const darkClipTop = Math.max(0, bestOverlap.top - rect.top);
-					const darkClipBottom = Math.max(0, rect.bottom - bestOverlap.bottom);
-
-					hint.style.setProperty("--hint-dark-clip-top", `${darkClipTop}px`);
-					hint.style.setProperty("--hint-dark-clip-bottom", `${darkClipBottom}px`);
-				} else {
-					hint.style.setProperty("--hint-dark-clip-top", `${hintHeight}px`);
-					hint.style.setProperty("--hint-dark-clip-bottom", `0px`);
-				}
-			});
 		},
 	
 		revealTemporarily() {
@@ -1561,7 +1477,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
 				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
 				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
-				this.updateHintVisuals();
 				return;
 			}
 
@@ -1579,7 +1494,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
 				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
 				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
-				this.updateHintVisuals();
 				return;
 			}
 
@@ -1671,7 +1585,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					opacity: belowBottomText ? 1 : 0
 				});
 
-				this.updateHintVisuals();
 				return;
 			}
 
@@ -1729,7 +1642,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					opacity: belowBottomText ? exitProgress : 0
 				});
 
-				this.updateHintVisuals();
 				return;
 			}
 
@@ -1758,7 +1670,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				opacity: belowBottomText ? 1 : 0
 			});
 
-			this.updateHintVisuals();
 		},
 		
 		getTopHintDockY(hintEl, text) {
@@ -1785,7 +1696,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateTopAnchor();
 				this.updateColumn();
 				this.updateBoundaryScene();
-				this.updateHintVisuals();
 			});
 		},
 		
