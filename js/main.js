@@ -1542,23 +1542,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				const navbarBottom = this.getNavbarBottom();
 				const anchorTop = navbarBottom + boundaryGap;
 
-				/* vertikale Ausdehnung des rotierten Hints */
 				const visualExtent = topMetrics.width || 120;
 
-				/* Dock-Position: Hint-Unterkante liegt am Anchor */
-				const dockY = topDockY;
-
-				/* Boundary-Folge:
-				   Unterkante des Hints = upperBoundaryY - boundaryGap
-				   => topY = boundaryY - gap - hintHeight
-				*/
-				const boundaryFollowY = upperBoundaryY - anchorTop - boundaryGap;
-
-				/* erst andocken, dann 1:1 mit der Boundary nach unten laufen */
-				const topPrimaryY = Math.max(dockY, boundaryFollowY);
+				/* Unterkante des rotierten Hints soll boundaryGap über der Boundary liegen */
+				const topPrimaryY = upperBoundaryY - anchorTop - boundaryGap - visualExtent;
 				const topIncomingY = topPrimaryY;
 
-				/* Fade wie bisher */
 				const fadeStartLine = upperThird;
 				const fadeEndLine = midline;
 
