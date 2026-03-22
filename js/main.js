@@ -1693,7 +1693,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			   oben: current -> above
 			   unten: below bleibt sichtbar
 			========================= */
-			if (upperBoundaryVisible && above) {
+			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
 				const boundaryKey = `${above.id}->${current.id}`;
 				const currentDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
 				const revealDockY = this.getTopHintRevealDockY(this.topIncoming, aboveTopText || " ");
@@ -1746,7 +1746,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			   oben: current bleibt sichtbar
 			   unten: below blendet aus
 			========================= */
-			if (lowerBoundaryVisible && below) {
+			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
 				this.upperRevealState.key = null;
 				this.upperRevealState.startTime = 0;
 				this.upperRevealState.active = false;
