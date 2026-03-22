@@ -1177,13 +1177,25 @@ document.addEventListener("DOMContentLoaded", () => {
 	const scrollSectionHintModule = {
 		measurer: null,
 		metricsCache: new Map(),
-		
+
 		root: null,
 		hideTimer: null,
 		lastKnownScrollY: window.scrollY,
-		
+
 		hintRaf: null,
-		
+
+		motion: {
+			topPrimaryY: 0,
+			topIncomingY: 0,
+			bottomPrimaryY: 0,
+
+			topPrimaryOpacity: 0,
+			topIncomingOpacity: 0,
+			bottomPrimaryOpacity: 0,
+
+			raf: null
+		},
+
 		labels: {
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
@@ -1199,7 +1211,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.root = document.createElement("div");
 			this.root.className = "scroll-section-hints";
 			this.root.setAttribute("aria-hidden", "true");
-			
+
 			this.root.innerHTML = `
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--top">
 					<div class="scroll-section-hint scroll-section-hint--top-primary">
@@ -1219,7 +1231,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			`;
 
 			document.body.appendChild(this.root);
-			
+
 			this.measurer = document.createElement("span");
 			this.measurer.className = "scroll-section-hint-measurer";
 			document.body.appendChild(this.measurer);
@@ -1228,7 +1240,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.topIncoming = this.root.querySelector(".scroll-section-hint--top-incoming");
 			this.bottomPrimary = this.root.querySelector(".scroll-section-hint--bottom-primary");
 		},
-		
+
 		getContentSections() {
 			return state.orderedSections.filter(section => {
 				if (!section) return false;
@@ -1245,7 +1257,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return rect.top <= probeY && rect.bottom > probeY;
 		},
-		
+
 		getColumnLeft() {
 			const aboutImage =
 				document.querySelector("#about .about-image-wrapper") ||
@@ -1256,11 +1268,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (Number.isFinite(rect.left)) {
 					const columnCenter = rect.left / 2;
-
-					/* Rotierter Hint ist visuell noch etwas rechts vom Anchor,
-					   deshalb halbe Hint-Dicke nach links korrigieren */
 					const hintThickness = this.measureHint(this.topPrimary, ">> ÜBER MICH >>").height || 16;
-
 					return Math.max(12, columnCenter - (hintThickness / 2));
 				}
 			}
@@ -1272,7 +1280,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (Number.isFinite(rect.left)) {
 					const columnCenter = rect.left / 2;
 					const hintThickness = this.measureHint(this.topPrimary, ">> ÜBER MICH >>").height || 16;
-
 					return Math.max(12, columnCenter - (hintThickness / 2));
 				}
 			}
@@ -1340,7 +1347,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.scheduleBoundarySceneUpdate();
 			this.revealTemporarily();
 		},
-				
+
 		bindEvents() {
 			window.addEventListener("scroll", () => this.handleScroll(), { passive: true });
 
@@ -1362,17 +1369,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			window.addEventListener("touchmove", () => {
 				this.pulse();
-			}, { passive: true });	
-			
+			}, { passive: true });
 		},
-		
+
 		setHintText(hintEl, text) {
 			if (!hintEl) return;
 
 			const base = hintEl.querySelector(".scroll-section-hint-base");
 			if (base) base.textContent = text;
 		},
-	
+
 		revealTemporarily() {
 			if (!this.root || state.programmaticScroll) return;
 
@@ -1398,7 +1404,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hide();
 			}, 2000);
 		},
-		
+
 		init() {
 			this.build();
 			this.updateTopAnchor();
@@ -1414,12 +1420,88 @@ document.addEventListener("DOMContentLoaded", () => {
 		} = {}) {
 			if (!hintEl) return;
 
+			const snappedY = Math.round(y * 2) / 2;
+			const safeOpacity = Math.max(0, Math.min(1, opacity));
+
 			this.setHintText(hintEl, text);
-			hintEl.style.setProperty("--hint-y", `${y}px`);
-			hintEl.style.opacity = `${opacity}`;
-			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
+			hintEl.style.setProperty("--hint-y", `${snappedY}px`);
+			hintEl.style.opacity = `${safeOpacity}`;
+			hintEl.classList.toggle("is-empty", !text || safeOpacity <= 0.001);
 		},
-		
+
+		animateHintState(targets) {
+			const m = this.motion;
+
+			if (m.raf) {
+				cancelAnimationFrame(m.raf);
+				m.raf = null;
+			}
+
+			const step = () => {
+				const lerp = (a, b, t) => a + (b - a) * t;
+
+				m.topPrimaryY = lerp(m.topPrimaryY, targets.topPrimaryY, 0.18);
+				m.topIncomingY = lerp(m.topIncomingY, targets.topIncomingY, 0.18);
+				m.bottomPrimaryY = lerp(m.bottomPrimaryY, targets.bottomPrimaryY, 0.18);
+
+				m.topPrimaryOpacity = lerp(m.topPrimaryOpacity, targets.topPrimaryOpacity, 0.16);
+				m.topIncomingOpacity = lerp(m.topIncomingOpacity, targets.topIncomingOpacity, 0.16);
+				m.bottomPrimaryOpacity = lerp(m.bottomPrimaryOpacity, targets.bottomPrimaryOpacity, 0.16);
+
+				this.setHintState(this.topPrimary, {
+					text: targets.topPrimaryText,
+					y: m.topPrimaryY,
+					opacity: m.topPrimaryOpacity
+				});
+
+				this.setHintState(this.topIncoming, {
+					text: targets.topIncomingText,
+					y: m.topIncomingY,
+					opacity: m.topIncomingOpacity
+				});
+
+				this.setHintState(this.bottomPrimary, {
+					text: targets.bottomPrimaryText,
+					y: m.bottomPrimaryY,
+					opacity: m.bottomPrimaryOpacity
+				});
+
+				const done =
+					Math.abs(m.topPrimaryY - targets.topPrimaryY) < 0.25 &&
+					Math.abs(m.topIncomingY - targets.topIncomingY) < 0.25 &&
+					Math.abs(m.bottomPrimaryY - targets.bottomPrimaryY) < 0.25 &&
+					Math.abs(m.topPrimaryOpacity - targets.topPrimaryOpacity) < 0.01 &&
+					Math.abs(m.topIncomingOpacity - targets.topIncomingOpacity) < 0.01 &&
+					Math.abs(m.bottomPrimaryOpacity - targets.bottomPrimaryOpacity) < 0.01;
+
+				if (!done) {
+					m.raf = requestAnimationFrame(step);
+				} else {
+					m.raf = null;
+
+					this.setHintState(this.topPrimary, {
+						text: targets.topPrimaryText,
+						y: targets.topPrimaryY,
+						opacity: targets.topPrimaryOpacity
+					});
+
+					this.setHintState(this.topIncoming, {
+						text: targets.topIncomingText,
+						y: targets.topIncomingY,
+						opacity: targets.topIncomingOpacity
+					});
+
+					this.setHintState(this.bottomPrimary, {
+						text: targets.bottomPrimaryText,
+						y: targets.bottomPrimaryY,
+						opacity: targets.bottomPrimaryOpacity
+					});
+				}
+			};
+
+			m.raf = requestAnimationFrame(step);
+		},
+
 		clamp01(value) {
 			return Math.max(0, Math.min(1, value));
 		},
@@ -1446,7 +1528,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.metricsCache.set(key, metrics);
 			return metrics;
 		},
-		
+
 		getSectionRect(id) {
 			const el = document.getElementById(id);
 			return el ? el.getBoundingClientRect() : null;
@@ -1460,10 +1542,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			const upperRect = upper.getBoundingClientRect();
 			const lowerRect = lower.getBoundingClientRect();
 
-			/* identische Grenze */
 			return (upperRect.bottom + lowerRect.top) * 0.5;
 		},
-		
+
 		getNavbarBottom() {
 			if (!DOM.navbar) return 0;
 			const rect = DOM.navbar.getBoundingClientRect();
@@ -1474,15 +1555,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.root) return;
 
 			if (this.isHeroActive()) {
-				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
-				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
-				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
+				this.animateHintState({
+					topPrimaryText: "",
+					topIncomingText: "",
+					bottomPrimaryText: "",
+					topPrimaryY: 0,
+					topIncomingY: 0,
+					bottomPrimaryY: 0,
+					topPrimaryOpacity: 0,
+					topIncomingOpacity: 0,
+					bottomPrimaryOpacity: 0
+				});
 				return;
 			}
 
 			const viewportH = window.innerHeight;
-
-			/* zentrale Referenzlinien */
 			const upperThird = viewportH * (1 / 3);
 			const midline = viewportH * 0.5;
 			const lowerThird = viewportH * (2 / 3);
@@ -1491,9 +1578,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			let current = this.getActiveSection();
 			if (!current) {
-				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
-				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
-				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
+				this.animateHintState({
+					topPrimaryText: "",
+					topIncomingText: "",
+					bottomPrimaryText: "",
+					topPrimaryY: 0,
+					topIncomingY: 0,
+					bottomPrimaryY: 0,
+					topPrimaryOpacity: 0,
+					topIncomingOpacity: 0,
+					bottomPrimaryOpacity: 0
+				});
 				return;
 			}
 
@@ -1514,7 +1609,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
 			const lowerBoundaryY = below ? this.getBoundaryY(current.id, below.id) : null;
-		
+
 			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
 			const hintHeight = topMetrics.height || 120;
 			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
@@ -1529,15 +1624,19 @@ document.addEventListener("DOMContentLoaded", () => {
 				lowerBoundaryY !== null &&
 				lowerBoundaryY > -boundaryVisibilityMargin &&
 				lowerBoundaryY < viewportH + boundaryVisibilityMargin;
-			
-			/* =========================
-			   FALL 2A:
-			   sichtbare Grenze above | current
-			   oben: current bewegt sich mit der oberen Boundary abwärts
-			   und hält zur Boundary immer den Gap ein
-			   oben incoming: above blendet positionsbasiert ein
-			   unten: below bleibt sichtbar
-			========================= */
+
+			let topPrimaryText = "";
+			let topIncomingText = "";
+			let bottomPrimaryText = "";
+
+			let topPrimaryY = 0;
+			let topIncomingY = 0;
+			let bottomPrimaryY = 0;
+
+			let topPrimaryOpacity = 0;
+			let topIncomingOpacity = 0;
+			let bottomPrimaryOpacity = 0;
+
 			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
 				const navbarBottom = this.getNavbarBottom();
 				const anchorTop = navbarBottom + boundaryGap;
@@ -1545,12 +1644,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				const visualExtent = topMetrics.width || 120;
 				const dockY = topDockY;
 
-				/* Oberkante des rotierten Hints soll boundaryGap unter der Boundary liegen */
 				const boundaryFollowY =
 					upperBoundaryY - anchorTop + boundaryGap + visualExtent;
 
-				const topPrimaryY = Math.max(dockY, boundaryFollowY);
-				const topIncomingY = topPrimaryY;
+				const nextTopPrimaryY = Math.max(dockY, boundaryFollowY);
+				const nextTopIncomingY = nextTopPrimaryY;
 
 				const fadeStartLine = upperThird;
 				const fadeEndLine = midline;
@@ -1559,33 +1657,32 @@ document.addEventListener("DOMContentLoaded", () => {
 					(upperBoundaryY - fadeStartLine) / Math.max(1, fadeEndLine - fadeStartLine)
 				);
 
-				this.setHintState(this.topPrimary, {
-					text: currentTopText,
-					y: topPrimaryY,
-					opacity: currentTopText ? (1 - incomingProgress) : 0
-				});
+				topPrimaryText = currentTopText;
+				topIncomingText = aboveTopText;
+				bottomPrimaryText = belowBottomText;
 
-				this.setHintState(this.topIncoming, {
-					text: aboveTopText,
-					y: topIncomingY,
-					opacity: aboveTopText ? incomingProgress : 0
-				});
+				topPrimaryY = nextTopPrimaryY;
+				topIncomingY = nextTopIncomingY;
+				bottomPrimaryY = 0;
 
-				this.setHintState(this.bottomPrimary, {
-					text: belowBottomText,
-					y: 0,
-					opacity: belowBottomText ? 1 : 0
-				});
+				topPrimaryOpacity = currentTopText ? (1 - incomingProgress) : 0;
+				topIncomingOpacity = aboveTopText ? incomingProgress : 0;
+				bottomPrimaryOpacity = belowBottomText ? 1 : 0;
 
+				this.animateHintState({
+					topPrimaryText,
+					topIncomingText,
+					bottomPrimaryText,
+					topPrimaryY,
+					topIncomingY,
+					bottomPrimaryY,
+					topPrimaryOpacity,
+					topIncomingOpacity,
+					bottomPrimaryOpacity
+				});
 				return;
 			}
-			
-			/* =========================
-			   FALL 2B:
-			   sichtbare Grenze current | below
-			   oben: current bewegt sich mit der unteren Boundary abwärts
-			   unten: below blendet aus
-			========================= */
+
 			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
 				const navbarBottom = this.getNavbarBottom();
 
@@ -1597,7 +1694,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					(lowerBoundaryY - followStartLine) / Math.max(1, followEndLine - followStartLine)
 				);
 
-				const topPrimaryY = this.lerp(
+				const nextTopPrimaryY = this.lerp(
 					topDockY,
 					topDockY + travel,
 					boundaryFollowProgress
@@ -1610,66 +1707,69 @@ document.addEventListener("DOMContentLoaded", () => {
 					(lowerBoundaryY - fadeStartLine) / Math.max(1, fadeEndLine - fadeStartLine)
 				);
 
-				const bottomPrimaryY = this.clampBottomHintY(
+				const nextBottomPrimaryY = this.clampBottomHintY(
 					(1 - exitProgress) * -travel,
 					this.bottomPrimary,
 					belowBottomText
 				);
 
-				this.setHintState(this.topPrimary, {
-					text: currentTopText,
-					y: topPrimaryY,
-					opacity: currentTopText ? 1 : 0
-				});
+				topPrimaryText = currentTopText;
+				topIncomingText = "";
+				bottomPrimaryText = belowBottomText;
 
-				this.setHintState(this.topIncoming, {
-					text: "",
-					y: 0,
-					opacity: 0
-				});
+				topPrimaryY = nextTopPrimaryY;
+				topIncomingY = 0;
+				bottomPrimaryY = nextBottomPrimaryY;
 
-				this.setHintState(this.bottomPrimary, {
-					text: belowBottomText,
-					y: bottomPrimaryY,
-					opacity: belowBottomText ? exitProgress : 0
-				});
+				topPrimaryOpacity = currentTopText ? 1 : 0;
+				topIncomingOpacity = 0;
+				bottomPrimaryOpacity = belowBottomText ? exitProgress : 0;
 
+				this.animateHintState({
+					topPrimaryText,
+					topIncomingText,
+					bottomPrimaryText,
+					topPrimaryY,
+					topIncomingY,
+					bottomPrimaryY,
+					topPrimaryOpacity,
+					topIncomingOpacity,
+					bottomPrimaryOpacity
+				});
 				return;
 			}
 
-			/* =========================
-			   FALL 1:
-			   keine Grenze sichtbar
-			   oben: current
-			   unten: below
-			========================= */
-			
-			this.setHintState(this.topPrimary, {
-				text: currentTopText,
-				y: topDockY,
-				opacity: currentTopText ? 1 : 0
-			});
-			
-			this.setHintState(this.topIncoming, {
-				text: "",
-				y: 0,
-				opacity: 0
-			});
+			topPrimaryText = currentTopText;
+			topIncomingText = "";
+			bottomPrimaryText = belowBottomText;
 
-			this.setHintState(this.bottomPrimary, {
-				text: belowBottomText,
-				y: 0,
-				opacity: belowBottomText ? 1 : 0
-			});
+			topPrimaryY = topDockY;
+			topIncomingY = 0;
+			bottomPrimaryY = 0;
 
+			topPrimaryOpacity = currentTopText ? 1 : 0;
+			topIncomingOpacity = 0;
+			bottomPrimaryOpacity = belowBottomText ? 1 : 0;
+
+			this.animateHintState({
+				topPrimaryText,
+				topIncomingText,
+				bottomPrimaryText,
+				topPrimaryY,
+				topIncomingY,
+				bottomPrimaryY,
+				topPrimaryOpacity,
+				topIncomingOpacity,
+				bottomPrimaryOpacity
+			});
 		},
-		
+
 		getTopHintDockY(hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
 			const visualExtent = metrics.width || 120;
 			return Math.max(0, visualExtent);
 		},
-		
+
 		clampBottomHintY(y, hintEl, text) {
 			const metrics = this.measureHint(hintEl, text);
 			const visualExtent = metrics.width || 120;
@@ -1679,18 +1779,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return Math.max(minY, Math.min(maxY, y));
 		},
-			
-		scheduleBoundarySceneUpdate() {
-			if (state.hintRaf) return;
 
-			state.hintRaf = requestAnimationFrame(() => {
-				state.hintRaf = null;
+		scheduleBoundarySceneUpdate() {
+			if (this.hintRaf) return;
+
+			this.hintRaf = requestAnimationFrame(() => {
+				this.hintRaf = null;
 				this.updateTopAnchor();
 				this.updateColumn();
 				this.updateBoundaryScene();
 			});
 		},
-		
+
 		updateTopAnchor() {
 			if (!this.root) return;
 
@@ -1702,7 +1802,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				`${navbarBottom + boundaryGap}px`
 			);
 		}
-
 	};
 
 	/* =========================================================
