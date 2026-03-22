@@ -1697,8 +1697,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
 			const lowerBoundaryY = below ? this.getBoundaryY(current.id, below.id) : null;
 
-			const boundaryVisibilityMargin = 120;
-
 			const upperBoundaryVisible =
 				upperBoundaryY !== null &&
 				upperBoundaryY > -boundaryVisibilityMargin &&
