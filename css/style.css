@@ -59,6 +59,7 @@
 	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
 	--section-hint-size: 0.82rem;
 	--section-hint-letter-spacing: 0.22em;
+	--section-hint-switch-threshold: 0.7;
 	
 	/* =========================
 	   NAVBAR STRUCTURE

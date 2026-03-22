@@ -1512,6 +1512,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			const rect = DOM.navbar.getBoundingClientRect();
 			return rect.bottom;
 		},
+		
+		getHintSwitchLineY() {
+			const threshold = utils.getRootNumber("--section-hint-switch-threshold", 0.7);
+			return window.innerHeight * threshold;
+		},
 
 		updateBoundaryScene() {
 			if (!this.root) return;
@@ -1530,11 +1535,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 				return;
 			}
-
+			
 			const viewportH = window.innerHeight;
 			const upperThird = viewportH * (1 / 3);
 			const midline = viewportH * 0.5;
 			const lowerThird = viewportH * (2 / 3);
+			const switchLine = this.getHintSwitchLineY();
 
 			const sections = this.getContentSections();
 
@@ -1598,7 +1604,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			let topPrimaryOpacity = 0;
 			let topIncomingOpacity = 0;
 			let bottomPrimaryOpacity = 0;
-
+		
 			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
 				const navbarBottom = this.getNavbarBottom();
 				const anchorTop = navbarBottom + boundaryGap;
@@ -1612,23 +1618,28 @@ document.addEventListener("DOMContentLoaded", () => {
 				const nextTopPrimaryY = Math.max(dockY, boundaryFollowY);
 				const nextTopIncomingY = nextTopPrimaryY;
 
-				const fadeStartLine = upperThird;
-				const fadeEndLine = midline;
-
 				const incomingProgress = this.clamp01(
-					(upperBoundaryY - fadeStartLine) / Math.max(1, fadeEndLine - fadeStartLine)
+					(upperBoundaryY - upperThird) / Math.max(1, switchLine - upperThird)
 				);
 
-				topPrimaryText = currentTopText;
-				topIncomingText = aboveTopText;
+				const hasSwitched = upperBoundaryY >= switchLine;
+
+				topPrimaryText = hasSwitched ? aboveTopText : currentTopText;
+				topIncomingText = hasSwitched ? "" : aboveTopText;
 				bottomPrimaryText = belowBottomText;
 
 				topPrimaryY = nextTopPrimaryY;
 				topIncomingY = nextTopIncomingY;
 				bottomPrimaryY = 0;
 
-				topPrimaryOpacity = currentTopText ? (1 - incomingProgress) : 0;
-				topIncomingOpacity = aboveTopText ? incomingProgress : 0;
+				if (hasSwitched) {
+					topPrimaryOpacity = aboveTopText ? 1 : 0;
+					topIncomingOpacity = 0;
+				} else {
+					topPrimaryOpacity = currentTopText ? (1 - incomingProgress) : 0;
+					topIncomingOpacity = aboveTopText ? incomingProgress : 0;
+				}
+
 				bottomPrimaryOpacity = belowBottomText ? 1 : 0;
 
 				this.animateHintState({
