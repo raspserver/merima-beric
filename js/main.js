@@ -1643,7 +1643,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			const revealStartRatio = utils.getRootNumber("--section-hint-upper-reveal-start", 0.4);
 			const revealStartLine = viewportH * revealStartRatio;
 
-			const current = this.getActiveSection();
+			const sections = this.getContentSections();
+
+			let current = this.getActiveSection();
 			if (!current) {
 				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
 				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
@@ -1653,8 +1655,31 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
-			const sections = this.getContentSections();
-			const currentIndex = sections.findIndex(section => section === current);
+			let currentIndex = sections.findIndex(section => section === current);
+
+			/* -------------------------------------------------
+			   DOWNWARD STABILIZATION:
+			   Wenn beim Abwärtsscrollen die Grenze previous|current
+			   noch sichtbar ist, bleibt die obere Section "current".
+			   So folgt der obere Hint weiter der Boundary nach unten,
+			   statt auf die neue Section nach oben zu springen.
+			-------------------------------------------------- */
+			const boundaryVisibilityMargin = 120;
+
+			if (state.scrollDirection === "down" && currentIndex > 0) {
+				const previous = sections[currentIndex - 1];
+				const previousBoundaryY = this.getBoundaryY(previous.id, current.id);
+
+				const previousBoundaryVisible =
+					previousBoundaryY !== null &&
+					previousBoundaryY > -boundaryVisibilityMargin &&
+					previousBoundaryY < viewportH + boundaryVisibilityMargin;
+
+				if (previousBoundaryVisible) {
+					current = previous;
+					currentIndex = sections.findIndex(section => section === current);
+				}
+			}
 
 			const above = currentIndex > 0 ? sections[currentIndex - 1] : null;
 			const below = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : null;
