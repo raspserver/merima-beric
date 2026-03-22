@@ -1526,10 +1526,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			hintEl.style.opacity = `${opacity}`;
 			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
 		},
-			
-		getCurrentSectionDownwardHintOffset() {
-			return 0;
-		},
 		
 		clamp01(value) {
 			return Math.max(0, Math.min(1, value));
@@ -1807,12 +1803,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.upperRevealState.key = null;
 			this.upperRevealState.startTime = 0;
 			this.upperRevealState.active = false;
-
-			const downwardFollowY = this.getCurrentSectionDownwardHintOffset(current);
-
+			
 			this.setHintState(this.topPrimary, {
 				text: currentTopText,
-				y: topDockY - downwardFollowY,
+				y: topDockY,
 				opacity: currentTopText ? 1 : 0
 			});
 			
