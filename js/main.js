@@ -1218,11 +1218,6 @@ document.addEventListener("DOMContentLoaded", () => {
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
 					</div>
-
-					<div class="scroll-section-hint scroll-section-hint--bottom-swap">
-						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
-						<span class="scroll-section-hint-text scroll-section-hint-invert"></span>
-					</div>
 				</div>
 			`;
 
@@ -1235,7 +1230,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.topPrimary = this.root.querySelector(".scroll-section-hint--top-primary");
 			this.topIncoming = this.root.querySelector(".scroll-section-hint--top-incoming");
 			this.bottomPrimary = this.root.querySelector(".scroll-section-hint--bottom-primary");
-			this.bottomSwap = this.root.querySelector(".scroll-section-hint--bottom-swap");
 		},
 		
 		getContentSections() {
@@ -1416,7 +1410,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.topPrimary,
 				this.topIncoming,
 				this.bottomPrimary,
-				this.bottomSwap
 			].filter(Boolean);
 
 			if (!hints.length) return;
@@ -1578,7 +1571,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
 				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
 				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
-				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
 				this.updateHintVisuals();
 				return;
 			}
@@ -1597,12 +1589,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHintState(this.topPrimary, { text: "", opacity: 0 });
 				this.setHintState(this.topIncoming, { text: "", opacity: 0 });
 				this.setHintState(this.bottomPrimary, { text: "", opacity: 0 });
-				this.setHintState(this.bottomSwap, { text: "", opacity: 0 });
 				this.updateHintVisuals();
 				return;
 			}
 
-			let currentIndex = sections.findIndex(section => section === current);
+			const currentIndex = sections.findIndex(section => section === current);
 
 			const above = currentIndex > 0 ? sections[currentIndex - 1] : null;
 			const below = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : null;
@@ -1644,7 +1635,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			========================= */
 			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
 				const navbarBottom = this.getNavbarBottom();
-				const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
 
 				const followStartLine = navbarBottom + boundaryGap;
 				const followEndLine = upperThird;
@@ -1691,12 +1681,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					opacity: belowBottomText ? 1 : 0
 				});
 
-				this.setHintState(this.bottomSwap, {
-					text: "",
-					y: 0,
-					opacity: 0
-				});
-
 				this.updateHintVisuals();
 				return;
 			}
@@ -1709,7 +1693,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			========================= */
 			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
 				const navbarBottom = this.getNavbarBottom();
-				const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
 
 				const followStartLine = navbarBottom + boundaryGap;
 				const followEndLine = lowerThird;
@@ -1756,12 +1739,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					opacity: belowBottomText ? exitProgress : 0
 				});
 
-				this.setHintState(this.bottomSwap, {
-					text: "",
-					y: 0,
-					opacity: 0
-				});
-
 				this.updateHintVisuals();
 				return;
 			}
@@ -1789,12 +1766,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				text: belowBottomText,
 				y: 0,
 				opacity: belowBottomText ? 1 : 0
-			});
-
-			this.setHintState(this.bottomSwap, {
-				text: "",
-				y: 0,
-				opacity: 0
 			});
 
 			this.updateHintVisuals();
