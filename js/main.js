@@ -1184,12 +1184,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		hintRaf: null,
 		
-		upperRevealState: {
-			key: null,
-			startTime: 0,
-			active: false
-		},
-		
 		labels: {
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
@@ -1669,9 +1663,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			   unten: below bleibt sichtbar
 			========================= */
 			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
-				this.upperRevealState.key = null;
-				this.upperRevealState.startTime = 0;
-				this.upperRevealState.active = false;
 
 				const navbarBottom = this.getNavbarBottom();
 				const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
@@ -1745,9 +1736,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			   unten: below blendet aus
 			========================= */
 			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
-			this.upperRevealState.key = null;
-			this.upperRevealState.startTime = 0;
-			this.upperRevealState.active = false;
 
 			const navbarBottom = this.getNavbarBottom();
 			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
@@ -1819,9 +1807,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			   oben: current
 			   unten: below
 			========================= */
-			this.upperRevealState.key = null;
-			this.upperRevealState.startTime = 0;
-			this.upperRevealState.active = false;
 			
 			this.setHintState(this.topPrimary, {
 				text: currentTopText,
