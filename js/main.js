@@ -1527,6 +1527,28 @@ document.addEventListener("DOMContentLoaded", () => {
 			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
 		},
 		
+		getCurrentSectionDownwardHintOffset(currentSection) {
+			if (!currentSection || state.scrollDirection !== "down") return 0;
+
+			const rect = currentSection.getBoundingClientRect();
+			const viewportH = window.innerHeight;
+
+			/* Fortschritt der aktuellen Section im Viewport:
+			   0 = Anfang der Section ist am oberen Viewport-Bereich
+			   1 = Section nähert sich ihrem unteren Übergang */
+			const startLine = viewportH * 0.18;
+			const endLine = viewportH * 0.62;
+
+			const progress = this.clamp01(
+				(startLine - rect.top) / Math.max(1, startLine - endLine)
+			);
+
+			/* kleiner, eleganter Follow nach unten */
+			const maxTravel = (this.measureHint(this.topPrimary, ">> TEST <<").height || 16) + 28;
+
+			return progress * maxTravel;
+		},
+		
 		clamp01(value) {
 			return Math.max(0, Math.min(1, value));
 		},
@@ -1803,10 +1825,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.upperRevealState.key = null;
 			this.upperRevealState.startTime = 0;
 			this.upperRevealState.active = false;
-			
+
+			const downwardFollowY = this.getCurrentSectionDownwardHintOffset(current);
+
 			this.setHintState(this.topPrimary, {
 				text: currentTopText,
-				y: topDockY,
+				y: topDockY + downwardFollowY,
 				opacity: currentTopText ? 1 : 0
 			});
 
