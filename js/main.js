@@ -1533,38 +1533,32 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* =========================
 			   FALL 2A:
 			   sichtbare Grenze above | current
-			   oben: current bewegt sich mit der oberen Boundary abwärts
+			   oben: current bewegt sich 1:1 mit der oberen Boundary abwärts
 			   oben incoming: above blendet positionsbasiert ein
 			   unten: below bleibt sichtbar
 			========================= */
 			if (upperBoundaryVisible && above && state.scrollDirection === "up") {
 				const navbarBottom = this.getNavbarBottom();
 
+				/* Ab hier beginnt das Mitziehen:
+				   sobald die Boundary oben im sichtbaren Bereich erscheint */
 				const followStartLine = navbarBottom + boundaryGap;
-				const followEndLine = upperThird;
-				const travel = hintHeight + 40;
 
-				const boundaryFollowProgress = this.clamp01(
-					(upperBoundaryY - followStartLine) / Math.max(1, followEndLine - followStartLine)
-				);
+				/* 1:1-Bewegung: Boundary-Distanz seit Eintritt */
+				const boundaryDelta = Math.max(0, upperBoundaryY - followStartLine);
 
-				const topPrimaryY = this.lerp(
-					topDockY,
-					topDockY + travel,
-					boundaryFollowProgress
-				);
+				/* maximaler Weg, damit der Hint nicht endlos nach unten läuft */
+				const maxTravel = hintHeight + 40;
 
+				const topPrimaryY = topDockY + Math.min(boundaryDelta, maxTravel);
+				const topIncomingY = topDockY + Math.min(boundaryDelta, maxTravel);
+
+				/* Fade wie bisher über den mittleren Bereich */
 				const fadeStartLine = upperThird;
 				const fadeEndLine = midline;
 
 				const incomingProgress = this.clamp01(
 					(upperBoundaryY - fadeStartLine) / Math.max(1, fadeEndLine - fadeStartLine)
-				);
-
-				const topIncomingY = this.lerp(
-					topDockY,
-					topDockY + travel,
-					boundaryFollowProgress
 				);
 
 				this.setHintState(this.topPrimary, {
@@ -1587,7 +1581,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				return;
 			}
-
+			
 			/* =========================
 			   FALL 2B:
 			   sichtbare Grenze current | below
