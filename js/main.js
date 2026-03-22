@@ -1708,70 +1708,63 @@ document.addEventListener("DOMContentLoaded", () => {
 			   unten: below blendet aus
 			========================= */
 			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
+				const navbarBottom = this.getNavbarBottom();
+				const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
 
-			const navbarBottom = this.getNavbarBottom();
-			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+				const followStartLine = navbarBottom + boundaryGap;
+				const followEndLine = lowerThird;
+				const travel = hintHeight + 40;
 
-			/* Startpunkt: direkt unter der Navbar */
-			const followStartLine = navbarBottom + boundaryGap;
+				const boundaryFollowProgress = this.clamp01(
+					(lowerBoundaryY - followStartLine) / Math.max(1, followEndLine - followStartLine)
+				);
 
-			/* Bis ungefähr zur unteren Trigger-Zone darf der Hint mitwandern */
-			const followEndLine = lowerThird;
+				const topPrimaryY = this.lerp(
+					topDockY,
+					topDockY + travel,
+					boundaryFollowProgress
+				);
 
-			const travel = hintHeight + 40;
+				const fadeStartLine = midline;
+				const fadeEndLine = lowerThird;
 
-			/* Boundary bewegt sich nach unten => Hint bewegt sich mit */
-			const boundaryFollowProgress = this.clamp01(
-				(lowerBoundaryY - followStartLine) / Math.max(1, followEndLine - followStartLine)
-			);
+				const exitProgress = this.clamp01(
+					(lowerBoundaryY - fadeStartLine) / Math.max(1, fadeEndLine - fadeStartLine)
+				);
 
-			const topPrimaryY = this.lerp(
-				topDockY,
-				topDockY + travel,
-				boundaryFollowProgress
-			);
+				const bottomPrimaryY = this.clampBottomHintY(
+					(1 - exitProgress) * -travel,
+					this.bottomPrimary,
+					belowBottomText
+				);
 
-			/* Ausblenden erst später, nicht sofort beim Eintritt */
-			const fadeStartLine = midline;
-			const fadeEndLine = lowerThird;
+				this.setHintState(this.topPrimary, {
+					text: currentTopText,
+					y: topPrimaryY,
+					opacity: currentTopText ? 1 : 0
+				});
 
-			const exitProgress = this.clamp01(
-				(lowerBoundaryY - fadeStartLine) / Math.max(1, fadeEndLine - fadeStartLine)
-			);
+				this.setHintState(this.topIncoming, {
+					text: "",
+					y: 0,
+					opacity: 0
+				});
 
-			const bottomPrimaryY = this.clampBottomHintY(
-				(1 - exitProgress) * -travel,
-				this.bottomPrimary,
-				belowBottomText
-			);
+				this.setHintState(this.bottomPrimary, {
+					text: belowBottomText,
+					y: bottomPrimaryY,
+					opacity: belowBottomText ? exitProgress : 0
+				});
 
-			this.setHintState(this.topPrimary, {
-				text: currentTopText,
-				y: topPrimaryY,
-				opacity: currentTopText ? 1 : 0
-			});
+				this.setHintState(this.bottomSwap, {
+					text: "",
+					y: 0,
+					opacity: 0
+				});
 
-			this.setHintState(this.topIncoming, {
-				text: "",
-				y: 0,
-				opacity: 0
-			});
-
-			this.setHintState(this.bottomPrimary, {
-				text: belowBottomText,
-				y: bottomPrimaryY,
-				opacity: belowBottomText ? exitProgress : 0
-			});
-
-			this.setHintState(this.bottomSwap, {
-				text: "",
-				y: 0,
-				opacity: 0
-			});
-
-			this.updateHintVisuals();
-			return;
-		}
+				this.updateHintVisuals();
+				return;
+			}
 
 			/* =========================
 			   FALL 1:
