@@ -20,10 +20,6 @@
 	========================= */
 	--brand-sub-ratio: 0.25;
 	--hero-stack-gap: clamp(3.0rem, 7.0vh, 3.5rem);
-	
-	@media (max-height: 580px) {
-			--hero-stack-gap: clamp(1.0rem, 3.0vh, 2.0rem);
-		}
 
 	/* ---------------------------------------------------------------------------------------------------- */
 	/* clamp(MIN, BEVORZUGT, MAX);	min					bevorzugt				max					Result.	*/
@@ -477,6 +473,12 @@ html, body {
 	-webkit-user-select: none;				/* vehindert Textmarkierung */
 	user-select: none;
 	-webkit-touch-callout: none;
+}
+
+@media (max-height: 580px) {
+    :root {
+        --hero-stack-gap: clamp(1.0rem, 3.0vh, 2.0rem);
+    }
 }
 
 .hero {
