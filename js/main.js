@@ -1320,7 +1320,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}, null);
 
 			return active?.section || sections[0];
-		},
+		}
 
 		show() {
 			if (!this.root) return;
