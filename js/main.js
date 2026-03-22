@@ -1610,7 +1610,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const currentTopText = currentText ? `>> ${currentText} >>` : "";
 			const aboveTopText = aboveText ? `>> ${aboveText} >>` : "";
 			const belowBottomText = belowText ? `<< ${belowText} <<` : "";
-			const currentBottomText = currentText ? `<< ${currentText} <<` : "";
 
 			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
 
