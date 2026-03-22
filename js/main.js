@@ -707,8 +707,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navbar.style.setProperty("--nav-compact", easedCompact);
 			DOM.navbar.style.setProperty("--nav-surface", easedSurface);
 			DOM.navbar.style.setProperty("--nav-height-progress", easedCompact);
-			
-			scrollSectionHintModule.updateViewportOffsets();
 
 			const velocityFactor = Math.round(Math.min(Math.abs(state.scrollVelocity) * 0.15, 6));
 			DOM.navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
@@ -1528,7 +1526,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		init() {
 			this.build();
-			this.updateViewportOffsets();
 			this.updateColumn();
 			this.updateBoundaryScene();
 			this.bindEvents();
@@ -1809,7 +1806,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			state.hintRaf = requestAnimationFrame(() => {
 				state.hintRaf = null;
-				this.updateViewportOffsets();
 				this.updateColumn();
 				this.updateBoundaryScene();
 				this.updateHintVisuals();
@@ -1818,23 +1814,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		snapPx(value) {
 			return Math.round(value);
-		},
-		
-		updateViewportOffsets() {
-			const gapPx = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-
-			const navRect = DOM.navbar?.getBoundingClientRect();
-			const navBottom = navRect ? Math.max(0, navRect.bottom) : 0;
-
-			document.documentElement.style.setProperty(
-				"--section-hint-top-offset-current",
-				`${Math.round(navBottom + gapPx)}px`
-			);
-
-			document.documentElement.style.setProperty(
-				"--section-hint-bottom-offset-current",
-				`${Math.round(gapPx)}px`
-			);
 		}
 		
 	};

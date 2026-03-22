@@ -2249,30 +2249,10 @@ section > .section-scroll-head + * {
 
 :root {
 	--section-hint-boundary-gap: 0.3rem;
-
-	/* Fallbacks */
-	--section-hint-top-offset: calc(var(--nav-height-max) + var(--section-hint-boundary-gap));
-	--section-hint-bottom-offset: var(--section-hint-boundary-gap);
-
-	/* werden von JS dynamisch überschrieben */
-	--section-hint-top-offset-current: var(--section-hint-top-offset);
-	--section-hint-bottom-offset-current: var(--section-hint-bottom-offset);
-
 	--section-hint-color: rgba(45, 45, 45, 0.78);
 	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
 	--section-hint-size: 0.82rem;
 	--section-hint-letter-spacing: 0.22em;
-}
-
-@media (max-width: 768px) {
-	:root {
-		--section-hint-size: 0.72rem;
-		--section-hint-letter-spacing: 0.16em;
-
-		/* Fallback für Mobile */
-		--section-hint-top-offset: calc(var(--nav-height-min) + var(--section-hint-boundary-gap));
-		--section-hint-bottom-offset: var(--section-hint-boundary-gap);
-	}
 }
 
 .scroll-section-hints {
@@ -2292,12 +2272,12 @@ section > .section-scroll-head + * {
 }
 
 .scroll-section-hint-anchor--top {
-	top: var(--section-hint-top-offset-current, var(--section-hint-top-offset));
+	top: var(--section-hint-boundary-gap);
 }
 
 .scroll-section-hint-anchor--bottom {
 	top: auto;
-	bottom: var(--section-hint-bottom-offset-current, var(--section-hint-bottom-offset));
+	bottom: var(--section-hint-boundary-gap);
 }
 
 .scroll-section-hint {
