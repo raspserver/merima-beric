@@ -1779,8 +1779,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				);
 
 				const travel = hintHeight + 40;
-
-				const topPrimaryY = topDockY + (exitProgress * travel);
+				
+				const topPrimaryY = topDockY - (exitProgress * travel);
 
 				const bottomPrimaryY = this.clampBottomHintY(
 					exitProgress * travel,
@@ -1830,10 +1830,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.setHintState(this.topPrimary, {
 				text: currentTopText,
-				y: topDockY + downwardFollowY,
+				y: topDockY - downwardFollowY,
 				opacity: currentTopText ? 1 : 0
 			});
-
+			
 			this.setHintState(this.topIncoming, {
 				text: "",
 				y: 0,
