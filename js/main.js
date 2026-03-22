@@ -1740,11 +1740,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 				return;
 			}
-
+	
 			/* =========================
 			   FALL 2B:
 			   sichtbare Grenze current | below
-			   oben: current bleibt sichtbar
+			   oben: current bewegt sich mit der unteren Boundary abwärts
 			   unten: below blendet aus
 			========================= */	
 			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
@@ -1752,13 +1752,27 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.upperRevealState.startTime = 0;
 				this.upperRevealState.active = false;
 
+				const fadeRange = Math.max(80, viewportH * 0.18);
+
+				/* 0 solange Boundary noch unter der Midline ist,
+				   dann progressiv bis 1 */
 				const exitProgress = this.clamp01(
-					(midline - lowerBoundaryY) / Math.max(80, viewportH * 0.18)
+					(midline - lowerBoundaryY) / fadeRange
 				);
 
 				const travel = hintHeight + 40;
-				
-				const topPrimaryY = topDockY - (exitProgress * travel);
+
+				/* aktueller Hint soll NICHT nach oben springen,
+				   sondern der unteren Boundary nach unten folgen */
+				const boundaryFollowProgress = this.clamp01(
+					(lowerBoundaryY - lowerThird) / Math.max(1, viewportH - lowerThird)
+				);
+
+				const topPrimaryY = this.lerp(
+					topDockY,
+					topDockY + travel,
+					boundaryFollowProgress
+				);
 
 				const bottomPrimaryY = this.clampBottomHintY(
 					exitProgress * travel,
@@ -1769,7 +1783,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHintState(this.topPrimary, {
 					text: currentTopText,
 					y: topPrimaryY,
-					opacity: currentTopText ? 1 : 0
+					opacity: currentTopText ? (1 - exitProgress) : 0
 				});
 
 				this.setHintState(this.topIncoming, {
