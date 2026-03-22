@@ -1855,8 +1855,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		snapPx(value) {
 			return Math.round(value);
-		}
+		},
 		
+		updateTopAnchor() {
+			if (!this.root) return;
+
+			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+			const navbarBottom = this.getNavbarBottom();
+
+			this.root.style.setProperty(
+				"--scroll-hint-top-anchor-y",
+				`${navbarBottom + boundaryGap}px`
+			);
+		}
+
 	};
 
 	/* =========================================================

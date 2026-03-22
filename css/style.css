@@ -2275,7 +2275,7 @@ section > .section-scroll-head + * {
 }
 
 .scroll-section-hint-anchor--top {
-	top: var(--section-hint-boundary-gap);
+	top: calc(var(--scroll-hint-top-anchor-y, 0px));
 }
 
 .scroll-section-hint-anchor--bottom {
