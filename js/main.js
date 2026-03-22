@@ -1547,11 +1547,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				/* 1:1-Bewegung: Boundary-Distanz seit Eintritt */
 				const boundaryDelta = Math.max(0, upperBoundaryY - followStartLine);
 
-				/* maximaler Weg, damit der Hint nicht endlos nach unten läuft */
-				const maxTravel = hintHeight + 40;
-
-				const topPrimaryY = topDockY + Math.min(boundaryDelta, maxTravel);
-				const topIncomingY = topDockY + Math.min(boundaryDelta, maxTravel);
+				const topPrimaryY = topDockY + boundaryDelta;
+				const topIncomingY = topDockY + boundaryDelta;
 
 				/* Fade wie bisher über den mittleren Bereich */
 				const fadeStartLine = upperThird;
