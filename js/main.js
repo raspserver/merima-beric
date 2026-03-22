@@ -1552,7 +1552,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				   Unterkante des Hints = upperBoundaryY - boundaryGap
 				   => topY = boundaryY - gap - hintHeight
 				*/
-				const boundaryFollowY = upperBoundaryY - anchorTop - boundaryGap - visualExtent;
+				const boundaryFollowY = upperBoundaryY - anchorTop - boundaryGap;
 
 				/* erst andocken, dann 1:1 mit der Boundary nach unten laufen */
 				const topPrimaryY = Math.max(dockY, boundaryFollowY);
