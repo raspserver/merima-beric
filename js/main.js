@@ -1543,13 +1543,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				const anchorTop = navbarBottom + boundaryGap;
 
 				const visualExtent = topMetrics.width || 120;
+				const hintThickness = topMetrics.height || 16;
 
 				const dockY = topDockY;
 
-				/* sichtbare Oberkante des rotierten Hints soll
-				   boundaryGap über der Boundary liegen */
+				/* Unterkante des rotierten Hints soll boundaryGap über der Boundary liegen */
 				const boundaryFollowY =
-					upperBoundaryY - anchorTop - boundaryGap + visualExtent;
+					upperBoundaryY - anchorTop - boundaryGap + visualExtent - hintThickness;
 
 				const topPrimaryY = Math.max(dockY, boundaryFollowY);
 				const topIncomingY = topPrimaryY;
