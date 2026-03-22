@@ -1788,10 +1788,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateHintVisuals();
 			});
 		},
-
-		snapPx(value) {
-			return Math.round(value);
-		},
 		
 		updateTopAnchor() {
 			if (!this.root) return;
