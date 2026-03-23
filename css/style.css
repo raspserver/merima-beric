@@ -2248,13 +2248,12 @@ section > .section-scroll-head + * {
 /* =============================
    SCROLL SECTION HINT SYSTEM
 ============================= */
-
 .scroll-section-hints {
 	position: fixed;
 	inset: 0;
 	pointer-events: none;
 	z-index: 1400;
-	--scroll-hint-column-left: 24px;
+	--scroll-hint-column-left: 24px; /* Fallback */
 }
 
 .scroll-section-hint-anchor {
