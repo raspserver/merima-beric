@@ -2199,15 +2199,6 @@ footer {
 	100% { transform: translateX(-50%) translateY(0); }
 }
 
-
-
-
-
-
-
-
-
-
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
 	40%  { transform: translateX(-50%) translateY(10px); }
@@ -2256,7 +2247,9 @@ section > .section-scroll-head + * {
 	}
 }
 
-
+/* =============================
+   SCROLL SECTION HINT SYSTEM
+============================= */
 
 .scroll-section-hints {
 	position: fixed;
@@ -2264,22 +2257,20 @@ section > .section-scroll-head + * {
 	pointer-events: none;
 	z-index: 1400;
 	--scroll-hint-column-left: 24px;
-	--scroll-hint-optical-shift: 0px;
 }
 
 .scroll-section-hint-anchor {
 	position: fixed;
-	left: calc(var(--scroll-hint-column-left) + var(--scroll-hint-optical-shift));
+	left: var(--scroll-hint-column-left);
 	width: 0;
 	height: 0;
 }
 
 .scroll-section-hint-anchor--top {
-	top: calc(var(--scroll-hint-top-anchor-y, 0px));
+	top: var(--scroll-hint-top-anchor-y, 0px);
 }
 
 .scroll-section-hint-anchor--bottom {
-	top: auto;
 	bottom: var(--section-hint-boundary-gap);
 }
 
@@ -2296,25 +2287,11 @@ section > .section-scroll-head + * {
 	text-transform: uppercase;
 	line-height: 1;
 	opacity: 0;
-
-	--hint-clip-top: 0px;
-	--hint-clip-bottom: 0px;
 	--hint-y: 0px;
-
-	clip-path: inset(var(--hint-clip-top) 0 var(--hint-clip-bottom) 0);
-
 	will-change: transform, opacity;
 	backface-visibility: hidden;
-	transform-style: preserve-3d;
-	contain: layout paint style;
-}
-
-.scroll-section-hint-anchor--top .scroll-section-hint,
-.scroll-section-hint-anchor--bottom .scroll-section-hint {
 	transform-origin: left top;
-	transform:
-		translate3d(0, var(--hint-y), 0)
-		rotate(-90deg);
+	transform: translate3d(0, var(--hint-y), 0) rotate(-90deg);
 }
 
 .scroll-section-hint-measurer {
@@ -2340,11 +2317,6 @@ section > .section-scroll-head + * {
 
 .scroll-section-hint-base {
 	position: relative;
-	color: var(--section-hint-color);
-	transition: color 0.2s ease;
-}
-
-.scroll-section-hints.is-visible .scroll-section-hint-base {
 	color: var(--section-hint-color-strong);
 }
 
@@ -2352,14 +2324,9 @@ section > .section-scroll-head + * {
 	opacity: 0 !important;
 }
 
-.scroll-section-hints.is-visible .scroll-section-hint {
-	opacity: 1;
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.scroll-section-hint {
 		transition: opacity 0.2s linear;
-		filter: none;
 	}
 }
 
