@@ -1230,38 +1230,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
-		isHeroActive() {
-			if (!DOM.hero) return false;
-
-			const rect = DOM.hero.getBoundingClientRect();
-			const probeY = window.innerHeight * 0.5;
-
-			return rect.top <= probeY && rect.bottom > probeY;
-		},
-
 		getActiveSection() {
 			const sections = this.getContentSections();
 			if (!sections.length) return null;
 
-			const probeY = window.innerHeight * 0.5;
+			const navbarBottom = this.getNavbarBottom();
+			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+			const triggerY = navbarBottom + boundaryGap;
 
-			const hit = sections.find(section => {
+			let active = sections[0];
+
+			for (const section of sections) {
 				const rect = section.getBoundingClientRect();
-				return rect.top <= probeY && rect.bottom > probeY;
-			});
-
-			if (hit) return hit;
-
-			return sections.reduce((best, section) => {
-				const rect = section.getBoundingClientRect();
-				const center = rect.top + rect.height / 2;
-				const distance = Math.abs(center - probeY);
-
-				if (!best || distance < best.distance) {
-					return { section, distance };
+				if (rect.top <= triggerY) {
+					active = section;
+				} else {
+					break;
 				}
-				return best;
-			}, null)?.section || null;
+			}
+
+			return active;
 		},
 
 		getBelowSection(currentSection) {
@@ -1274,28 +1262,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			return sections[index + 1] || null;
 		},
 
-		getPreviousSection(currentSection) {
-			if (!currentSection) return null;
-
-			const sections = this.getContentSections();
-			const index = sections.findIndex(section => section === currentSection);
-
-			if (index <= 0) return null;
-			return sections[index - 1] || null;
-		},
-
 		getNavbarBottom() {
 			if (!DOM.navbar) return 0;
 			return DOM.navbar.getBoundingClientRect().bottom;
-		},
-
-		getBoundaryY(upperSection, lowerSection) {
-			if (!upperSection || !lowerSection) return null;
-
-			const upperRect = upperSection.getBoundingClientRect();
-			const lowerRect = lowerSection.getBoundingClientRect();
-
-			return (upperRect.bottom + lowerRect.top) * 0.5;
 		},
 
 		measureHint(text) {
@@ -1350,12 +1319,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.updateTopAnchor();
 
-			if (this.isHeroActive()) {
-				this.setHint(this.topHint, { text: "", y: 0, opacity: 0 });
-				this.setHint(this.bottomHint, { text: "", y: 0, opacity: 0 });
-				return;
-			}
-
 			const current = this.getActiveSection();
 			if (!current) {
 				this.setHint(this.topHint, { text: "", y: 0, opacity: 0 });
@@ -1364,43 +1327,19 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			const below = this.getBelowSection(current);
-			const previous = this.getPreviousSection(current);
 
 			const currentText = this.labels[current.id] ? `>> ${this.labels[current.id]} >>` : "";
 			const belowText = below?.id ? `<< ${this.labels[below.id]} <<` : "";
 
-			let topY = this.getTopDockY(currentText);
-			let bottomY = 0;
-
-			if (state.scrollDirection === "up" && previous) {
-				const boundaryY = this.getBoundaryY(previous, current);
-				const navbarBottom = this.getNavbarBottom();
-				const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-				const metrics = this.measureHint(currentText);
-				const hintExtent = metrics.width || 120;
-				const visibilityMargin = (metrics.height || 16) + 24;
-
-				const boundaryVisible =
-					boundaryY !== null &&
-					boundaryY >= navbarBottom - visibilityMargin &&
-					boundaryY <= window.innerHeight + visibilityMargin;
-
-				if (boundaryVisible) {
-					const anchorTop = navbarBottom + boundaryGap;
-					const followY = boundaryY - anchorTop + boundaryGap + hintExtent;
-					topY = Math.max(this.getTopDockY(currentText), followY);
-				}
-			}
-
 			this.setHint(this.topHint, {
 				text: currentText,
-				y: topY,
+				y: this.getTopDockY(currentText),
 				opacity: currentText ? 1 : 0
 			});
 
 			this.setHint(this.bottomHint, {
 				text: belowText,
-				y: bottomY,
+				y: 0,
 				opacity: belowText ? 1 : 0
 			});
 		},
@@ -1436,7 +1375,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindEvents();
 		}
 	};
-	
+
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
