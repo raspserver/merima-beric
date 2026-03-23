@@ -1701,11 +1701,11 @@ document.addEventListener("DOMContentLoaded", () => {
 					? 0
 					: (upperTopText ? progress : 0);
 		
-				/* Unten die untere/current-lower Section weiterhin sichtbar lassen */
-				bottomPrimaryText = lowerBottomText;
+				/* Unten weiterhin die Section unterhalb der aktuellen Section anzeigen */
+				bottomPrimaryText = belowBottomText;
 				bottomPrimaryY = 0;
-				bottomPrimaryOpacity = lowerBottomText ? 1 : 0;
-				
+				bottomPrimaryOpacity = belowBottomText ? 1 : 0;
+		
 				this.animateHintState({
 					topPrimaryText,
 					topIncomingText,
