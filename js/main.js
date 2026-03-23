@@ -1653,7 +1653,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						switchLine
 					})
 					: null;
-
+		
 			if (upwardPair) {
 				const upperSection = upwardPair.upper;
 				const lowerSection = upwardPair.lower;
@@ -1664,6 +1664,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				const upperTopText = upperLabel ? `>> ${upperLabel} >>` : "";
 				const lowerTopText = lowerLabel ? `>> ${lowerLabel} >>` : "";
+				const lowerBottomText = lowerLabel ? `<< ${lowerLabel} <<` : "";
 
 				const navbarBottom = this.getNavbarBottom();
 				const anchorTop = navbarBottom + boundaryGap;
@@ -1674,9 +1675,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				const hasSwitched = boundaryY >= switchLine;
 
-				/* Wichtig:
-				   Bis zum Threshold bleibt LOWER logisch aktiv.
-				   Erst am Threshold wird direkt auf UPPER umgeschaltet. */
+				/* Bis zum Threshold bleibt LOWER logisch aktiv.
+				   Erst am Threshold wird auf UPPER umgeschaltet. */
 				const activeTopText = hasSwitched ? upperTopText : lowerTopText;
 				const activeMetrics = this.measureHint(this.topPrimary, activeTopText || " ");
 				const activeExtent = activeMetrics.width || 120;
@@ -1701,12 +1701,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					? 0
 					: (upperTopText ? progress : 0);
 
-				/* Ganz wichtig:
-				   Beim Aufwärtsswitch KEIN Bottom-Hint für die alte/current Section,
-				   sonst erscheint sie unten am Rand. */
-				bottomPrimaryText = "";
+				/* Unten die LOWER/current Section sichtbar lassen,
+				   solange der eigentliche Switch noch nicht passiert ist */
+				bottomPrimaryText = hasSwitched ? "" : lowerBottomText;
 				bottomPrimaryY = 0;
-				bottomPrimaryOpacity = 0;
+				bottomPrimaryOpacity = hasSwitched
+					? 0
+					: (lowerBottomText ? 1 : 0);
 
 				this.animateHintState({
 					topPrimaryText,
@@ -1721,7 +1722,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 				return;
 			}
-
+			
 			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
 				const navbarBottom = this.getNavbarBottom();
 
