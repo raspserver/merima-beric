@@ -2111,10 +2111,27 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* linker Rand der eigentlichen Text-/Content-Spalte */
 			const contentLeft = rect.left;
 
-			/* mittig zwischen linkem Bildschirmrand (0) und contentLeft */
-			const hintX = contentLeft / 2;
+			/* Zielpunkt: Mitte zwischen linkem Bildschirmrand und Content-Spalte */
+			const midpoint = contentLeft / 2;
+
+			/* Bei rotate(-90deg) ist die horizontale "Dicke" des Laufbandes
+			   ungefähr die Höhe des unrotierten Hint-Elements */
+			const sampleHint =
+				document.querySelector(".scroll-section-hint") ||
+				document.querySelector(".scroll-section-hint-measurer");
+
+			let bandThickness = 0;
+
+			if (sampleHint) {
+				const hintRect = sampleHint.getBoundingClientRect();
+				bandThickness = hintRect.height || 0;
+			}
+
+			/* Bezug nicht mehr auf linken Rand, sondern auf die Mitte des Laufbandes */
+			const hintX = midpoint - (bandThickness / 2);
 
 			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
+
 		},
 
 		init() {
