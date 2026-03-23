@@ -1235,8 +1235,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!sections.length) return null;
 
 			const navbarBottom = this.getNavbarBottom();
-			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-			const triggerY = navbarBottom + boundaryGap;
+			//~ const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+			//~ const triggerY = navbarBottom + boundaryGap;
+			const triggerY = navbarBottom;
 
 			let active = sections[0];
 
