@@ -1700,15 +1700,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				topIncomingOpacity = hasSwitched
 					? 0
 					: (upperTopText ? progress : 0);
-
-				/* Unten die LOWER/current Section sichtbar lassen,
-				   solange der eigentliche Switch noch nicht passiert ist */
-				bottomPrimaryText = hasSwitched ? "" : lowerBottomText;
+		
+				/* Beim Aufwärtsscrollen keine doppelte Anzeige der aktuellen Section unten */
+				bottomPrimaryText = "";
 				bottomPrimaryY = 0;
-				bottomPrimaryOpacity = hasSwitched
-					? 0
-					: (lowerBottomText ? 1 : 0);
-
+				bottomPrimaryOpacity = 0;	
+				
 				this.animateHintState({
 					topPrimaryText,
 					topIncomingText,
