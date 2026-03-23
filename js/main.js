@@ -1175,26 +1175,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	   SCROLL SECTION HINT MODULE
 	========================================================= */
 	const scrollSectionHintModule = {
+		root: null,
 		measurer: null,
 		metricsCache: new Map(),
-
-		root: null,
-		hideTimer: null,
-		lastKnownScrollY: window.scrollY,
-
-		hintRaf: null,
-
-		motion: {
-			topPrimaryY: 0,
-			topIncomingY: 0,
-			bottomPrimaryY: 0,
-
-			topPrimaryOpacity: 0,
-			topIncomingOpacity: 0,
-			bottomPrimaryOpacity: 0,
-
-			raf: null
-		},
+		topHint: null,
+		bottomHint: null,
+		updateRaf: null,
 
 		labels: {
 			about: "ÜBER MICH",
@@ -1214,17 +1200,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.root.innerHTML = `
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--top">
-					<div class="scroll-section-hint scroll-section-hint--top-primary">
-						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
-					</div>
-
-					<div class="scroll-section-hint scroll-section-hint--top-incoming">
+					<div class="scroll-section-hint scroll-section-hint--top">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 					</div>
 				</div>
 
 				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--bottom">
-					<div class="scroll-section-hint scroll-section-hint--bottom-primary">
+					<div class="scroll-section-hint scroll-section-hint--bottom">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 					</div>
 				</div>
@@ -1236,9 +1218,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.measurer.className = "scroll-section-hint-measurer";
 			document.body.appendChild(this.measurer);
 
-			this.topPrimary = this.root.querySelector(".scroll-section-hint--top-primary");
-			this.topIncoming = this.root.querySelector(".scroll-section-hint--top-incoming");
-			this.bottomPrimary = this.root.querySelector(".scroll-section-hint--bottom-primary");
+			this.topHint = this.root.querySelector(".scroll-section-hint--top");
+			this.bottomHint = this.root.querySelector(".scroll-section-hint--bottom");
 		},
 
 		getContentSections() {
@@ -1258,221 +1239,66 @@ document.addEventListener("DOMContentLoaded", () => {
 			return rect.top <= probeY && rect.bottom > probeY;
 		},
 
-		getColumnLeft() {
-			const aboutImage =
-				document.querySelector("#about .about-image-wrapper") ||
-				document.querySelector("#about .about-image");
-
-			if (aboutImage) {
-				const rect = aboutImage.getBoundingClientRect();
-
-				if (Number.isFinite(rect.left)) {
-					const columnCenter = rect.left / 2;
-					const hintThickness = this.measureHint(this.topPrimary, ">> ÜBER MICH >>").height || 16;
-					return Math.max(12, columnCenter - (hintThickness / 2));
-				}
-			}
-
-			const aboutContainer = document.querySelector("#about .container");
-			if (aboutContainer) {
-				const rect = aboutContainer.getBoundingClientRect();
-
-				if (Number.isFinite(rect.left)) {
-					const columnCenter = rect.left / 2;
-					const hintThickness = this.measureHint(this.topPrimary, ">> ÜBER MICH >>").height || 16;
-					return Math.max(12, columnCenter - (hintThickness / 2));
-				}
-			}
-
-			return 24;
-		},
-
-		updateColumn() {
-			if (!this.root) return;
-			this.root.style.setProperty(
-				"--scroll-hint-column-left",
-				`${this.getColumnLeft()}px`
-			);
-		},
-
 		getActiveSection() {
 			const sections = this.getContentSections();
 			if (!sections.length) return null;
 
 			const probeY = window.innerHeight * 0.5;
 
-			let active = sections.find(section => {
+			const hit = sections.find(section => {
 				const rect = section.getBoundingClientRect();
 				return rect.top <= probeY && rect.bottom > probeY;
 			});
 
-			if (active) return active;
+			if (hit) return hit;
 
-			active = sections.reduce((best, section) => {
+			return sections.reduce((best, section) => {
 				const rect = section.getBoundingClientRect();
-				const sectionCenter = rect.top + rect.height / 2;
-				const distance = Math.abs(sectionCenter - probeY);
+				const center = rect.top + rect.height / 2;
+				const distance = Math.abs(center - probeY);
 
 				if (!best || distance < best.distance) {
 					return { section, distance };
 				}
 				return best;
-			}, null);
-
-			return active?.section || sections[0];
+			}, null)?.section || null;
 		},
 
-		show() {
-			if (!this.root) return;
-			this.root.classList.add("is-visible");
+		getBelowSection(currentSection) {
+			if (!currentSection) return null;
+
+			const sections = this.getContentSections();
+			const index = sections.findIndex(section => section === currentSection);
+
+			if (index === -1) return null;
+			return sections[index + 1] || null;
 		},
 
-		hide() {
-			if (!this.root) return;
-			this.root.classList.remove("is-visible");
+		getPreviousSection(currentSection) {
+			if (!currentSection) return null;
+
+			const sections = this.getContentSections();
+			const index = sections.findIndex(section => section === currentSection);
+
+			if (index <= 0) return null;
+			return sections[index - 1] || null;
 		},
 
-		pulse() {
-			this.revealTemporarily();
+		getNavbarBottom() {
+			if (!DOM.navbar) return 0;
+			return DOM.navbar.getBoundingClientRect().bottom;
 		},
 
-		handleScroll() {
-			const currentY = window.scrollY;
-			if (currentY === this.lastKnownScrollY) return;
+		getBoundaryY(upperSection, lowerSection) {
+			if (!upperSection || !lowerSection) return null;
 
-			this.lastKnownScrollY = currentY;
+			const upperRect = upperSection.getBoundingClientRect();
+			const lowerRect = lowerSection.getBoundingClientRect();
 
-			if (!this.root) return;
-
-			this.scheduleBoundarySceneUpdate();
-			this.revealTemporarily();
+			return (upperRect.bottom + lowerRect.top) * 0.5;
 		},
 
-		bindEvents() {
-			window.addEventListener("scroll", () => this.handleScroll(), { passive: true });
-
-			window.addEventListener("resize", () => {
-				this.metricsCache.clear();
-				this.scheduleBoundarySceneUpdate();
-			});
-
-			window.addEventListener("orientationchange", () => {
-				setTimeout(() => {
-					this.metricsCache.clear();
-					this.scheduleBoundarySceneUpdate();
-				}, 120);
-			});
-
-			window.addEventListener("wheel", () => {
-				this.pulse();
-			}, { passive: true });
-
-			window.addEventListener("touchmove", () => {
-				this.pulse();
-			}, { passive: true });
-		},
-
-		setHintText(hintEl, text) {
-			if (!hintEl) return;
-
-			const base = hintEl.querySelector(".scroll-section-hint-base");
-			if (base) base.textContent = text;
-		},
-
-		revealTemporarily() {
-			if (!this.root || state.programmaticScroll) return;
-
-			this.scheduleBoundarySceneUpdate();
-
-			if (this.isHeroActive()) {
-				this.hide();
-
-				if (this.hideTimer) {
-					clearTimeout(this.hideTimer);
-					this.hideTimer = null;
-				}
-				return;
-			}
-
-			this.show();
-
-			if (this.hideTimer) {
-				clearTimeout(this.hideTimer);
-			}
-
-			this.hideTimer = setTimeout(() => {
-				this.hide();
-			}, 2000);
-		},
-
-		init() {
-			this.build();
-			this.updateTopAnchor();
-			this.updateColumn();
-			this.updateBoundaryScene();
-			this.bindEvents();
-		},
-
-		setHintState(hintEl, {
-			text = "",
-			y = 0,
-			opacity = 0
-		} = {}) {
-			if (!hintEl) return;
-
-			const snappedY = Math.round(y * 2) / 2;
-			const safeOpacity = Math.max(0, Math.min(1, opacity));
-
-			this.setHintText(hintEl, text);
-			hintEl.style.setProperty("--hint-y", `${snappedY}px`);
-			hintEl.style.opacity = `${safeOpacity}`;
-			hintEl.classList.toggle("is-empty", !text || safeOpacity <= 0.001);
-		},	
-		
-		animateHintState(targets) {
-			const m = this.motion;
-
-			if (m.raf) {
-				cancelAnimationFrame(m.raf);
-				m.raf = null;
-			}
-
-			m.topPrimaryY = this.lerp(m.topPrimaryY, targets.topPrimaryY, 0.55);
-			m.topIncomingY = this.lerp(m.topIncomingY, targets.topIncomingY, 0.55);
-			m.bottomPrimaryY = this.lerp(m.bottomPrimaryY, targets.bottomPrimaryY, 0.55);
-
-			m.topPrimaryOpacity = this.lerp(m.topPrimaryOpacity, targets.topPrimaryOpacity, 0.45);
-			m.topIncomingOpacity = this.lerp(m.topIncomingOpacity, targets.topIncomingOpacity, 0.45);
-			m.bottomPrimaryOpacity = this.lerp(m.bottomPrimaryOpacity, targets.bottomPrimaryOpacity, 0.45);
-
-			this.setHintState(this.topPrimary, {
-				text: targets.topPrimaryText,
-				y: m.topPrimaryY,
-				opacity: m.topPrimaryOpacity
-			});
-
-			this.setHintState(this.topIncoming, {
-				text: targets.topIncomingText,
-				y: m.topIncomingY,
-				opacity: m.topIncomingOpacity
-			});
-
-			this.setHintState(this.bottomPrimary, {
-				text: targets.bottomPrimaryText,
-				y: m.bottomPrimaryY,
-				opacity: m.bottomPrimaryOpacity
-			});
-		},
-
-		clamp01(value) {
-			return Math.max(0, Math.min(1, value));
-		},
-
-		lerp(a, b, t) {
-			return a + (b - a) * t;
-		},
-
-		measureHint(hintEl, text) {
+		measureHint(text) {
 			if (!this.measurer) return { width: 0, height: 0 };
 
 			const key = text || " ";
@@ -1491,341 +1317,20 @@ document.addEventListener("DOMContentLoaded", () => {
 			return metrics;
 		},
 
-		getSectionRect(id) {
-			const el = document.getElementById(id);
-			return el ? el.getBoundingClientRect() : null;
-		},
-		
-		getBoundaryPairs() {
-			const sections = this.getContentSections();
-
-			return sections
-				.map((section, index) => {
-					const upper = sections[index];
-					const lower = sections[index + 1];
-
-					if (!upper || !lower) return null;
-
-					const y = this.getBoundaryY(upper.id, lower.id);
-					if (y === null) return null;
-
-					return { upper, lower, y, index };
-				})
-				.filter(Boolean);
+		getTopDockY(text) {
+			const metrics = this.measureHint(text);
+			return Math.max(0, metrics.width || 120);
 		},
 
-		getRelevantUpwardBoundaryPair({ margin = 0, switchLine = 0 } = {}) {
-			const navbarBottom = this.getNavbarBottom();
+		setHint(hintEl, { text = "", y = 0, opacity = 0 } = {}) {
+			if (!hintEl) return;
 
-			const candidates = this.getBoundaryPairs().filter(pair => {
-				return (
-					pair.y >= navbarBottom - margin &&
-					pair.y <= window.innerHeight + margin
-				);
-			});
+			const base = hintEl.querySelector(".scroll-section-hint-base");
+			if (base) base.textContent = text;
 
-			if (!candidates.length) return null;
-
-			/* Nimm die Boundary, die dem Wechselbereich am nächsten ist */
-			return candidates.reduce((best, pair) => {
-				if (!best) return pair;
-
-				const bestDist = Math.abs(best.y - switchLine);
-				const pairDist = Math.abs(pair.y - switchLine);
-
-				return pairDist < bestDist ? pair : best;
-			}, null);
-		},
-
-		getBoundaryY(upperId, lowerId) {
-			const upper = document.getElementById(upperId);
-			const lower = document.getElementById(lowerId);
-			if (!upper || !lower) return null;
-
-			const upperRect = upper.getBoundingClientRect();
-			const lowerRect = lower.getBoundingClientRect();
-
-			return (upperRect.bottom + lowerRect.top) * 0.5;
-		},
-
-		getNavbarBottom() {
-			if (!DOM.navbar) return 0;
-			const rect = DOM.navbar.getBoundingClientRect();
-			return rect.bottom;
-		},
-		
-		getHintSwitchLineY() {
-			const threshold = utils.getRootNumber("--section-hint-switch-threshold", 0.7);
-			return window.innerHeight * threshold;
-		},
-
-		updateBoundaryScene() {
-			if (!this.root) return;
-
-			if (this.isHeroActive()) {
-				this.animateHintState({
-					topPrimaryText: "",
-					topIncomingText: "",
-					bottomPrimaryText: "",
-					topPrimaryY: 0,
-					topIncomingY: 0,
-					bottomPrimaryY: 0,
-					topPrimaryOpacity: 0,
-					topIncomingOpacity: 0,
-					bottomPrimaryOpacity: 0
-				});
-				return;
-			}
-			
-			const viewportH = window.innerHeight;
-			const upperThird = viewportH * (1 / 3);
-			const midline = viewportH * 0.5;
-			const lowerThird = viewportH * (2 / 3);
-			const switchLine = this.getHintSwitchLineY();
-
-			const sections = this.getContentSections();
-
-			let current = this.getActiveSection();
-			if (!current) {
-				this.animateHintState({
-					topPrimaryText: "",
-					topIncomingText: "",
-					bottomPrimaryText: "",
-					topPrimaryY: 0,
-					topIncomingY: 0,
-					bottomPrimaryY: 0,
-					topPrimaryOpacity: 0,
-					topIncomingOpacity: 0,
-					bottomPrimaryOpacity: 0
-				});
-				return;
-			}
-
-			const currentIndex = sections.findIndex(section => section === current);
-
-			const above = currentIndex > 0 ? sections[currentIndex - 1] : null;
-			const below = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : null;
-
-			const currentText = current?.id ? this.labels[current.id] : "";
-			const aboveText = above?.id ? this.labels[above.id] : "";
-			const belowText = below?.id ? this.labels[below.id] : "";
-
-			const currentTopText = currentText ? `>> ${currentText} >>` : "";
-			const aboveTopText = aboveText ? `>> ${aboveText} >>` : "";
-			const belowBottomText = belowText ? `<< ${belowText} <<` : "";
-
-			const topDockY = this.getTopHintDockY(this.topPrimary, currentTopText || " ");
-
-			const upperBoundaryY = above ? this.getBoundaryY(above.id, current.id) : null;
-			const lowerBoundaryY = below ? this.getBoundaryY(current.id, below.id) : null;
-
-			const topMetrics = this.measureHint(this.topPrimary, currentTopText || " ");
-			const hintHeight = topMetrics.height || 120;
-			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-			const boundaryVisibilityMargin = hintHeight + 24;
-
-			const upperBoundaryVisible =
-				upperBoundaryY !== null &&
-				upperBoundaryY > -boundaryVisibilityMargin &&
-				upperBoundaryY < viewportH + boundaryVisibilityMargin;
-
-			const lowerBoundaryVisible =
-				lowerBoundaryY !== null &&
-				lowerBoundaryY > -boundaryVisibilityMargin &&
-				lowerBoundaryY < viewportH + boundaryVisibilityMargin;
-
-			let topPrimaryText = "";
-			let topIncomingText = "";
-			let bottomPrimaryText = "";
-
-			let topPrimaryY = 0;
-			let topIncomingY = 0;
-			let bottomPrimaryY = 0;
-
-			let topPrimaryOpacity = 0;
-			let topIncomingOpacity = 0;
-			let bottomPrimaryOpacity = 0;
-		
-			const upwardPair =
-				state.scrollDirection === "up"
-					? this.getRelevantUpwardBoundaryPair({
-						margin: boundaryVisibilityMargin,
-						switchLine
-					})
-					: null;
-		
-			if (upwardPair) {
-				const upperSection = upwardPair.upper;
-				const lowerSection = upwardPair.lower;
-				const boundaryY = upwardPair.y;
-
-				const upperLabel = upperSection?.id ? this.labels[upperSection.id] : "";
-				const lowerLabel = lowerSection?.id ? this.labels[lowerSection.id] : "";
-
-				const upperTopText = upperLabel ? `>> ${upperLabel} >>` : "";
-				const lowerTopText = lowerLabel ? `>> ${lowerLabel} >>` : "";
-				const lowerBottomText = lowerLabel ? `<< ${lowerLabel} <<` : "";
-
-				const navbarBottom = this.getNavbarBottom();
-				const anchorTop = navbarBottom + boundaryGap;
-
-				const progress = this.clamp01(
-					(boundaryY - upperThird) / Math.max(1, switchLine - upperThird)
-				);
-
-				const hasSwitched = boundaryY >= switchLine;
-
-				/* Bis zum Threshold bleibt LOWER logisch aktiv.
-				   Erst am Threshold wird auf UPPER umgeschaltet. */
-				const activeTopText = hasSwitched ? upperTopText : lowerTopText;
-				const activeMetrics = this.measureHint(this.topPrimary, activeTopText || " ");
-				const activeExtent = activeMetrics.width || 120;
-				const activeDockY = Math.max(0, activeExtent);
-
-				const boundaryFollowY =
-					boundaryY - anchorTop + boundaryGap + activeExtent;
-
-				const followY = Math.max(activeDockY, boundaryFollowY);
-
-				topPrimaryText = hasSwitched ? upperTopText : lowerTopText;
-				topIncomingText = hasSwitched ? "" : upperTopText;
-
-				topPrimaryY = followY;
-				topIncomingY = followY;
-
-				topPrimaryOpacity = hasSwitched
-					? (upperTopText ? 1 : 0)
-					: (lowerTopText ? (1 - progress) : 0);
-
-				topIncomingOpacity = hasSwitched
-					? 0
-					: (upperTopText ? progress : 0);
-		
-				/* Unten weiterhin die Section unterhalb der aktuellen Section anzeigen */
-				bottomPrimaryText = belowBottomText;
-				bottomPrimaryY = 0;
-				bottomPrimaryOpacity = belowBottomText ? 1 : 0;
-		
-				this.animateHintState({
-					topPrimaryText,
-					topIncomingText,
-					bottomPrimaryText,
-					topPrimaryY,
-					topIncomingY,
-					bottomPrimaryY,
-					topPrimaryOpacity,
-					topIncomingOpacity,
-					bottomPrimaryOpacity
-				});
-				return;
-			}
-			
-			if (lowerBoundaryVisible && below && state.scrollDirection === "down") {
-				const navbarBottom = this.getNavbarBottom();
-
-				const followStartLine = navbarBottom + boundaryGap;
-				const followEndLine = lowerThird;
-				const travel = hintHeight + 40;
-
-				const boundaryFollowProgress = this.clamp01(
-					(lowerBoundaryY - followStartLine) / Math.max(1, followEndLine - followStartLine)
-				);
-
-				const nextTopPrimaryY = this.lerp(
-					topDockY,
-					topDockY + travel,
-					boundaryFollowProgress
-				);
-
-				const fadeStartLine = midline;
-				const fadeEndLine = lowerThird;
-
-				const exitProgress = this.clamp01(
-					(lowerBoundaryY - fadeStartLine) / Math.max(1, fadeEndLine - fadeStartLine)
-				);
-
-				const nextBottomPrimaryY = this.clampBottomHintY(
-					(1 - exitProgress) * -travel,
-					this.bottomPrimary,
-					belowBottomText
-				);
-
-				topPrimaryText = currentTopText;
-				topIncomingText = "";
-				bottomPrimaryText = belowBottomText;
-
-				topPrimaryY = nextTopPrimaryY;
-				topIncomingY = 0;
-				bottomPrimaryY = nextBottomPrimaryY;
-
-				topPrimaryOpacity = currentTopText ? 1 : 0;
-				topIncomingOpacity = 0;
-				bottomPrimaryOpacity = belowBottomText ? exitProgress : 0;
-
-				this.animateHintState({
-					topPrimaryText,
-					topIncomingText,
-					bottomPrimaryText,
-					topPrimaryY,
-					topIncomingY,
-					bottomPrimaryY,
-					topPrimaryOpacity,
-					topIncomingOpacity,
-					bottomPrimaryOpacity
-				});
-				return;
-			}
-
-			topPrimaryText = currentTopText;
-			topIncomingText = "";
-			bottomPrimaryText = belowBottomText;
-
-			topPrimaryY = topDockY;
-			topIncomingY = 0;
-			bottomPrimaryY = 0;
-
-			topPrimaryOpacity = currentTopText ? 1 : 0;
-			topIncomingOpacity = 0;
-			bottomPrimaryOpacity = belowBottomText ? 1 : 0;
-
-			this.animateHintState({
-				topPrimaryText,
-				topIncomingText,
-				bottomPrimaryText,
-				topPrimaryY,
-				topIncomingY,
-				bottomPrimaryY,
-				topPrimaryOpacity,
-				topIncomingOpacity,
-				bottomPrimaryOpacity
-			});
-		},
-
-		getTopHintDockY(hintEl, text) {
-			const metrics = this.measureHint(hintEl, text);
-			const visualExtent = metrics.width || 120;
-			return Math.max(0, visualExtent);
-		},
-
-		clampBottomHintY(y, hintEl, text) {
-			const metrics = this.measureHint(hintEl, text);
-			const visualExtent = metrics.width || 120;
-
-			const maxY = 0;
-			const minY = -Math.max(0, visualExtent);
-
-			return Math.max(minY, Math.min(maxY, y));
-		},
-
-		scheduleBoundarySceneUpdate() {
-			if (this.hintRaf) return;
-
-			this.hintRaf = requestAnimationFrame(() => {
-				this.hintRaf = null;
-				this.updateTopAnchor();
-				this.updateColumn();
-				this.updateBoundaryScene();
-			});
+			hintEl.style.setProperty("--hint-y", `${Math.round(y * 2) / 2}px`);
+			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
+			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
 		},
 
 		updateTopAnchor() {
@@ -1838,9 +1343,100 @@ document.addEventListener("DOMContentLoaded", () => {
 				"--scroll-hint-top-anchor-y",
 				`${navbarBottom + boundaryGap}px`
 			);
+		},
+
+		update() {
+			if (!this.root) return;
+
+			this.updateTopAnchor();
+
+			if (this.isHeroActive()) {
+				this.setHint(this.topHint, { text: "", y: 0, opacity: 0 });
+				this.setHint(this.bottomHint, { text: "", y: 0, opacity: 0 });
+				return;
+			}
+
+			const current = this.getActiveSection();
+			if (!current) {
+				this.setHint(this.topHint, { text: "", y: 0, opacity: 0 });
+				this.setHint(this.bottomHint, { text: "", y: 0, opacity: 0 });
+				return;
+			}
+
+			const below = this.getBelowSection(current);
+			const previous = this.getPreviousSection(current);
+
+			const currentText = this.labels[current.id] ? `>> ${this.labels[current.id]} >>` : "";
+			const belowText = below?.id ? `<< ${this.labels[below.id]} <<` : "";
+
+			let topY = this.getTopDockY(currentText);
+			let bottomY = 0;
+
+			if (state.scrollDirection === "up" && previous) {
+				const boundaryY = this.getBoundaryY(previous, current);
+				const navbarBottom = this.getNavbarBottom();
+				const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+				const metrics = this.measureHint(currentText);
+				const hintExtent = metrics.width || 120;
+				const visibilityMargin = (metrics.height || 16) + 24;
+
+				const boundaryVisible =
+					boundaryY !== null &&
+					boundaryY >= navbarBottom - visibilityMargin &&
+					boundaryY <= window.innerHeight + visibilityMargin;
+
+				if (boundaryVisible) {
+					const anchorTop = navbarBottom + boundaryGap;
+					const followY = boundaryY - anchorTop + boundaryGap + hintExtent;
+					topY = Math.max(this.getTopDockY(currentText), followY);
+				}
+			}
+
+			this.setHint(this.topHint, {
+				text: currentText,
+				y: topY,
+				opacity: currentText ? 1 : 0
+			});
+
+			this.setHint(this.bottomHint, {
+				text: belowText,
+				y: bottomY,
+				opacity: belowText ? 1 : 0
+			});
+		},
+
+		scheduleUpdate() {
+			if (this.updateRaf) return;
+
+			this.updateRaf = requestAnimationFrame(() => {
+				this.updateRaf = null;
+				this.update();
+			});
+		},
+
+		bindEvents() {
+			window.addEventListener("scroll", () => this.scheduleUpdate(), { passive: true });
+
+			window.addEventListener("resize", () => {
+				this.metricsCache.clear();
+				this.scheduleUpdate();
+			});
+
+			window.addEventListener("orientationchange", () => {
+				setTimeout(() => {
+					this.metricsCache.clear();
+					this.scheduleUpdate();
+				}, 120);
+			});
+		},
+
+		init() {
+			this.build();
+			this.update();
+			this.bindEvents();
 		}
 	};
-
+	
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
