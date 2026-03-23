@@ -1701,10 +1701,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					? 0
 					: (upperTopText ? progress : 0);
 		
-				/* Beim Aufwärtsscrollen keine doppelte Anzeige der aktuellen Section unten */
-				bottomPrimaryText = "";
+				/* Unten die untere/current-lower Section weiterhin sichtbar lassen */
+				bottomPrimaryText = lowerBottomText;
 				bottomPrimaryY = 0;
-				bottomPrimaryOpacity = 0;	
+				bottomPrimaryOpacity = lowerBottomText ? 1 : 0;
 				
 				this.animateHintState({
 					topPrimaryText,
