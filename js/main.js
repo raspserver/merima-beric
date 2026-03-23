@@ -2114,11 +2114,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* Zielpunkt: Mitte zwischen linkem Bildschirmrand und Content-Spalte */
 			const midpoint = contentLeft / 2;
 
-			/* Bei rotate(-90deg) ist die horizontale "Dicke" des Laufbandes
-			   ungefähr die Höhe des unrotierten Hint-Elements */
-			const sampleHint =
-				document.querySelector(".scroll-section-hint") ||
-				document.querySelector(".scroll-section-hint-measurer");
+			/* direkt den Measurer verwenden */
+			const sampleHint = scrollSectionHintModule.measurer;
 
 			let bandThickness = 0;
 
@@ -2127,11 +2124,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				bandThickness = hintRect.height || 0;
 			}
 
-			/* Bezug nicht mehr auf linken Rand, sondern auf die Mitte des Laufbandes */
+			/* Bezug auf die Mitte des rotieren Hint-Bandes */
 			const hintX = midpoint - (bandThickness / 2);
 
 			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
-
 		},
 
 		init() {
