@@ -1369,6 +1369,41 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
+		/* =========================================================
+		   SCROLL SECTION HINT POSITION MODULE
+		========================================================= */
+		const scrollSectionHintPositionModule = {
+			update() {
+				const hintsRoot = document.querySelector(".scroll-section-hints");
+				if (!hintsRoot) return;
+
+				const referenceContainer =
+					document.querySelector("#about .container") ||
+					document.querySelector("section .container");
+
+				if (!referenceContainer) return;
+
+				const rect = referenceContainer.getBoundingClientRect();
+
+				/* linker Rand der eigentlichen Text-/Content-Spalte */
+				const contentLeft = rect.left;
+
+				/* mittig zwischen linkem Bildschirmrand (0) und contentLeft */
+				const hintX = contentLeft / 2;
+
+				hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
+			},
+
+			init() {
+				this.update();
+
+				window.addEventListener("resize", () => this.update());
+				window.addEventListener("orientationchange", () => {
+					setTimeout(() => this.update(), 120);
+				});
+			}
+		};
+
 		init() {
 			this.build();
 			this.update();
