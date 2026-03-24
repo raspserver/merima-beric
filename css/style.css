@@ -2253,22 +2253,15 @@ section > .section-scroll-head + * {
 	inset: 0;
 	pointer-events: none;
 	z-index: 1400;
-	--scroll-hint-column-left: 24px; /* Fallback */
+	--scroll-hint-column-left: 24px;
 }
 
 .scroll-section-hint-anchor {
 	position: fixed;
 	left: var(--scroll-hint-column-left);
+	top: 0;
 	width: 0;
 	height: 0;
-}
-
-.scroll-section-hint-anchor--top {
-	top: var(--scroll-hint-top-anchor-y, 0px);
-}
-
-.scroll-section-hint-anchor--bottom {
-	bottom: var(--section-hint-boundary-gap);
 }
 
 .scroll-section-hint {
@@ -2304,21 +2297,6 @@ section > .section-scroll-head + * {
 	letter-spacing: var(--section-hint-letter-spacing);
 	text-transform: uppercase;
 	line-height: 1;
-}
-
-.scroll-section-hint-text {
-	display: block;
-	white-space: nowrap;
-	pointer-events: none;
-}
-
-.scroll-section-hint-base {
-	position: relative;
-	color: var(--section-hint-color-strong);
-}
-
-.scroll-section-hint.is-empty {
-	opacity: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

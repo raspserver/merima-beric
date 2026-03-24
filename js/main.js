@@ -1178,8 +1178,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		root: null,
 		measurer: null,
 		metricsCache: new Map(),
-		topHint: null,
-		bottomHint: null,
+		hintA: null,
+		hintB: null,
 		updateRaf: null,
 
 		labels: {
@@ -1199,14 +1199,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.root.setAttribute("aria-hidden", "true");
 
 			this.root.innerHTML = `
-				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--top">
-					<div class="scroll-section-hint scroll-section-hint--top">
+				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--a">
+					<div class="scroll-section-hint scroll-section-hint--a">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 					</div>
 				</div>
 
-				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--bottom">
-					<div class="scroll-section-hint scroll-section-hint--bottom">
+				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--b">
+					<div class="scroll-section-hint scroll-section-hint--b">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 					</div>
 				</div>
@@ -1218,8 +1218,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.measurer.className = "scroll-section-hint-measurer";
 			document.body.appendChild(this.measurer);
 
-			this.topHint = this.root.querySelector(".scroll-section-hint--top");
-			this.bottomHint = this.root.querySelector(".scroll-section-hint--bottom");
+			this.hintA = this.root.querySelector(".scroll-section-hint--a");
+			this.hintB = this.root.querySelector(".scroll-section-hint--b");
 		},
 
 		getContentSections() {
@@ -1230,39 +1230,45 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
-		getActiveSection() {
+		getNavbarBottom() {
+			if (!DOM.navbar) {
+				return utils.getRootNumber("--nav-height", 78);
+			}
+			return DOM.navbar.getBoundingClientRect().bottom;
+		},
+
+		getBoundaryGapPx() {
+			return utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
+		},
+
+		getSectionContext() {
 			const sections = this.getContentSections();
 			if (!sections.length) return null;
 
 			const navbarBottom = this.getNavbarBottom();
 
-			let active = sections[0];
+			let currentIndex = 0;
 
-			for (const section of sections) {
-				const rect = section.getBoundingClientRect();
+			for (let i = 0; i < sections.length; i++) {
+				const rect = sections[i].getBoundingClientRect();
 				if (rect.top <= navbarBottom) {
-					active = section;
+					currentIndex = i;
 				} else {
 					break;
 				}
 			}
 
-			return active;
-		},
+			const current = sections[currentIndex] || null;
+			const next = sections[currentIndex + 1] || null;
+			const overnext = sections[currentIndex + 2] || null;
 
-		getBelowSection(currentSection) {
-			if (!currentSection) return null;
-
-			const sections = this.getContentSections();
-			const index = sections.findIndex(section => section === currentSection);
-
-			if (index === -1) return null;
-			return sections[index + 1] || null;
-		},
-
-		getNavbarBottom() {
-			if (!DOM.navbar) return 0;
-			return DOM.navbar.getBoundingClientRect().bottom;
+			return {
+				sections,
+				currentIndex,
+				current,
+				next,
+				overnext
+			};
 		},
 
 		measureHint(text) {
@@ -1284,62 +1290,180 @@ document.addEventListener("DOMContentLoaded", () => {
 			return metrics;
 		},
 
-		getTopDockY(text) {
+		getRotatedBandThickness(text) {
 			const metrics = this.measureHint(text);
-			return Math.max(0, metrics.width || 120);
+			return metrics.height || 0;
 		},
 
-		setHint(hintEl, { text = "", y = 0, opacity = 0 } = {}) {
+		getRotatedBandLength(text) {
+			const metrics = this.measureHint(text);
+			return metrics.width || 0;
+		},
+
+		setAnchorTop(hintEl, topPx) {
+			const anchor = hintEl?.parentElement;
+			if (!anchor) return;
+			anchor.style.top = `${Math.round(topPx * 2) / 2}px`;
+		},
+
+		setHint(hintEl, { text = "", top = 0, y = 0, opacity = 0 } = {}) {
 			if (!hintEl) return;
 
 			const base = hintEl.querySelector(".scroll-section-hint-base");
 			if (base) base.textContent = text;
 
+			this.setAnchorTop(hintEl, top);
 			hintEl.style.setProperty("--hint-y", `${Math.round(y * 2) / 2}px`);
 			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
 			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
 		},
 
-		updateTopAnchor() {
-			if (!this.root) return;
+		hideAll() {
+			this.setHint(this.hintA, { text: "", top: 0, y: 0, opacity: 0 });
+			this.setHint(this.hintB, { text: "", top: 0, y: 0, opacity: 0 });
+		},
 
-			const boundaryGap = utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
-			const navbarBottom = this.getNavbarBottom();
+		makeText(section, direction = "current") {
+			if (!section?.id || !this.labels[section.id]) return "";
 
-			this.root.style.setProperty(
-				"--scroll-hint-top-anchor-y",
-				`${navbarBottom + boundaryGap}px`
-			);
+			if (direction === "current") {
+				return `>> ${this.labels[section.id]} >>`;
+			}
+
+			return `<< ${this.labels[section.id]} <<`;
+		},
+
+		classifyCase(changeY, bandTop, bandBottom) {
+			if (!Number.isFinite(changeY)) return 1;
+
+			if (changeY < bandTop || changeY > bandBottom) {
+				return 1;
+			}
+
+			const bandHeight = bandBottom - bandTop;
+			if (bandHeight <= 0) return 1;
+
+			const rel = changeY - bandTop;
+			const third = bandHeight / 3;
+
+			if (rel < third) return 2;
+			if (rel < third * 2) return 3;
+			return 4;
 		},
 
 		update() {
 			if (!this.root) return;
 
-			this.updateTopAnchor();
-
-			const current = this.getActiveSection();
-			if (!current) {
-				this.setHint(this.topHint, { text: "", y: 0, opacity: 0 });
-				this.setHint(this.bottomHint, { text: "", y: 0, opacity: 0 });
+			const context = this.getSectionContext();
+			if (!context?.current) {
+				this.hideAll();
 				return;
 			}
 
-			const below = this.getBelowSection(current);
+			const gap = this.getBoundaryGapPx();
+			const navbarBottom = this.getNavbarBottom();
+			const viewportBottom = window.innerHeight;
 
-			const currentText = this.labels[current.id] ? `>> ${this.labels[current.id]} >>` : "";
-			const belowText = below?.id ? `<< ${this.labels[below.id]} <<` : "";
+			const bandTop = navbarBottom;
+			const bandBottom = viewportBottom;
 
-			this.setHint(this.topHint, {
-				text: currentText,
-				y: this.getTopDockY(currentText),
-				opacity: currentText ? 1 : 0
-			});
+			const current = context.current;
+			const next = context.next;
+			const overnext = context.overnext;
 
-			this.setHint(this.bottomHint, {
-				text: belowText,
-				y: 0,
-				opacity: belowText ? 1 : 0
-			});
+			const currentText = this.makeText(current, "current");
+			const nextText = this.makeText(next, "next");
+			const overnextText = this.makeText(overnext, "next");
+
+			const nextRect = next?.getBoundingClientRect() || null;
+			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
+
+			const fall = this.classifyCase(changeY, bandTop, bandBottom);
+
+			const currentTop = navbarBottom + gap;
+			const nextAboveChangeTop = changeY - gap;
+			const nextBelowChangeTop = changeY + gap;
+			const bottomDockTop = viewportBottom - gap;
+
+			/*
+				Hinweis:
+				Das rotierte Element hängt mit seinem transformierten Textband nach unten.
+				Darum positionieren wir die Anchor-Top-Werte direkt an der gewünschten
+				Referenzlinie. Das funktioniert mit deinem bestehenden rotate(-90deg)-Ansatz
+				sehr stabil.
+			*/
+
+			if (fall === 1) {
+				this.setHint(this.hintA, {
+					text: currentText,
+					top: currentTop,
+					y: this.getRotatedBandLength(currentText),
+					opacity: currentText ? 1 : 0
+				});
+
+				this.setHint(this.hintB, {
+					text: nextText,
+					top: bottomDockTop,
+					y: 0,
+					opacity: nextText ? 1 : 0
+				});
+
+				return;
+			}
+
+			if (fall === 2) {
+				this.setHint(this.hintA, {
+					text: nextText,
+					top: nextAboveChangeTop,
+					y: this.getRotatedBandLength(nextText),
+					opacity: nextText ? 1 : 0
+				});
+
+				this.setHint(this.hintB, {
+					text: overnextText,
+					top: bottomDockTop,
+					y: 0,
+					opacity: overnextText ? 1 : 0
+				});
+
+				return;
+			}
+
+			if (fall === 3) {
+				this.setHint(this.hintA, {
+					text: currentText,
+					top: currentTop,
+					y: this.getRotatedBandLength(currentText),
+					opacity: currentText ? 1 : 0
+				});
+
+				this.setHint(this.hintB, {
+					text: nextText,
+					top: nextAboveChangeTop,
+					y: this.getRotatedBandLength(nextText),
+					opacity: nextText ? 1 : 0
+				});
+
+				return;
+			}
+
+			if (fall === 4) {
+				this.setHint(this.hintA, {
+					text: currentText,
+					top: currentTop,
+					y: this.getRotatedBandLength(currentText),
+					opacity: currentText ? 1 : 0
+				});
+
+				this.setHint(this.hintB, {
+					text: nextText,
+					top: nextBelowChangeTop,
+					y: 0,
+					opacity: nextText ? 1 : 0
+				});
+
+				return;
+			}
 		},
 
 		scheduleUpdate() {
@@ -1373,7 +1497,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindEvents();
 		}
 	};
-
+	
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
