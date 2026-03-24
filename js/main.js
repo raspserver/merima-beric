@@ -1639,53 +1639,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
-		//~ handleHomeCase(caseNumber, context, geometry) {
-			//~ const { next, overnext } = context;
-
-			//~ if (caseNumber === 1 || caseNumber === 4) {
-				//~ this.hideAll();
-				//~ return true;
-			//~ }
-
-			//~ if (caseNumber === 2) {
-				//~ this.renderNextAndBottomOvernext(next, overnext, geometry);
-				//~ return true;
-			//~ }
-
-			//~ if (caseNumber === 3) {
-				//~ this.applyHint(this.hintA, next, {
-					//~ variant: "forward",
-					//~ top: geometry.nextBelowBoundaryTop,
-					//~ y: this.getRotatedBandLength(geometry.nextForwardText),
-					//~ opacity: 1
-				//~ });
-				//~ this.hideHint(this.hintB);
-				//~ return true;
-			//~ }
-
-			//~ return false;
-		//~ },
-		
-		
-		
-		
 		handleHomeCase(caseNumber, context, geometry) {
-			const { current, next, overnext } = context;
+			const { next, overnext } = context;
 
-			if (!next) {
+			if (caseNumber === 1 || caseNumber === 4) {
 				this.hideAll();
-				return true;
-			}
-
-			// Auf Home mindestens den nächsten Bereich anzeigen
-			if (caseNumber === 1) {
-				this.applyHint(this.hintA, next, {
-					variant: "forward",
-					top: geometry.currentTop,
-					y: this.getRotatedBandLength(geometry.nextForwardText),
-					opacity: 1
-				});
-				this.hideHint(this.hintB);
 				return true;
 			}
 
@@ -1705,28 +1663,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				return true;
 			}
 
-			if (caseNumber === 4) {
-				this.applyHint(this.hintA, next, {
-					variant: "backward",
-					top: geometry.nextAboveBoundaryTop,
-					y: 0,
-					opacity: 1
-				});
-				this.hideHint(this.hintB);
-				return true;
-			}
-
 			return false;
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-
+		},
+	
 		handleStandardCase(caseNumber, context, geometry) {
 			const { current, next, overnext } = context;
 
