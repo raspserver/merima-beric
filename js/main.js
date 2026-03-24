@@ -1556,12 +1556,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				nextAboveBoundaryTop
 			};
 		},
-
+		
 		renderSingleCurrent(current, geometry) {
 			this.applyHint(this.hintA, current, {
 				variant: "forward",
 				top: geometry.currentTop,
-				y: this.getRotatedBandLength(geometry.currentText),
+				y: 0,
 				opacity: 1
 			});
 			this.hideHint(this.hintB);
@@ -1571,7 +1571,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.applyHint(this.hintA, current, {
 				variant: "forward",
 				top: geometry.currentTop,
-				y: this.getRotatedBandLength(geometry.currentText),
+				y: 0,
 				opacity: 1
 			});
 
@@ -1591,7 +1591,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.applyHint(this.hintA, next, {
 				variant: "forward",
 				top: geometry.nextBelowBoundaryTop,
-				y: this.getRotatedBandLength(geometry.nextForwardText),
+				y: 0,
 				opacity: 1
 			});
 
@@ -1611,23 +1611,23 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.applyHint(this.hintA, current, {
 				variant: "forward",
 				top: geometry.currentTop,
-				y: this.getRotatedBandLength(geometry.currentText),
+				y: 0,
 				opacity: 1
 			});
 
 			this.applyHint(this.hintB, next, {
 				variant: "forward",
 				top: geometry.nextBelowBoundaryTop,
-				y: this.getRotatedBandLength(geometry.nextForwardText),
+				y: 0,
 				opacity: 1
 			});
 		},
-
+		
 		renderCurrentAndNextBackward(current, next, geometry) {
 			this.applyHint(this.hintA, current, {
 				variant: "forward",
 				top: geometry.currentTop,
-				y: this.getRotatedBandLength(geometry.currentText),
+				y: 0,
 				opacity: 1
 			});
 
@@ -1637,8 +1637,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				y: 0,
 				opacity: 1
 			});
-		},
-
+		},	
+		
 		handleHomeCase(caseNumber, context, geometry) {
 			const { next, overnext } = context;
 
@@ -1656,7 +1656,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.applyHint(this.hintA, next, {
 					variant: "forward",
 					top: geometry.nextBelowBoundaryTop,
-					y: this.getRotatedBandLength(geometry.nextForwardText),
+					y: 0,
 					opacity: 1
 				});
 				this.hideHint(this.hintB);
@@ -1665,7 +1665,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return false;
 		},
-	
+
 		handleStandardCase(caseNumber, context, geometry) {
 			const { current, next, overnext } = context;
 
