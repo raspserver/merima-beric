@@ -2557,24 +2557,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!referenceContainer) return;
 
 			const rect = referenceContainer.getBoundingClientRect();
-
-			/* linker Rand der eigentlichen Text-/Content-Spalte */
 			const contentLeft = rect.left;
-
-			/* Zielpunkt: Mitte zwischen linkem Bildschirmrand und Content-Spalte */
 			const midpoint = contentLeft / 2;
 
-			/* direkt den Measurer verwenden */
-			const sampleHint = scrollSectionHintModule.measurer;
+			/* immer mit echtem Beispieltext messen */
+			const sampleText = ">> ÜBER MICH >>";
+			const metrics = scrollSectionHintModule.measureHint(sampleText);
+			const bandThickness = metrics.height || 0;
 
-			let bandThickness = 0;
-
-			if (sampleHint) {
-				const hintRect = sampleHint.getBoundingClientRect();
-				bandThickness = hintRect.height || 0;
-			}
-
-			/* Bezug auf die Mitte des rotieren Hint-Bandes */
+			/* Band-Mitte zwischen Viewportrand und Textspalte */
 			const hintX = midpoint - (bandThickness / 2);
 
 			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
@@ -2584,9 +2575,19 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.update();
 
 			window.addEventListener("resize", () => this.update());
+
 			window.addEventListener("orientationchange", () => {
 				setTimeout(() => this.update(), 120);
 			});
+
+			/* wichtig nach Reload + Scroll-Restore + Font-Load */
+			window.addEventListener("pageshow", () => {
+				requestAnimationFrame(() => this.update());
+			});
+
+			if (document.fonts?.ready) {
+				document.fonts.ready.then(() => this.update());
+			}
 		}
 	};
 
