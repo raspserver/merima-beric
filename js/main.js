@@ -1351,14 +1351,105 @@ document.addEventListener("DOMContentLoaded", () => {
 			return `<< ${this.labels[section.id]} <<`;
 		},
 		
-		getHintTheme(section) {
-			if (!section?.id) return "dark";
+		getRgbFromColorString(color) {
+			if (!color) return null;
 
-			if (section.id === "services" || section.id === "contact") {
-				return "light";
+			const value = color.trim().toLowerCase();
+
+			if (value === "transparent" || value === "rgba(0, 0, 0, 0)") {
+				return null;
 			}
 
-			return "dark";
+			const rgbMatch = value.match(/rgba?\(([^)]+)\)/);
+			if (rgbMatch) {
+				const parts = rgbMatch[1].split(",").map(part => parseFloat(part.trim()));
+				if (parts.length >= 3 && parts.slice(0, 3).every(Number.isFinite)) {
+					return {
+						r: parts[0],
+						g: parts[1],
+						b: parts[2]
+					};
+				}
+			}
+
+			const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+			if (hexMatch) {
+				let hex = hexMatch[1];
+
+				if (hex.length === 3) {
+					hex = hex.split("").map(ch => ch + ch).join("");
+				}
+
+				const intVal = parseInt(hex, 16);
+				return {
+					r: (intVal >> 16) & 255,
+					g: (intVal >> 8) & 255,
+					b: intVal & 255
+				};
+			}
+
+			return null;
+		},
+
+		getRelativeLuminance({ r, g, b }) {
+			const normalize = (channel) => {
+				const v = channel / 255;
+				return v <= 0.03928
+					? v / 12.92
+					: Math.pow((v + 0.055) / 1.055, 2.4);
+			};
+
+			const R = normalize(r);
+			const G = normalize(g);
+			const B = normalize(b);
+
+			return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+		},
+
+		findEffectiveBackgroundColorAtPoint(x, y) {
+			const maxX = Math.max(0, Math.min(Math.round(x), window.innerWidth - 1));
+			const maxY = Math.max(0, Math.min(Math.round(y), this.getViewportHeight() - 1));
+
+			let el = document.elementFromPoint(maxX, maxY);
+
+			while (el && el !== document.documentElement) {
+				const style = getComputedStyle(el);
+				const rgb = this.getRgbFromColorString(style.backgroundColor);
+
+				if (rgb) return rgb;
+
+				el = el.parentElement;
+			}
+
+			/* Fallback auf Body */
+			const bodyRgb = this.getRgbFromColorString(getComputedStyle(document.body).backgroundColor);
+			if (bodyRgb) return bodyRgb;
+
+			/* letzter Fallback: hell */
+			return { r: 250, g: 250, b: 248 };
+		},
+
+		getHintThemeForPosition(top, text, y = 0) {
+			const left = parseFloat(
+				getComputedStyle(this.root).getPropertyValue("--scroll-hint-column-left")
+			) || 24;
+
+			const bandThickness = this.getRotatedBandThickness(text) || 12;
+			const bandLength = this.getRotatedBandLength(text) || 100;
+
+			/* nach Rotation(-90deg):
+			   top/left ist der Transform-Ursprung,
+			   das sichtbare Band läuft nach oben.
+			   Wir sampeln ungefähr die Mitte des sichtbaren Hint-Bandes.
+			*/
+			const sampleX = left + bandThickness / 2;
+			const sampleY = top + y - bandLength / 2;
+
+			const bgRgb = this.findEffectiveBackgroundColorAtPoint(sampleX, sampleY);
+			const luminance = this.getRelativeLuminance(bgRgb);
+
+			/* dunkler Hintergrund => helle Schrift, heller Hintergrund => dunkle Schrift */
+			return luminance < 0.42 ? "light" : "dark";
 		},
 
 		classifyCase(changeY, bandTop, bandBottom) {
@@ -1419,14 +1510,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			const bottomDockTop = this.getBottomDockTop(nextBackwardText, gap);
 
 			const caseNumber = this.classifyCase(changeY, bandTop, bandBottom);
-
+		
 			if (caseNumber === 1) {
+				const themeA = this.getHintThemeForPosition(
+					currentTop,
+					currentText,
+					this.getRotatedBandLength(currentText)
+				);
+
+				const themeB = this.getHintThemeForPosition(
+					bottomDockTop,
+					nextBackwardText,
+					0
+				);
+
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
 					y: this.getRotatedBandLength(currentText),
 					opacity: currentText ? 1 : 0,
-					theme: this.getHintTheme(current)
+					theme: themeA
 				});
 
 				this.setHint(this.hintB, {
@@ -1434,59 +1537,103 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: bottomDockTop,
 					y: 0,
 					opacity: nextBackwardText ? 1 : 0,
-					theme: this.getHintTheme(next)
+					theme: themeB
 				});
 
 				return;
 			}
-
+			
 			if (caseNumber === 2) {
+				const yA = this.getRotatedBandLength(nextForwardText);
+
+				const themeA = this.getHintThemeForPosition(
+					nextBelowBoundaryTop,
+					nextForwardText,
+					yA
+				);
+
+				const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
+				const themeB = this.getHintThemeForPosition(
+					overnextBottomTop,
+					overnextBackwardText,
+					0
+				);
+
 				this.setHint(this.hintA, {
 					text: nextForwardText,
 					top: nextBelowBoundaryTop,
-					y: this.getRotatedBandLength(nextForwardText),
+					y: yA,
 					opacity: nextForwardText ? 1 : 0,
-					theme: this.getHintTheme(next)
+					theme: themeA
 				});
 
 				this.setHint(this.hintB, {
 					text: overnextBackwardText,
-					top: this.getBottomDockTop(overnextBackwardText, gap),
+					top: overnextBottomTop,
 					y: 0,
 					opacity: overnextBackwardText ? 1 : 0,
-					theme: this.getHintTheme(overnext)
+					theme: themeB
 				});
 
 				return;
 			}
-
+			
 			if (caseNumber === 3) {
+				const yA = this.getRotatedBandLength(currentText);
+				const yB = this.getRotatedBandLength(nextForwardText);
+
+				const themeA = this.getHintThemeForPosition(
+					currentTop,
+					currentText,
+					yA
+				);
+
+				const themeB = this.getHintThemeForPosition(
+					nextBelowBoundaryTop,
+					nextForwardText,
+					yB
+				);
+
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
+					y: yA,
 					opacity: currentText ? 1 : 0,
-					theme: this.getHintTheme(current)
+					theme: themeA
 				});
 
 				this.setHint(this.hintB, {
 					text: nextForwardText,
 					top: nextBelowBoundaryTop,
-					y: this.getRotatedBandLength(nextForwardText),
+					y: yB,
 					opacity: nextForwardText ? 1 : 0,
-					theme: this.getHintTheme(next)
+					theme: themeB
 				});
 				
 				return;
 			}
-
+			
 			if (caseNumber === 4) {
+				const yA = this.getRotatedBandLength(currentText);
+
+				const themeA = this.getHintThemeForPosition(
+					currentTop,
+					currentText,
+					yA
+				);
+
+				const themeB = this.getHintThemeForPosition(
+					nextAboveBoundaryTop,
+					nextBackwardText,
+					0
+				);
+
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
+					y: yA,
 					opacity: currentText ? 1 : 0,
-					theme: this.getHintTheme(current)
+					theme: themeA
 				});
 
 				this.setHint(this.hintB, {
@@ -1494,11 +1641,12 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: nextAboveBoundaryTop,
 					y: 0,
 					opacity: nextBackwardText ? 1 : 0,
-					theme: this.getHintTheme(next)
+					theme: themeB
 				});
 
 				return;
 			}
+
 		},
 
 		scheduleUpdate() {
