@@ -1336,7 +1336,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		classifyCase(changeY, bandTop, bandBottom) {
 			if (!Number.isFinite(changeY)) return 1;
 
-			if (changeY < bandTop || changeY > bandBottom) {
+			if (changeY <= bandTop || changeY >= bandBottom) {
 				return 1;
 			}
 
