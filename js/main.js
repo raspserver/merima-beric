@@ -1380,8 +1380,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
 
 			const currentTop = navbarBottom + gap;
-			const nextAboveChangeTop = changeY - gap;
-			const nextBelowChangeTop = changeY + gap;
+
+			/* Hint unterhalb der Sektionsgrenze:
+			   obere Kante des rotierten Hints = changeY + gap */
+			const nextBelowBoundaryTop = changeY + gap;
+
+			/* Hint oberhalb der Sektionsgrenze:
+			   untere Kante des rotierten Hints = changeY - gap */
+			const nextAboveBoundaryTop = changeY - gap;
+
 			const bottomDockTop = viewportBottom - gap;
 
 			const caseNumber = this.classifyCase(changeY, bandTop, bandBottom);
@@ -1407,7 +1414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (caseNumber === 2) {
 				this.setHint(this.hintA, {
 					text: nextForwardText,
-					top: nextAboveChangeTop,
+					top: nextBelowBoundaryTop,
 					y: this.getRotatedBandLength(nextForwardText),
 					opacity: nextForwardText ? 1 : 0
 				});
@@ -1432,7 +1439,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				this.setHint(this.hintB, {
 					text: nextForwardText,
-					top: nextAboveChangeTop,
+					top: nextBelowBoundaryTop,
 					y: this.getRotatedBandLength(nextForwardText),
 					opacity: nextForwardText ? 1 : 0
 				});
@@ -1450,13 +1457,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				this.setHint(this.hintB, {
 					text: nextBackwardText,
-					top: nextBelowChangeTop,
+					top: nextAboveBoundaryTop,
 					y: 0,
 					opacity: nextBackwardText ? 1 : 0
 				});
 
 				return;
-			}
+			}		
 		},
 		
 		scheduleUpdate() {
