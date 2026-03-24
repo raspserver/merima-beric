@@ -1376,29 +1376,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			const nextBackwardText = this.makeText(next, "backward");
 			const overnextBackwardText = this.makeText(overnext, "backward");
 
-			const currentLen = this.getRotatedBandLength(currentText);
-			const nextForwardLen = this.getRotatedBandLength(nextForwardText);
-			const nextBackwardLen = this.getRotatedBandLength(nextBackwardText);
-			const overnextBackwardLen = this.getRotatedBandLength(overnextBackwardText);
-
 			const nextRect = next?.getBoundingClientRect() || null;
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
 
-			/* 
-			   Positionen sauber aus sichtbarer Geometrie ableiten:
-
-			   rotate(-90deg) + translateY(var(--hint-y))
-			   -> sichtbare obere Kante liegt bei: top - y
-			   -> sichtbare untere Kante liegt bei: top - y + length
-
-			   Deshalb:
-			   - oberhalb der Grenze enden: top = boundary - gap
-				 mit y = length  => sichtbare Unterkante = boundary - gap
-			   - unterhalb der Grenze starten: top = boundary + gap
-				 mit y = 0       => sichtbare Oberkante = boundary + gap
-			*/
-
-			const currentTop = navbarBottom + gap + currentLen;
+			const currentTop = navbarBottom + gap;
 			const nextAboveChangeTop = changeY - gap;
 			const nextBelowChangeTop = changeY + gap;
 			const bottomDockTop = viewportBottom - gap;
@@ -1409,7 +1390,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: currentLen,
+					y: this.getRotatedBandLength(currentText),
 					opacity: currentText ? 1 : 0
 				});
 
@@ -1427,7 +1408,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHint(this.hintA, {
 					text: nextForwardText,
 					top: nextAboveChangeTop,
-					y: nextForwardLen,
+					y: this.getRotatedBandLength(nextForwardText),
 					opacity: nextForwardText ? 1 : 0
 				});
 
@@ -1445,14 +1426,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: currentLen,
+					y: this.getRotatedBandLength(currentText),
 					opacity: currentText ? 1 : 0
 				});
 
 				this.setHint(this.hintB, {
 					text: nextForwardText,
 					top: nextAboveChangeTop,
-					y: nextForwardLen,
+					y: this.getRotatedBandLength(nextForwardText),
 					opacity: nextForwardText ? 1 : 0
 				});
 
@@ -1463,7 +1444,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: currentLen,
+					y: this.getRotatedBandLength(currentText),
 					opacity: currentText ? 1 : 0
 				});
 
@@ -1477,7 +1458,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 		},
-
+		
 		scheduleUpdate() {
 			if (this.updateRaf) return;
 
