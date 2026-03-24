@@ -2528,20 +2528,20 @@ document.addEventListener("DOMContentLoaded", () => {
 			const hintsRoot = document.querySelector(".scroll-section-hints");
 			if (!hintsRoot) return;
 
-			const referenceContainer =
+			const referenceColumn =
+				document.querySelector("#about .about-text") ||
 				document.querySelector("#about .container") ||
 				document.querySelector("section .container");
 
-			if (!referenceContainer) return;
+			if (!referenceColumn) return;
 
-			const rect = referenceContainer.getBoundingClientRect();
+			const rect = referenceColumn.getBoundingClientRect();
 			const contentLeft = rect.left;
 
-			/* echte Mitte zwischen linkem Bildschirmrand und linkem Rand der Textspalte */
+			/* Mittelpunkt zwischen linkem Viewportrand und linkem Rand der Textspalte */
 			const hintCenterX = contentLeft / 2;
 
 			hintsRoot.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
-
 		},
 
 		init() {
