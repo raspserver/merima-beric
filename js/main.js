@@ -1298,7 +1298,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				next,
 				overnext
 			};
-		}
+		},
 
 		measureHint(text) {
 			if (!this.measurer) return { width: 0, height: 0 };
