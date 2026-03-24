@@ -1887,8 +1887,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		init() {
 			this.build();
+			this.bindHintClicks();
 			this.update();
 			this.bindEvents();
+		},
+		
+		bindHintClicks() {
+			[this.hintA, this.hintB].forEach(hintEl => {
+				if (!hintEl) return;
+
+				hintEl.setAttribute("tabindex", "0");
+				hintEl.setAttribute("role", "button");
+
+				const goToHintTarget = () => {
+					const targetSelector = hintEl.dataset.scrollTarget;
+					const opacity = parseFloat(hintEl.style.opacity || "0");
+
+					if (!targetSelector || opacity <= 0.01) return;
+
+					scrollEngine.goTo(targetSelector);
+				};
+
+				hintEl.addEventListener("click", (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					goToHintTarget();
+				});
+
+				hintEl.addEventListener("keydown", (e) => {
+					if (e.key !== "Enter" && e.key !== " ") return;
+
+					e.preventDefault();
+					e.stopPropagation();
+					goToHintTarget();
+				});
+			});
 		}
 	};
 	
