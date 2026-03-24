@@ -2260,9 +2260,9 @@ section > .section-scroll-head + * {
 	position: fixed;
 	left: var(--scroll-hint-column-center);
 	top: 0;
-	width: 44px;
+	width: 0;
 	height: 160px;
-	transform: translateX(-50%);
+	transform: none;
 	pointer-events: auto;
 	cursor: pointer;
 }
@@ -2270,7 +2270,7 @@ section > .section-scroll-head + * {
 .scroll-section-hint {
 	position: absolute;
 	top: 0;
-	left: 50%;
+	left: 0;
 	display: inline-block;
 	white-space: nowrap;
 	font-family: 'Montserrat', sans-serif;
@@ -2285,7 +2285,7 @@ section > .section-scroll-head + * {
 	will-change: transform, opacity;
 	backface-visibility: hidden;
 
-	transform-origin: center top;
+	transform-origin: center center;
 	transform: translateX(-50%) rotate(-90deg);
 
 	pointer-events: none;
