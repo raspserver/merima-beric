@@ -2537,18 +2537,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			const rect = referenceContainer.getBoundingClientRect();
 			const contentLeft = rect.left;
 
-			/* exakt die Mitte zwischen Viewport-Linkskante (0)
-			   und linker Kante der Textspalte */
-			const rawHintX = contentLeft / 2;
+			/* echte Mitte zwischen linkem Bildschirmrand und linkem Rand der Textspalte */
+			const hintCenterX = contentLeft / 2;
 
-			/* nur Schutz vor echtem Randkontakt */
-			const safePadding = 20;
-			const minX = safePadding;
-			const maxX = Math.max(safePadding, contentLeft - safePadding);
+			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintCenterX}px`);
 
-			const hintX = Math.max(minX, Math.min(rawHintX, maxX));
-
-			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
 		},
 
 		init() {

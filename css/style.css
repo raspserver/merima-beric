@@ -2258,11 +2258,11 @@ section > .section-scroll-head + * {
 
 .scroll-section-hint-anchor {
 	position: fixed;
-	left: var(--scroll-hint-column-left);
+	left: calc(var(--scroll-hint-column-left) - 22px); /* 22 = halbe Anchor-Breite */
 	top: 0;
 	width: 44px;
 	height: 160px;
-	transform: translateX(-50%);
+	transform: none;
 	pointer-events: auto;
 	cursor: pointer;
 }
