@@ -2292,6 +2292,20 @@ section > .section-scroll-head + * {
 	cursor: default;
 }
 
+
+
+.scroll-section-hint {
+	opacity: 1 !important;
+	transform: translate3d(-50%, 0, 0) rotate(0deg) !important;
+	background: rgba(0,255,0,0.2) !important;
+	color: red !important;
+}
+
+
+
+
+
+
 .scroll-section-hint-anchor[aria-hidden="true"] {
 	pointer-events: none;
 }
