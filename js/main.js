@@ -1181,6 +1181,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		hintA: null,
 		hintB: null,
 		updateRaf: null,
+		liveTrackingRaf: null,
+		liveTrackingActive: false,
 
 		labels: {
 			about: "ÜBER MICH",
@@ -1230,11 +1232,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
+		getViewportHeight() {
+			return window.visualViewport?.height || window.innerHeight;
+		},
+
+		getViewportOffsetTop() {
+			return window.visualViewport?.offsetTop || 0;
+		},
+
 		getNavbarBottom() {
 			if (!DOM.navbar) {
 				return utils.getRootNumber("--nav-height", 78);
 			}
-			return DOM.navbar.getBoundingClientRect().bottom;
+
+			const navRect = DOM.navbar.getBoundingClientRect();
+			return navRect.bottom - this.getViewportOffsetTop();
 		},
 
 		getBoundaryGapPx() {
@@ -1300,6 +1312,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			return metrics.width || 0;
 		},
 
+		getBottomDockTop(text, gap) {
+			const length = this.getRotatedBandLength(text);
+			const viewportBottom = this.getViewportHeight();
+
+			/* obere Anchor-Position so, dass der rotierte Hint gap px
+			   über dem unteren sichtbaren Viewport endet */
+			return viewportBottom - gap - length;
+		},
+
 		setAnchorTop(hintEl, topPx) {
 			const anchor = hintEl?.parentElement;
 			if (!anchor) return;
@@ -1362,7 +1383,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const gap = this.getBoundaryGapPx();
 			const navbarBottom = this.getNavbarBottom();
-			const viewportBottom = window.innerHeight;
+			const viewportBottom = this.getViewportHeight();
 
 			const bandTop = navbarBottom;
 			const bandBottom = viewportBottom;
@@ -1381,15 +1402,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const currentTop = navbarBottom + gap;
 
-			/* Hint unterhalb der Sektionsgrenze:
-			   obere Kante des rotierten Hints = changeY + gap */
+			/* unterhalb der Grenzlinie */
 			const nextBelowBoundaryTop = changeY + gap;
 
-			/* Hint oberhalb der Sektionsgrenze:
-			   untere Kante des rotierten Hints = changeY - gap */
+			/* oberhalb der Grenzlinie */
 			const nextAboveBoundaryTop = changeY - gap;
 
-			const bottomDockTop = viewportBottom - gap;
+			/* sauber unten gedockt anhand realer rotierter Länge */
+			const bottomDockTop = this.getBottomDockTop(nextBackwardText, gap);
 
 			const caseNumber = this.classifyCase(changeY, bandTop, bandBottom);
 
@@ -1421,7 +1441,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				this.setHint(this.hintB, {
 					text: overnextBackwardText,
-					top: bottomDockTop,
+					top: this.getBottomDockTop(overnextBackwardText, gap),
 					y: 0,
 					opacity: overnextBackwardText ? 1 : 0
 				});
@@ -1463,9 +1483,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 
 				return;
-			}		
+			}
 		},
-		
+
 		scheduleUpdate() {
 			if (this.updateRaf) return;
 
@@ -1473,6 +1493,28 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.updateRaf = null;
 				this.update();
 			});
+		},
+
+		startLiveTracking() {
+			if (this.liveTrackingActive) return;
+			this.liveTrackingActive = true;
+
+			const tick = () => {
+				if (!this.liveTrackingActive) return;
+				this.update();
+				this.liveTrackingRaf = requestAnimationFrame(tick);
+			};
+
+			this.liveTrackingRaf = requestAnimationFrame(tick);
+		},
+
+		stopLiveTracking() {
+			this.liveTrackingActive = false;
+
+			if (this.liveTrackingRaf) {
+				cancelAnimationFrame(this.liveTrackingRaf);
+				this.liveTrackingRaf = null;
+			}
 		},
 
 		bindEvents() {
@@ -1489,6 +1531,30 @@ document.addEventListener("DOMContentLoaded", () => {
 					this.scheduleUpdate();
 				}, 120);
 			});
+
+			/* während aktiver Wischgeste kontinuierlich nachführen */
+			window.addEventListener("touchstart", () => this.startLiveTracking(), { passive: true });
+
+			window.addEventListener("touchend", () => {
+				this.stopLiveTracking();
+				this.scheduleUpdate();
+			}, { passive: true });
+
+			window.addEventListener("touchcancel", () => {
+				this.stopLiveTracking();
+				this.scheduleUpdate();
+			}, { passive: true });
+
+			if (window.visualViewport) {
+				window.visualViewport.addEventListener("resize", () => {
+					this.metricsCache.clear();
+					this.scheduleUpdate();
+				}, { passive: true });
+
+				window.visualViewport.addEventListener("scroll", () => {
+					this.scheduleUpdate();
+				}, { passive: true });
+			}
 		},
 
 		init() {
@@ -1497,7 +1563,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindEvents();
 		}
 	};
-
+	
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
