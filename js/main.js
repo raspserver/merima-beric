@@ -1506,20 +1506,52 @@ document.addEventListener("DOMContentLoaded", () => {
 			const current = context.current;
 			const next = context.next;
 			const overnext = context.overnext;
-	
+
 			const isHomeCurrent =
 				current?.classList?.contains("hero") ||
 				current?.id === "home";
-			
+
 			const currentText = this.makeText(current, "forward");
-			const nextForwardText = this.makeText(next, "forward");
-			const nextBackwardText = this.makeText(next, "backward");
-			const overnextBackwardText = this.makeText(overnext, "backward");
+			const nextForwardText = next ? this.makeText(next, "forward") : "";
+			const nextBackwardText = next ? this.makeText(next, "backward") : "";
+			const overnextBackwardText = overnext ? this.makeText(overnext, "backward") : "";
+
+			const currentTop = navbarBottom + gap;
+			const bottomDockTop = next ? this.getBottomDockTop(nextBackwardText, gap) : 0;
+
+			/* ---------------------------------
+			   FALL 0: keine nächste Section mehr
+			   z. B. #contact
+			--------------------------------- */
+			if (!isHomeCurrent && !next) {
+				const yA = this.getRotatedBandLength(currentText);
+
+				const themeA = this.getHintThemeForPosition(
+					currentTop,
+					currentText,
+					yA
+				);
+
+				this.setHint(this.hintA, {
+					text: currentText,
+					top: currentTop,
+					y: yA,
+					opacity: currentText ? 1 : 0,
+					theme: themeA
+				});
+
+				this.setHint(this.hintB, {
+					text: "",
+					top: 0,
+					y: 0,
+					opacity: 0
+				});
+
+				return;
+			}
 
 			const nextRect = next?.getBoundingClientRect() || null;
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
-
-			const currentTop = navbarBottom + gap;
 
 			/* unterhalb der Grenzlinie */
 			const nextBelowBoundaryTop = changeY + gap;
@@ -1527,15 +1559,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* oberhalb der Grenzlinie */
 			const nextAboveBoundaryTop = changeY - gap;
 
-			/* sauber unten gedockt anhand realer rotierter Länge */
-			const bottomDockTop = this.getBottomDockTop(nextBackwardText, gap);
+			const caseNumber = next
+				? this.classifyCase(changeY, bandTop, bandBottom)
+				: 1;
 
-			const caseNumber = this.classifyCase(changeY, bandTop, bandBottom);
-		
+			/* ---------------------------------
+			   HERO / HOME
+			--------------------------------- */
 			if (isHomeCurrent) {
-				const nextForwardText = this.makeText(next, "forward");
-				const overnextBackwardText = this.makeText(overnext, "backward");
-
 				if (caseNumber === 1) {
 					this.hideAll();
 					return;
@@ -1550,14 +1581,6 @@ document.addEventListener("DOMContentLoaded", () => {
 						yA
 					);
 
-					const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
-
-					const themeB = this.getHintThemeForPosition(
-						overnextBottomTop,
-						overnextBackwardText,
-						0
-					);
-
 					this.setHint(this.hintA, {
 						text: nextForwardText,
 						top: nextBelowBoundaryTop,
@@ -1566,13 +1589,30 @@ document.addEventListener("DOMContentLoaded", () => {
 						theme: themeA
 					});
 
-					this.setHint(this.hintB, {
-						text: overnextBackwardText,
-						top: overnextBottomTop,
-						y: 0,
-						opacity: overnextBackwardText ? 1 : 0,
-						theme: themeB
-					});
+					if (overnext) {
+						const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
+
+						const themeB = this.getHintThemeForPosition(
+							overnextBottomTop,
+							overnextBackwardText,
+							0
+						);
+
+						this.setHint(this.hintB, {
+							text: overnextBackwardText,
+							top: overnextBottomTop,
+							y: 0,
+							opacity: overnextBackwardText ? 1 : 0,
+							theme: themeB
+						});
+					} else {
+						this.setHint(this.hintB, {
+							text: "",
+							top: 0,
+							y: 0,
+							opacity: 0
+						});
+					}
 
 					return;
 				}
@@ -1609,39 +1649,53 @@ document.addEventListener("DOMContentLoaded", () => {
 					return;
 				}
 			}
-		
+
+			/* ---------------------------------
+			   NORMALE SECTIONS
+			--------------------------------- */
 			if (caseNumber === 1) {
+				const yA = this.getRotatedBandLength(currentText);
+
 				const themeA = this.getHintThemeForPosition(
 					currentTop,
 					currentText,
-					this.getRotatedBandLength(currentText)
-				);
-
-				const themeB = this.getHintThemeForPosition(
-					bottomDockTop,
-					nextBackwardText,
-					0
+					yA
 				);
 
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
+					y: yA,
 					opacity: currentText ? 1 : 0,
 					theme: themeA
 				});
 
-				this.setHint(this.hintB, {
-					text: nextBackwardText,
-					top: bottomDockTop,
-					y: 0,
-					opacity: nextBackwardText ? 1 : 0,
-					theme: themeB
-				});
+				if (next) {
+					const themeB = this.getHintThemeForPosition(
+						bottomDockTop,
+						nextBackwardText,
+						0
+					);
+
+					this.setHint(this.hintB, {
+						text: nextBackwardText,
+						top: bottomDockTop,
+						y: 0,
+						opacity: nextBackwardText ? 1 : 0,
+						theme: themeB
+					});
+				} else {
+					this.setHint(this.hintB, {
+						text: "",
+						top: 0,
+						y: 0,
+						opacity: 0
+					});
+				}
 
 				return;
 			}
-			
+
 			if (caseNumber === 2) {
 				const yA = this.getRotatedBandLength(nextForwardText);
 
@@ -1649,13 +1703,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					nextBelowBoundaryTop,
 					nextForwardText,
 					yA
-				);
-
-				const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
-				const themeB = this.getHintThemeForPosition(
-					overnextBottomTop,
-					overnextBackwardText,
-					0
 				);
 
 				this.setHint(this.hintA, {
@@ -1666,17 +1713,34 @@ document.addEventListener("DOMContentLoaded", () => {
 					theme: themeA
 				});
 
-				this.setHint(this.hintB, {
-					text: overnextBackwardText,
-					top: overnextBottomTop,
-					y: 0,
-					opacity: overnextBackwardText ? 1 : 0,
-					theme: themeB
-				});
+				if (overnext) {
+					const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
+
+					const themeB = this.getHintThemeForPosition(
+						overnextBottomTop,
+						overnextBackwardText,
+						0
+					);
+
+					this.setHint(this.hintB, {
+						text: overnextBackwardText,
+						top: overnextBottomTop,
+						y: 0,
+						opacity: overnextBackwardText ? 1 : 0,
+						theme: themeB
+					});
+				} else {
+					this.setHint(this.hintB, {
+						text: "",
+						top: 0,
+						y: 0,
+						opacity: 0
+					});
+				}
 
 				return;
 			}
-			
+
 			if (caseNumber === 3) {
 				const yA = this.getRotatedBandLength(currentText);
 				const yB = this.getRotatedBandLength(nextForwardText);
@@ -1708,10 +1772,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					opacity: nextForwardText ? 1 : 0,
 					theme: themeB
 				});
-				
+
 				return;
 			}
-			
+
 			if (caseNumber === 4) {
 				const yA = this.getRotatedBandLength(currentText);
 
@@ -1746,6 +1810,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
+			this.hideAll();
 		},
 
 		scheduleUpdate() {
