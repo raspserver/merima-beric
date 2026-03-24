@@ -1173,7 +1173,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	/* =========================================================
 	   SCROLL SECTION HINT MODULE
-	========================================================= */
+	========================================================= */	
 	const scrollSectionHintModule = {
 		root: null,
 		measurer: null,
@@ -1223,7 +1223,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.hintA = this.root.querySelector(".scroll-section-hint--a");
 			this.hintB = this.root.querySelector(".scroll-section-hint--b");
 		},
-		
+
 		bindHintClicks() {
 			[this.hintA, this.hintB].forEach(hintEl => {
 				if (!hintEl) return;
@@ -1264,11 +1264,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		getContentSections() {
 			return state.orderedSections.filter(section => {
 				if (!section) return false;
-
-				if (section.classList?.contains("hero")) {
-					return true;
-				}
-
+				if (section.classList?.contains("hero")) return true;
 				return !!section.id && !!this.labels[section.id];
 			});
 		},
@@ -1299,7 +1295,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!sections.length) return null;
 
 			const navbarBottom = this.getNavbarBottom();
-
 			let currentIndex = 0;
 
 			for (let i = 0; i < sections.length; i++) {
@@ -1324,16 +1319,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			}
 
-			const current = sections[currentIndex] || null;
-			const next = sections[currentIndex + 1] || null;
-			const overnext = sections[currentIndex + 2] || null;
-
 			return {
 				sections,
 				currentIndex,
-				current,
-				next,
-				overnext
+				current: sections[currentIndex] || null,
+				next: sections[currentIndex + 1] || null,
+				overnext: sections[currentIndex + 2] || null
 			};
 		},
 
@@ -1356,19 +1347,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			return metrics;
 		},
 
-		getRotatedBandThickness(text) {
-			const metrics = this.measureHint(text);
-			return metrics.height || 0;
-		},
-
 		getRotatedBandLength(text) {
-			const metrics = this.measureHint(text);
-			return metrics.width || 0;
+			return this.measureHint(text).width || 0;
 		},
 
-		getBottomDockTop(text, gap) {
-			const viewportBottom = this.getViewportHeight();
-			return viewportBottom - gap;
+		getBottomDockTop(_text, gap) {
+			return this.getViewportHeight() - gap;
 		},
 
 		setAnchorTop(hintEl, topPx) {
@@ -1376,7 +1360,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!anchor) return;
 			anchor.style.top = `${Math.round(topPx * 2) / 2}px`;
 		},
-	
+
 		setHint(hintEl, {
 			text = "",
 			top = 0,
@@ -1407,19 +1391,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
+		hideHint(hintEl) {
+			this.setHint(hintEl, {
+				text: "",
+				top: 0,
+				y: 0,
+				opacity: 0,
+				target: ""
+			});
+		},
+
 		hideAll() {
-			this.setHint(this.hintA, { text: "", top: 0, y: 0, opacity: 0, target: "" });
-			this.setHint(this.hintB, { text: "", top: 0, y: 0, opacity: 0, target: "" });
+			this.hideHint(this.hintA);
+			this.hideHint(this.hintB);
 		},
 
 		makeText(section, variant = "forward") {
 			if (!section?.id || !this.labels[section.id]) return "";
-
-			if (variant === "forward") {
-				return `>> ${this.labels[section.id]} >>`;
-			}
-
-			return `<< ${this.labels[section.id]} <<`;
+			return variant === "forward"
+				? `>> ${this.labels[section.id]} >>`
+				: `<< ${this.labels[section.id]} <<`;
 		},
 
 		getRgbFromColorString(color) {
@@ -1435,11 +1426,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (rgbMatch) {
 				const parts = rgbMatch[1].split(",").map(part => parseFloat(part.trim()));
 				if (parts.length >= 3 && parts.slice(0, 3).every(Number.isFinite)) {
-					return {
-						r: parts[0],
-						g: parts[1],
-						b: parts[2]
-					};
+					return { r: parts[0], g: parts[1], b: parts[2] };
 				}
 			}
 
@@ -1476,9 +1463,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return 0.2126 * R + 0.7152 * G + 0.0722 * B;
 		},
-		
+
 		getSectionTheme(sectionEl) {
 			if (!sectionEl) return "dark";
+
+			const explicitTheme = sectionEl.dataset.hintTheme;
+			if (explicitTheme === "light" || explicitTheme === "dark") {
+				return explicitTheme;
+			}
 
 			const style = getComputedStyle(sectionEl);
 			const rgb =
@@ -1507,7 +1499,32 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (rel < third * 2) return 3;
 			return 4;
 		},
-	
+
+		applyHint(hintEl, section, {
+			variant = "forward",
+			top = 0,
+			y = 0,
+			opacity = 1
+		} = {}) {
+			if (!section) {
+				this.hideHint(hintEl);
+				return;
+			}
+
+			const text = this.makeText(section, variant);
+			const theme = this.getSectionTheme(section);
+			const target = section.id ? `#${section.id}` : "";
+
+			this.setHint(hintEl, {
+				text,
+				top,
+				y,
+				opacity: text ? opacity : 0,
+				theme,
+				target
+			});
+		},
+
 		update() {
 			if (!this.root) return;
 
@@ -1524,10 +1541,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const bandTop = navbarBottom;
 			const bandBottom = viewportBottom;
 
-			const current = context.current;
-			const next = context.next;
-			const overnext = context.overnext;
-
+			const { current, next, overnext } = context;
 			const isHomeCurrent =
 				current?.classList?.contains("hero") ||
 				current?.id === "home";
@@ -1541,247 +1555,137 @@ document.addEventListener("DOMContentLoaded", () => {
 			const bottomDockTop = next ? this.getBottomDockTop(nextBackwardText, gap) : 0;
 
 			if (!isHomeCurrent && !next) {
-				const yA = this.getRotatedBandLength(currentText);
-
-				const themeA = this.getSectionTheme(current);
-
-				this.setHint(this.hintA, {
-					text: currentText,
+				this.applyHint(this.hintA, current, {
+					variant: "forward",
 					top: currentTop,
-					y: yA,
-					opacity: currentText ? 1 : 0,
-					theme: themeA,
-					target: current?.id ? `#${current.id}` : ""
+					y: this.getRotatedBandLength(currentText),
+					opacity: 1
 				});
-
-				this.setHint(this.hintB, {
-					text: "",
-					top: 0,
-					y: 0,
-					opacity: 0,
-					target: ""
-				});
-
+				this.hideHint(this.hintB);
 				return;
 			}
 
 			const nextRect = next?.getBoundingClientRect() || null;
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
-
 			const nextBelowBoundaryTop = changeY + gap;
 			const nextAboveBoundaryTop = changeY - gap;
-
 			const caseNumber = next
 				? this.classifyCase(changeY, bandTop, bandBottom)
 				: 1;
 
 			if (isHomeCurrent) {
-				if (caseNumber === 1) {
+				if (caseNumber === 1 || caseNumber === 4) {
 					this.hideAll();
 					return;
 				}
 
 				if (caseNumber === 2) {
-					const yA = this.getRotatedBandLength(nextForwardText);
-
-					const themeA = this.getSectionTheme(next);
-
-					this.setHint(this.hintA, {
-						text: nextForwardText,
+					this.applyHint(this.hintA, next, {
+						variant: "forward",
 						top: nextBelowBoundaryTop,
-						y: yA,
-						opacity: nextForwardText ? 1 : 0,
-						theme: themeA,
-						target: next?.id ? `#${next.id}` : ""
+						y: this.getRotatedBandLength(nextForwardText),
+						opacity: 1
 					});
 
 					if (overnext) {
-						const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
-
-						const themeB = this.getSectionTheme(overnext);
-
-						this.setHint(this.hintB, {
-							text: overnextBackwardText,
-							top: overnextBottomTop,
+						this.applyHint(this.hintB, overnext, {
+							variant: "backward",
+							top: this.getBottomDockTop(overnextBackwardText, gap),
 							y: 0,
-							opacity: overnextBackwardText ? 1 : 0,
-							theme: themeB,
-							target: overnext?.id ? `#${overnext.id}` : ""
+							opacity: 1
 						});
 					} else {
-						this.setHint(this.hintB, {
-							text: "",
-							top: 0,
-							y: 0,
-							opacity: 0,
-							target: ""
-						});
+						this.hideHint(this.hintB);
 					}
 
 					return;
 				}
 
 				if (caseNumber === 3) {
-					const yA = this.getRotatedBandLength(nextForwardText);
-
-					const themeA = this.getSectionTheme(next);
-
-					this.setHint(this.hintA, {
-						text: nextForwardText,
+					this.applyHint(this.hintA, next, {
+						variant: "forward",
 						top: nextBelowBoundaryTop,
-						y: yA,
-						opacity: nextForwardText ? 1 : 0,
-						theme: themeA,
-						target: next?.id ? `#${next.id}` : ""
+						y: this.getRotatedBandLength(nextForwardText),
+						opacity: 1
 					});
-
-					this.setHint(this.hintB, {
-						text: "",
-						top: 0,
-						y: 0,
-						opacity: 0,
-						target: ""
-					});
-
-					return;
-				}
-
-				if (caseNumber === 4) {
-					this.hideAll();
+					this.hideHint(this.hintB);
 					return;
 				}
 			}
 
 			if (caseNumber === 1) {
-				const yA = this.getRotatedBandLength(currentText);
-
-				const themeA = this.getSectionTheme(current);
-
-				this.setHint(this.hintA, {
-					text: currentText,
+				this.applyHint(this.hintA, current, {
+					variant: "forward",
 					top: currentTop,
-					y: yA,
-					opacity: currentText ? 1 : 0,
-					theme: themeA,
-					target: current?.id ? `#${current.id}` : ""
+					y: this.getRotatedBandLength(currentText),
+					opacity: 1
 				});
 
 				if (next) {
-					const themeB = this.getSectionTheme(next);
-
-					this.setHint(this.hintB, {
-						text: nextBackwardText,
+					this.applyHint(this.hintB, next, {
+						variant: "backward",
 						top: bottomDockTop,
 						y: 0,
-						opacity: nextBackwardText ? 1 : 0,
-						theme: themeB,
-						target: next?.id ? `#${next.id}` : ""
+						opacity: 1
 					});
 				} else {
-					this.setHint(this.hintB, {
-						text: "",
-						top: 0,
-						y: 0,
-						opacity: 0,
-						target: ""
-					});
+					this.hideHint(this.hintB);
 				}
-
 				return;
 			}
 
 			if (caseNumber === 2) {
-				const yA = this.getRotatedBandLength(nextForwardText);
-
-				const themeA = this.getSectionTheme(next);
-
-				this.setHint(this.hintA, {
-					text: nextForwardText,
+				this.applyHint(this.hintA, next, {
+					variant: "forward",
 					top: nextBelowBoundaryTop,
-					y: yA,
-					opacity: nextForwardText ? 1 : 0,
-					theme: themeA,
-					target: next?.id ? `#${next.id}` : ""
+					y: this.getRotatedBandLength(nextForwardText),
+					opacity: 1
 				});
 
 				if (overnext) {
-					const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
-
-					const themeB = this.getSectionTheme(overnext);
-
-					this.setHint(this.hintB, {
-						text: overnextBackwardText,
-						top: overnextBottomTop,
+					this.applyHint(this.hintB, overnext, {
+						variant: "backward",
+						top: this.getBottomDockTop(overnextBackwardText, gap),
 						y: 0,
-						opacity: overnextBackwardText ? 1 : 0,
-						theme: themeB,
-						target: overnext?.id ? `#${overnext.id}` : ""
+						opacity: 1
 					});
 				} else {
-					this.setHint(this.hintB, {
-						text: "",
-						top: 0,
-						y: 0,
-						opacity: 0,
-						target: ""
-					});
+					this.hideHint(this.hintB);
 				}
-
 				return;
 			}
 
 			if (caseNumber === 3) {
-				const yA = this.getRotatedBandLength(currentText);
-				const yB = this.getRotatedBandLength(nextForwardText);
-
-				const themeA = this.getSectionTheme(current);
-				const themeB = this.getSectionTheme(next);
-
-				this.setHint(this.hintA, {
-					text: currentText,
+				this.applyHint(this.hintA, current, {
+					variant: "forward",
 					top: currentTop,
-					y: yA,
-					opacity: currentText ? 1 : 0,
-					theme: themeA,
-					target: current?.id ? `#${current.id}` : ""
+					y: this.getRotatedBandLength(currentText),
+					opacity: 1
 				});
 
-				this.setHint(this.hintB, {
-					text: nextForwardText,
+				this.applyHint(this.hintB, next, {
+					variant: "forward",
 					top: nextBelowBoundaryTop,
-					y: yB,
-					opacity: nextForwardText ? 1 : 0,
-					theme: themeB,
-					target: next?.id ? `#${next.id}` : ""
+					y: this.getRotatedBandLength(nextForwardText),
+					opacity: 1
 				});
-
 				return;
 			}
 
 			if (caseNumber === 4) {
-				const yA = this.getRotatedBandLength(currentText);
-
-				const themeA = this.getSectionTheme(current);
-				const themeB = this.getSectionTheme(next);
-
-				this.setHint(this.hintA, {
-					text: currentText,
+				this.applyHint(this.hintA, current, {
+					variant: "forward",
 					top: currentTop,
-					y: yA,
-					opacity: currentText ? 1 : 0,
-					theme: themeA,
-					target: current?.id ? `#${current.id}` : ""
+					y: this.getRotatedBandLength(currentText),
+					opacity: 1
 				});
 
-				this.setHint(this.hintB, {
-					text: nextBackwardText,
+				this.applyHint(this.hintB, next, {
+					variant: "backward",
 					top: nextAboveBoundaryTop,
 					y: 0,
-					opacity: nextBackwardText ? 1 : 0,
-					theme: themeB,
-					target: next?.id ? `#${next.id}` : ""
+					opacity: 1
 				});
-
 				return;
 			}
 
