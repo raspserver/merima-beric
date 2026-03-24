@@ -2536,19 +2536,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const rect = referenceContainer.getBoundingClientRect();
 			const contentLeft = rect.left;
-			const midpoint = contentLeft / 2;
 
-			const rawHintX = midpoint;
+			/* exakt die Mitte zwischen Viewport-Linkskante (0)
+			   und linker Kante der Textspalte */
+			const rawHintX = contentLeft / 2;
+
+			/* nur Schutz vor echtem Randkontakt */
 			const safePadding = 20;
-
-			/* nur leicht absichern, nicht künstlich nach rechts drücken */
 			const minX = safePadding;
 			const maxX = Math.max(safePadding, contentLeft - safePadding);
 
 			const hintX = Math.max(minX, Math.min(rawHintX, maxX));
 
 			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
-
 		},
 
 		init() {
@@ -2560,7 +2560,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				setTimeout(() => this.update(), 120);
 			});
 
-			/* wichtig nach Reload + Scroll-Restore + Font-Load */
 			window.addEventListener("pageshow", () => {
 				requestAnimationFrame(() => this.update());
 			});
