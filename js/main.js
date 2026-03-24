@@ -2540,7 +2540,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			/* echte Mitte zwischen linkem Bildschirmrand und linkem Rand der Textspalte */
 			const hintCenterX = contentLeft / 2;
 
-			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintCenterX}px`);
+			hintsRoot.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
 
 		},
 
