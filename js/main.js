@@ -1185,7 +1185,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		liveTrackingActive: false,
 
 		labels: {
-			home: "HOME",
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
 			services: "LEISTUNGEN",
@@ -1224,11 +1223,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.hintA = this.root.querySelector(".scroll-section-hint--a");
 			this.hintB = this.root.querySelector(".scroll-section-hint--b");
 		},
-
+		
 		getContentSections() {
 			return state.orderedSections.filter(section => {
 				if (!section) return false;
-				if (section.classList?.contains("hero")) return false;
+
+				if (section.classList?.contains("hero")) {
+					return true;
+				}
+
 				return !!section.id && !!this.labels[section.id];
 			});
 		},
@@ -1263,7 +1266,20 @@ document.addEventListener("DOMContentLoaded", () => {
 			let currentIndex = 0;
 
 			for (let i = 0; i < sections.length; i++) {
-				const rect = sections[i].getBoundingClientRect();
+				const section = sections[i];
+
+				if (section.classList?.contains("hero")) {
+					const heroBottom = section.getBoundingClientRect().bottom;
+
+					if (heroBottom > navbarBottom) {
+						currentIndex = i;
+						break;
+					}
+					continue;
+				}
+
+				const rect = section.getBoundingClientRect();
+
 				if (rect.top <= navbarBottom) {
 					currentIndex = i;
 				} else {
@@ -1282,7 +1298,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				next,
 				overnext
 			};
-		},
+		}
 
 		measureHint(text) {
 			if (!this.measurer) return { width: 0, height: 0 };
@@ -1490,7 +1506,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			const current = context.current;
 			const next = context.next;
 			const overnext = context.overnext;
-
+	
+			const isHomeCurrent =
+				current?.classList?.contains("hero") ||
+				current?.id === "home";
+			
 			const currentText = this.makeText(current, "forward");
 			const nextForwardText = this.makeText(next, "forward");
 			const nextBackwardText = this.makeText(next, "backward");
@@ -1511,6 +1531,84 @@ document.addEventListener("DOMContentLoaded", () => {
 			const bottomDockTop = this.getBottomDockTop(nextBackwardText, gap);
 
 			const caseNumber = this.classifyCase(changeY, bandTop, bandBottom);
+		
+			if (isHomeCurrent) {
+				const nextForwardText = this.makeText(next, "forward");
+				const overnextBackwardText = this.makeText(overnext, "backward");
+
+				if (caseNumber === 1) {
+					this.hideAll();
+					return;
+				}
+
+				if (caseNumber === 2) {
+					const yA = this.getRotatedBandLength(nextForwardText);
+
+					const themeA = this.getHintThemeForPosition(
+						nextBelowBoundaryTop,
+						nextForwardText,
+						yA
+					);
+
+					const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
+
+					const themeB = this.getHintThemeForPosition(
+						overnextBottomTop,
+						overnextBackwardText,
+						0
+					);
+
+					this.setHint(this.hintA, {
+						text: nextForwardText,
+						top: nextBelowBoundaryTop,
+						y: yA,
+						opacity: nextForwardText ? 1 : 0,
+						theme: themeA
+					});
+
+					this.setHint(this.hintB, {
+						text: overnextBackwardText,
+						top: overnextBottomTop,
+						y: 0,
+						opacity: overnextBackwardText ? 1 : 0,
+						theme: themeB
+					});
+
+					return;
+				}
+
+				if (caseNumber === 3) {
+					const yA = this.getRotatedBandLength(nextForwardText);
+
+					const themeA = this.getHintThemeForPosition(
+						nextBelowBoundaryTop,
+						nextForwardText,
+						yA
+					);
+
+					this.setHint(this.hintA, {
+						text: nextForwardText,
+						top: nextBelowBoundaryTop,
+						y: yA,
+						opacity: nextForwardText ? 1 : 0,
+						theme: themeA
+					});
+
+					this.setHint(this.hintB, {
+						text: "",
+						top: 0,
+						y: 0,
+						opacity: 0
+					});
+
+					return;
+				}
+
+				if (caseNumber === 4) {
+					this.hideAll();
+					return;
+				}
+			}
 		
 			if (caseNumber === 1) {
 				const themeA = this.getHintThemeForPosition(
