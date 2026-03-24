@@ -1173,7 +1173,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	/* =========================================================
 	   SCROLL SECTION HINT MODULE
-	========================================================= */	
+	========================================================= */
 	const scrollSectionHintModule = {
 		root: null,
 		measurer: null,
@@ -1302,7 +1302,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (section.classList?.contains("hero")) {
 					const heroBottom = section.getBoundingClientRect().bottom;
-
 					if (heroBottom > navbarBottom) {
 						currentIndex = i;
 						break;
@@ -1311,7 +1310,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 
 				const rect = section.getBoundingClientRect();
-
 				if (rect.top <= navbarBottom) {
 					currentIndex = i;
 				} else {
@@ -1484,10 +1482,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		classifyCase(changeY, bandTop, bandBottom) {
 			if (!Number.isFinite(changeY)) return 1;
-
-			if (changeY <= bandTop || changeY >= bandBottom) {
-				return 1;
-			}
+			if (changeY <= bandTop || changeY >= bandBottom) return 1;
 
 			const bandHeight = bandBottom - bandTop;
 			if (bandHeight <= 0) return 1;
@@ -1525,6 +1520,178 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
+		buildGeometry(context) {
+			const gap = this.getBoundaryGapPx();
+			const navbarBottom = this.getNavbarBottom();
+			const viewportBottom = this.getViewportHeight();
+
+			const bandTop = navbarBottom;
+			const bandBottom = viewportBottom;
+
+			const { current, next } = context;
+
+			const currentText = this.makeText(current, "forward");
+			const nextForwardText = next ? this.makeText(next, "forward") : "";
+			const nextBackwardText = next ? this.makeText(next, "backward") : "";
+
+			const currentTop = navbarBottom + gap;
+			const bottomDockTop = next ? this.getBottomDockTop(nextBackwardText, gap) : 0;
+
+			const nextRect = next?.getBoundingClientRect() || null;
+			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
+			const nextBelowBoundaryTop = changeY + gap;
+			const nextAboveBoundaryTop = changeY - gap;
+
+			return {
+				gap,
+				bandTop,
+				bandBottom,
+				currentText,
+				nextForwardText,
+				nextBackwardText,
+				currentTop,
+				bottomDockTop,
+				changeY,
+				nextBelowBoundaryTop,
+				nextAboveBoundaryTop
+			};
+		},
+
+		renderSingleCurrent(current, geometry) {
+			this.applyHint(this.hintA, current, {
+				variant: "forward",
+				top: geometry.currentTop,
+				y: this.getRotatedBandLength(geometry.currentText),
+				opacity: 1
+			});
+			this.hideHint(this.hintB);
+		},
+
+		renderCurrentAndBottomNext(current, next, geometry) {
+			this.applyHint(this.hintA, current, {
+				variant: "forward",
+				top: geometry.currentTop,
+				y: this.getRotatedBandLength(geometry.currentText),
+				opacity: 1
+			});
+
+			if (next) {
+				this.applyHint(this.hintB, next, {
+					variant: "backward",
+					top: geometry.bottomDockTop,
+					y: 0,
+					opacity: 1
+				});
+			} else {
+				this.hideHint(this.hintB);
+			}
+		},
+
+		renderNextAndBottomOvernext(next, overnext, geometry) {
+			this.applyHint(this.hintA, next, {
+				variant: "forward",
+				top: geometry.nextBelowBoundaryTop,
+				y: this.getRotatedBandLength(geometry.nextForwardText),
+				opacity: 1
+			});
+
+			if (overnext) {
+				this.applyHint(this.hintB, overnext, {
+					variant: "backward",
+					top: this.getBottomDockTop(this.makeText(overnext, "backward"), geometry.gap),
+					y: 0,
+					opacity: 1
+				});
+			} else {
+				this.hideHint(this.hintB);
+			}
+		},
+
+		renderCurrentAndNextForward(current, next, geometry) {
+			this.applyHint(this.hintA, current, {
+				variant: "forward",
+				top: geometry.currentTop,
+				y: this.getRotatedBandLength(geometry.currentText),
+				opacity: 1
+			});
+
+			this.applyHint(this.hintB, next, {
+				variant: "forward",
+				top: geometry.nextBelowBoundaryTop,
+				y: this.getRotatedBandLength(geometry.nextForwardText),
+				opacity: 1
+			});
+		},
+
+		renderCurrentAndNextBackward(current, next, geometry) {
+			this.applyHint(this.hintA, current, {
+				variant: "forward",
+				top: geometry.currentTop,
+				y: this.getRotatedBandLength(geometry.currentText),
+				opacity: 1
+			});
+
+			this.applyHint(this.hintB, next, {
+				variant: "backward",
+				top: geometry.nextAboveBoundaryTop,
+				y: 0,
+				opacity: 1
+			});
+		},
+
+		handleHomeCase(caseNumber, context, geometry) {
+			const { next, overnext } = context;
+
+			if (caseNumber === 1 || caseNumber === 4) {
+				this.hideAll();
+				return true;
+			}
+
+			if (caseNumber === 2) {
+				this.renderNextAndBottomOvernext(next, overnext, geometry);
+				return true;
+			}
+
+			if (caseNumber === 3) {
+				this.applyHint(this.hintA, next, {
+					variant: "forward",
+					top: geometry.nextBelowBoundaryTop,
+					y: this.getRotatedBandLength(geometry.nextForwardText),
+					opacity: 1
+				});
+				this.hideHint(this.hintB);
+				return true;
+			}
+
+			return false;
+		},
+
+		handleStandardCase(caseNumber, context, geometry) {
+			const { current, next, overnext } = context;
+
+			if (caseNumber === 1) {
+				this.renderCurrentAndBottomNext(current, next, geometry);
+				return true;
+			}
+
+			if (caseNumber === 2) {
+				this.renderNextAndBottomOvernext(next, overnext, geometry);
+				return true;
+			}
+
+			if (caseNumber === 3) {
+				this.renderCurrentAndNextForward(current, next, geometry);
+				return true;
+			}
+
+			if (caseNumber === 4) {
+				this.renderCurrentAndNextBackward(current, next, geometry);
+				return true;
+			}
+
+			return false;
+		},
+
 		update() {
 			if (!this.root) return;
 
@@ -1534,160 +1701,27 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
-			const gap = this.getBoundaryGapPx();
-			const navbarBottom = this.getNavbarBottom();
-			const viewportBottom = this.getViewportHeight();
-
-			const bandTop = navbarBottom;
-			const bandBottom = viewportBottom;
-
-			const { current, next, overnext } = context;
+			const { current, next } = context;
 			const isHomeCurrent =
 				current?.classList?.contains("hero") ||
 				current?.id === "home";
 
-			const currentText = this.makeText(current, "forward");
-			const nextForwardText = next ? this.makeText(next, "forward") : "";
-			const nextBackwardText = next ? this.makeText(next, "backward") : "";
-			const overnextBackwardText = overnext ? this.makeText(overnext, "backward") : "";
-
-			const currentTop = navbarBottom + gap;
-			const bottomDockTop = next ? this.getBottomDockTop(nextBackwardText, gap) : 0;
+			const geometry = this.buildGeometry(context);
 
 			if (!isHomeCurrent && !next) {
-				this.applyHint(this.hintA, current, {
-					variant: "forward",
-					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
-					opacity: 1
-				});
-				this.hideHint(this.hintB);
+				this.renderSingleCurrent(current, geometry);
 				return;
 			}
 
-			const nextRect = next?.getBoundingClientRect() || null;
-			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
-			const nextBelowBoundaryTop = changeY + gap;
-			const nextAboveBoundaryTop = changeY - gap;
 			const caseNumber = next
-				? this.classifyCase(changeY, bandTop, bandBottom)
+				? this.classifyCase(geometry.changeY, geometry.bandTop, geometry.bandBottom)
 				: 1;
 
 			if (isHomeCurrent) {
-				if (caseNumber === 1 || caseNumber === 4) {
-					this.hideAll();
-					return;
-				}
-
-				if (caseNumber === 2) {
-					this.applyHint(this.hintA, next, {
-						variant: "forward",
-						top: nextBelowBoundaryTop,
-						y: this.getRotatedBandLength(nextForwardText),
-						opacity: 1
-					});
-
-					if (overnext) {
-						this.applyHint(this.hintB, overnext, {
-							variant: "backward",
-							top: this.getBottomDockTop(overnextBackwardText, gap),
-							y: 0,
-							opacity: 1
-						});
-					} else {
-						this.hideHint(this.hintB);
-					}
-
-					return;
-				}
-
-				if (caseNumber === 3) {
-					this.applyHint(this.hintA, next, {
-						variant: "forward",
-						top: nextBelowBoundaryTop,
-						y: this.getRotatedBandLength(nextForwardText),
-						opacity: 1
-					});
-					this.hideHint(this.hintB);
-					return;
-				}
+				if (this.handleHomeCase(caseNumber, context, geometry)) return;
 			}
 
-			if (caseNumber === 1) {
-				this.applyHint(this.hintA, current, {
-					variant: "forward",
-					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
-					opacity: 1
-				});
-
-				if (next) {
-					this.applyHint(this.hintB, next, {
-						variant: "backward",
-						top: bottomDockTop,
-						y: 0,
-						opacity: 1
-					});
-				} else {
-					this.hideHint(this.hintB);
-				}
-				return;
-			}
-
-			if (caseNumber === 2) {
-				this.applyHint(this.hintA, next, {
-					variant: "forward",
-					top: nextBelowBoundaryTop,
-					y: this.getRotatedBandLength(nextForwardText),
-					opacity: 1
-				});
-
-				if (overnext) {
-					this.applyHint(this.hintB, overnext, {
-						variant: "backward",
-						top: this.getBottomDockTop(overnextBackwardText, gap),
-						y: 0,
-						opacity: 1
-					});
-				} else {
-					this.hideHint(this.hintB);
-				}
-				return;
-			}
-
-			if (caseNumber === 3) {
-				this.applyHint(this.hintA, current, {
-					variant: "forward",
-					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
-					opacity: 1
-				});
-
-				this.applyHint(this.hintB, next, {
-					variant: "forward",
-					top: nextBelowBoundaryTop,
-					y: this.getRotatedBandLength(nextForwardText),
-					opacity: 1
-				});
-				return;
-			}
-
-			if (caseNumber === 4) {
-				this.applyHint(this.hintA, current, {
-					variant: "forward",
-					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
-					opacity: 1
-				});
-
-				this.applyHint(this.hintB, next, {
-					variant: "backward",
-					top: nextAboveBoundaryTop,
-					y: 0,
-					opacity: 1
-				});
-				return;
-			}
+			if (this.handleStandardCase(caseNumber, context, geometry)) return;
 
 			this.hideAll();
 		},
@@ -1769,7 +1803,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindEvents();
 		}
 	};
-	
+
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
