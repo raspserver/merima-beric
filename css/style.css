@@ -2276,12 +2276,17 @@ section > .section-scroll-head + * {
 	letter-spacing: var(--section-hint-letter-spacing);
 	text-transform: uppercase;
 	line-height: 1;
+	color: var(--section-hint-color-strong); /* hinzufügen */
 	opacity: 0;
 	--hint-y: 0px;
 	will-change: transform, opacity;
 	backface-visibility: hidden;
 	transform-origin: left top;
 	transform: translate3d(0, var(--hint-y), 0) rotate(-90deg);
+}
+
+.scroll-section-hint[data-theme="light"] {
+	color: var(--text-light);
 }
 
 .scroll-section-hint-measurer {
