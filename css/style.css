@@ -2292,6 +2292,19 @@ section > .section-scroll-head + * {
 	cursor: default;
 }
 
+
+
+
+.scroll-section-hint {
+	opacity: 1 !important;
+}
+
+.scroll-section-hint-anchor {
+	opacity: 1 !important;
+}
+
+
+
 .scroll-section-hint-anchor[aria-hidden="true"] {
 	pointer-events: none;
 }
