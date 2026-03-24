@@ -1390,7 +1390,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
+					y: 0,
 					opacity: currentText ? 1 : 0
 				});
 
@@ -1408,7 +1408,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHint(this.hintA, {
 					text: nextForwardText,
 					top: nextAboveChangeTop,
-					y: this.getRotatedBandLength(nextForwardText),
+					y: 0,
 					opacity: nextForwardText ? 1 : 0
 				});
 
@@ -1426,14 +1426,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
+					y: 0,
 					opacity: currentText ? 1 : 0
 				});
 
 				this.setHint(this.hintB, {
 					text: nextForwardText,
 					top: nextAboveChangeTop,
-					y: this.getRotatedBandLength(nextForwardText),
+					y: 0,
 					opacity: nextForwardText ? 1 : 0
 				});
 
@@ -1444,7 +1444,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
-					y: this.getRotatedBandLength(currentText),
+					y: 0,
 					opacity: currentText ? 1 : 0
 				});
 
