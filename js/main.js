@@ -1185,6 +1185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		liveTrackingActive: false,
 
 		labels: {
+			home: "HOME",
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
 			services: "LEISTUNGEN",
