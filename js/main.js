@@ -1223,7 +1223,41 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.hintA = this.root.querySelector(".scroll-section-hint--a");
 			this.hintB = this.root.querySelector(".scroll-section-hint--b");
 		},
-		
+
+		bindHintClicks() {
+			[this.hintA, this.hintB].forEach(hintEl => {
+				if (!hintEl) return;
+
+				hintEl.setAttribute("tabindex", "0");
+				hintEl.setAttribute("role", "button");
+
+				const goToHintTarget = () => {
+					const targetSelector = hintEl.dataset.scrollTarget;
+					const opacity = parseFloat(hintEl.style.opacity || "0");
+					const text = hintEl.textContent || "";
+
+					if (!targetSelector || opacity <= 0.01) return;
+
+					const forcedMode = text.includes(">>") ? "down" : "up-section";
+					scrollEngine.goTo(targetSelector, forcedMode);
+				};
+
+				hintEl.addEventListener("click", (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					goToHintTarget();
+				});
+
+				hintEl.addEventListener("keydown", (e) => {
+					if (e.key !== "Enter" && e.key !== " ") return;
+
+					e.preventDefault();
+					e.stopPropagation();
+					goToHintTarget();
+				});
+			});
+		},
+
 		getContentSections() {
 			return state.orderedSections.filter(section => {
 				if (!section) return false;
@@ -1339,8 +1373,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!anchor) return;
 			anchor.style.top = `${Math.round(topPx * 2) / 2}px`;
 		},
-	
-		setHint(hintEl, { text = "", top = 0, y = 0, opacity = 0, theme = "dark", target = "" } = {}) {
+
+		setHint(hintEl, {
+			text = "",
+			top = 0,
+			y = 0,
+			opacity = 0,
+			theme = "dark",
+			target = ""
+		} = {}) {
 			if (!hintEl) return;
 
 			const base = hintEl.querySelector(".scroll-section-hint-base");
@@ -1355,8 +1396,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		hideAll() {
-			this.setHint(this.hintA, { text: "", top: 0, y: 0, opacity: 0 });
-			this.setHint(this.hintB, { text: "", top: 0, y: 0, opacity: 0 });
+			this.setHint(this.hintA, { text: "", top: 0, y: 0, opacity: 0, target: "" });
+			this.setHint(this.hintB, { text: "", top: 0, y: 0, opacity: 0, target: "" });
 		},
 
 		makeText(section, variant = "forward") {
@@ -1368,7 +1409,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return `<< ${this.labels[section.id]} <<`;
 		},
-		
+
 		getRgbFromColorString(color) {
 			if (!color) return null;
 
@@ -1439,11 +1480,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				el = el.parentElement;
 			}
 
-			/* Fallback auf Body */
 			const bodyRgb = this.getRgbFromColorString(getComputedStyle(document.body).backgroundColor);
 			if (bodyRgb) return bodyRgb;
 
-			/* letzter Fallback: hell */
 			return { r: 250, g: 250, b: 248 };
 		},
 
@@ -1455,18 +1494,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			const bandThickness = this.getRotatedBandThickness(text) || 12;
 			const bandLength = this.getRotatedBandLength(text) || 100;
 
-			/* nach Rotation(-90deg):
-			   top/left ist der Transform-Ursprung,
-			   das sichtbare Band läuft nach oben.
-			   Wir sampeln ungefähr die Mitte des sichtbaren Hint-Bandes.
-			*/
 			const sampleX = left + bandThickness / 2;
 			const sampleY = top + y - bandLength / 2;
 
 			const bgRgb = this.findEffectiveBackgroundColorAtPoint(sampleX, sampleY);
 			const luminance = this.getRelativeLuminance(bgRgb);
 
-			/* dunkler Hintergrund => helle Schrift, heller Hintergrund => dunkle Schrift */
 			return luminance < 0.42 ? "light" : "dark";
 		},
 
@@ -1520,10 +1553,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const currentTop = navbarBottom + gap;
 			const bottomDockTop = next ? this.getBottomDockTop(nextBackwardText, gap) : 0;
 
-			/* ---------------------------------
-			   FALL 0: keine nächste Section mehr
-			   z. B. #contact
-			--------------------------------- */
 			if (!isHomeCurrent && !next) {
 				const yA = this.getRotatedBandLength(currentText);
 
@@ -1538,14 +1567,16 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: currentTop,
 					y: yA,
 					opacity: currentText ? 1 : 0,
-					theme: themeA
+					theme: themeA,
+					target: current?.id ? `#${current.id}` : ""
 				});
 
 				this.setHint(this.hintB, {
 					text: "",
 					top: 0,
 					y: 0,
-					opacity: 0
+					opacity: 0,
+					target: ""
 				});
 
 				return;
@@ -1554,19 +1585,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			const nextRect = next?.getBoundingClientRect() || null;
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
 
-			/* unterhalb der Grenzlinie */
 			const nextBelowBoundaryTop = changeY + gap;
-
-			/* oberhalb der Grenzlinie */
 			const nextAboveBoundaryTop = changeY - gap;
 
 			const caseNumber = next
 				? this.classifyCase(changeY, bandTop, bandBottom)
 				: 1;
 
-			/* ---------------------------------
-			   HERO / HOME
-			--------------------------------- */
 			if (isHomeCurrent) {
 				if (caseNumber === 1) {
 					this.hideAll();
@@ -1587,7 +1612,8 @@ document.addEventListener("DOMContentLoaded", () => {
 						top: nextBelowBoundaryTop,
 						y: yA,
 						opacity: nextForwardText ? 1 : 0,
-						theme: themeA
+						theme: themeA,
+						target: next?.id ? `#${next.id}` : ""
 					});
 
 					if (overnext) {
@@ -1604,14 +1630,16 @@ document.addEventListener("DOMContentLoaded", () => {
 							top: overnextBottomTop,
 							y: 0,
 							opacity: overnextBackwardText ? 1 : 0,
-							theme: themeB
+							theme: themeB,
+							target: overnext?.id ? `#${overnext.id}` : ""
 						});
 					} else {
 						this.setHint(this.hintB, {
 							text: "",
 							top: 0,
 							y: 0,
-							opacity: 0
+							opacity: 0,
+							target: ""
 						});
 					}
 
@@ -1632,14 +1660,16 @@ document.addEventListener("DOMContentLoaded", () => {
 						top: nextBelowBoundaryTop,
 						y: yA,
 						opacity: nextForwardText ? 1 : 0,
-						theme: themeA
+						theme: themeA,
+						target: next?.id ? `#${next.id}` : ""
 					});
 
 					this.setHint(this.hintB, {
 						text: "",
 						top: 0,
 						y: 0,
-						opacity: 0
+						opacity: 0,
+						target: ""
 					});
 
 					return;
@@ -1651,9 +1681,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			}
 
-			/* ---------------------------------
-			   NORMALE SECTIONS
-			--------------------------------- */
 			if (caseNumber === 1) {
 				const yA = this.getRotatedBandLength(currentText);
 
@@ -1668,7 +1695,8 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: currentTop,
 					y: yA,
 					opacity: currentText ? 1 : 0,
-					theme: themeA
+					theme: themeA,
+					target: current?.id ? `#${current.id}` : ""
 				});
 
 				if (next) {
@@ -1683,14 +1711,16 @@ document.addEventListener("DOMContentLoaded", () => {
 						top: bottomDockTop,
 						y: 0,
 						opacity: nextBackwardText ? 1 : 0,
-						theme: themeB
+						theme: themeB,
+						target: next?.id ? `#${next.id}` : ""
 					});
 				} else {
 					this.setHint(this.hintB, {
 						text: "",
 						top: 0,
 						y: 0,
-						opacity: 0
+						opacity: 0,
+						target: ""
 					});
 				}
 
@@ -1711,7 +1741,8 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: nextBelowBoundaryTop,
 					y: yA,
 					opacity: nextForwardText ? 1 : 0,
-					theme: themeA
+					theme: themeA,
+					target: next?.id ? `#${next.id}` : ""
 				});
 
 				if (overnext) {
@@ -1728,14 +1759,16 @@ document.addEventListener("DOMContentLoaded", () => {
 						top: overnextBottomTop,
 						y: 0,
 						opacity: overnextBackwardText ? 1 : 0,
-						theme: themeB
+						theme: themeB,
+						target: overnext?.id ? `#${overnext.id}` : ""
 					});
 				} else {
 					this.setHint(this.hintB, {
 						text: "",
 						top: 0,
 						y: 0,
-						opacity: 0
+						opacity: 0,
+						target: ""
 					});
 				}
 
@@ -1763,7 +1796,8 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: currentTop,
 					y: yA,
 					opacity: currentText ? 1 : 0,
-					theme: themeA
+					theme: themeA,
+					target: current?.id ? `#${current.id}` : ""
 				});
 
 				this.setHint(this.hintB, {
@@ -1771,7 +1805,8 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: nextBelowBoundaryTop,
 					y: yB,
 					opacity: nextForwardText ? 1 : 0,
-					theme: themeB
+					theme: themeB,
+					target: next?.id ? `#${next.id}` : ""
 				});
 
 				return;
@@ -1797,7 +1832,8 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: currentTop,
 					y: yA,
 					opacity: currentText ? 1 : 0,
-					theme: themeA
+					theme: themeA,
+					target: current?.id ? `#${current.id}` : ""
 				});
 
 				this.setHint(this.hintB, {
@@ -1805,7 +1841,8 @@ document.addEventListener("DOMContentLoaded", () => {
 					top: nextAboveBoundaryTop,
 					y: 0,
 					opacity: nextBackwardText ? 1 : 0,
-					theme: themeB
+					theme: themeB,
+					target: next?.id ? `#${next.id}` : ""
 				});
 
 				return;
@@ -1860,7 +1897,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				}, 120);
 			});
 
-			/* während aktiver Wischgeste kontinuierlich nachführen */
 			window.addEventListener("touchstart", () => this.startLiveTracking(), { passive: true });
 
 			window.addEventListener("touchend", () => {
@@ -1890,38 +1926,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindHintClicks();
 			this.update();
 			this.bindEvents();
-		},
-		
-		bindHintClicks() {
-			[this.hintA, this.hintB].forEach(hintEl => {
-				if (!hintEl) return;
-
-				hintEl.setAttribute("tabindex", "0");
-				hintEl.setAttribute("role", "button");
-
-				const goToHintTarget = () => {
-					const targetSelector = hintEl.dataset.scrollTarget;
-					const opacity = parseFloat(hintEl.style.opacity || "0");
-
-					if (!targetSelector || opacity <= 0.01) return;
-
-					scrollEngine.goTo(targetSelector);
-				};
-
-				hintEl.addEventListener("click", (e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					goToHintTarget();
-				});
-
-				hintEl.addEventListener("keydown", (e) => {
-					if (e.key !== "Enter" && e.key !== " ") return;
-
-					e.preventDefault();
-					e.stopPropagation();
-					goToHintTarget();
-				});
-			});
 		}
 	};
 	
