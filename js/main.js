@@ -1222,6 +1222,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.hintA = this.root.querySelector(".scroll-section-hint--a");
 			this.hintB = this.root.querySelector(".scroll-section-hint--b");
+			
+			
+			[this.hintA, this.hintB].forEach(hint => {
+				if (!hint) return;
+				const anchor = hint.parentElement;
+				anchor.style.background = "rgba(255,0,0,0.15)";
+				anchor.style.outline = "1px solid red";
+				hint.style.background = "rgba(0,255,0,0.15)";
+			});
+			
+			
+			
+			
+			
 		},
 
 		bindHintClicks() {
