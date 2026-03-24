@@ -1313,12 +1313,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		getBottomDockTop(text, gap) {
-			const length = this.getRotatedBandLength(text);
 			const viewportBottom = this.getViewportHeight();
-
-			/* obere Anchor-Position so, dass der rotierte Hint gap px
-			   über dem unteren sichtbaren Viewport endet */
-			return viewportBottom - gap - length;
+			return viewportBottom - gap;
 		},
 
 		setAnchorTop(hintEl, topPx) {
