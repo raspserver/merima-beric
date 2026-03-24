@@ -2538,15 +2538,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			const contentLeft = rect.left;
 			const midpoint = contentLeft / 2;
 
-			/* immer mit echtem Beispieltext messen */
-			const sampleText = ">> ÜBER MICH >>";
-			const metrics = scrollSectionHintModule.measureHint(sampleText);
-			const bandThickness = metrics.height || 0;
-			
 			const rawHintX = midpoint;
 			const safePadding = 20;
-			const minX = safePadding + bandThickness;
-			const maxX = window.innerWidth - safePadding;
+
+			/* nur leicht absichern, nicht künstlich nach rechts drücken */
+			const minX = safePadding;
+			const maxX = Math.max(safePadding, contentLeft - safePadding);
 
 			const hintX = Math.max(minX, Math.min(rawHintX, maxX));
 
