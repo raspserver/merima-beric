@@ -1350,8 +1350,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			return this.measureHint(text).width || 0;
 		},
 
-		getBottomDockTop(_text, gap) {
-			return this.getViewportHeight() - gap;
+		getTopDockTop(text, gap) {
+			const navHeight = utils.getRootNumber("--nav-height", 78);
+			const { width, height } = this.measureHint(text);
+			const rotatedBandLength = width || 0;
+			const correction = Math.max(0, (rotatedBandLength - height) / 2);
+
+			return navHeight + gap + correction;
+		},
+
+		getBottomDockTop(text, gap) {
+			const viewportHeight = this.getViewportHeight();
+			const { width, height } = this.measureHint(text);
+			const rotatedBandLength = width || 0;
+			const correction = (rotatedBandLength + height) / 2;
+
+			return viewportHeight - gap - correction;
 		},
 
 		setAnchorTop(hintEl, topPx) {
@@ -1533,9 +1547,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			const currentText = this.makeText(current, "forward");
 			const nextForwardText = next ? this.makeText(next, "forward") : "";
 			const nextBackwardText = next ? this.makeText(next, "backward") : "";
-
-			const currentTop = navbarBottom + gap;
-			const bottomDockTop = next ? this.getBottomDockTop(nextBackwardText, gap) : 0;
+			
+			const currentTop = this.getTopDockTop(currentText, gap);
+			const bottomDockTop = next ? this.getBottomDockTop(nextBackwardText, gap) : 0;		
 
 			const nextRect = next?.getBoundingClientRect() || null;
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
