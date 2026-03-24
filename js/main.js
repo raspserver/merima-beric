@@ -1464,42 +1464,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return 0.2126 * R + 0.7152 * G + 0.0722 * B;
 		},
+		
+		getSectionTheme(sectionEl) {
+			if (!sectionEl) return "dark";
 
-		findEffectiveBackgroundColorAtPoint(x, y) {
-			const maxX = Math.max(0, Math.min(Math.round(x), window.innerWidth - 1));
-			const maxY = Math.max(0, Math.min(Math.round(y), this.getViewportHeight() - 1));
+			const style = getComputedStyle(sectionEl);
+			const rgb =
+				this.getRgbFromColorString(style.backgroundColor) ||
+				this.getRgbFromColorString(getComputedStyle(document.body).backgroundColor) ||
+				{ r: 250, g: 250, b: 248 };
 
-			let el = document.elementFromPoint(maxX, maxY);
-
-			while (el && el !== document.documentElement) {
-				const style = getComputedStyle(el);
-				const rgb = this.getRgbFromColorString(style.backgroundColor);
-
-				if (rgb) return rgb;
-
-				el = el.parentElement;
-			}
-
-			const bodyRgb = this.getRgbFromColorString(getComputedStyle(document.body).backgroundColor);
-			if (bodyRgb) return bodyRgb;
-
-			return { r: 250, g: 250, b: 248 };
-		},
-
-		getHintThemeForPosition(top, text, y = 0) {
-			const left = parseFloat(
-				getComputedStyle(this.root).getPropertyValue("--scroll-hint-column-left")
-			) || 24;
-
-			const bandThickness = this.getRotatedBandThickness(text) || 12;
-			const bandLength = this.getRotatedBandLength(text) || 100;
-
-			const sampleX = left + bandThickness / 2;
-			const sampleY = top + y - bandLength / 2;
-
-			const bgRgb = this.findEffectiveBackgroundColorAtPoint(sampleX, sampleY);
-			const luminance = this.getRelativeLuminance(bgRgb);
-
+			const luminance = this.getRelativeLuminance(rgb);
 			return luminance < 0.42 ? "light" : "dark";
 		},
 
@@ -1520,7 +1495,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (rel < third * 2) return 3;
 			return 4;
 		},
-
+	
 		update() {
 			if (!this.root) return;
 
@@ -1556,11 +1531,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!isHomeCurrent && !next) {
 				const yA = this.getRotatedBandLength(currentText);
 
-				const themeA = this.getHintThemeForPosition(
-					currentTop,
-					currentText,
-					yA
-				);
+				const themeA = this.getSectionTheme(current);
 
 				this.setHint(this.hintA, {
 					text: currentText,
@@ -1601,11 +1572,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (caseNumber === 2) {
 					const yA = this.getRotatedBandLength(nextForwardText);
 
-					const themeA = this.getHintThemeForPosition(
-						nextBelowBoundaryTop,
-						nextForwardText,
-						yA
-					);
+					const themeA = this.getSectionTheme(next);
 
 					this.setHint(this.hintA, {
 						text: nextForwardText,
@@ -1619,11 +1586,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					if (overnext) {
 						const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
 
-						const themeB = this.getHintThemeForPosition(
-							overnextBottomTop,
-							overnextBackwardText,
-							0
-						);
+						const themeB = this.getSectionTheme(overnext);
 
 						this.setHint(this.hintB, {
 							text: overnextBackwardText,
@@ -1649,11 +1612,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (caseNumber === 3) {
 					const yA = this.getRotatedBandLength(nextForwardText);
 
-					const themeA = this.getHintThemeForPosition(
-						nextBelowBoundaryTop,
-						nextForwardText,
-						yA
-					);
+					const themeA = this.getSectionTheme(next);
 
 					this.setHint(this.hintA, {
 						text: nextForwardText,
@@ -1684,11 +1643,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (caseNumber === 1) {
 				const yA = this.getRotatedBandLength(currentText);
 
-				const themeA = this.getHintThemeForPosition(
-					currentTop,
-					currentText,
-					yA
-				);
+				const themeA = this.getSectionTheme(current);
 
 				this.setHint(this.hintA, {
 					text: currentText,
@@ -1700,11 +1655,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 
 				if (next) {
-					const themeB = this.getHintThemeForPosition(
-						bottomDockTop,
-						nextBackwardText,
-						0
-					);
+					const themeB = this.getSectionTheme(next);
 
 					this.setHint(this.hintB, {
 						text: nextBackwardText,
@@ -1730,11 +1681,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (caseNumber === 2) {
 				const yA = this.getRotatedBandLength(nextForwardText);
 
-				const themeA = this.getHintThemeForPosition(
-					nextBelowBoundaryTop,
-					nextForwardText,
-					yA
-				);
+				const themeA = this.getSectionTheme(next);
 
 				this.setHint(this.hintA, {
 					text: nextForwardText,
@@ -1748,11 +1695,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (overnext) {
 					const overnextBottomTop = this.getBottomDockTop(overnextBackwardText, gap);
 
-					const themeB = this.getHintThemeForPosition(
-						overnextBottomTop,
-						overnextBackwardText,
-						0
-					);
+					const themeB = this.getSectionTheme(overnext);
 
 					this.setHint(this.hintB, {
 						text: overnextBackwardText,
@@ -1779,17 +1722,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				const yA = this.getRotatedBandLength(currentText);
 				const yB = this.getRotatedBandLength(nextForwardText);
 
-				const themeA = this.getHintThemeForPosition(
-					currentTop,
-					currentText,
-					yA
-				);
-
-				const themeB = this.getHintThemeForPosition(
-					nextBelowBoundaryTop,
-					nextForwardText,
-					yB
-				);
+				const themeA = this.getSectionTheme(current);
+				const themeB = this.getSectionTheme(next);
 
 				this.setHint(this.hintA, {
 					text: currentText,
@@ -1815,17 +1749,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (caseNumber === 4) {
 				const yA = this.getRotatedBandLength(currentText);
 
-				const themeA = this.getHintThemeForPosition(
-					currentTop,
-					currentText,
-					yA
-				);
-
-				const themeB = this.getHintThemeForPosition(
-					nextAboveBoundaryTop,
-					nextBackwardText,
-					0
-				);
+				const themeA = this.getSectionTheme(current);
+				const themeB = this.getSectionTheme(next);
 
 				this.setHint(this.hintA, {
 					text: currentText,
