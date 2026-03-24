@@ -2545,9 +2545,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			const bandThickness = metrics.height || 0;
 
 			/* Band-Mitte zwischen Viewportrand und Textspalte */
-			const hintX = midpoint - (bandThickness / 2);
+			//~ const hintX = midpoint - (bandThickness / 2);
+
+			//~ hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
+			
+			
+			
+			
+			const rawHintX = midpoint;
+			const safePadding = 20;
+			const minX = safePadding + bandThickness;
+			const maxX = window.innerWidth - safePadding;
+
+			const hintX = Math.max(minX, Math.min(rawHintX, maxX));
 
 			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
+			
+			
+			
+			
+			
 
 		},
 

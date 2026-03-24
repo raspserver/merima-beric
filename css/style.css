@@ -2267,6 +2267,12 @@ section > .section-scroll-head + * {
 	cursor: pointer;
 }
 
+
+
+
+
+
+/*
 .scroll-section-hint {
 	position: absolute;
 	top: 0;
@@ -2291,14 +2297,34 @@ section > .section-scroll-head + * {
 	pointer-events: none;
 	cursor: default;
 }
+*/
+
 
 
 
 .scroll-section-hint {
-	opacity: 1 !important;
-	transform: translate3d(-50%, 0, 0) rotate(0deg) !important;
-	background: rgba(0,255,0,0.2) !important;
-	color: red !important;
+	position: absolute;
+	top: 0;
+	left: 50%;
+	display: inline-block;
+	white-space: nowrap;
+	font-family: 'Montserrat', sans-serif;
+	font-size: var(--section-hint-size);
+	font-weight: 500;
+	letter-spacing: var(--section-hint-letter-spacing);
+	text-transform: uppercase;
+	line-height: 1;
+	color: var(--section-hint-color-strong);
+	text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+	opacity: 0;
+	will-change: transform, opacity;
+	backface-visibility: hidden;
+
+	transform-origin: center top;
+	transform: translateX(-50%) rotate(-90deg);
+
+	pointer-events: none;
+	cursor: default;
 }
 
 
