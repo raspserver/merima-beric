@@ -1323,10 +1323,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.setHint(this.hintB, { text: "", top: 0, y: 0, opacity: 0 });
 		},
 
-		makeText(section, direction = "current") {
+		makeText(section, variant = "forward") {
 			if (!section?.id || !this.labels[section.id]) return "";
 
-			if (direction === "current") {
+			if (variant === "forward") {
 				return `>> ${this.labels[section.id]} >>`;
 			}
 
@@ -1371,29 +1371,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			const next = context.next;
 			const overnext = context.overnext;
 
-			const currentText = this.makeText(current, "current");
-			const nextText = this.makeText(next, "next");
-			const overnextText = this.makeText(overnext, "next");
+			const currentText = this.makeText(current, "forward");
+			const nextForwardText = this.makeText(next, "forward");
+			const nextBackwardText = this.makeText(next, "backward");
+			const overnextBackwardText = this.makeText(overnext, "backward");
 
 			const nextRect = next?.getBoundingClientRect() || null;
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
-
-			const fall = this.classifyCase(changeY, bandTop, bandBottom);
 
 			const currentTop = navbarBottom + gap;
 			const nextAboveChangeTop = changeY - gap;
 			const nextBelowChangeTop = changeY + gap;
 			const bottomDockTop = viewportBottom - gap;
 
-			/*
-				Hinweis:
-				Das rotierte Element hängt mit seinem transformierten Textband nach unten.
-				Darum positionieren wir die Anchor-Top-Werte direkt an der gewünschten
-				Referenzlinie. Das funktioniert mit deinem bestehenden rotate(-90deg)-Ansatz
-				sehr stabil.
-			*/
+			const caseNumber = this.classifyCase(changeY, bandTop, bandBottom);
 
-			if (fall === 1) {
+			if (caseNumber === 1) {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
@@ -1402,34 +1395,34 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 
 				this.setHint(this.hintB, {
-					text: nextText,
+					text: nextBackwardText,
 					top: bottomDockTop,
 					y: 0,
-					opacity: nextText ? 1 : 0
+					opacity: nextBackwardText ? 1 : 0
 				});
 
 				return;
 			}
 
-			if (fall === 2) {
+			if (caseNumber === 2) {
 				this.setHint(this.hintA, {
-					text: nextText,
+					text: nextForwardText,
 					top: nextAboveChangeTop,
-					y: this.getRotatedBandLength(nextText),
-					opacity: nextText ? 1 : 0
+					y: this.getRotatedBandLength(nextForwardText),
+					opacity: nextForwardText ? 1 : 0
 				});
 
 				this.setHint(this.hintB, {
-					text: overnextText,
+					text: overnextBackwardText,
 					top: bottomDockTop,
 					y: 0,
-					opacity: overnextText ? 1 : 0
+					opacity: overnextBackwardText ? 1 : 0
 				});
 
 				return;
 			}
 
-			if (fall === 3) {
+			if (caseNumber === 3) {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
@@ -1438,16 +1431,16 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 
 				this.setHint(this.hintB, {
-					text: nextText,
+					text: nextForwardText,
 					top: nextAboveChangeTop,
-					y: this.getRotatedBandLength(nextText),
-					opacity: nextText ? 1 : 0
+					y: this.getRotatedBandLength(nextForwardText),
+					opacity: nextForwardText ? 1 : 0
 				});
 
 				return;
 			}
 
-			if (fall === 4) {
+			if (caseNumber === 4) {
 				this.setHint(this.hintA, {
 					text: currentText,
 					top: currentTop,
@@ -1456,10 +1449,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 
 				this.setHint(this.hintB, {
-					text: nextText,
+					text: nextBackwardText,
 					top: nextBelowChangeTop,
 					y: 0,
-					opacity: nextText ? 1 : 0
+					opacity: nextBackwardText ? 1 : 0
 				});
 
 				return;
@@ -1497,7 +1490,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindEvents();
 		}
 	};
-	
+
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
