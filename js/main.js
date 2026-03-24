@@ -1377,7 +1377,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (base) base.textContent = text;
 
 			this.setAnchorTop(hintEl, top);
-			hintEl.style.setProperty("--hint-y", `${Math.round(y * 2) / 2}px`);
 			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
 			hintEl.dataset.theme = theme;
 			hintEl.dataset.scrollTarget = target || "";
@@ -2543,14 +2542,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const sampleText = ">> ÜBER MICH >>";
 			const metrics = scrollSectionHintModule.measureHint(sampleText);
 			const bandThickness = metrics.height || 0;
-
-			/* Band-Mitte zwischen Viewportrand und Textspalte */
-			//~ const hintX = midpoint - (bandThickness / 2);
-
-			//~ hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
-			
-			
-			
 			
 			const rawHintX = midpoint;
 			const safePadding = 20;
@@ -2560,11 +2551,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const hintX = Math.max(minX, Math.min(rawHintX, maxX));
 
 			hintsRoot.style.setProperty("--scroll-hint-column-left", `${hintX}px`);
-			
-			
-			
-			
-			
 
 		},
 

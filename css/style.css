@@ -2267,41 +2267,6 @@ section > .section-scroll-head + * {
 	cursor: pointer;
 }
 
-
-
-
-
-
-/*
-.scroll-section-hint {
-	position: absolute;
-	top: 0;
-	left: 50%;
-	display: inline-block;
-	white-space: nowrap;
-	font-family: 'Montserrat', sans-serif;
-	font-size: var(--section-hint-size);
-	font-weight: 500;
-	letter-spacing: var(--section-hint-letter-spacing);
-	text-transform: uppercase;
-	line-height: 1;
-	color: var(--section-hint-color-strong);
-	text-shadow: 0 1px 2px rgba(0,0,0,0.08);
-	opacity: 0;
-	--hint-y: 0px;
-	will-change: transform, opacity;
-	backface-visibility: hidden;
-	transform-origin: left top;
-	transform: translate3d(-50%, var(--hint-y), 0) rotate(-90deg);
-
-	pointer-events: none;
-	cursor: default;
-}
-*/
-
-
-
-
 .scroll-section-hint {
 	position: absolute;
 	top: 0;
@@ -2326,11 +2291,6 @@ section > .section-scroll-head + * {
 	pointer-events: none;
 	cursor: default;
 }
-
-
-
-
-
 
 .scroll-section-hint-anchor[aria-hidden="true"] {
 	pointer-events: none;
