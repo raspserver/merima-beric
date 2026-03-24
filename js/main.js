@@ -1425,14 +1425,16 @@ document.addEventListener("DOMContentLoaded", () => {
 					text: currentText,
 					top: currentTop,
 					y: this.getRotatedBandLength(currentText),
-					opacity: currentText ? 1 : 0
+					opacity: currentText ? 1 : 0,
+					theme: this.getHintTheme(current)
 				});
 
 				this.setHint(this.hintB, {
 					text: nextBackwardText,
 					top: bottomDockTop,
 					y: 0,
-					opacity: nextBackwardText ? 1 : 0
+					opacity: nextBackwardText ? 1 : 0,
+					theme: this.getHintTheme(next)
 				});
 
 				return;
@@ -1443,14 +1445,16 @@ document.addEventListener("DOMContentLoaded", () => {
 					text: nextForwardText,
 					top: nextBelowBoundaryTop,
 					y: this.getRotatedBandLength(nextForwardText),
-					opacity: nextForwardText ? 1 : 0
+					opacity: nextForwardText ? 1 : 0,
+					theme: this.getHintTheme(next)
 				});
 
 				this.setHint(this.hintB, {
 					text: overnextBackwardText,
 					top: this.getBottomDockTop(overnextBackwardText, gap),
 					y: 0,
-					opacity: overnextBackwardText ? 1 : 0
+					opacity: overnextBackwardText ? 1 : 0,
+					theme: this.getHintTheme(overnext)
 				});
 
 				return;
@@ -1461,16 +1465,18 @@ document.addEventListener("DOMContentLoaded", () => {
 					text: currentText,
 					top: currentTop,
 					y: this.getRotatedBandLength(currentText),
-					opacity: currentText ? 1 : 0
+					opacity: currentText ? 1 : 0,
+					theme: this.getHintTheme(current)
 				});
 
 				this.setHint(this.hintB, {
 					text: nextForwardText,
 					top: nextBelowBoundaryTop,
 					y: this.getRotatedBandLength(nextForwardText),
-					opacity: nextForwardText ? 1 : 0
+					opacity: nextForwardText ? 1 : 0,
+					theme: this.getHintTheme(next)
 				});
-
+				
 				return;
 			}
 
@@ -1479,14 +1485,16 @@ document.addEventListener("DOMContentLoaded", () => {
 					text: currentText,
 					top: currentTop,
 					y: this.getRotatedBandLength(currentText),
-					opacity: currentText ? 1 : 0
+					opacity: currentText ? 1 : 0,
+					theme: this.getHintTheme(current)
 				});
 
 				this.setHint(this.hintB, {
 					text: nextBackwardText,
 					top: nextAboveBoundaryTop,
 					y: 0,
-					opacity: nextBackwardText ? 1 : 0
+					opacity: nextBackwardText ? 1 : 0,
+					theme: this.getHintTheme(next)
 				});
 
 				return;
