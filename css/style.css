@@ -2276,7 +2276,8 @@ section > .section-scroll-head + * {
 	letter-spacing: var(--section-hint-letter-spacing);
 	text-transform: uppercase;
 	line-height: 1;
-	color: var(--section-hint-color-strong); /* hinzufügen */
+	color: var(--section-hint-color-strong);
+	text-shadow: 0 1px 2px rgba(0,0,0,0.08);
 	opacity: 0;
 	--hint-y: 0px;
 	will-change: transform, opacity;
@@ -2287,6 +2288,7 @@ section > .section-scroll-head + * {
 
 .scroll-section-hint[data-theme="light"] {
 	color: var(--text-light);
+	text-shadow: 0 1px 2px rgba(0,0,0,0.22);
 }
 
 .scroll-section-hint-measurer {
