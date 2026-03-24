@@ -1339,8 +1339,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!anchor) return;
 			anchor.style.top = `${Math.round(topPx * 2) / 2}px`;
 		},
-		
-		setHint(hintEl, { text = "", top = 0, y = 0, opacity = 0, theme = "dark" } = {}) {
+	
+		setHint(hintEl, { text = "", top = 0, y = 0, opacity = 0, theme = "dark", target = "" } = {}) {
 			if (!hintEl) return;
 
 			const base = hintEl.querySelector(".scroll-section-hint-base");
@@ -1350,6 +1350,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			hintEl.style.setProperty("--hint-y", `${Math.round(y * 2) / 2}px`);
 			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
 			hintEl.dataset.theme = theme;
+			hintEl.dataset.scrollTarget = target || "";
 			hintEl.classList.toggle("is-empty", !text || opacity <= 0.001);
 		},
 

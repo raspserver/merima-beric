@@ -2262,6 +2262,7 @@ section > .section-scroll-head + * {
 	top: 0;
 	width: 0;
 	height: 0;
+	pointer-events: none;
 }
 
 .scroll-section-hint {
@@ -2284,6 +2285,9 @@ section > .section-scroll-head + * {
 	backface-visibility: hidden;
 	transform-origin: left top;
 	transform: translate3d(0, var(--hint-y), 0) rotate(-90deg);
+
+	pointer-events: auto;   /* wichtig */
+	cursor: pointer;        /* Mauszeiger beim Hover */
 }
 
 .scroll-section-hint[data-theme="light"] {
