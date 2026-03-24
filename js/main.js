@@ -1367,6 +1367,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return viewportHeight - gap - correction;
 		},
+		
+		getBoundaryBelowTop(text, changeY, gap) {
+			const { width, height } = this.measureHint(text);
+			const rotatedBandLength = width || 0;
+			const correction = Math.max(0, (rotatedBandLength - height) / 2);
+
+			return changeY + gap + correction;
+		},
+
+		getBoundaryAboveTop(text, changeY, gap) {
+			const { width, height } = this.measureHint(text);
+			const rotatedBandLength = width || 0;
+			const correction = (rotatedBandLength + height) / 2;
+
+			return changeY - gap - correction;
+		},
 
 		setAnchorTop(hintEl, topPx) {
 			const anchor = hintEl?.parentElement;
@@ -1553,9 +1569,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const nextRect = next?.getBoundingClientRect() || null;
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
-			const nextBelowBoundaryTop = changeY + gap;
-			const nextAboveBoundaryTop = changeY - gap;
+			
+			const nextBelowBoundaryTop = next
+				? this.getBoundaryBelowTop(nextForwardText, changeY, gap)
+				: 0;
 
+			const nextAboveBoundaryTop = next
+				? this.getBoundaryAboveTop(nextBackwardText, changeY, gap)
+				: 0;
+			
 			return {
 				gap,
 				bandTop,
