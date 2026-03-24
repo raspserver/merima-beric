@@ -2260,15 +2260,17 @@ section > .section-scroll-head + * {
 	position: fixed;
 	left: var(--scroll-hint-column-left);
 	top: 0;
-	width: 0;
-	height: 0;
-	pointer-events: none;
+	width: 44px;
+	height: 160px;
+	transform: translateX(-50%);
+	pointer-events: auto;
+	cursor: pointer;
 }
 
 .scroll-section-hint {
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: 50%;
 	display: inline-block;
 	white-space: nowrap;
 	font-family: 'Montserrat', sans-serif;
@@ -2284,10 +2286,14 @@ section > .section-scroll-head + * {
 	will-change: transform, opacity;
 	backface-visibility: hidden;
 	transform-origin: left top;
-	transform: translate3d(0, var(--hint-y), 0) rotate(-90deg);
+	transform: translate3d(-50%, var(--hint-y), 0) rotate(-90deg);
 
-	pointer-events: auto;   /* wichtig */
-	cursor: pointer;        /* Mauszeiger beim Hover */
+	pointer-events: none;
+	cursor: default;
+}
+
+.scroll-section-hint-anchor[aria-hidden="true"] {
+	pointer-events: none;
 }
 
 .scroll-section-hint[data-theme="light"] {
@@ -2308,6 +2314,15 @@ section > .section-scroll-head + * {
 	letter-spacing: var(--section-hint-letter-spacing);
 	text-transform: uppercase;
 	line-height: 1;
+}
+
+.scroll-section-hint-anchor:focus {
+	outline: none;
+}
+
+.scroll-section-hint-anchor:focus-visible {
+	outline: 2px solid rgba(212, 175, 55, 0.7);
+	outline-offset: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
