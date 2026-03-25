@@ -1206,12 +1206,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		maxVisibleHints: 2,
 
 		isVisible: false,
-		hideTimer: null,
 		scrollEndTimer: null,
-
-		touchSessionActive: false,
-		touchMoved: false,
-		lastTouchY: 0,
 
 		hideDelayMs: 500,
 		fadeDurationMs: 1000,
@@ -1870,13 +1865,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 1000);
 		},
 
-		clearHideTimer() {
-			if (this.hideTimer) {
-				clearTimeout(this.hideTimer);
-				this.hideTimer = null;
-			}
-		},
-
 		clearScrollEndTimer() {
 			if (this.scrollEndTimer) {
 				clearTimeout(this.scrollEndTimer);
@@ -1884,12 +1872,25 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
-		isTouchLikeDevice() {
-			return (
-				window.matchMedia("(pointer: coarse)").matches ||
-				"ontouchstart" in window ||
-				navigator.maxTouchPoints > 0
-			);
+		show() {
+			if (!this.root) return;
+
+			this.isVisible = true;
+
+			this.root.classList.remove("is-instant-hidden");
+			document.body.classList.remove("hints-instant-hide");
+
+			this.root.classList.add("is-visible");
+			document.body.classList.add("hints-visible");
+		},
+
+		hide() {
+			if (!this.root) return;
+
+			this.isVisible = false;
+
+			this.root.classList.remove("is-visible");
+			document.body.classList.remove("hints-visible");
 		},
 
 		handleScrollActivity() {
@@ -1903,79 +1904,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		scheduleHideAfterScrollEnd() {
-			this.clearHideTimer();
 			this.clearScrollEndTimer();
 
 			this.scrollEndTimer = setTimeout(() => {
 				this.hide();
-				this.touchSessionActive = false;
-				this.touchMoved = false;
 			}, this.hideDelayMs);
-		},
-
-		show() {
-			if (!this.root) return;
-
-			this.clearHideTimer();
-			this.isVisible = true;
-
-			this.root.classList.remove("is-instant-hidden");
-			document.body.classList.remove("hints-instant-hide");
-
-			this.root.classList.add("is-visible");
-			document.body.classList.add("hints-visible");
-		},
-
-		hide() {
-			if (!this.root) return;
-
-			this.clearHideTimer();
-			this.isVisible = false;
-
-			this.root.classList.remove("is-visible");
-			document.body.classList.remove("hints-visible");
-		},
-
-		scheduleHide() {
-			if (!this.root) return;
-			this.clearHideTimer();
-
-			this.hideTimer = setTimeout(() => {
-				this.hide();
-			}, this.hideDelayMs);
-		},
-
-		handleManualTouchScrollStart(touchY) {
-			this.touchSessionActive = true;
-			this.touchMoved = false;
-			this.lastTouchY = touchY;
-			this.clearScrollEndTimer();
-		},
-
-		handleManualTouchMove(touchY) {
-			if (!this.touchSessionActive) return;
-
-			if (Math.abs(touchY - this.lastTouchY) > 3) {
-				this.touchMoved = true;
-				this.show();
-				this.scheduleHideAfterScrollEnd();
-			}
-
-			this.lastTouchY = touchY;
-		},
-
-		handleManualTouchEnd() {
-			/* Kein sofortiges Beenden mehr:
-			   Momentum-Scroll wird durch weitere scroll-Events erkannt.
-			   Falls kein Scroll mehr kommt, blendet scheduleHideAfterScrollEnd aus. */
 		},
 
 		hideImmediatelyForProgrammaticScroll() {
 			if (!this.root) return;
 
-			this.touchSessionActive = false;
-			this.touchMoved = false;
-			this.clearHideTimer();
 			this.clearScrollEndTimer();
 			this.isVisible = false;
 
@@ -2011,32 +1949,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.handleScrollActivity();
 			}, { passive: true });
 
-			window.addEventListener("touchstart", (e) => {
-				if (!e.touches?.length) return;
-
+			window.addEventListener("touchstart", () => {
 				if (state.programmaticScroll) {
 					scrollEngine.cancelActiveScroll();
 				}
-
-				this.handleManualTouchScrollStart(e.touches[0].clientY);
-			}, { passive: true });
-
-			window.addEventListener("touchmove", (e) => {
-				if (!e.touches?.length) return;
-
-				if (state.programmaticScroll) {
-					scrollEngine.cancelActiveScroll();
-				}
-
-				this.handleManualTouchMove(e.touches[0].clientY);
-			}, { passive: true });
-
-			window.addEventListener("touchend", () => {
-				this.handleManualTouchEnd();
-			}, { passive: true });
-
-			window.addEventListener("touchcancel", () => {
-				this.handleManualTouchEnd();
 			}, { passive: true });
 
 			window.addEventListener("resize", () => {
@@ -2075,7 +1991,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindEvents();
 		}
 	};
-
+	
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
