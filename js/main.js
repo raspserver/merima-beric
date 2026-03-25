@@ -1269,13 +1269,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				return !!section.id && !!this.labels[section.id];
 			});
 		},
-
+		
 		getViewportHeight() {
-			return window.visualViewport?.height || window.innerHeight;
-		},
-
-		getViewportOffsetTop() {
-			return window.visualViewport?.offsetTop || 0;
+			return window.innerHeight || document.documentElement.clientHeight;
 		},
 
 		getBoundaryGapPx() {
@@ -1813,16 +1809,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.scheduleUpdate();
 			}, { passive: true });
 
-			if (window.visualViewport) {
-				window.visualViewport.addEventListener("resize", () => {
-					this.metricsCache.clear();
-					this.scheduleUpdate();
-				}, { passive: true });
-
-				window.visualViewport.addEventListener("scroll", () => {
-					this.scheduleUpdate();
-				}, { passive: true });
-			}
 		},
 
 		init() {
