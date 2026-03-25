@@ -1178,9 +1178,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		root: null,
 		measurer: null,
 		metricsCache: new Map(),
-		hintA: null,
-		hintB: null,
+		hintSlots: [],
 		updateRaf: null,
+		maxVisibleHints: 2,
 
 		labels: {
 			about: "ÜBER MICH",
@@ -1198,19 +1198,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.root.className = "scroll-section-hints";
 			this.root.setAttribute("aria-hidden", "true");
 
-			this.root.innerHTML = `
-				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--a">
-					<div class="scroll-section-hint scroll-section-hint--a">
-						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
-					</div>
-				</div>
+			const slotCount = this.maxVisibleHints;
 
-				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--b">
-					<div class="scroll-section-hint scroll-section-hint--b">
+			this.root.innerHTML = Array.from({ length: slotCount }, (_, index) => `
+				<div class="scroll-section-hint-anchor scroll-section-hint-anchor--${index}">
+					<div class="scroll-section-hint scroll-section-hint--${index}">
 						<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 					</div>
 				</div>
-			`;
+			`).join("");
 
 			document.body.appendChild(this.root);
 
@@ -1218,12 +1214,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.measurer.className = "scroll-section-hint-measurer";
 			document.body.appendChild(this.measurer);
 
-			this.hintA = this.root.querySelector(".scroll-section-hint--a");
-			this.hintB = this.root.querySelector(".scroll-section-hint--b");
+			this.hintSlots = Array.from(
+				this.root.querySelectorAll(".scroll-section-hint")
+			);
 		},
 
 		bindHintClicks() {
-			[this.hintA, this.hintB].forEach(hintEl => {
+			this.hintSlots.forEach(hintEl => {
 				if (!hintEl) return;
 
 				const anchor = hintEl.parentElement;
@@ -1265,10 +1262,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (section.classList?.contains("hero")) return true;
 				return !!section.id && !!this.labels[section.id];
 			});
-		},
-
-		getLayoutViewportHeight() {
-			return window.innerHeight || document.documentElement.clientHeight;
 		},
 
 		getVisualViewportBottom() {
@@ -1508,8 +1501,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		hideAll() {
-			this.hideHint(this.hintA);
-			this.hideHint(this.hintB);
+			this.hintSlots.forEach(hintEl => this.hideHint(hintEl));
 		},
 
 		getTransitionZone(changeY, bandTop, bandBottom) {
@@ -1531,17 +1523,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		createPlacement(section, {
+			role = "transition",
 			variant = "forward",
 			top = 0,
-			opacity = 1
+			opacity = 1,
+			priority = 0
 		} = {}) {
 			if (!section) return null;
 
 			return {
 				section,
+				role,
 				variant,
 				top,
-				opacity
+				opacity,
+				priority
 			};
 		},
 
@@ -1569,6 +1565,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				overnextBackward: this.getAnchorHeightForText(text.overnextBackward)
 			};
 
+			const band = {
+				top: navbarBottom,
+				bottom: viewportBottom
+			};
+
 			const docks = {
 				top: {
 					current: navbarBottom + gap + anchorHeights.currentForward / 2
@@ -1592,14 +1593,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					: 0
 			};
 
-			const band = {
-				top: navbarBottom,
-				bottom: viewportBottom
-			};
-
 			return {
 				gap,
 				text,
+				anchorHeights,
 				band,
 				changeY,
 				docks,
@@ -1607,7 +1604,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			};
 		},
 
-		buildPlacementPlan(context, geometry) {
+		buildPlacements(context, geometry) {
 			const { current, next, overnext } = context;
 
 			const isHomeCurrent =
@@ -1622,133 +1619,178 @@ document.addEventListener("DOMContentLoaded", () => {
 				)
 				: "outside";
 
-			const plan = {
-				topDock: null,
-				transition: null,
-				bottomDock: null
+			const placements = [];
+
+			const pushPlacement = (placement) => {
+				if (placement?.section) placements.push(placement);
 			};
 
 			/* letzte inhaltliche Section */
 			if (!isHomeCurrent && !next) {
-				plan.topDock = this.createPlacement(current, {
-					variant: "forward",
-					top: geometry.docks.top.current
-				});
-				return plan;
+				pushPlacement(
+					this.createPlacement(current, {
+						role: "topDock",
+						variant: "forward",
+						top: geometry.docks.top.current,
+						priority: 100
+					})
+				);
+
+				return placements;
 			}
 
 			/* HERO / HOME */
 			if (isHomeCurrent) {
 				if (zone === "entering") {
-					plan.transition = this.createPlacement(next, {
-						variant: "forward",
-						top: geometry.transition.nextForwardBelowBoundary
-					});
+					pushPlacement(
+						this.createPlacement(next, {
+							role: "transition",
+							variant: "forward",
+							top: geometry.transition.nextForwardBelowBoundary,
+							priority: 100
+						})
+					);
 
-					plan.bottomDock = this.createPlacement(overnext, {
-						variant: "backward",
-						top: geometry.docks.bottom.overnext
-					});
+					pushPlacement(
+						this.createPlacement(overnext, {
+							role: "bottomDock",
+							variant: "backward",
+							top: geometry.docks.bottom.overnext,
+							priority: 60
+						})
+					);
 				}
 
 				if (zone === "passing") {
-					plan.transition = this.createPlacement(next, {
-						variant: "forward",
-						top: geometry.transition.nextForwardBelowBoundary
-					});
+					pushPlacement(
+						this.createPlacement(next, {
+							role: "transition",
+							variant: "forward",
+							top: geometry.transition.nextForwardBelowBoundary,
+							priority: 100
+						})
+					);
 				}
 
-				return plan;
+				return placements;
 			}
 
 			/* Standard */
 			if (zone === "outside") {
-				plan.topDock = this.createPlacement(current, {
-					variant: "forward",
-					top: geometry.docks.top.current
-				});
+				pushPlacement(
+					this.createPlacement(current, {
+						role: "topDock",
+						variant: "forward",
+						top: geometry.docks.top.current,
+						priority: 100
+					})
+				);
 
-				plan.bottomDock = this.createPlacement(next, {
-					variant: "backward",
-					top: geometry.docks.bottom.next
-				});
+				pushPlacement(
+					this.createPlacement(next, {
+						role: "bottomDock",
+						variant: "backward",
+						top: geometry.docks.bottom.next,
+						priority: 70
+					})
+				);
 
-				return plan;
+				return placements;
 			}
 
 			if (zone === "entering") {
-				plan.transition = this.createPlacement(next, {
-					variant: "forward",
-					top: geometry.transition.nextForwardBelowBoundary
-				});
+				pushPlacement(
+					this.createPlacement(next, {
+						role: "transition",
+						variant: "forward",
+						top: geometry.transition.nextForwardBelowBoundary,
+						priority: 100
+					})
+				);
 
-				plan.bottomDock = this.createPlacement(overnext, {
-					variant: "backward",
-					top: geometry.docks.bottom.overnext
-				});
+				pushPlacement(
+					this.createPlacement(overnext, {
+						role: "bottomDock",
+						variant: "backward",
+						top: geometry.docks.bottom.overnext,
+						priority: 60
+					})
+				);
 
-				return plan;
+				return placements;
 			}
 
 			if (zone === "passing") {
-				plan.topDock = this.createPlacement(current, {
-					variant: "forward",
-					top: geometry.docks.top.current
-				});
+				pushPlacement(
+					this.createPlacement(current, {
+						role: "topDock",
+						variant: "forward",
+						top: geometry.docks.top.current,
+						priority: 90
+					})
+				);
 
-				plan.transition = this.createPlacement(next, {
-					variant: "forward",
-					top: geometry.transition.nextForwardBelowBoundary
-				});
+				pushPlacement(
+					this.createPlacement(next, {
+						role: "transition",
+						variant: "forward",
+						top: geometry.transition.nextForwardBelowBoundary,
+						priority: 100
+					})
+				);
 
-				return plan;
+				return placements;
 			}
 
 			if (zone === "leaving") {
-				plan.topDock = this.createPlacement(current, {
-					variant: "forward",
-					top: geometry.docks.top.current
-				});
+				pushPlacement(
+					this.createPlacement(current, {
+						role: "topDock",
+						variant: "forward",
+						top: geometry.docks.top.current,
+						priority: 90
+					})
+				);
 
-				plan.transition = this.createPlacement(next, {
-					variant: "backward",
-					top: geometry.transition.nextBackwardAboveBoundary
-				});
+				pushPlacement(
+					this.createPlacement(next, {
+						role: "transition",
+						variant: "backward",
+						top: geometry.transition.nextBackwardAboveBoundary,
+						priority: 100
+					})
+				);
 
-				return plan;
+				return placements;
 			}
 
-			return plan;
+			return placements;
 		},
 
-		renderPlacementPlan(plan) {
-			const placements = [
-				plan.topDock,
-				plan.transition,
-				plan.bottomDock
-			]
+		renderPlacements(placements) {
+			const visiblePlacements = (placements || [])
 				.filter(Boolean)
-				.sort((a, b) => a.top - b.top);
+				.filter(placement => placement.section && (placement.opacity ?? 1) > 0.001)
+				.sort((a, b) => {
+					if (a.top !== b.top) return a.top - b.top;
+					return (b.priority ?? 0) - (a.priority ?? 0);
+				});
 
-			if (!placements.length) {
+			if (!visiblePlacements.length) {
 				this.hideAll();
 				return;
 			}
 
-			const first = placements[0] || null;
-			const second = placements[1] || null;
+			this.hintSlots.forEach((hintEl, index) => {
+				const placement = visiblePlacements[index];
 
-			if (first) {
-				this.applyHint(this.hintA, first);
-			} else {
-				this.hideHint(this.hintA);
-			}
+				if (!placement) {
+					this.hideHint(hintEl);
+					return;
+				}
 
-			if (second) {
-				this.applyHint(this.hintB, second);
-			} else {
-				this.hideHint(this.hintB);
-			}
+				this.applyHint(hintEl, placement);
+			});
 		},
 
 		update() {
@@ -1761,9 +1803,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			const geometry = this.buildGeometry(context);
-			const plan = this.buildPlacementPlan(context, geometry);
+			const placements = this.buildPlacements(context, geometry);
 
-			this.renderPlacementPlan(plan);
+			this.renderPlacements(placements);
 		},
 
 		scheduleUpdate() {
