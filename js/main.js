@@ -1337,12 +1337,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		getRotatedBandLength(text) {
 			return this.measureHint(text).width || 0;
 		},
-
+		
 		getTopDockTop(text, gap) {
 			const navHeight = utils.getRootNumber("--nav-height", 78);
-			return navHeight + gap;
-		},
+			const { width, height } = this.measureHint(text);
+			const rotatedBandLength = width || 0;
 
+			/* visuelle Oberkante nach Rotation ausgleichen */
+			const correction = Math.max(0, (rotatedBandLength - height) / 2);
+
+			return navHeight + gap + correction;
+		},
+		
 		getBottomDockTop(text, gap) {
 			const viewportHeight = this.getViewportHeight();
 			const { width, height } = this.measureHint(text);
