@@ -1781,20 +1781,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					this.scheduleUpdate();
 				}, 120);
 			});
-			
-			window.addEventListener("scroll", () => this.scheduleUpdate(), { passive: true });
-
-			window.addEventListener("resize", () => {
-				this.metricsCache.clear();
-				this.scheduleUpdate();
-			});
-
-			window.addEventListener("orientationchange", () => {
-				setTimeout(() => {
-					this.metricsCache.clear();
-					this.scheduleUpdate();
-				}, 120);
-			});
 
 			if (window.visualViewport) {
 				window.visualViewport.addEventListener("resize", () => {
