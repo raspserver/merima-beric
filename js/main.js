@@ -1407,14 +1407,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.setAnchorTop(hintEl, top);
 			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
 			hintEl.dataset.theme = theme;
-			hintEl.dataset.scrollTarget = target || "";
 			hintEl.classList.toggle("is-empty", !visible);
 
 			if (anchor) {
 				const metrics = this.measureHint(text);
+
+				anchor.dataset.scrollTarget = target || "";
 				anchor.style.width = `${Math.max(48, metrics.height + 16)}px`;
 				anchor.style.height = `${Math.max(48, metrics.width + 16)}px`;
-
 				anchor.style.pointerEvents = visible ? "auto" : "none";
 				anchor.style.opacity = visible ? "1" : "0";
 				anchor.setAttribute("aria-hidden", visible ? "false" : "true");
