@@ -58,6 +58,8 @@
 	--section-hint-color-strong: rgba(45, 45, 45, 0.96);
 	--section-hint-size: 0.82rem;
 	--section-hint-letter-spacing: 0.22em;
+	--section-hint-hide-delay: 0.5s;
+	--section-hint-fade-duration: 1s;
 	
 	/* =========================
 	   NAVBAR STRUCTURE
@@ -2254,6 +2256,20 @@ section > .section-scroll-head + * {
 	pointer-events: none;
 	z-index: 1400;
 	--scroll-hint-column-center: 24px;
+
+	opacity: 0;
+	visibility: hidden;
+	transition:
+		opacity var(--section-hint-fade-duration) ease,
+		visibility 0s linear var(--section-hint-fade-duration);
+}
+
+.scroll-section-hints.is-visible {
+	opacity: 1;
+	visibility: visible;
+	transition:
+		opacity 0.18s ease,
+		visibility 0s linear 0s;
 }
 
 .scroll-section-hint-anchor {

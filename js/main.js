@@ -120,6 +120,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			return Number.isFinite(px) ? px : fallbackPx;
 		}
 		
+		getRootTimeMs(name, fallbackMs) {
+			const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+			if (!raw) return fallbackMs;
+
+			if (raw.endsWith("ms")) {
+				const ms = parseFloat(raw);
+				return Number.isFinite(ms) ? ms : fallbackMs;
+			}
+
+			if (raw.endsWith("s")) {
+				const s = parseFloat(raw);
+				return Number.isFinite(s) ? s * 1000 : fallbackMs;
+			}
+
+			const num = parseFloat(raw);
+			return Number.isFinite(num) ? num : fallbackMs;
+		},
+		
 	};
 
 	/* =========================================================
@@ -360,6 +378,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				  navOffset +
 				  inset;
 
+			scrollSectionHintModule.hideImmediatelyForProgrammaticScroll?.();
+			
 			state.programmaticScroll = true;
 			state.programmaticNavMode = effectiveNavMode;
 
@@ -426,6 +446,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		scrollToPageBottom() {
+			scrollSectionHintModule.hideImmediatelyForProgrammaticScroll?.();
+			
 			state.programmaticScroll = true;
 			state.programmaticNavMode = "down";
 			state.scrollDirection = "down";
@@ -464,6 +486,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			state.lastScrollY = window.scrollY;
+			scrollSectionHintModule.scheduleHide?.();
 			navbarModule.handleScroll();
 		},
 		
@@ -1181,6 +1204,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		hintSlots: [],
 		updateRaf: null,
 		maxVisibleHints: 2,
+		
+		isVisible: false,
+		hideTimer: null,
+		touchGestureActive: false,
+		touchMoved: false,
+		lastTouchY: 0,
+		hideDelayMs: 500,
+		fadeDurationMs: 1000,
 
 		labels: {
 			about: "ÜBER MICH",
@@ -1818,16 +1849,58 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		bindEvents() {
-			window.addEventListener("scroll", () => this.scheduleUpdate(), { passive: true });
+			window.addEventListener("scroll", () => {
+				this.scheduleUpdate();
+
+				/* Nur bei manueller Touch-/Wisch-Geste sichtbar halten */
+				if (state.programmaticScroll) {
+					this.hideImmediatelyForProgrammaticScroll();
+					return;
+				}
+
+				if (this.touchGestureActive && this.touchMoved) {
+					this.show();
+					this.scheduleHide();
+				}
+			}, { passive: true });
+
+			window.addEventListener("touchstart", (e) => {
+				if (!e.touches?.length) return;
+				if (state.programmaticScroll) return;
+
+				this.handleManualTouchScrollStart(e.touches[0].clientY);
+			}, { passive: true });
+
+			window.addEventListener("touchmove", (e) => {
+				if (!e.touches?.length) return;
+				if (state.programmaticScroll) return;
+
+				this.handleManualTouchMove(e.touches[0].clientY);
+			}, { passive: true });
+
+			window.addEventListener("touchend", () => {
+				this.handleManualTouchEnd();
+			}, { passive: true });
+
+			window.addEventListener("touchcancel", () => {
+				this.handleManualTouchEnd();
+			}, { passive: true });
+
+			/* Mausrad / Trackpad sollen die Hints nicht anzeigen */
+			window.addEventListener("wheel", () => {
+				this.hide();
+			}, { passive: true });
 
 			window.addEventListener("resize", () => {
 				this.metricsCache.clear();
+				this.refreshTimingVars();
 				this.scheduleUpdate();
 			});
 
 			window.addEventListener("orientationchange", () => {
 				setTimeout(() => {
 					this.metricsCache.clear();
+					this.refreshTimingVars();
 					this.scheduleUpdate();
 				}, 120);
 			});
@@ -1843,13 +1916,84 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			}
 		},
-
+		
 		init() {
 			this.build();
+			this.refreshTimingVars();
 			this.bindHintClicks();
+			this.hide();
 			this.update();
 			this.bindEvents();
+		},
+		
+		refreshTimingVars() {
+			this.hideDelayMs = utils.getRootTimeMs("--section-hint-hide-delay", 500);
+			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 1000);
+		},
+
+		clearHideTimer() {
+			if (this.hideTimer) {
+				clearTimeout(this.hideTimer);
+				this.hideTimer = null;
+			}
+		},
+
+		show() {
+			if (!this.root) return;
+			this.clearHideTimer();
+			this.isVisible = true;
+			this.root.classList.add("is-visible");
+		},
+
+		hide() {
+			if (!this.root) return;
+			this.clearHideTimer();
+			this.isVisible = false;
+			this.root.classList.remove("is-visible");
+		},
+
+		scheduleHide() {
+			if (!this.root) return;
+			this.clearHideTimer();
+
+			this.hideTimer = setTimeout(() => {
+				this.hide();
+			}, this.hideDelayMs);
+		},
+
+		handleManualTouchScrollStart(touchY) {
+			this.touchGestureActive = true;
+			this.touchMoved = false;
+			this.lastTouchY = touchY;
+		},
+
+		handleManualTouchMove(touchY) {
+			if (!this.touchGestureActive) return;
+
+			if (Math.abs(touchY - this.lastTouchY) > 3) {
+				this.touchMoved = true;
+				this.show();
+			}
+
+			this.lastTouchY = touchY;
+		},
+
+		handleManualTouchEnd() {
+			if (!this.touchGestureActive) return;
+
+			this.touchGestureActive = false;
+
+			if (this.touchMoved) {
+				this.scheduleHide();
+			}
+		},
+
+		hideImmediatelyForProgrammaticScroll() {
+			this.touchGestureActive = false;
+			this.touchMoved = false;
+			this.hide();
 		}
+
 	};
 
 	/* =========================================================
