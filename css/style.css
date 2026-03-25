@@ -498,6 +498,35 @@ html, body {
     }
 }
 
+html.low-end .hero::before,
+html.low-fps .hero::before {
+	animation: none !important;
+}
+
+html.low-end .gallery-track,
+html.low-fps .gallery-track {
+	transition-duration: 0.35s;
+}
+
+html.low-end .service-card,
+html.low-end .pricing-item,
+html.low-end .testimonial-card,
+html.low-fps .service-card,
+html.low-fps .pricing-item,
+html.low-fps .testimonial-card {
+	transition: none;
+}
+
+html.low-end .hero,
+html.low-fps .hero {
+	will-change: auto;
+}
+
+html.low-end .hero-inner,
+html.low-fps .hero-inner {
+	will-change: auto;
+}
+
 .hero {
 	position: relative;
 	z-index: 5;

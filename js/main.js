@@ -136,6 +136,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const num = parseFloat(raw);
 			return Number.isFinite(num) ? num : fallbackMs;
+		},
+		
+		getPerformanceProfile() {
+			const cores = navigator.hardwareConcurrency || 0;
+			const memory = navigator.deviceMemory || 0;
+			const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+			let reducedTransparency = false;
+			try {
+				reducedTransparency = window.matchMedia("(prefers-reduced-transparency: reduce)").matches;
+			} catch {}
+
+			const lowEndByCpu = cores > 0 && cores <= 4;
+			const lowEndByRam = memory > 0 && memory <= 4;
+
+			return {
+				cores,
+				memory,
+				reducedMotion,
+				reducedTransparency,
+				lowEnd: lowEndByCpu || lowEndByRam || reducedMotion || reducedTransparency
+			};
 		}
 		
 	};
@@ -2775,9 +2797,61 @@ document.addEventListener("DOMContentLoaded", () => {
 	};
 
 	/* =========================================================
+	   PERFORMANCE MODULE
+	========================================================= */
+	const performanceModule = {
+		fpsSampleFrames: 45,
+		lowFpsThreshold: 42,
+
+		applyInitialProfile() {
+			const profile = utils.getPerformanceProfile();
+
+			if (profile.lowEnd) {
+				document.documentElement.classList.add("low-end");
+			}
+		},
+
+		measureInitialFPS() {
+			if (utils.prefersReducedMotion()) return;
+
+			let frames = 0;
+			let start = 0;
+
+			const sample = (now) => {
+				if (!start) start = now;
+				frames++;
+
+				const elapsed = now - start;
+
+				if (frames < this.fpsSampleFrames) {
+					requestAnimationFrame(sample);
+					return;
+				}
+
+				const fps = frames / (elapsed / 1000);
+
+				if (fps < this.lowFpsThreshold) {
+					document.documentElement.classList.add("low-fps");
+				}
+			};
+
+			requestAnimationFrame(sample);
+		},
+
+		init() {
+			this.applyInitialProfile();
+
+			window.addEventListener("load", () => {
+				this.measureInitialFPS();
+			});
+		}
+	};
+
+	/* =========================================================
 	   INIT
 	========================================================= */
 	function init() {
+		performanceModule.init();
 		physics.update();
 		sectionNavigationModule.buildOrderedSections();
 
