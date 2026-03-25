@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const px = parseFloat(raw);
 			return Number.isFinite(px) ? px : fallbackPx;
-		}
+		},
 		
 		getRootTimeMs(name, fallbackMs) {
 			const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const num = parseFloat(raw);
 			return Number.isFinite(num) ? num : fallbackMs;
-		},
+		}
 		
 	};
 
