@@ -2784,6 +2784,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			hintsRoot.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
 			document.documentElement.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
 
+			/* <<< NEU: Breite der Schneise = Abstand vom linken Viewportrand bis zur linken Textkante */
+			document.documentElement.style.setProperty(
+				"--gallery-hint-lane-width",
+				`${contentLeft}px`
+			);
+
 			/* Schneise relativ zum Gallery-Slider ausrichten */
 			const gallerySlider = document.querySelector(".gallery-slider");
 			if (gallerySlider) {

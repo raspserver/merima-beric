@@ -64,7 +64,7 @@
 
 	/* für die Schneise durch die Videos */
 	--scroll-hint-column-center: 24px;
-	--gallery-hint-lane-width: clamp(48px, 5vw, 80px);
+	--gallery-hint-lane-width: 0px;
 	
 	/* =========================
 	   NAVBAR STRUCTURE
