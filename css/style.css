@@ -896,6 +896,11 @@ body.hints-visible .gallery-slider::before {
 	transform: scaleX(1);
 }
 
+body.hints-visible.in-gallery .gallery-slider::before {
+	opacity: 1;
+	transform: scaleX(1);
+}
+
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button.is-hovered,
 body.suppress-cta-hover .cta-button:active,
@@ -2406,11 +2411,9 @@ section > .section-scroll-head + * {
 	--gallery-lane-left: 24px;
 }
 
-/* DIE echte Schneise durch den Video-Bereich */
 .gallery-slider::before {
 	content: "";
 	position: absolute;
-
 	top: 0;
 	bottom: 0;
 
@@ -2424,14 +2427,22 @@ section > .section-scroll-head + * {
 	box-shadow:
 		-10px 0 18px rgba(245, 230, 211, 0.35),
 		 10px 0 18px rgba(245, 230, 211, 0.35);
-		 
+
 	opacity: 0;
-	transform: scaleX(0.85);
+	transform: scaleX(0.88);
 	transform-origin: center;
 	transition:
 		opacity var(--section-hint-fade-duration) ease,
 		transform var(--section-hint-fade-duration) ease;
 }
+
+
+
+
+
+
+
+
 
 .gallery-track {
 	display: flex;

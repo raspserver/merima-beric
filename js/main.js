@@ -1842,11 +1842,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.applyHint(hintEl, placement);
 			});
 		},
-
+		
 		update() {
 			if (!this.root) return;
 
 			const context = this.getSectionContext();
+			this.updateGalleryBodyState(context?.current || null);
+
 			if (!context?.current) {
 				this.hideAll();
 				return;
@@ -1857,7 +1859,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.renderPlacements(placements);
 		},
-
+		
 		scheduleUpdate() {
 			if (this.updateRaf) return;
 
@@ -2030,6 +2032,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.hide();
 
 			document.body.classList.remove("hints-visible");
+		},
+		
+		updateGalleryBodyState(currentSection) {
+			if (currentSection?.id === "gallery") {
+				document.body.classList.add("in-gallery");
+			} else {
+				document.body.classList.remove("in-gallery");
+			}
 		}
 
 	};
