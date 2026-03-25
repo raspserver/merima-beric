@@ -1174,15 +1174,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* =========================================================
 	   SCROLL SECTION HINT MODULE
 	========================================================= */
-	const scrollSectionHintModule = {
+		const scrollSectionHintModule = {
 		root: null,
 		measurer: null,
 		metricsCache: new Map(),
 		hintA: null,
 		hintB: null,
 		updateRaf: null,
-		liveTrackingRaf: null,
-		liveTrackingActive: false,
 
 		labels: {
 			about: "ÜBER MICH",
@@ -1222,9 +1220,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.hintA = this.root.querySelector(".scroll-section-hint--a");
 			this.hintB = this.root.querySelector(".scroll-section-hint--b");
-			
 		},
-		
+
 		bindHintClicks() {
 			[this.hintA, this.hintB].forEach(hintEl => {
 				if (!hintEl) return;
@@ -1269,11 +1266,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				return !!section.id && !!this.labels[section.id];
 			});
 		},
-		
+
 		getLayoutViewportHeight() {
 			return window.innerHeight || document.documentElement.clientHeight;
 		},
-	
+
 		getVisualViewportBottom() {
 			if (window.visualViewport) {
 				return window.visualViewport.height;
@@ -1284,11 +1281,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		getBoundaryGapPx() {
 			return utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
 		},
-	
+
+		getNavbarBottom() {
+			if (!DOM.navbar) return utils.getRootNumber("--nav-height", 78);
+			return DOM.navbar.getBoundingClientRect().bottom;
+		},
+
 		getSectionContext() {
 			const sections = this.getContentSections();
 			if (!sections.length) return null;
-			
+
 			const navbarBottom = this.getNavbarBottom();
 			let currentIndex = 0;
 
@@ -1340,89 +1342,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			return metrics;
 		},
 
-		getRotatedBandLength(text) {
-			return this.measureHint(text).width || 0;
-		},
-		
-		getTopDockTop(text, gap) {
-			const navbarBottom = this.getNavbarBottom();
-			const anchorHeight = this.getAnchorHeightForText(text);
-			return navbarBottom + gap + anchorHeight / 2;
-		},
-	
-		getBottomDockTop(text, gap) {
-			const visualBottom = this.getVisualViewportBottom();
-			const anchorHeight = this.getAnchorHeightForText(text);
-			return visualBottom - gap - anchorHeight / 2;
-		},
-
-		getBoundaryBelowTop(text, changeY, gap) {
-			const anchorHeight = this.getAnchorHeightForText(text);
-			return changeY + gap + anchorHeight / 2;
-		},
-
-		getBoundaryAboveTop(text, changeY, gap) {
-			const anchorHeight = this.getAnchorHeightForText(text);
-			return changeY - gap - anchorHeight / 2;
-		},	
-
-		getNavbarBottom() {
-			if (!DOM.navbar) return utils.getRootNumber("--nav-height", 78);
-			return DOM.navbar.getBoundingClientRect().bottom;
-		},
-		
-		setAnchorCenterY(hintEl, centerYPx) {
-			const anchor = hintEl?.parentElement;
-			if (!anchor) return;
-			anchor.style.top = `${Math.round(centerYPx)}px`;
-		},
-		
-		setHint(hintEl, {
-			text = "",
-			top = 0,
-			y = 0,
-			opacity = 0,
-			theme = "dark",
-			target = ""
-		} = {}) {
-			if (!hintEl) return;
-
-			const anchor = hintEl.parentElement;
-			const base = hintEl.querySelector(".scroll-section-hint-base");
-			const visible = !!text && opacity > 0.001;
-
-			if (base) base.textContent = text;
-
-			this.setAnchorCenterY(hintEl, top);
-			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
-			hintEl.dataset.theme = theme;
-			hintEl.classList.toggle("is-empty", !visible);
-
-			if (anchor) {
-				const metrics = this.measureHint(text);
-
-				anchor.dataset.scrollTarget = target || "";
-				anchor.style.width = `${Math.max(48, metrics.height + 16)}px`;
-				anchor.style.height = `${Math.max(48, metrics.width + 16)}px`;
-				anchor.style.pointerEvents = visible ? "auto" : "none";
-				anchor.style.opacity = visible ? "1" : "0";
-				anchor.setAttribute("aria-hidden", visible ? "false" : "true");
-			}
-		},
-
-		hideHint(hintEl) {
-			this.setHint(hintEl, {
-				text: "",
-				top: 0,
-				y: 0,
-				opacity: 0,
-				target: ""
-			});
-		},
-
-		hideAll() {
-			this.hideHint(this.hintA);
-			this.hideHint(this.hintB);
+		getAnchorHeightForText(text) {
+			const { width } = this.measureHint(text);
+			return Math.max(48, width + 16);
 		},
 
 		makeText(section, variant = "forward") {
@@ -1483,11 +1405,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			return 0.2126 * R + 0.7152 * G + 0.0722 * B;
 		},
 
-		getAnchorHeightForText(text) {
-			const { width } = this.measureHint(text);
-			return Math.max(48, width + 16);
-		},
-
 		getSectionTheme(sectionEl) {
 			if (!sectionEl) return "dark";
 
@@ -1505,7 +1422,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const luminance = this.getRelativeLuminance(rgb);
 			return luminance < 0.42 ? "light" : "dark";
 		},
-		
+
 		getSectionAtViewportY(viewportY) {
 			const sections = this.getContentSections().filter(Boolean);
 
@@ -1524,44 +1441,108 @@ document.addEventListener("DOMContentLoaded", () => {
 			return this.getSectionTheme(sectionAtPoint || fallbackSection);
 		},
 
-		classifyCase(changeY, bandTop, bandBottom) {
-			if (!Number.isFinite(changeY)) return 1;
-			if (changeY <= bandTop || changeY >= bandBottom) return 1;
-
-			const bandHeight = bandBottom - bandTop;
-			if (bandHeight <= 0) return 1;
-
-			const rel = changeY - bandTop;
-			const third = bandHeight / 3;
-
-			if (rel < third) return 2;
-			if (rel < third * 2) return 3;
-			return 4;
+		setAnchorCenterY(hintEl, centerYPx) {
+			const anchor = hintEl?.parentElement;
+			if (!anchor) return;
+			anchor.style.top = `${Math.round(centerYPx)}px`;
 		},
 
-		applyHint(hintEl, section, {
-			variant = "forward",
+		setHint(hintEl, {
+			text = "",
 			top = 0,
-			y = 0,
-			opacity = 1
+			opacity = 0,
+			theme = "dark",
+			target = ""
 		} = {}) {
-			if (!section) {
+			if (!hintEl) return;
+
+			const anchor = hintEl.parentElement;
+			const base = hintEl.querySelector(".scroll-section-hint-base");
+			const visible = !!text && opacity > 0.001;
+
+			if (base) base.textContent = text;
+
+			this.setAnchorCenterY(hintEl, top);
+			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
+			hintEl.dataset.theme = theme;
+			hintEl.classList.toggle("is-empty", !visible);
+
+			if (anchor) {
+				const metrics = this.measureHint(text);
+
+				anchor.dataset.scrollTarget = target || "";
+				anchor.style.width = `${Math.max(48, metrics.height + 16)}px`;
+				anchor.style.height = `${Math.max(48, metrics.width + 16)}px`;
+				anchor.style.pointerEvents = visible ? "auto" : "none";
+				anchor.style.opacity = visible ? "1" : "0";
+				anchor.setAttribute("aria-hidden", visible ? "false" : "true");
+			}
+		},
+
+		applyHint(hintEl, placement) {
+			if (!placement?.section) {
 				this.hideHint(hintEl);
 				return;
 			}
 
-			const text = this.makeText(section, variant);
-			const theme = this.getThemeAtViewportY(top, section);
-			const target = section.id ? `#${section.id}` : "";
+			const text = this.makeText(placement.section, placement.variant);
+			const theme = this.getThemeAtViewportY(placement.top, placement.section);
+			const target = placement.section.id ? `#${placement.section.id}` : "";
 
 			this.setHint(hintEl, {
 				text,
-				top,
-				y,
-				opacity: text ? opacity : 0,
+				top: placement.top,
+				opacity: placement.opacity ?? 1,
 				theme,
 				target
 			});
+		},
+
+		hideHint(hintEl) {
+			this.setHint(hintEl, {
+				text: "",
+				top: 0,
+				opacity: 0,
+				target: ""
+			});
+		},
+
+		hideAll() {
+			this.hideHint(this.hintA);
+			this.hideHint(this.hintB);
+		},
+
+		getTransitionZone(changeY, bandTop, bandBottom) {
+			if (!Number.isFinite(changeY)) return "outside";
+
+			if (changeY <= bandTop || changeY >= bandBottom) {
+				return "outside";
+			}
+
+			const bandHeight = bandBottom - bandTop;
+			if (bandHeight <= 0) return "outside";
+
+			const rel = changeY - bandTop;
+			const third = bandHeight / 3;
+
+			if (rel < third) return "entering";
+			if (rel < third * 2) return "passing";
+			return "leaving";
+		},
+
+		createPlacement(section, {
+			variant = "forward",
+			top = 0,
+			opacity = 1
+		} = {}) {
+			if (!section) return null;
+
+			return {
+				section,
+				variant,
+				top,
+				opacity
+			};
 		},
 
 		buildGeometry(context) {
@@ -1569,177 +1550,205 @@ document.addEventListener("DOMContentLoaded", () => {
 			const navbarBottom = this.getNavbarBottom();
 			const viewportBottom = this.getVisualViewportBottom();
 
-			const bandTop = navbarBottom;
-			const bandBottom = viewportBottom;
+			const { current, next, overnext } = context;
 
-			const { current, next } = context;
-
-			const currentText = this.makeText(current, "forward");
-			const nextForwardText = next ? this.makeText(next, "forward") : "";
-			const nextBackwardText = next ? this.makeText(next, "backward") : "";
-			
-			const currentTop = this.getTopDockTop(currentText, gap);
-			const bottomDockTop = next ? this.getBottomDockTop(nextBackwardText, gap) : 0;		
+			const text = {
+				currentForward: this.makeText(current, "forward"),
+				nextForward: next ? this.makeText(next, "forward") : "",
+				nextBackward: next ? this.makeText(next, "backward") : "",
+				overnextBackward: overnext ? this.makeText(overnext, "backward") : ""
+			};
 
 			const nextRect = next?.getBoundingClientRect() || null;
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
-			
-			const nextBelowBoundaryTop = next
-				? this.getBoundaryBelowTop(nextForwardText, changeY, gap)
-				: 0;
 
-			const nextAboveBoundaryTop = next
-				? this.getBoundaryAboveTop(nextBackwardText, changeY, gap)
-				: 0;
-			
+			const anchorHeights = {
+				currentForward: this.getAnchorHeightForText(text.currentForward),
+				nextForward: this.getAnchorHeightForText(text.nextForward),
+				nextBackward: this.getAnchorHeightForText(text.nextBackward),
+				overnextBackward: this.getAnchorHeightForText(text.overnextBackward)
+			};
+
+			const docks = {
+				top: {
+					current: navbarBottom + gap + anchorHeights.currentForward / 2
+				},
+				bottom: {
+					next: next
+						? viewportBottom - gap - anchorHeights.nextBackward / 2
+						: 0,
+					overnext: overnext
+						? viewportBottom - gap - anchorHeights.overnextBackward / 2
+						: 0
+				}
+			};
+
+			const transition = {
+				nextForwardBelowBoundary: next
+					? changeY + gap + anchorHeights.nextForward / 2
+					: 0,
+				nextBackwardAboveBoundary: next
+					? changeY - gap - anchorHeights.nextBackward / 2
+					: 0
+			};
+
+			const band = {
+				top: navbarBottom,
+				bottom: viewportBottom
+			};
+
 			return {
 				gap,
-				bandTop,
-				bandBottom,
-				currentText,
-				nextForwardText,
-				nextBackwardText,
-				currentTop,
-				bottomDockTop,
+				text,
+				band,
 				changeY,
-				nextBelowBoundaryTop,
-				nextAboveBoundaryTop
+				docks,
+				transition
 			};
 		},
-		
-		renderSingleCurrent(current, geometry) {
-			this.applyHint(this.hintA, current, {
-				variant: "forward",
-				top: geometry.currentTop,
-				y: 0,
-				opacity: 1
-			});
-			this.hideHint(this.hintB);
-		},
 
-		renderCurrentAndBottomNext(current, next, geometry) {
-			this.applyHint(this.hintA, current, {
-				variant: "forward",
-				top: geometry.currentTop,
-				y: 0,
-				opacity: 1
-			});
-
-			if (next) {
-				this.applyHint(this.hintB, next, {
-					variant: "backward",
-					top: geometry.bottomDockTop,
-					y: 0,
-					opacity: 1
-				});
-			} else {
-				this.hideHint(this.hintB);
-			}
-		},
-
-		renderNextAndBottomOvernext(next, overnext, geometry) {
-			this.applyHint(this.hintA, next, {
-				variant: "forward",
-				top: geometry.nextBelowBoundaryTop,
-				y: 0,
-				opacity: 1
-			});
-
-			if (overnext) {
-				this.applyHint(this.hintB, overnext, {
-					variant: "backward",
-					top: this.getBottomDockTop(this.makeText(overnext, "backward"), geometry.gap),
-					y: 0,
-					opacity: 1
-				});
-			} else {
-				this.hideHint(this.hintB);
-			}
-		},
-
-		renderCurrentAndNextForward(current, next, geometry) {
-			this.applyHint(this.hintA, current, {
-				variant: "forward",
-				top: geometry.currentTop,
-				y: 0,
-				opacity: 1
-			});
-
-			this.applyHint(this.hintB, next, {
-				variant: "forward",
-				top: geometry.nextBelowBoundaryTop,
-				y: 0,
-				opacity: 1
-			});
-		},
-		
-		renderCurrentAndNextBackward(current, next, geometry) {
-			this.applyHint(this.hintA, current, {
-				variant: "forward",
-				top: geometry.currentTop,
-				y: 0,
-				opacity: 1
-			});
-
-			this.applyHint(this.hintB, next, {
-				variant: "backward",
-				top: geometry.nextAboveBoundaryTop,
-				y: 0,
-				opacity: 1
-			});
-		},	
-		
-		handleHomeCase(caseNumber, context, geometry) {
-			const { next, overnext } = context;
-
-			if (caseNumber === 1 || caseNumber === 4) {
-				this.hideAll();
-				return true;
-			}
-
-			if (caseNumber === 2) {
-				this.renderNextAndBottomOvernext(next, overnext, geometry);
-				return true;
-			}
-
-			if (caseNumber === 3) {
-				this.applyHint(this.hintA, next, {
-					variant: "forward",
-					top: geometry.nextBelowBoundaryTop,
-					y: 0,
-					opacity: 1
-				});
-				this.hideHint(this.hintB);
-				return true;
-			}
-
-			return false;
-		},
-
-		handleStandardCase(caseNumber, context, geometry) {
+		buildPlacementPlan(context, geometry) {
 			const { current, next, overnext } = context;
 
-			if (caseNumber === 1) {
-				this.renderCurrentAndBottomNext(current, next, geometry);
-				return true;
+			const isHomeCurrent =
+				current?.classList?.contains("hero") ||
+				current?.id === "home";
+
+			const zone = next
+				? this.getTransitionZone(
+					geometry.changeY,
+					geometry.band.top,
+					geometry.band.bottom
+				)
+				: "outside";
+
+			const plan = {
+				topDock: null,
+				transition: null,
+				bottomDock: null
+			};
+
+			/* letzte inhaltliche Section */
+			if (!isHomeCurrent && !next) {
+				plan.topDock = this.createPlacement(current, {
+					variant: "forward",
+					top: geometry.docks.top.current
+				});
+				return plan;
 			}
 
-			if (caseNumber === 2) {
-				this.renderNextAndBottomOvernext(next, overnext, geometry);
-				return true;
+			/* HERO / HOME */
+			if (isHomeCurrent) {
+				if (zone === "entering") {
+					plan.transition = this.createPlacement(next, {
+						variant: "forward",
+						top: geometry.transition.nextForwardBelowBoundary
+					});
+
+					plan.bottomDock = this.createPlacement(overnext, {
+						variant: "backward",
+						top: geometry.docks.bottom.overnext
+					});
+				}
+
+				if (zone === "passing") {
+					plan.transition = this.createPlacement(next, {
+						variant: "forward",
+						top: geometry.transition.nextForwardBelowBoundary
+					});
+				}
+
+				return plan;
 			}
 
-			if (caseNumber === 3) {
-				this.renderCurrentAndNextForward(current, next, geometry);
-				return true;
+			/* Standard */
+			if (zone === "outside") {
+				plan.topDock = this.createPlacement(current, {
+					variant: "forward",
+					top: geometry.docks.top.current
+				});
+
+				plan.bottomDock = this.createPlacement(next, {
+					variant: "backward",
+					top: geometry.docks.bottom.next
+				});
+
+				return plan;
 			}
 
-			if (caseNumber === 4) {
-				this.renderCurrentAndNextBackward(current, next, geometry);
-				return true;
+			if (zone === "entering") {
+				plan.transition = this.createPlacement(next, {
+					variant: "forward",
+					top: geometry.transition.nextForwardBelowBoundary
+				});
+
+				plan.bottomDock = this.createPlacement(overnext, {
+					variant: "backward",
+					top: geometry.docks.bottom.overnext
+				});
+
+				return plan;
 			}
 
-			return false;
+			if (zone === "passing") {
+				plan.topDock = this.createPlacement(current, {
+					variant: "forward",
+					top: geometry.docks.top.current
+				});
+
+				plan.transition = this.createPlacement(next, {
+					variant: "forward",
+					top: geometry.transition.nextForwardBelowBoundary
+				});
+
+				return plan;
+			}
+
+			if (zone === "leaving") {
+				plan.topDock = this.createPlacement(current, {
+					variant: "forward",
+					top: geometry.docks.top.current
+				});
+
+				plan.transition = this.createPlacement(next, {
+					variant: "backward",
+					top: geometry.transition.nextBackwardAboveBoundary
+				});
+
+				return plan;
+			}
+
+			return plan;
+		},
+
+		renderPlacementPlan(plan) {
+			const placements = [
+				plan.topDock,
+				plan.transition,
+				plan.bottomDock
+			]
+				.filter(Boolean)
+				.sort((a, b) => a.top - b.top);
+
+			if (!placements.length) {
+				this.hideAll();
+				return;
+			}
+
+			const first = placements[0] || null;
+			const second = placements[1] || null;
+
+			if (first) {
+				this.applyHint(this.hintA, first);
+			} else {
+				this.hideHint(this.hintA);
+			}
+
+			if (second) {
+				this.applyHint(this.hintB, second);
+			} else {
+				this.hideHint(this.hintB);
+			}
 		},
 
 		update() {
@@ -1751,29 +1760,10 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
-			const { current, next } = context;
-			const isHomeCurrent =
-				current?.classList?.contains("hero") ||
-				current?.id === "home";
-
 			const geometry = this.buildGeometry(context);
+			const plan = this.buildPlacementPlan(context, geometry);
 
-			if (!isHomeCurrent && !next) {
-				this.renderSingleCurrent(current, geometry);
-				return;
-			}
-
-			const caseNumber = next
-				? this.classifyCase(geometry.changeY, geometry.bandTop, geometry.bandBottom)
-				: 1;
-
-			if (isHomeCurrent) {
-				if (this.handleHomeCase(caseNumber, context, geometry)) return;
-			}
-
-			if (this.handleStandardCase(caseNumber, context, geometry)) return;
-
-			this.hideAll();
+			this.renderPlacementPlan(plan);
 		},
 
 		scheduleUpdate() {
@@ -1810,7 +1800,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					this.scheduleUpdate();
 				});
 			}
-		},	
+		},
 
 		init() {
 			this.build();
