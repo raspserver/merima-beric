@@ -2026,7 +2026,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		hideImmediatelyForProgrammaticScroll() {
 			this.touchGestureActive = false;
 			this.touchMoved = false;
+
 			this.hide();
+
+			document.body.classList.remove("hints-visible");
 		}
 
 	};
