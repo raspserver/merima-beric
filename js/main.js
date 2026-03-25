@@ -1224,16 +1224,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.hintB = this.root.querySelector(".scroll-section-hint--b");
 			
 		},
-
+		
 		bindHintClicks() {
 			[this.hintA, this.hintB].forEach(hintEl => {
 				if (!hintEl) return;
 
-				const anchor = hintEl.parentElement;
-				if (!anchor) return;
-
-				anchor.setAttribute("tabindex", "0");
-				anchor.setAttribute("role", "button");
+				hintEl.setAttribute("tabindex", "0");
+				hintEl.setAttribute("role", "button");
 
 				const goToHintTarget = () => {
 					const targetSelector = hintEl.dataset.scrollTarget;
@@ -1246,13 +1243,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					scrollEngine.goTo(targetSelector, forcedMode);
 				};
 
-				anchor.addEventListener("click", (e) => {
+				hintEl.addEventListener("click", (e) => {
 					e.preventDefault();
 					e.stopPropagation();
 					goToHintTarget();
 				});
 
-				anchor.addEventListener("keydown", (e) => {
+				hintEl.addEventListener("keydown", (e) => {
 					if (e.key !== "Enter" && e.key !== " ") return;
 
 					e.preventDefault();
@@ -1260,7 +1257,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					goToHintTarget();
 				});
 			});
-		},
+		}
 
 		getContentSections() {
 			return state.orderedSections.filter(section => {
