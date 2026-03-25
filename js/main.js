@@ -1343,51 +1343,37 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		getTopDockTop(text, gap) {
 			const navbarBottom = this.getNavbarBottom();
-			const { width, height } = this.measureHint(text);
-			const rotatedBandLength = width || 0;
-
-			/* visuelle Oberkante nach Rotation ausgleichen */
-			const correction = Math.max(0, (rotatedBandLength - height) / 2);
-
-			return navbarBottom + gap + correction;
+			const anchorHeight = this.getAnchorHeightForText(text);
+			return navbarBottom + gap + anchorHeight / 2;
 		},
 
 		getBottomDockTop(text, gap) {
 			const viewportHeight = this.getViewportHeight();
-			const { width, height } = this.measureHint(text);
-			const rotatedBandLength = width || 0;
-			const correction = (rotatedBandLength + height) / 2;
-
-			return viewportHeight - gap - correction;
+			const anchorHeight = this.getAnchorHeightForText(text);
+			return viewportHeight - gap - anchorHeight / 2;
 		},
-		
-		getBoundaryBelowTop(text, changeY, gap) {
-			const { width, height } = this.measureHint(text);
-			const rotatedBandLength = width || 0;
-			const correction = Math.max(0, (rotatedBandLength - height) / 2);
 
-			return changeY + gap + correction;
+		getBoundaryBelowTop(text, changeY, gap) {
+			const anchorHeight = this.getAnchorHeightForText(text);
+			return changeY + gap + anchorHeight / 2;
 		},
 
 		getBoundaryAboveTop(text, changeY, gap) {
-			const { width, height } = this.measureHint(text);
-			const rotatedBandLength = width || 0;
-			const correction = (rotatedBandLength + height) / 2;
-
-			return changeY - gap - correction;
-		},
+			const anchorHeight = this.getAnchorHeightForText(text);
+			return changeY - gap - anchorHeight / 2;
+		},	
 
 		getNavbarBottom() {
 			if (!DOM.navbar) return utils.getRootNumber("--nav-height", 78);
 			return DOM.navbar.getBoundingClientRect().bottom;
 		},
-
-		setAnchorTop(hintEl, topPx) {
+		
+		setAnchorCenterY(hintEl, centerYPx) {
 			const anchor = hintEl?.parentElement;
 			if (!anchor) return;
-			anchor.style.top = `${Math.round(topPx * 2) / 2}px`;
+			anchor.style.top = `${Math.round(centerYPx * 2) / 2}px`;
 		},
-
+		
 		setHint(hintEl, {
 			text = "",
 			top = 0,
@@ -1404,7 +1390,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (base) base.textContent = text;
 
-			this.setAnchorTop(hintEl, top);
+			this.setAnchorCenterY(hintEl, top);
 			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
 			hintEl.dataset.theme = theme;
 			hintEl.classList.toggle("is-empty", !visible);
@@ -1492,6 +1478,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			const B = normalize(b);
 
 			return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+		},
+
+		getAnchorHeightForText(text) {
+			const { width } = this.measureHint(text);
+			return Math.max(48, width + 16);
 		},
 
 		getSectionTheme(sectionEl) {

@@ -2260,17 +2260,22 @@ section > .section-scroll-head + * {
 	position: fixed;
 	left: var(--scroll-hint-column-center);
 	top: 0;
-	width: 48px;              /* statt 0 */
+
+	width: 48px;
 	height: 160px;
-	transform: translateX(-50%);
+
+	transform: translate(-50%, -50%);
+	transform-origin: center center;
+
 	pointer-events: auto;
 	cursor: pointer;
 }
 
 .scroll-section-hint {
 	position: absolute;
-	top: 0;
+	top: 50%;
 	left: 50%;
+
 	display: inline-block;
 	white-space: nowrap;
 	font-family: 'Montserrat', sans-serif;
@@ -2286,10 +2291,9 @@ section > .section-scroll-head + * {
 	backface-visibility: hidden;
 
 	transform-origin: center center;
-	transform: translateX(-50%) rotate(-90deg);
+	transform: translate(-50%, -50%) rotate(-90deg);
 
 	pointer-events: none;
-	cursor: pointer;
 }
 
 .scroll-section-hint-anchor[aria-hidden="true"] {
