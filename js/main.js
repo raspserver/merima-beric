@@ -1967,16 +1967,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		show() {
 			if (!this.root) return;
+
 			this.clearHideTimer();
 			this.isVisible = true;
+
 			this.root.classList.add("is-visible");
+
+			document.body.classList.add("hints-visible");
 		},
 
 		hide() {
 			if (!this.root) return;
+
 			this.clearHideTimer();
 			this.isVisible = false;
+
 			this.root.classList.remove("is-visible");
+
+			document.body.classList.remove("hints-visible");
 		},
 
 		scheduleHide() {

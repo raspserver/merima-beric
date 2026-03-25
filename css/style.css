@@ -2277,6 +2277,10 @@ section > .section-scroll-head + * {
 		visibility 0s linear 0s;
 }
 
+.scroll-section-hints.is-visible ~ .gallery .gallery-slider::before {
+	opacity: 1;
+}
+
 .scroll-section-hint-anchor {
 	position: fixed;
 	left: var(--scroll-hint-column-center);
@@ -2415,6 +2419,9 @@ section > .section-scroll-head + * {
 	box-shadow:
 		-10px 0 18px rgba(245, 230, 211, 0.35),
 		 10px 0 18px rgba(245, 230, 211, 0.35);
+		 
+	opacity: 0;
+	transition: opacity var(--section-hint-fade-duration) ease;
 }
 
 .gallery-track {
