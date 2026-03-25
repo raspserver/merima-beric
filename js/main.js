@@ -1270,8 +1270,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 		
-		getViewportHeight() {
+		getLayoutViewportHeight() {
 			return window.innerHeight || document.documentElement.clientHeight;
+		},
+
+		getVisualViewportBottom() {
+			if (window.visualViewport) {
+				return window.visualViewport.offsetTop + window.visualViewport.height;
+			}
+			return this.getLayoutViewportHeight();
 		},
 
 		getBoundaryGapPx() {
@@ -1342,11 +1349,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			const anchorHeight = this.getAnchorHeightForText(text);
 			return navbarBottom + gap + anchorHeight / 2;
 		},
-
+	
 		getBottomDockTop(text, gap) {
-			const viewportHeight = this.getViewportHeight();
+			const visualBottom = this.getVisualViewportBottom();
 			const anchorHeight = this.getAnchorHeightForText(text);
-			return viewportHeight - gap - anchorHeight / 2;
+			return visualBottom - gap - anchorHeight / 2;
 		},
 
 		getBoundaryBelowTop(text, changeY, gap) {
@@ -1760,28 +1767,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
-		startLiveTracking() {
-			if (this.liveTrackingActive) return;
-			this.liveTrackingActive = true;
-
-			const tick = () => {
-				if (!this.liveTrackingActive) return;
-				this.update();
-				this.liveTrackingRaf = requestAnimationFrame(tick);
-			};
-
-			this.liveTrackingRaf = requestAnimationFrame(tick);
-		},
-
-		stopLiveTracking() {
-			this.liveTrackingActive = false;
-
-			if (this.liveTrackingRaf) {
-				cancelAnimationFrame(this.liveTrackingRaf);
-				this.liveTrackingRaf = null;
-			}
-		},
-
 		bindEvents() {
 			window.addEventListener("scroll", () => this.scheduleUpdate(), { passive: true });
 
@@ -1796,18 +1781,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					this.scheduleUpdate();
 				}, 120);
 			});
-
-			window.addEventListener("touchstart", () => this.startLiveTracking(), { passive: true });
-
-			window.addEventListener("touchend", () => {
-				this.stopLiveTracking();
-				this.scheduleUpdate();
-			}, { passive: true });
-
-			window.addEventListener("touchcancel", () => {
-				this.stopLiveTracking();
-				this.scheduleUpdate();
-			}, { passive: true });
 
 		},
 
