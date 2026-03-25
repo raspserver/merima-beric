@@ -1208,9 +1208,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		isVisible: false,
 		hideTimer: null,
 		scrollEndTimer: null,
+
 		touchSessionActive: false,
 		touchMoved: false,
 		lastTouchY: 0,
+
 		hideDelayMs: 500,
 		fadeDurationMs: 1000,
 
@@ -1863,90 +1865,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		},
 
-		bindEvents() {
-			window.addEventListener("scroll", () => {
-				this.scheduleUpdate();
-
-				if (state.programmaticScroll) {
-					this.hideImmediatelyForProgrammaticScroll();
-					return;
-				}
-
-				/* Während manueller Touch-Scroll-Session inkl. iOS Momentum sichtbar halten */
-				if (this.touchSessionActive && this.touchMoved) {
-					this.show();
-					this.scheduleHide();
-					this.scheduleTouchSessionEnd();
-				}
-			}, { passive: true });
-
-			window.addEventListener("touchstart", (e) => {
-				if (!e.touches?.length) return;
-
-				if (state.programmaticScroll) {
-					scrollEngine.cancelActiveScroll();
-				}
-
-				this.handleManualTouchScrollStart(e.touches[0].clientY);
-			}, { passive: true });
-
-			window.addEventListener("touchmove", (e) => {
-				if (!e.touches?.length) return;
-
-				if (state.programmaticScroll) {
-					scrollEngine.cancelActiveScroll();
-				}
-
-				this.handleManualTouchMove(e.touches[0].clientY);
-			}, { passive: true });
-
-			window.addEventListener("touchend", () => {
-				this.handleManualTouchEnd();
-			}, { passive: true });
-
-			window.addEventListener("touchcancel", () => {
-				this.handleManualTouchEnd();
-			}, { passive: true });
-
-			window.addEventListener("wheel", () => {
-				this.hide();
-			}, { passive: true });
-
-			window.addEventListener("resize", () => {
-				this.metricsCache.clear();
-				this.refreshTimingVars();
-				this.scheduleUpdate();
-			});
-
-			window.addEventListener("orientationchange", () => {
-				setTimeout(() => {
-					this.metricsCache.clear();
-					this.refreshTimingVars();
-					this.scheduleUpdate();
-				}, 120);
-			});
-
-			if (window.visualViewport) {
-				window.visualViewport.addEventListener("resize", () => {
-					this.metricsCache.clear();
-					this.scheduleUpdate();
-				});
-
-				window.visualViewport.addEventListener("scroll", () => {
-					this.scheduleUpdate();
-				});
-			}
-		},
-
-		init() {
-			this.build();
-			this.refreshTimingVars();
-			this.bindHintClicks();
-			this.hide();
-			this.update();
-			this.bindEvents();
-		},
-
 		refreshTimingVars() {
 			this.hideDelayMs = utils.getRootTimeMs("--section-hint-hide-delay", 500);
 			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 1000);
@@ -1966,13 +1884,33 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
-		scheduleTouchSessionEnd() {
+		isTouchLikeDevice() {
+			return (
+				window.matchMedia("(pointer: coarse)").matches ||
+				"ontouchstart" in window ||
+				navigator.maxTouchPoints > 0
+			);
+		},
+
+		handleScrollActivity() {
+			if (state.programmaticScroll) {
+				this.hideImmediatelyForProgrammaticScroll();
+				return;
+			}
+
+			this.show();
+			this.scheduleHideAfterScrollEnd();
+		},
+
+		scheduleHideAfterScrollEnd() {
+			this.clearHideTimer();
 			this.clearScrollEndTimer();
 
 			this.scrollEndTimer = setTimeout(() => {
+				this.hide();
 				this.touchSessionActive = false;
 				this.touchMoved = false;
-			}, this.hideDelayMs + 120);
+			}, this.hideDelayMs);
 		},
 
 		show() {
@@ -2020,21 +1958,16 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (Math.abs(touchY - this.lastTouchY) > 3) {
 				this.touchMoved = true;
 				this.show();
+				this.scheduleHideAfterScrollEnd();
 			}
 
 			this.lastTouchY = touchY;
 		},
 
 		handleManualTouchEnd() {
-			if (!this.touchSessionActive) return;
-
-			/* Nicht sofort beenden, Safari kann noch Momentum-Scroll liefern */
-			if (this.touchMoved) {
-				this.scheduleHide();
-				this.scheduleTouchSessionEnd();
-			} else {
-				this.touchSessionActive = false;
-			}
+			/* Kein sofortiges Beenden mehr:
+			   Momentum-Scroll wird durch weitere scroll-Events erkannt.
+			   Falls kein Scroll mehr kommt, blendet scheduleHideAfterScrollEnd aus. */
 		},
 
 		hideImmediatelyForProgrammaticScroll() {
@@ -2066,6 +1999,80 @@ document.addEventListener("DOMContentLoaded", () => {
 			} else {
 				document.body.classList.remove("in-gallery");
 			}
+		},
+
+		bindEvents() {
+			window.addEventListener("scroll", () => {
+				this.scheduleUpdate();
+				this.handleScrollActivity();
+			}, { passive: true });
+
+			window.addEventListener("wheel", () => {
+				this.handleScrollActivity();
+			}, { passive: true });
+
+			window.addEventListener("touchstart", (e) => {
+				if (!e.touches?.length) return;
+
+				if (state.programmaticScroll) {
+					scrollEngine.cancelActiveScroll();
+				}
+
+				this.handleManualTouchScrollStart(e.touches[0].clientY);
+			}, { passive: true });
+
+			window.addEventListener("touchmove", (e) => {
+				if (!e.touches?.length) return;
+
+				if (state.programmaticScroll) {
+					scrollEngine.cancelActiveScroll();
+				}
+
+				this.handleManualTouchMove(e.touches[0].clientY);
+			}, { passive: true });
+
+			window.addEventListener("touchend", () => {
+				this.handleManualTouchEnd();
+			}, { passive: true });
+
+			window.addEventListener("touchcancel", () => {
+				this.handleManualTouchEnd();
+			}, { passive: true });
+
+			window.addEventListener("resize", () => {
+				this.metricsCache.clear();
+				this.refreshTimingVars();
+				this.scheduleUpdate();
+			});
+
+			window.addEventListener("orientationchange", () => {
+				setTimeout(() => {
+					this.metricsCache.clear();
+					this.refreshTimingVars();
+					this.scheduleUpdate();
+				}, 120);
+			});
+
+			if (window.visualViewport) {
+				window.visualViewport.addEventListener("resize", () => {
+					this.metricsCache.clear();
+					this.scheduleUpdate();
+				});
+
+				window.visualViewport.addEventListener("scroll", () => {
+					this.scheduleUpdate();
+					this.handleScrollActivity();
+				});
+			}
+		},
+
+		init() {
+			this.build();
+			this.refreshTimingVars();
+			this.bindHintClicks();
+			this.hide();
+			this.update();
+			this.bindEvents();
 		}
 	};
 
