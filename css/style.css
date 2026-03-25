@@ -2366,11 +2366,15 @@ section > .section-scroll-head + * {
 	background: var(--section-bg-gallery);
 	scroll-margin-top: calc(78px + 2rem);
 	padding: var(--section-spacing) 0;
-	
+
 	position: relative;
 	isolation: isolate;
 	overflow: clip;
 }
+
+
+
+
 
 .gallery .section-title {
 	margin-bottom: 4rem;
@@ -2378,30 +2382,59 @@ section > .section-scroll-head + * {
 }
 
 .gallery-slider {
-	overflow: hidden;          /* nur Track scrollt */
+	overflow: hidden;
 	width: 100%;
 	max-width: 1200px;
-	
-	position: relative;
-	z-index: 1; /* Videos unter der Schneise */
 
-	margin: 0 auto 40rem; /* unten mehr Abstand */
-	padding: 0 5%;             /* für Peek-Effekt */
+	position: relative;
+	isolation: isolate;
+
+	margin: 0 auto 40rem;
+	padding: 0 5%;
 	box-sizing: border-box;
+
+	/* Position der Schneise relativ zum Slider */
+	--gallery-lane-left: 24px;
+}
+
+/* DIE echte Schneise durch den Video-Bereich */
+.gallery-slider::before {
+	content: "";
+	position: absolute;
+
+	top: 0;
+	bottom: 0;
+
+	left: calc(var(--gallery-lane-left) - (var(--gallery-hint-lane-width) / 2));
+	width: var(--gallery-hint-lane-width);
+
+	background: var(--section-bg-gallery);
+	pointer-events: none;
+	z-index: 4;
+
+	box-shadow:
+		-10px 0 18px rgba(245, 230, 211, 0.35),
+		 10px 0 18px rgba(245, 230, 211, 0.35);
 }
 
 .gallery-track {
 	display: flex;
-	gap: 2%;                   /* Abstand zwischen Videos */
+	gap: 2%;
 	transition: transform 0.6s cubic-bezier(.16,.84,.44,1);
 	will-change: transform;
 	align-items: flex-start;
 	transform: translateZ(0);
+
+	position: relative;
+	z-index: 1;
 }
 
 .gallery video {
-	flex: 0 0 auto;             /* verhindert Shrink */
-	width: calc((100% - (2% * (4 - 1))) / 4); /* 4 Videos pro Reihe Desktop */
+	position: relative;
+	z-index: 1;
+
+	flex: 0 0 auto;
+	width: calc((100% - (2% * (4 - 1))) / 4);
 	aspect-ratio: 9 / 16;
 	object-fit: cover;
 	border-radius: 2px;
@@ -2417,26 +2450,7 @@ section > .section-scroll-head + * {
 
 .gallery .container {
 	position: relative;
-	z-index: 3; /* Titel/Subtitel über der Schneise */
-}
-
-/* durchgehende Schneise für die Section-Hints */
-.gallery::before {
-	content: "";
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: calc(var(--scroll-hint-column-center) - (var(--gallery-hint-lane-width) / 2));
-	width: var(--gallery-hint-lane-width);
-
-	background: var(--section-bg-gallery);
-	pointer-events: none;
-	z-index: 2;
-
-	/* leichte weiche Kanten, damit es edler wirkt */
-	box-shadow:
-		-10px 0 18px rgba(245, 230, 211, 0.35),
-		 10px 0 18px rgba(245, 230, 211, 0.35);
+	z-index: 5;
 }
 
 /* Responsive Design */

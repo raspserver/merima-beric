@@ -2762,6 +2762,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			hintsRoot.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
 			document.documentElement.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
+
+			/* Schneise relativ zum Gallery-Slider ausrichten */
+			const gallerySlider = document.querySelector(".gallery-slider");
+			if (gallerySlider) {
+				const sliderRect = gallerySlider.getBoundingClientRect();
+
+				const laneLeftInsideSlider = Math.max(
+					0,
+					Math.min(sliderRect.width, hintCenterX - sliderRect.left)
+				);
+
+				gallerySlider.style.setProperty(
+					"--gallery-lane-left",
+					`${laneLeftInsideSlider}px`
+				);
+			}
 		},
 
 		init() {
