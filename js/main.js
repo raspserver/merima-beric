@@ -2851,7 +2851,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	   INIT
 	========================================================= */
 	function init() {
-		performanceModule.init();
+		//~ performanceModule.init();
 		physics.update();
 		sectionNavigationModule.buildOrderedSections();
 
