@@ -1233,6 +1233,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		hideDelayMs: 500,
 		fadeDurationMs: 1000,
 
+		touchScrollActive: false,
+		touchScrollResetTimer: null,
+		touchScrollGraceMs: 180,
+
 		labels: {
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
@@ -1894,6 +1898,32 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
+		markTouchScrollActive() {
+			this.touchScrollActive = true;
+
+			if (this.touchScrollResetTimer) {
+				clearTimeout(this.touchScrollResetTimer);
+			}
+
+			this.touchScrollResetTimer = setTimeout(() => {
+				this.touchScrollActive = false;
+				this.touchScrollResetTimer = null;
+			}, this.touchScrollGraceMs);
+		},
+
+		clearTouchScrollActive() {
+			this.touchScrollActive = false;
+
+			if (this.touchScrollResetTimer) {
+				clearTimeout(this.touchScrollResetTimer);
+				this.touchScrollResetTimer = null;
+			}
+		},
+
+		shouldShowForCurrentScroll() {
+			return this.touchScrollActive;
+		},
+
 		show() {
 			if (!this.root) return;
 
@@ -1918,6 +1948,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		handleScrollActivity() {
 			if (state.programmaticScroll) {
 				this.hideImmediatelyForProgrammaticScroll();
+				return;
+			}
+
+			if (!this.shouldShowForCurrentScroll()) {
 				return;
 			}
 
@@ -1964,16 +1998,34 @@ document.addEventListener("DOMContentLoaded", () => {
 		bindEvents() {
 			window.addEventListener("scroll", () => {
 				this.scheduleUpdate();
-				this.handleScrollActivity();
+
+				if (this.shouldShowForCurrentScroll()) {
+					this.handleScrollActivity();
+				}
 			}, { passive: true });
 
 			window.addEventListener("wheel", () => {
-				this.handleScrollActivity();
+				this.clearTouchScrollActive();
+				this.hide();
 			}, { passive: true });
 
 			window.addEventListener("touchstart", () => {
+				this.markTouchScrollActive();
+
 				if (state.programmaticScroll) {
 					scrollEngine.cancelActiveScroll();
+				}
+			}, { passive: true });
+
+			window.addEventListener("touchmove", () => {
+				this.markTouchScrollActive();
+			}, { passive: true });
+
+			window.addEventListener("pointerdown", (e) => {
+				if (e.pointerType === "touch") {
+					this.markTouchScrollActive();
+				} else if (e.pointerType === "mouse") {
+					this.clearTouchScrollActive();
 				}
 			}, { passive: true });
 
@@ -1999,8 +2051,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				window.visualViewport.addEventListener("scroll", () => {
 					this.scheduleUpdate();
-					this.handleScrollActivity();
-				});
+
+					if (this.shouldShowForCurrentScroll()) {
+						this.handleScrollActivity();
+					}
+				}, { passive: true });
 			}
 		},
 
