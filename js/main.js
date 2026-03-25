@@ -1505,6 +1505,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			const luminance = this.getRelativeLuminance(rgb);
 			return luminance < 0.42 ? "light" : "dark";
 		},
+		
+		getSectionAtViewportY(viewportY) {
+			const sections = this.getContentSections().filter(Boolean);
+
+			for (const section of sections) {
+				const rect = section.getBoundingClientRect();
+				if (viewportY >= rect.top && viewportY <= rect.bottom) {
+					return section;
+				}
+			}
+
+			return null;
+		},
+
+		getThemeAtViewportY(viewportY, fallbackSection = null) {
+			const sectionAtPoint = this.getSectionAtViewportY(viewportY);
+			return this.getSectionTheme(sectionAtPoint || fallbackSection);
+		},
 
 		classifyCase(changeY, bandTop, bandBottom) {
 			if (!Number.isFinite(changeY)) return 1;
@@ -1533,7 +1551,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			const text = this.makeText(section, variant);
-			const theme = this.getSectionTheme(section);
+			const theme = this.getThemeAtViewportY(top, section);
 			const target = section.id ? `#${section.id}` : "";
 
 			this.setHint(hintEl, {
