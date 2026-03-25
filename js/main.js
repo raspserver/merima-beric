@@ -1882,14 +1882,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			window.addEventListener("touchstart", (e) => {
 				if (!e.touches?.length) return;
-				if (state.programmaticScroll) return;
+
+				/* laufenden programmatic scroll sofort abbrechen,
+				   damit derselbe erste Swipe schon als manuelle Geste zählt */
+				if (state.programmaticScroll) {
+					scrollEngine.cancelActiveScroll();
+				}
 
 				this.handleManualTouchScrollStart(e.touches[0].clientY);
 			}, { passive: true });
-
+	
 			window.addEventListener("touchmove", (e) => {
 				if (!e.touches?.length) return;
-				if (state.programmaticScroll) return;
+
+				if (state.programmaticScroll) {
+					scrollEngine.cancelActiveScroll();
+				}
 
 				this.handleManualTouchMove(e.touches[0].clientY);
 			}, { passive: true });
