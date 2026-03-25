@@ -1257,7 +1257,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					goToHintTarget();
 				});
 			});
-		}
+		},
 
 		getContentSections() {
 			return state.orderedSections.filter(section => {
