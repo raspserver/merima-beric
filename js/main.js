@@ -1229,11 +1229,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			[this.hintA, this.hintB].forEach(hintEl => {
 				if (!hintEl) return;
 
-				hintEl.setAttribute("tabindex", "0");
-				hintEl.setAttribute("role", "button");
+				const anchor = hintEl.parentElement;
+				if (!anchor) return;
+
+				anchor.setAttribute("tabindex", "0");
+				anchor.setAttribute("role", "button");
 
 				const goToHintTarget = () => {
-					const targetSelector = hintEl.dataset.scrollTarget;
+					const targetSelector = anchor.dataset.scrollTarget;
 					const opacity = parseFloat(hintEl.style.opacity || "0");
 					const text = hintEl.textContent || "";
 
@@ -1243,13 +1246,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					scrollEngine.goTo(targetSelector, forcedMode);
 				};
 
-				hintEl.addEventListener("click", (e) => {
+				anchor.addEventListener("click", (e) => {
 					e.preventDefault();
 					e.stopPropagation();
 					goToHintTarget();
 				});
 
-				hintEl.addEventListener("keydown", (e) => {
+				anchor.addEventListener("keydown", (e) => {
 					if (e.key !== "Enter" && e.key !== " ") return;
 
 					e.preventDefault();
@@ -1404,7 +1407,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.setAnchorTop(hintEl, top);
 			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
 			hintEl.dataset.theme = theme;
-			hintEl.dataset.scrollTarget = target || "";
+			
+			const anchor = hintEl.parentElement;
+			if (anchor) {
+				anchor.dataset.scrollTarget = target || "";
+			}
+
 			hintEl.classList.toggle("is-empty", !visible);
 
 			if (anchor) {

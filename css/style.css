@@ -2288,7 +2288,7 @@ section > .section-scroll-head + * {
 	transform-origin: center center;
 	transform: translateX(-50%) rotate(-90deg);
 
-	pointer-events: auto;     /* statt none */
+	pointer-events: none;
 	cursor: pointer;
 }
 
