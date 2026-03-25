@@ -2285,6 +2285,9 @@ section > .section-scroll-head + * {
 
 	pointer-events: auto;
 	cursor: pointer;
+
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
 }
 
 .scroll-section-hint {

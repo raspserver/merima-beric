@@ -1249,7 +1249,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.root.querySelectorAll(".scroll-section-hint")
 			);
 		},
-
+	
 		bindHintClicks() {
 			this.hintSlots.forEach(hintEl => {
 				if (!hintEl) return;
@@ -1271,10 +1271,26 @@ document.addEventListener("DOMContentLoaded", () => {
 					scrollEngine.goTo(targetSelector, forcedMode);
 				};
 
-				anchor.addEventListener("click", (e) => {
+				const triggerNavigation = (e) => {
 					e.preventDefault();
 					e.stopPropagation();
 					goToHintTarget();
+				};
+
+				/* wichtig:
+				   pointerdown reagiert sofort, auch wenn noch Momentum-Scroll läuft */
+				anchor.addEventListener("pointerdown", (e) => {
+					if (e.pointerType === "mouse") return;
+					triggerNavigation(e);
+				}, { passive: false });
+
+				/* Fallback für ältere Mobile-Browser */
+				anchor.addEventListener("touchstart", triggerNavigation, { passive: false });
+
+				/* Maus / Desktop weiter normal per click */
+				anchor.addEventListener("click", (e) => {
+					if (e.pointerType && e.pointerType !== "mouse") return;
+					triggerNavigation(e);
 				});
 
 				anchor.addEventListener("keydown", (e) => {
