@@ -1549,7 +1549,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		buildGeometry(context) {
 			const gap = this.getBoundaryGapPx();
 			const navbarBottom = this.getNavbarBottom();
-			const viewportBottom = this.getViewportHeight();
+			const viewportBottom = this.getVisualViewportBottom();
 
 			const bandTop = navbarBottom;
 			const bandBottom = viewportBottom;
