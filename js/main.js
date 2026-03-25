@@ -1503,7 +1503,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (base) base.textContent = text;
 
 			this.setAnchorCenterY(hintEl, top);
-			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
+			
+			const hintVisibility = utils.getRootNumber("--section-hint-visibility", 0.5);
+			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity)) * hintVisibility}`;
+			
 			hintEl.dataset.theme = theme;
 			hintEl.classList.toggle("is-empty", !visible);
 
