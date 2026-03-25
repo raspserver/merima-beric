@@ -1283,7 +1283,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		getViewportBottom() {
 			return window.innerHeight || document.documentElement.clientHeight;
-		}
+		},
 
 		getBoundaryGapPx() {
 			return utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
