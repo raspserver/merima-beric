@@ -891,6 +891,11 @@ html, body {
 	color: var(--primary-color);
 }
 
+body.hints-visible .gallery-slider::before {
+	opacity: 1;
+	transform: scaleX(1);
+}
+
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button.is-hovered,
 body.suppress-cta-hover .cta-button:active,
@@ -2421,7 +2426,11 @@ section > .section-scroll-head + * {
 		 10px 0 18px rgba(245, 230, 211, 0.35);
 		 
 	opacity: 0;
-	transition: opacity var(--section-hint-fade-duration) ease;
+	transform: scaleX(0.85);
+	transform-origin: center;
+	transition:
+		opacity var(--section-hint-fade-duration) ease,
+		transform var(--section-hint-fade-duration) ease;
 }
 
 .gallery-track {
