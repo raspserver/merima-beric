@@ -903,6 +903,14 @@ body.hints-visible.in-gallery .gallery-slider::before,
 		transform var(--section-hint-show-duration) ease;
 }
 
+/* Auch die Schneise in der Gallery sofort ausblenden */
+body.hints-instant-hide .gallery-slider::before,
+body.hints-instant-hide .scroll-section-hints.is-visible ~ .gallery .gallery-slider::before {
+	transition: none !important;
+	opacity: 0 !important;
+	transform: scaleX(0.88) !important;
+}
+
 body.suppress-cta-hover .cta-button,
 body.suppress-cta-hover .cta-button.is-hovered,
 body.suppress-cta-hover .cta-button:active,
@@ -2287,6 +2295,18 @@ section > .section-scroll-head + * {
 	transition:
 		opacity var(--section-hint-show-duration) ease,
 		visibility 0s linear 0s;
+}
+
+/* Sofortiges Ausblenden ohne Fade */
+.scroll-section-hints.is-instant-hidden,
+.scroll-section-hints.is-instant-hidden .scroll-section-hint-anchor,
+.scroll-section-hints.is-instant-hidden .scroll-section-hint {
+	transition: none !important;
+}
+
+.scroll-section-hints.is-instant-hidden {
+	opacity: 0 !important;
+	visibility: hidden !important;
 }
 
 .scroll-section-hints.is-visible ~ .gallery .gallery-slider::before {

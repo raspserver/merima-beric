@@ -1966,15 +1966,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hideTimer = null;
 			}
 		},
-
+		
 		show() {
 			if (!this.root) return;
 
 			this.clearHideTimer();
 			this.isVisible = true;
 
-			this.root.classList.add("is-visible");
+			this.root.classList.remove("is-instant-hidden");
+			document.body.classList.remove("hints-instant-hide");
 
+			this.root.classList.add("is-visible");
 			document.body.classList.add("hints-visible");
 		},
 
@@ -2026,12 +2028,29 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		hideImmediatelyForProgrammaticScroll() {
+			if (!this.root) return;
+
 			this.touchGestureActive = false;
 			this.touchMoved = false;
+			this.clearHideTimer();
+			this.isVisible = false;
 
-			this.hide();
+			/* Transition komplett ausschalten */
+			this.root.classList.add("is-instant-hidden");
+			document.body.classList.add("hints-instant-hide");
 
+			/* Sichtbarkeit sofort weg */
+			this.root.classList.remove("is-visible");
 			document.body.classList.remove("hints-visible");
+
+			/* Im nächsten Frame Instant-Mode wieder freigeben,
+			   damit spätere manuelle Einblendungen normal animieren */
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					this.root?.classList.remove("is-instant-hidden");
+					document.body.classList.remove("hints-instant-hide");
+				});
+			});
 		},
 		
 		updateGalleryBodyState(currentSection) {
