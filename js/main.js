@@ -1197,17 +1197,18 @@ document.addEventListener("DOMContentLoaded", () => {
 	/* =========================================================
 	   SCROLL SECTION HINT MODULE
 	========================================================= */
-		const scrollSectionHintModule = {
+	const scrollSectionHintModule = {
 		root: null,
 		measurer: null,
 		metricsCache: new Map(),
 		hintSlots: [],
 		updateRaf: null,
 		maxVisibleHints: 2,
-		
+
 		isVisible: false,
 		hideTimer: null,
-		touchGestureActive: false,
+		scrollEndTimer: null,
+		touchSessionActive: false,
 		touchMoved: false,
 		lastTouchY: 0,
 		hideDelayMs: 500,
@@ -1249,7 +1250,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.root.querySelectorAll(".scroll-section-hint")
 			);
 		},
-	
+
 		bindHintClicks() {
 			this.hintSlots.forEach(hintEl => {
 				if (!hintEl) return;
@@ -1277,17 +1278,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					goToHintTarget();
 				};
 
-				/* wichtig:
-				   pointerdown reagiert sofort, auch wenn noch Momentum-Scroll läuft */
 				anchor.addEventListener("pointerdown", (e) => {
 					if (e.pointerType === "mouse") return;
 					triggerNavigation(e);
 				}, { passive: false });
 
-				/* Fallback für ältere Mobile-Browser */
 				anchor.addEventListener("touchstart", triggerNavigation, { passive: false });
 
-				/* Maus / Desktop weiter normal per click */
 				anchor.addEventListener("click", (e) => {
 					if (e.pointerType && e.pointerType !== "mouse") return;
 					triggerNavigation(e);
@@ -1503,10 +1500,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (base) base.textContent = text;
 
 			this.setAnchorCenterY(hintEl, top);
-			
+
 			const hintVisibility = utils.getRootNumber("--section-hint-visibility", 0.5);
 			hintEl.style.opacity = `${Math.max(0, Math.min(1, opacity)) * hintVisibility}`;
-			
+
 			hintEl.dataset.theme = theme;
 			hintEl.classList.toggle("is-empty", !visible);
 
@@ -1675,7 +1672,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (placement?.section) placements.push(placement);
 			};
 
-			/* letzte inhaltliche Section */
 			if (!isHomeCurrent && !next) {
 				pushPlacement(
 					this.createPlacement(current, {
@@ -1689,7 +1685,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				return placements;
 			}
 
-			/* HERO / HOME */
 			if (isHomeCurrent) {
 				if (zone === "entering") {
 					pushPlacement(
@@ -1725,7 +1720,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				return placements;
 			}
 
-			/* Standard */
 			if (zone === "outside") {
 				pushPlacement(
 					this.createPlacement(current, {
@@ -1842,7 +1836,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.applyHint(hintEl, placement);
 			});
 		},
-		
+
 		update() {
 			if (!this.root) return;
 
@@ -1859,7 +1853,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.renderPlacements(placements);
 		},
-		
+
 		scheduleUpdate() {
 			if (this.updateRaf) return;
 
@@ -1873,30 +1867,29 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.addEventListener("scroll", () => {
 				this.scheduleUpdate();
 
-				/* Nur bei manueller Touch-/Wisch-Geste sichtbar halten */
 				if (state.programmaticScroll) {
 					this.hideImmediatelyForProgrammaticScroll();
 					return;
 				}
 
-				if (this.touchGestureActive && this.touchMoved) {
+				/* Während manueller Touch-Scroll-Session inkl. iOS Momentum sichtbar halten */
+				if (this.touchSessionActive && this.touchMoved) {
 					this.show();
 					this.scheduleHide();
+					this.scheduleTouchSessionEnd();
 				}
 			}, { passive: true });
 
 			window.addEventListener("touchstart", (e) => {
 				if (!e.touches?.length) return;
 
-				/* laufenden programmatic scroll sofort abbrechen,
-				   damit derselbe erste Swipe schon als manuelle Geste zählt */
 				if (state.programmaticScroll) {
 					scrollEngine.cancelActiveScroll();
 				}
 
 				this.handleManualTouchScrollStart(e.touches[0].clientY);
 			}, { passive: true });
-	
+
 			window.addEventListener("touchmove", (e) => {
 				if (!e.touches?.length) return;
 
@@ -1915,7 +1908,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.handleManualTouchEnd();
 			}, { passive: true });
 
-			/* Mausrad / Trackpad sollen die Hints nicht anzeigen */
 			window.addEventListener("wheel", () => {
 				this.hide();
 			}, { passive: true });
@@ -1945,7 +1937,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			}
 		},
-		
+
 		init() {
 			this.build();
 			this.refreshTimingVars();
@@ -1954,7 +1946,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.update();
 			this.bindEvents();
 		},
-		
+
 		refreshTimingVars() {
 			this.hideDelayMs = utils.getRootTimeMs("--section-hint-hide-delay", 500);
 			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 1000);
@@ -1966,7 +1958,23 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hideTimer = null;
 			}
 		},
-		
+
+		clearScrollEndTimer() {
+			if (this.scrollEndTimer) {
+				clearTimeout(this.scrollEndTimer);
+				this.scrollEndTimer = null;
+			}
+		},
+
+		scheduleTouchSessionEnd() {
+			this.clearScrollEndTimer();
+
+			this.scrollEndTimer = setTimeout(() => {
+				this.touchSessionActive = false;
+				this.touchMoved = false;
+			}, this.hideDelayMs + 120);
+		},
+
 		show() {
 			if (!this.root) return;
 
@@ -1987,7 +1995,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.isVisible = false;
 
 			this.root.classList.remove("is-visible");
-
 			document.body.classList.remove("hints-visible");
 		},
 
@@ -2001,13 +2008,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		handleManualTouchScrollStart(touchY) {
-			this.touchGestureActive = true;
+			this.touchSessionActive = true;
 			this.touchMoved = false;
 			this.lastTouchY = touchY;
+			this.clearScrollEndTimer();
 		},
 
 		handleManualTouchMove(touchY) {
-			if (!this.touchGestureActive) return;
+			if (!this.touchSessionActive) return;
 
 			if (Math.abs(touchY - this.lastTouchY) > 3) {
 				this.touchMoved = true;
@@ -2018,33 +2026,32 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		handleManualTouchEnd() {
-			if (!this.touchGestureActive) return;
+			if (!this.touchSessionActive) return;
 
-			this.touchGestureActive = false;
-
+			/* Nicht sofort beenden, Safari kann noch Momentum-Scroll liefern */
 			if (this.touchMoved) {
 				this.scheduleHide();
+				this.scheduleTouchSessionEnd();
+			} else {
+				this.touchSessionActive = false;
 			}
 		},
 
 		hideImmediatelyForProgrammaticScroll() {
 			if (!this.root) return;
 
-			this.touchGestureActive = false;
+			this.touchSessionActive = false;
 			this.touchMoved = false;
 			this.clearHideTimer();
+			this.clearScrollEndTimer();
 			this.isVisible = false;
 
-			/* Transition komplett ausschalten */
 			this.root.classList.add("is-instant-hidden");
 			document.body.classList.add("hints-instant-hide");
 
-			/* Sichtbarkeit sofort weg */
 			this.root.classList.remove("is-visible");
 			document.body.classList.remove("hints-visible");
 
-			/* Im nächsten Frame Instant-Mode wieder freigeben,
-			   damit spätere manuelle Einblendungen normal animieren */
 			requestAnimationFrame(() => {
 				requestAnimationFrame(() => {
 					this.root?.classList.remove("is-instant-hidden");
@@ -2052,7 +2059,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		},
-		
+
 		updateGalleryBodyState(currentSection) {
 			if (currentSection?.id === "gallery") {
 				document.body.classList.add("in-gallery");
@@ -2060,7 +2067,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				document.body.classList.remove("in-gallery");
 			}
 		}
-
 	};
 
 	/* =========================================================
