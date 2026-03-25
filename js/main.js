@@ -1273,12 +1273,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		getLayoutViewportHeight() {
 			return window.innerHeight || document.documentElement.clientHeight;
 		},
-
+	
 		getVisualViewportBottom() {
 			if (window.visualViewport) {
-				return window.visualViewport.offsetTop + window.visualViewport.height;
+				return window.visualViewport.height;
 			}
-			return this.getLayoutViewportHeight();
+			return window.innerHeight || document.documentElement.clientHeight;
 		},
 
 		getBoundaryGapPx() {
