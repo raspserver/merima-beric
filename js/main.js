@@ -1275,15 +1275,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			return window.visualViewport?.offsetTop || 0;
 		},
 
-		getNavbarBottom() {
-			if (!DOM.navbar) {
-				return utils.getRootNumber("--nav-height", 78);
-			}
-
-			const navRect = DOM.navbar.getBoundingClientRect();
-			return navRect.bottom - this.getViewportOffsetTop();
-		},
-
 		getBoundaryGapPx() {
 			return utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
 		},
@@ -1291,8 +1282,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		getSectionContext() {
 			const sections = this.getContentSections();
 			if (!sections.length) return null;
-
-			const navbarBottom = this.getNavbarBottom();
+			
+			const navbarBottom = utils.getRootNumber("--nav-height", 78);
 			let currentIndex = 0;
 
 			for (let i = 0; i < sections.length; i++) {
@@ -1349,11 +1340,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		getTopDockTop(text, gap) {
 			const navHeight = utils.getRootNumber("--nav-height", 78);
-			const { width, height } = this.measureHint(text);
-			const rotatedBandLength = width || 0;
-			const correction = Math.max(0, (rotatedBandLength - height) / 2);
-
-			return navHeight + gap + correction;
+			return navHeight + gap;
 		},
 
 		getBottomDockTop(text, gap) {
@@ -1549,7 +1536,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		buildGeometry(context) {
 			const gap = this.getBoundaryGapPx();
-			const navbarBottom = this.getNavbarBottom();
+			const navbarBottom = utils.getRootNumber("--nav-height", 78);
 			const viewportBottom = this.getViewportHeight();
 
 			const bandTop = navbarBottom;
