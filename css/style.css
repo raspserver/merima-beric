@@ -891,14 +891,16 @@ html, body {
 	color: var(--primary-color);
 }
 
-body.hints-visible .gallery-slider::before {
+/* EINBLENDEN = gleiche Dauer wie Hints */
+body.hints-visible .gallery-slider::before,
+body.hints-visible.in-gallery .gallery-slider::before,
+.scroll-section-hints.is-visible ~ .gallery .gallery-slider::before {
 	opacity: 1;
 	transform: scaleX(1);
-}
 
-body.hints-visible.in-gallery .gallery-slider::before {
-	opacity: 1;
-	transform: scaleX(1);
+	transition:
+		opacity 0.18s ease,
+		transform 0.18s ease;
 }
 
 body.suppress-cta-hover .cta-button,
@@ -2431,18 +2433,12 @@ section > .section-scroll-head + * {
 	opacity: 0;
 	transform: scaleX(0.88);
 	transform-origin: center;
+
+	/* AUSBLENDEN = gleiche Dauer wie Hints */
 	transition:
 		opacity var(--section-hint-fade-duration) ease,
 		transform var(--section-hint-fade-duration) ease;
 }
-
-
-
-
-
-
-
-
 
 .gallery-track {
 	display: flex;
