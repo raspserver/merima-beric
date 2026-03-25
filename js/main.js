@@ -1374,7 +1374,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		setAnchorCenterY(hintEl, centerYPx) {
 			const anchor = hintEl?.parentElement;
 			if (!anchor) return;
-			anchor.style.top = `${Math.round(centerYPx * 2) / 2}px`;
+			anchor.style.top = `${Math.round(centerYPx)}px`;
 		},
 		
 		setHint(hintEl, {
