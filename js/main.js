@@ -1280,6 +1280,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 			return window.innerHeight || document.documentElement.clientHeight;
 		},
+		
+		getViewportBottom() {
+			return window.innerHeight || document.documentElement.clientHeight;
+		}
 
 		getBoundaryGapPx() {
 			return utils.getRootRemPx("--section-hint-boundary-gap", 4.8);
@@ -1351,7 +1355,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 	
 		getBottomDockTop(text, gap) {
-			const visualBottom = this.getVisualViewportBottom();
+			const visualBottom = this.getViewportBottom();
 			const anchorHeight = this.getAnchorHeightForText(text);
 			return visualBottom - gap - anchorHeight / 2;
 		},
@@ -1549,7 +1553,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		buildGeometry(context) {
 			const gap = this.getBoundaryGapPx();
 			const navbarBottom = this.getNavbarBottom();
-			const viewportBottom = this.getVisualViewportBottom();
+			const viewportBottom = this.getViewportBottom();
 
 			const bandTop = navbarBottom;
 			const bandBottom = viewportBottom;
