@@ -1670,41 +1670,6 @@ footer a:hover {
         rgba(0,0,0, calc(0.45 * var(--nav-surface)));
 }
 
-.navbar::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-
-    backdrop-filter: blur(
-        calc(
-            10px +
-            (6px * var(--nav-surface)) +
-            (1px * var(--nav-velocity-blur))
-        )
-    );
-
-    -webkit-backdrop-filter: blur(
-        calc(
-            10px +
-            (6px * var(--nav-surface)) +
-            (1px * var(--nav-velocity-blur))
-        )
-    );
-
-    will-change: backdrop-filter;
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            120deg,
-            rgba(255,255,255,0.06),
-            rgba(255,255,255,0.02) 40%,
-            rgba(255,255,255,0.08) 60%,
-            rgba(255,255,255,0.03)
-        );
-}
-
 .navbar::after {
     content: "";
     position: absolute;
@@ -2579,19 +2544,77 @@ section > .section-scroll-head + * {
 	}
 }
 
-/* Blur auf der Navbar deaktivieren für Browser mit schwacher GPU-Optimierung */
-@supports not (backdrop-filter: blur(1px)) {
-	.navbar {
+/* =========================================
+   NAVBAR BACKDROP: Standard + Fallbacks
+========================================= */
+
+/* Standard bleibt aktiv */
+.navbar::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+
+	backdrop-filter: blur(
+		calc(
+			10px +
+			(6px * var(--nav-surface)) +
+			(1px * var(--nav-velocity-blur))
+		)
+	);
+
+	-webkit-backdrop-filter: blur(
+		calc(
+			10px +
+			(6px * var(--nav-surface)) +
+			(1px * var(--nav-velocity-blur))
+		)
+	);
+
+	will-change: backdrop-filter;
+	pointer-events: none;
+
+	background:
+		linear-gradient(
+			120deg,
+			rgba(255,255,255,0.06),
+			rgba(255,255,255,0.02) 40%,
+			rgba(255,255,255,0.08) 60%,
+			rgba(255,255,255,0.03)
+		);
+}
+
+/* Browser kann kein backdrop-filter */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.navbar::before {
 		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background: rgba(26,26,26,0.92);
 	}
 }
 
-/*
-@media (max-width: 968px) {
-    .navbar::before {
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        background: rgba(26,26,26,0.92);
-    }
+/* Nutzer möchte reduzierte Bewegung */
+@media (prefers-reduced-motion: reduce) {
+	.navbar::before {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background: rgba(26,26,26,0.92);
+	}
 }
-*/
+
+/* Optional: falls Browser diese Präferenz unterstützt */
+@media (prefers-reduced-transparency: reduce) {
+	.navbar::before {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background: rgba(26,26,26,0.92);
+	}
+}
+
+/* JS setzt diese Klasse bei schwächeren Geräten / schlechter Laufzeit */
+html.low-end .navbar::before,
+html.low-fps .navbar::before {
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+	background: rgba(26,26,26,0.92) !important;
+}
