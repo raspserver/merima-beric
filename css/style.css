@@ -61,6 +61,10 @@
 	--section-hint-hide-delay: 0.5s;
 	--section-hint-fade-duration: 2s;
 	--section-hint-visibility: 0.3;
+
+	/* für die Schneise durch die Videos */
+	--scroll-hint-column-center: 24px;
+	--gallery-hint-lane-width: clamp(64px, 7vw, 108px);
 	
 	/* =========================
 	   NAVBAR STRUCTURE
@@ -2358,11 +2362,14 @@ section > .section-scroll-head + * {
 /* ===============================
    GALLERY / VIDEO SLIDER OPTIMIZED
 ================================= */
-
 .gallery {
 	background: var(--section-bg-gallery);
 	scroll-margin-top: calc(78px + 2rem);
 	padding: var(--section-spacing) 0;
+	
+	position: relative;
+	isolation: isolate;
+	overflow: clip;
 }
 
 .gallery .section-title {
@@ -2374,9 +2381,10 @@ section > .section-scroll-head + * {
 	overflow: hidden;          /* nur Track scrollt */
 	width: 100%;
 	max-width: 1200px;
-/*
-	margin: 0 auto;
-*/
+	
+	position: relative;
+	z-index: 1; /* Videos unter der Schneise */
+
 	margin: 0 auto 40rem; /* unten mehr Abstand */
 	padding: 0 5%;             /* für Peek-Effekt */
 	box-sizing: border-box;
@@ -2405,6 +2413,30 @@ section > .section-scroll-head + * {
 .gallery video:hover {
 	transform: scale(1.03);
 	box-shadow: 0 30px 80px rgba(212, 175, 55, 0.3);
+}
+
+.gallery .container {
+	position: relative;
+	z-index: 3; /* Titel/Subtitel über der Schneise */
+}
+
+/* durchgehende Schneise für die Section-Hints */
+.gallery::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: calc(var(--scroll-hint-column-center) - (var(--gallery-hint-lane-width) / 2));
+	width: var(--gallery-hint-lane-width);
+
+	background: var(--section-bg-gallery);
+	pointer-events: none;
+	z-index: 2;
+
+	/* leichte weiche Kanten, damit es edler wirkt */
+	box-shadow:
+		-10px 0 18px rgba(245, 230, 211, 0.35),
+		 10px 0 18px rgba(245, 230, 211, 0.35);
 }
 
 /* Responsive Design */

@@ -2761,6 +2761,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const hintCenterX = contentLeft / 2;
 
 			hintsRoot.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
+			document.documentElement.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
 		},
 
 		init() {
