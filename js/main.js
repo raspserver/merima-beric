@@ -1229,9 +1229,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		isVisible: false,
 		scrollEndTimer: null,
-
-		hideDelayMs: 500,
-		fadeDurationMs: 1000,
+		
+		hideDelayMs: utils.getRootTimeMs("--section-hint-hide-delay", 1000),
+		fadeDurationMs: utils.getRootTimeMs("--section-hint-fade-duration", 500),
 
 		touchScrollActive: false,
 
