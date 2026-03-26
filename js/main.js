@@ -2007,6 +2007,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		bindEvents() {
 			window.addEventListener("scroll", () => {
+				if (!state.programmaticScroll && !this.scrollGestureActive) {
+					this.beginScrollGesture("wheel");
+				}
+
 				this.scheduleUpdate();
 				this.handleScrollActivity();
 			}, { passive: true });
