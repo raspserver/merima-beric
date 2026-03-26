@@ -1234,8 +1234,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		fadeDurationMs: 1000,
 
 		touchScrollActive: false,
-		touchScrollResetTimer: null,
-		touchScrollGraceMs: 180,
 
 		labels: {
 			about: "ÜBER MICH",
@@ -1900,24 +1898,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		markTouchScrollActive() {
 			this.touchScrollActive = true;
-
-			if (this.touchScrollResetTimer) {
-				clearTimeout(this.touchScrollResetTimer);
-			}
-
-			this.touchScrollResetTimer = setTimeout(() => {
-				this.touchScrollActive = false;
-				this.touchScrollResetTimer = null;
-			}, this.touchScrollGraceMs);
 		},
 
 		clearTouchScrollActive() {
 			this.touchScrollActive = false;
-
-			if (this.touchScrollResetTimer) {
-				clearTimeout(this.touchScrollResetTimer);
-				this.touchScrollResetTimer = null;
-			}
 		},
 
 		shouldShowForCurrentScroll() {
@@ -1964,6 +1948,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.scrollEndTimer = setTimeout(() => {
 				this.hide();
+				this.clearTouchScrollActive();
 			}, this.hideDelayMs);
 		},
 
@@ -1971,6 +1956,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.root) return;
 
 			this.clearScrollEndTimer();
+			this.clearTouchScrollActive();
 			this.isVisible = false;
 
 			this.root.classList.add("is-instant-hidden");
@@ -2068,7 +2054,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindEvents();
 		}
 	};
-	
+
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
