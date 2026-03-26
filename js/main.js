@@ -845,7 +845,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const easedSurface = 1 - Math.pow(1 - state.currentSurface, 3);
 
 			DOM.navbar.style.setProperty("--nav-visible", state.currentVisible);
-			DOM.navbar.style.setProperty("--nav-compact", easedCompact);
+			DOM.navbar.style.setProperty("--nav-compact", easedCompact); // kannst du fürs Erste noch behalten
+			DOM.navbar.style.setProperty("--nav-settle", easedCompact);  // neu: nur für Logo / Toggle / Inner
 			DOM.navbar.style.setProperty("--nav-surface", easedSurface);
 			DOM.navbar.style.setProperty("--nav-height-progress", easedCompact);
 			DOM.navbar.style.setProperty(
