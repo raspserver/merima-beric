@@ -1228,6 +1228,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		maxVisibleHints: 2,
 
 		isVisible: false,
+		hasUnlockedScrollHints: false,
 		scrollEndTimer: null,
 
 		lastScrollTs: 0,
@@ -1946,11 +1947,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
-			if (!this.hasReachedShowScrollDistance()) {
-				this.hide();
-				return;
+			/* Erstes Einblenden nur nach Mindest-Scrollstrecke */
+			if (!this.hasUnlockedScrollHints) {
+				if (!this.hasReachedShowScrollDistance()) {
+					this.hide();
+					return;
+				}
+
+				this.hasUnlockedScrollHints = true;
 			}
 
+			/* Danach reicht jede Scrollbewegung */
 			this.show();
 			this.scheduleHideAfterScrollEnd();
 		},
