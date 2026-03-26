@@ -1229,18 +1229,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		isVisible: false,
 		scrollEndTimer: null,
-		
+
+		lastScrollTs: 0,
+		scrollGestureActive: false,
+		scrollGestureStartY: null,
+		scrollGestureType: null, // "touch" | "wheel" | null
+
 		hideDelayMs: utils.getRootTimeMs("--section-hint-hide-delay", 1000),
 		fadeDurationMs: utils.getRootTimeMs("--section-hint-fade-duration", 500),
-
-		touchScrollActive: false,
-
-		lastTouchLikeInputTs: 0,
-		lastScrollTs: 0,
-		scrollHideFallbackTimer: null,
-		touchLikeGraceMs: 1400,
-		
-		touchScrollStartY: null,
 		showScrollDistancePx: utils.getRootNumber("--section-hint-show-scroll-distance", 200),
 
 		labels: {
@@ -1891,7 +1887,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.update();
 			});
 		},
-		
+
 		refreshTimingVars() {
 			this.hideDelayMs = utils.getRootTimeMs("--section-hint-hide-delay", 1000);
 			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 500);
@@ -1905,17 +1901,16 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
-		markTouchLikeInput() {
-			this.lastTouchLikeInputTs = performance.now();
+		beginScrollGesture(type) {
+			this.scrollGestureActive = true;
+			this.scrollGestureType = type;
+			this.scrollGestureStartY = window.scrollY;
 		},
 
-		clearTouchLikeState() {
-			this.lastTouchLikeInputTs = 0;
-		},
-
-		shouldShowForCurrentScroll() {
-			const now = performance.now();
-			return (now - this.lastTouchLikeInputTs) <= this.touchLikeGraceMs;
+		endScrollGesture() {
+			this.scrollGestureActive = false;
+			this.scrollGestureType = null;
+			this.scrollGestureStartY = null;
 		},
 
 		show() {
@@ -1947,7 +1942,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.lastScrollTs = performance.now();
 
-			if (!this.shouldShowForCurrentScroll()) {
+			if (!this.scrollGestureActive) {
 				return;
 			}
 
@@ -1968,20 +1963,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (idleFor >= this.hideDelayMs) {
 					this.hide();
-					this.clearTouchLikeState();
+					this.endScrollGesture();
 					return;
 				}
 
 				this.scheduleHideAfterScrollEnd();
 			}, this.hideDelayMs);
 		},
-		
+
 		hideImmediatelyForProgrammaticScroll() {
 			if (!this.root) return;
 
 			this.clearScrollEndTimer();
-			this.clearTouchLikeState();
-			this.touchScrollStartY = null;
+			this.endScrollGesture();
 			this.isVisible = false;
 
 			this.root.classList.add("is-instant-hidden");
@@ -1997,7 +1991,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		},
-		
+
 		updateGalleryBodyState(currentSection) {
 			if (currentSection?.id === "gallery") {
 				document.body.classList.add("in-gallery");
@@ -2005,7 +1999,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				document.body.classList.remove("in-gallery");
 			}
 		},
-	
+
+		hasReachedShowScrollDistance() {
+			if (this.scrollGestureStartY === null) return false;
+			return Math.abs(window.scrollY - this.scrollGestureStartY) >= this.showScrollDistancePx;
+		},
+
 		bindEvents() {
 			window.addEventListener("scroll", () => {
 				this.scheduleUpdate();
@@ -2013,35 +2012,31 @@ document.addEventListener("DOMContentLoaded", () => {
 			}, { passive: true });
 
 			window.addEventListener("wheel", () => {
-				this.clearTouchLikeState();
-				this.hide();
+				if (!this.scrollGestureActive || this.scrollGestureType !== "wheel") {
+					this.beginScrollGesture("wheel");
+				}
 			}, { passive: true });
-			
-			window.addEventListener("touchstart", () => {
-				this.markTouchLikeInput();
-				this.touchScrollStartY = window.scrollY;
 
+			window.addEventListener("touchstart", () => {
 				if (state.programmaticScroll) {
 					scrollEngine.cancelActiveScroll();
 				}
-			}, { passive: true });	
+				this.beginScrollGesture("touch");
+			}, { passive: true });
 
 			window.addEventListener("touchmove", () => {
-				this.markTouchLikeInput();
+				if (!this.scrollGestureActive) {
+					this.beginScrollGesture("touch");
+				}
 			}, { passive: true });
-			
+
 			window.addEventListener("touchend", () => {
-				this.markTouchLikeInput();
 				this.lastScrollTs = performance.now();
 				this.scheduleHideAfterScrollEnd();
-				this.touchScrollStartY = null;
 			}, { passive: true });
 
 			window.addEventListener("pointerdown", (e) => {
-				if (e.pointerType === "touch") {
-					this.markTouchLikeInput();
-				} else if (e.pointerType === "mouse") {
-					this.clearTouchLikeState();
+				if (e.pointerType === "mouse" && !this.scrollGestureActive) {
 					this.hide();
 				}
 			}, { passive: true });
@@ -2076,22 +2071,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				window.visualViewport.addEventListener("scroll", () => {
 					this.scheduleUpdate();
-					this.handleScrollActivity();
 				}, { passive: true });
-
-				if ("onscrollend" in window.visualViewport) {
-					window.visualViewport.addEventListener("scrollend", () => {
-						if (state.programmaticScroll) return;
-						this.lastScrollTs = performance.now();
-						this.scheduleHideAfterScrollEnd();
-					}, { passive: true });
-				}
 			}
-		},
-		
-		hasReachedShowScrollDistance() {
-			if (this.touchScrollStartY === null) return false;
-			return Math.abs(window.scrollY - this.touchScrollStartY) >= this.showScrollDistancePx;
 		},
 
 		init() {
@@ -2102,7 +2083,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.update();
 			this.bindEvents();
 		}
-		
 	};
 
 	/* =========================================================
