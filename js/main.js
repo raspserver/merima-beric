@@ -160,7 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			};
 		},
 		
-		
 		getRootLengthPx(name, fallbackPx) {
 			const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 			if (!raw) return fallbackPx;
@@ -177,7 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return Number.isFinite(px) && px > 0 ? px : fallbackPx;
 		}
-		
 	};
 
 	/* =========================================================
@@ -213,6 +211,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		currentSurface: 0,
 		surfaceVelocity: 0,
 
+		touchScrollActive: false,
+		targetGestureStretch: 0,
+		currentGestureStretch: 0,
+		gestureStretchVelocity: 0,
+
 		activeScrollAnimation: null,
 		activeScrollToken: 0,
 		
@@ -246,7 +249,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			heroParallaxStiffness: 0.04,
 			heroParallaxDamping: 0.85,
 			heroScaleScrollFactor: 0.01,
-			heroBrightnessScrollFactor: 0.06
+			heroBrightnessScrollFactor: 0.06,
+
+			navGestureExpandMax: 22,
+			navGestureCompressMax: 12,
+			navGestureExpandVelocityFactor: 0.18,
+			navGestureCompressVelocityFactor: 0.12,
+			navGestureStiffness: 0.18,
+			navGestureDamping: 0.74
 		},
 
 		update() {
@@ -267,6 +277,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.values.heroParallaxDamping = utils.getRootNumber("--hero-parallax-damping", 0.85);
 			this.values.heroScaleScrollFactor = utils.getRootNumber("--hero-scale-scroll-factor", 0.01);
 			this.values.heroBrightnessScrollFactor = utils.getRootNumber("--hero-brightness-scroll-factor", 0.06);
+
+			this.values.navGestureExpandMax = utils.getRootNumber("--nav-gesture-expand-max", 22);
+			this.values.navGestureCompressMax = utils.getRootNumber("--nav-gesture-compress-max", 12);
+			this.values.navGestureExpandVelocityFactor = utils.getRootNumber("--nav-gesture-expand-velocity-factor", 0.18);
+			this.values.navGestureCompressVelocityFactor = utils.getRootNumber("--nav-gesture-compress-velocity-factor", 0.12);
+			this.values.navGestureStiffness = utils.getRootNumber("--nav-gesture-stiffness", 0.18);
+			this.values.navGestureDamping = utils.getRootNumber("--nav-gesture-damping", 0.74);
 
 			if (isMobile) {
 				this.values.navVisibleStiffness = utils.getRootNumber("--nav-spring-stiffness-mobile", 0.06);
@@ -422,6 +439,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			
 			state.programmaticScroll = true;
 			state.programmaticNavMode = effectiveNavMode;
+			state.targetGestureStretch = 0;
+			navbarModule.startAnimation();
 
 			if (effectiveNavMode === "down") {
 				state.scrollDirection = "down";
@@ -491,6 +510,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.programmaticScroll = true;
 			state.programmaticNavMode = "down";
 			state.scrollDirection = "down";
+			state.targetGestureStretch = 0;
+			navbarModule.startAnimation();
 
 			this.animateWindowScrollTo(utils.getMaxScrollY(), {
 				onComplete: () => {
@@ -520,6 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.activeScrollToken++;
 			state.programmaticScroll = false;
 			state.programmaticNavMode = null;
+			state.targetGestureStretch = 0;
 
 			if (keepPosition) {
 				window.scrollTo(0, window.scrollY);
@@ -528,6 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.lastScrollY = window.scrollY;
 			scrollSectionHintModule.scheduleHide?.();
 			navbarModule.handleScroll();
+			navbarModule.startAnimation();
 		},
 		
 		clearTopSettle() {
@@ -554,7 +577,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				const y = window.scrollY;
 
-				/* wirklich oben oder praktisch oben */
 				if (y <= 0) {
 					if (lastY === 0) {
 						stableFrames++;
@@ -567,14 +589,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				lastY = y;
 
-				/* 3 stabile Frames am Stück = fertig */
 				if (stableFrames >= 3) {
 					this.clearTopSettle();
 					onDone?.();
 					return;
 				}
 
-				/* Sicherheitsgrenze für sehr schwache Geräte */
 				if (performance.now() - startedAt > 1200) {
 					window.scrollTo(0, 0);
 					this.clearTopSettle();
@@ -585,7 +605,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.topSettleRaf = requestAnimationFrame(tick);
 			};
 
-			/* zusätzlich harter Fallback */
 			state.topSettleTimeout = setTimeout(() => {
 				window.scrollTo(0, 0);
 				this.clearTopSettle();
@@ -594,7 +613,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			state.topSettleRaf = requestAnimationFrame(tick);
 		},
-		
 	};
 
 	/* =========================================================
@@ -611,7 +629,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navMenu.classList.add("active");
 			DOM.navToggle.classList.add("active");
 			document.body.classList.add("nav-menu-open");
-
+			state.targetGestureStretch = 0;
+			this.startAnimation();
 		},
 
 		closeMenu({ keepNavbarVisible = false } = {}) {
@@ -647,6 +666,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.suppressCtaHoverTemporarily(700);
 			state.manualNavbarOpen = false;
+			state.targetGestureStretch = 0;
+			this.startAnimation();
 
 			if (keepNavbarVisible) {
 				this.setTargets(1, 1, 1);
@@ -679,6 +700,46 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
+		canUseGestureStretch(currentY) {
+			return (
+				state.touchScrollActive &&
+				!state.programmaticScroll &&
+				!state.manualNavbarOpen &&
+				!this.isOpen() &&
+				currentY > 5 &&
+				state.targetVisible >= 1 &&
+				state.targetCompact >= 1 &&
+				state.programmaticNavMode !== "hero-top"
+			);
+		},
+
+		updateGestureStretch(deltaY, currentY) {
+			if (!this.canUseGestureStretch(currentY)) {
+				state.targetGestureStretch = 0;
+				return;
+			}
+
+			const absDelta = Math.abs(deltaY);
+
+			if (deltaY < 0) {
+				state.targetGestureStretch = Math.min(
+					absDelta * physics.values.navGestureExpandVelocityFactor,
+					physics.values.navGestureExpandMax
+				);
+				return;
+			}
+
+			if (deltaY > 0) {
+				state.targetGestureStretch = -Math.min(
+					absDelta * physics.values.navGestureCompressVelocityFactor,
+					physics.values.navGestureCompressMax
+				);
+				return;
+			}
+
+			state.targetGestureStretch = 0;
+		},
+
 		handleScroll() {
 			if (!DOM.navbar) return;
 
@@ -686,6 +747,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const deltaY = currentY - state.lastScrollY;
 
 			state.scrollVelocity = deltaY * 0.8;
+			this.updateGestureStretch(deltaY, currentY);
 
 			if (!state.programmaticScroll && Math.abs(deltaY) > SETTINGS.thresholds.directionLock) {
 				state.scrollDirection = deltaY > 0 ? "down" : "up";
@@ -721,6 +783,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			if (currentY <= 5) {
+				state.targetGestureStretch = 0;
 				this.setTargets(0, 0, 0);
 			} else if (state.scrollDirection === "down") {
 				this.setTargets(1, 1, 1);
@@ -763,6 +826,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.currentSurface += state.surfaceVelocity * delta;
 			state.currentSurface = Math.max(0, Math.min(state.currentSurface, 1));
 
+			const gestureForce =
+				(state.targetGestureStretch - state.currentGestureStretch) *
+				physics.values.navGestureStiffness;
+			state.gestureStretchVelocity += gestureForce * delta;
+			state.gestureStretchVelocity *= Math.pow(physics.values.navGestureDamping, delta);
+			state.currentGestureStretch += state.gestureStretchVelocity * delta;
+
+			const maxExpand = physics.values.navGestureExpandMax;
+			const maxCompress = physics.values.navGestureCompressMax;
+
+			state.currentGestureStretch = Math.max(
+				-maxCompress,
+				Math.min(state.currentGestureStretch, maxExpand)
+			);
+
 			const easedCompact = 1 - Math.pow(1 - state.currentCompact, 3);
 			const easedSurface = 1 - Math.pow(1 - state.currentSurface, 3);
 
@@ -770,6 +848,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.navbar.style.setProperty("--nav-compact", easedCompact);
 			DOM.navbar.style.setProperty("--nav-surface", easedSurface);
 			DOM.navbar.style.setProperty("--nav-height-progress", easedCompact);
+			DOM.navbar.style.setProperty(
+				"--nav-gesture-stretch",
+				`${state.currentGestureStretch.toFixed(2)}px`
+			);
 
 			const velocityFactor = Math.round(Math.min(Math.abs(state.scrollVelocity) * 0.15, 6));
 			DOM.navbar.style.setProperty("--nav-velocity-blur", velocityFactor);
@@ -812,7 +894,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				Math.abs(state.targetCompact - state.currentCompact) > 0.0005 ||
 				Math.abs(state.compactVelocity) > 0.0005 ||
 				Math.abs(state.targetSurface - state.currentSurface) > 0.0005 ||
-				Math.abs(state.surfaceVelocity) > 0.0005;
+				Math.abs(state.surfaceVelocity) > 0.0005 ||
+				Math.abs(state.targetGestureStretch - state.currentGestureStretch) > 0.01 ||
+				Math.abs(state.gestureStretchVelocity) > 0.01;
 
 			if (!stillMoving) {
 				state.animationRunning = false;
@@ -938,8 +1022,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (insideMenu || onToggle || onLogo) return;
 
-				/* Jeder Klick außerhalb des Menüs soll nur das Menü schließen,
-				   aber keine Folgeaktion auslösen */
 				if (onCta || onSectionScrollHead) {
 					e.preventDefault();
 					e.stopPropagation();
@@ -965,7 +1047,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				e.preventDefault();
 				e.stopPropagation();
 			}, true);
-
 		},
 		
 		suppressCtaHoverTemporarily(duration = 700) {
@@ -977,7 +1058,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			const cleanup = (e) => {
-				/* Nur echte Mausbewegung darf Hover wieder freigeben */
 				if (e && e.pointerType && e.pointerType !== "mouse") return;
 
 				document.body.classList.remove("suppress-cta-hover");
@@ -1000,7 +1080,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			window.addEventListener("pointermove", cleanup);
 		},
-
 	};
 
 	/* =========================================================
@@ -1135,9 +1214,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				const isAtOwnHome = this.isAtOwnSectionHomePosition(sectionEl);
 
-				/* FALL 2:
-				   Nicht auf eigener y-section-home-position
-				   -> keine Doppelclick-Logik, also sofort navigieren */
 				if (!isAtOwnHome) {
 					if (clickTimer) {
 						clearTimeout(clickTimer);
@@ -1148,9 +1224,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					return;
 				}
 
-				/* FALL 1:
-				   Auf eigener y-section-home-position
-				   -> Single-/Double-Click unterscheiden */
 				if (clickTimer) clearTimeout(clickTimer);
 
 				clickTimer = setTimeout(() => {
@@ -1171,7 +1244,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					clickTimer = null;
 				}
 
-				/* Doppelclick nur dann, wenn wir auf einer home-position sind */
 				if (!this.isAtOwnSectionHomePosition(sectionEl)) return;
 				
 				this.navigateSection(sectionEl, "prev", allowPrev);
@@ -1253,7 +1325,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		lastScrollTs: 0,
 		scrollGestureActive: false,
 		scrollGestureStartY: null,
-		scrollGestureType: null, // "touch" | "wheel" | null
+		scrollGestureType: null,
 
 		hideDelayMs: utils.getRootTimeMs("--section-hint-hide-delay", 1000),
 		fadeDurationMs: utils.getRootTimeMs("--section-hint-fade-duration", 500),
@@ -2062,7 +2134,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.addEventListener("scroll", () => {
 				this.scheduleUpdate();
 
-				/* Section hints nur für echte Touch-Scroll-Gesten */
 				if (this.scrollGestureActive && this.scrollGestureType === "touch") {
 					this.handleScrollActivity();
 				} else {
@@ -2415,7 +2486,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				item.button.style.setProperty("--gloss-x", "50%");
 				item.button.style.setProperty("--gloss-y", "50%");
 				item.button.style.setProperty("--gloss-opacity", "0");
-				
 			});
 		},
 
@@ -2580,7 +2650,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				gloss: button.querySelector(".cta-gloss"),
 				isNear: false,
 
-				/* OUTER */
 				targetX: 0,
 				targetY: 0,
 				targetScale: 1,
@@ -2602,7 +2671,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				velocityShadowBlur: 0,
 				velocityShadowAlpha: 0,
 
-				/* INNER LABEL */
 				targetLabelX: 0,
 				targetLabelY: 0,
 				targetLabelScale: 1,
@@ -2615,7 +2683,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				velocityLabelY: 0,
 				velocityLabelScale: 0,
 
-				/* GLOSS */
 				targetGlossX: 50,
 				targetGlossY: 50,
 				targetGlossOpacity: 0,
@@ -2730,14 +2797,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				item.targetLabelY = dirY * labelShiftY * Math.min(combinedStrength * 1.18, 1);
 				item.targetLabelScale = 1 + (combinedStrength * 0.01);
 
-				/* Pointerposition relativ im Button -> Gloss */
 				const localX = ((clientX - rect.left) / rect.width) * 100;
 				const localY = ((clientY - rect.top) / rect.height) * 100;
 
 				item.targetGlossX = Math.max(0, Math.min(localX, 100));
 				item.targetGlossY = Math.max(0, Math.min(localY, 100));
 				item.targetGlossOpacity = 0.18 + (combinedStrength * 0.24);
-
 			};
 
 			const handlePointerMove = (e) => {
@@ -2812,6 +2877,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.targetCompact = newTarget;
 				state.targetSurface = newTarget;
 				state.manualNavbarOpen = newTarget === 1;
+				state.targetGestureStretch = 0;
 
 				navbarModule.startAnimation();
 			});
@@ -2845,6 +2911,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.navbar.style.setProperty("--nav-compact", 1);
 				DOM.navbar.style.setProperty("--nav-surface", 1);
 				DOM.navbar.style.setProperty("--nav-height-progress", 1);
+				DOM.navbar.style.setProperty("--nav-gesture-stretch", "0px");
 			}
 
 			if (DOM.year) {
@@ -2863,6 +2930,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		window.addEventListener("wheel", interrupt, { passive: true });
 		window.addEventListener("touchstart", interrupt, { passive: true });
+
+		window.addEventListener("touchstart", () => {
+			state.touchScrollActive = true;
+		}, { passive: true });
+
+		window.addEventListener("touchend", () => {
+			state.touchScrollActive = false;
+			state.targetGestureStretch = 0;
+			navbarModule.startAnimation();
+		}, { passive: true });
+
+		window.addEventListener("touchcancel", () => {
+			state.touchScrollActive = false;
+			state.targetGestureStretch = 0;
+			navbarModule.startAnimation();
+		}, { passive: true });
+
+		window.addEventListener("wheel", () => {
+			state.touchScrollActive = false;
+			state.targetGestureStretch = 0;
+			navbarModule.startAnimation();
+		}, { passive: true });
 	}
 
 	/* =========================================================
@@ -2883,19 +2972,16 @@ document.addEventListener("DOMContentLoaded", () => {
 			const rect = referenceColumn.getBoundingClientRect();
 			const contentLeft = rect.left;
 
-			/* Mittelpunkt zwischen linkem Viewportrand und linkem Rand der Textspalte */
 			const hintCenterX = contentLeft / 2;
 
 			hintsRoot.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
 			document.documentElement.style.setProperty("--scroll-hint-column-center", `${hintCenterX}px`);
 
-			/* <<< NEU: Breite der Schneise = Abstand vom linken Viewportrand bis zur linken Textkante */
 			document.documentElement.style.setProperty(
 				"--gallery-hint-lane-width",
 				`${contentLeft}px`
 			);
 
-			/* Schneise relativ zum Gallery-Slider ausrichten */
 			const gallerySlider = document.querySelector(".gallery-slider");
 			if (gallerySlider) {
 				const sliderRect = gallerySlider.getBoundingClientRect();
@@ -2986,7 +3072,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	   INIT
 	========================================================= */
 	function init() {
-		//~ performanceModule.init();
+		// performanceModule.init();
 		physics.update();
 		sectionNavigationModule.buildOrderedSections();
 

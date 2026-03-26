@@ -69,6 +69,26 @@
 	--gallery-hint-lane-width: 0px;
 	
 	/* =========================
+	   NAVBAR GESTURE ELASTICITY
+	========================= */
+	--nav-gesture-expand-max: 22px;
+	--nav-gesture-compress-max: 12px;
+
+	--nav-gesture-expand-velocity-factor: 0.18;
+	--nav-gesture-compress-velocity-factor: 0.12;
+
+	--nav-gesture-stiffness: 0.18;
+	--nav-gesture-damping: 0.74;
+	
+	/* ===================================================================================
+	expand-max					maximale zusätzliche Höhe beim Heraufscrollen
+	compress-max				maximale zusätzliche Verringerung beim Herabscrollen
+	expand-velocity-factor		wie stark die Expansion auf Swipe-Geschwindigkeit reagiert
+	compress-velocity-factor	wie stark die Stauchung reagiert
+	stiffness / damping			Rückfederung
+	=================================================================================== */
+	
+	/* =========================
 	   NAVBAR STRUCTURE
 	========================= */
 	--nav-height: 78px;
@@ -1669,6 +1689,7 @@ footer a:hover {
     --nav-velocity-blur: 0;
     --nav-refraction: 0;
     --nav-bounce: 0;
+    --nav-gesture-stretch: 0px;
 
     transform: translate3d(
         0,
@@ -1725,10 +1746,11 @@ footer a:hover {
     align-items: center;
     
     z-index: 1001;
-
+	
 	height: calc(
 		var(--nav-height-max) -
 		((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress)) +
+		var(--nav-gesture-stretch) +
 		(14px * var(--nav-bounce))
 	);
 
@@ -1742,23 +1764,18 @@ footer a:hover {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-
-    transform-origin: center top;
-    transform: scale(calc(1 - (0.08 * var(--nav-compact))));
-    transition: transform 0.6s cubic-bezier(.16,.84,.44,1);
-
-    will-change: transform;
+    will-change: auto;
 }
 
 .nav-logo,
 .nav-toggle {
-    transform: scale(calc(1 - (0.10 * var(--nav-compact))));
+    transform: translate3d(0, 0, 0);
     transition:
-        transform 0.6s cubic-bezier(.16,.84,.44,1),
         opacity 0.4s ease,
         filter 0.6s ease;
     transform-origin: center;
     opacity: 1;
+    align-self: center;
 }
 
 /* Logo */
@@ -1812,10 +1829,6 @@ footer a:hover {
         transform: scaleX(1);
     }
 }
-
-
-
-
 
 .nav-menu {
     display: flex;
@@ -1927,10 +1940,13 @@ footer a:hover {
 
     .nav-menu {
         position: fixed;
+        
         top: calc(
-            var(--nav-height-max) -
-            ((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress))
-        );
+			var(--nav-height-max) -
+			((var(--nav-height-max) - var(--nav-height-min)) * var(--nav-height-progress)) +
+			var(--nav-gesture-stretch)
+		);
+
         left: 0;
         width: 100%;
         background: rgba(26, 26, 26, 0.98);
