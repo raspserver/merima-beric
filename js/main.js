@@ -1230,6 +1230,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		isVisible: false,
 		hasUnlockedScrollHints: false,
 		scrollEndTimer: null,
+		hideCompleteTimer: null,
 
 		lastScrollTs: 0,
 		scrollGestureActive: false,
@@ -1902,6 +1903,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
+		clearHideCompleteTimer() {
+			if (this.hideCompleteTimer) {
+				clearTimeout(this.hideCompleteTimer);
+				this.hideCompleteTimer = null;
+			}
+		},
+
+		scheduleRelockAfterFullyHidden() {
+			this.clearHideCompleteTimer();
+
+			this.hideCompleteTimer = setTimeout(() => {
+				if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
+					this.hasUnlockedScrollHints = false;
+					this.endScrollGesture();
+				}
+
+				this.hideCompleteTimer = null;
+			}, this.fadeDurationMs);
+		},
+
 		beginScrollGesture(type) {
 			this.scrollGestureActive = true;
 			this.scrollGestureType = type;
@@ -1917,6 +1938,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		show() {
 			if (!this.root) return;
 
+			this.clearHideCompleteTimer();
 			this.isVisible = true;
 
 			this.root.classList.remove("is-instant-hidden");
@@ -1933,6 +1955,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.root.classList.remove("is-visible");
 			document.body.classList.remove("hints-visible");
+
+			this.scheduleRelockAfterFullyHidden();
 		},
 
 		handleScrollActivity() {
@@ -1947,7 +1971,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
-			/* Erstes Einblenden nur nach Mindest-Scrollstrecke */
 			if (!this.hasUnlockedScrollHints) {
 				if (!this.hasReachedShowScrollDistance()) {
 					this.hide();
@@ -1957,7 +1980,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hasUnlockedScrollHints = true;
 			}
 
-			/* Danach reicht jede Scrollbewegung */
 			this.show();
 			this.scheduleHideAfterScrollEnd();
 		},
@@ -1982,8 +2004,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.root) return;
 
 			this.clearScrollEndTimer();
+			this.clearHideCompleteTimer();
 			this.endScrollGesture();
+
 			this.isVisible = false;
+			this.hasUnlockedScrollHints = false;
 
 			this.root.classList.add("is-instant-hidden");
 			document.body.classList.add("hints-instant-hide");
