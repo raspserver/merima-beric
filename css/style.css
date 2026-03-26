@@ -72,10 +72,10 @@
 	   NAVBAR GESTURE ELASTICITY
 	========================= */
 	--nav-gesture-expand-max: 22px;
-	--nav-gesture-compress-max: 12px;
+	--nav-gesture-compress-max: 22px;
 
 	--nav-gesture-expand-velocity-factor: 0.18;
-	--nav-gesture-compress-velocity-factor: 0.12;
+	--nav-gesture-compress-velocity-factor: 0.18;
 
 	--nav-gesture-stiffness: 0.18;
 	--nav-gesture-damping: 0.74;
