@@ -1995,7 +1995,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				document.body.classList.remove("in-gallery");
 			}
 		},
-
+	
 		bindEvents() {
 			window.addEventListener("scroll", () => {
 				this.scheduleUpdate();
@@ -2021,6 +2021,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			window.addEventListener("touchend", () => {
 				this.markTouchLikeInput();
+				this.lastScrollTs = performance.now();
+				this.scheduleHideAfterScrollEnd();
 			}, { passive: true });
 
 			window.addEventListener("pointerdown", (e) => {
@@ -2028,13 +2030,15 @@ document.addEventListener("DOMContentLoaded", () => {
 					this.markTouchLikeInput();
 				} else if (e.pointerType === "mouse") {
 					this.clearTouchLikeState();
+					this.hide();
 				}
 			}, { passive: true });
 
 			if ("onscrollend" in document) {
 				document.addEventListener("scrollend", () => {
-					this.hide();
-					this.clearTouchLikeState();
+					if (state.programmaticScroll) return;
+					this.lastScrollTs = performance.now();
+					this.scheduleHideAfterScrollEnd();
 				}, { passive: true });
 			}
 
@@ -2065,8 +2069,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if ("onscrollend" in window.visualViewport) {
 					window.visualViewport.addEventListener("scrollend", () => {
-						this.hide();
-						this.clearTouchLikeState();
+						if (state.programmaticScroll) return;
+						this.lastScrollTs = performance.now();
+						this.scheduleHideAfterScrollEnd();
 					}, { passive: true });
 				}
 			}
