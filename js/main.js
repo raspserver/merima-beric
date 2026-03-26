@@ -1239,6 +1239,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		lastScrollTs: 0,
 		scrollHideFallbackTimer: null,
 		touchLikeGraceMs: 1400,
+		
+		touchScrollStartY: null,
+		showScrollDistancePx: utils.getRootNumber("--section-hint-show-scroll-distance", 200),
 
 		labels: {
 			about: "ÜBER MICH",
@@ -1888,10 +1891,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.update();
 			});
 		},
-
+		
 		refreshTimingVars() {
 			this.hideDelayMs = utils.getRootTimeMs("--section-hint-hide-delay", 1000);
 			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 500);
+			this.showScrollDistancePx = utils.getRootNumber("--section-hint-show-scroll-distance", 200);
 		},
 
 		clearScrollEndTimer() {
@@ -1947,6 +1951,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
+			if (!this.hasReachedShowScrollDistance()) {
+				this.hide();
+				return;
+			}
+
 			this.show();
 			this.scheduleHideAfterScrollEnd();
 		},
@@ -1966,12 +1975,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.scheduleHideAfterScrollEnd();
 			}, this.hideDelayMs);
 		},
-
+		
 		hideImmediatelyForProgrammaticScroll() {
 			if (!this.root) return;
 
 			this.clearScrollEndTimer();
 			this.clearTouchLikeState();
+			this.touchScrollStartY = null;
 			this.isVisible = false;
 
 			this.root.classList.add("is-instant-hidden");
@@ -1987,7 +1997,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		},
-
+		
 		updateGalleryBodyState(currentSection) {
 			if (currentSection?.id === "gallery") {
 				document.body.classList.add("in-gallery");
@@ -2006,23 +2016,25 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.clearTouchLikeState();
 				this.hide();
 			}, { passive: true });
-
+			
 			window.addEventListener("touchstart", () => {
 				this.markTouchLikeInput();
+				this.touchScrollStartY = window.scrollY;
 
 				if (state.programmaticScroll) {
 					scrollEngine.cancelActiveScroll();
 				}
-			}, { passive: true });
+			}, { passive: true });	
 
 			window.addEventListener("touchmove", () => {
 				this.markTouchLikeInput();
 			}, { passive: true });
-
+			
 			window.addEventListener("touchend", () => {
 				this.markTouchLikeInput();
 				this.lastScrollTs = performance.now();
 				this.scheduleHideAfterScrollEnd();
+				this.touchScrollStartY = null;
 			}, { passive: true });
 
 			window.addEventListener("pointerdown", (e) => {
@@ -2076,6 +2088,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			}
 		},
+		
+		hasReachedShowScrollDistance() {
+			if (this.touchScrollStartY === null) return false;
+			return Math.abs(window.scrollY - this.touchScrollStartY) >= this.showScrollDistancePx;
+		},
 
 		init() {
 			this.build();
@@ -2085,6 +2102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.update();
 			this.bindEvents();
 		}
+		
 	};
 
 	/* =========================================================
