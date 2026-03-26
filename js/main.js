@@ -158,6 +158,24 @@ document.addEventListener("DOMContentLoaded", () => {
 				reducedTransparency,
 				lowEnd: lowEndByCpu || lowEndByRam || reducedMotion || reducedTransparency
 			};
+		},
+		
+		
+		getRootLengthPx(name, fallbackPx) {
+			const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+			if (!raw) return fallbackPx;
+
+			const probe = document.createElement("div");
+			probe.style.position = "absolute";
+			probe.style.visibility = "hidden";
+			probe.style.pointerEvents = "none";
+			probe.style.height = raw;
+			document.body.appendChild(probe);
+
+			const px = probe.getBoundingClientRect().height;
+			document.body.removeChild(probe);
+
+			return Number.isFinite(px) && px > 0 ? px : fallbackPx;
 		}
 		
 	};
@@ -1893,7 +1911,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		refreshTimingVars() {
 			this.hideDelayMs = utils.getRootTimeMs("--section-hint-hide-delay", 1000);
 			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 500);
-			this.showScrollDistancePx = utils.getRootNumber("--section-hint-show-scroll-distance", 200);
+			this.showScrollDistancePx = utils.getRootLengthPx(
+				"--section-hint-show-scroll-distance",
+				window.innerHeight
+			);
 		},
 
 		clearScrollEndTimer() {

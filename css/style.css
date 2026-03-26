@@ -62,7 +62,7 @@
 	--section-hint-show-duration: 0.18s;
 	--section-hint-fade-duration: 0.5s;
 	--section-hint-visibility: 0.4;
-	--section-hint-show-scroll-distance: 100svh;
+	--section-hint-show-scroll-distance: calc(100svh - 78px);
 
 	/* für die Schneise durch die Videos */
 	--scroll-hint-column-center: 24px;
