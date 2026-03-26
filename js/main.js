@@ -2039,17 +2039,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		bindEvents() {
 			window.addEventListener("scroll", () => {
-				if (!state.programmaticScroll && !this.scrollGestureActive) {
-					this.beginScrollGesture("wheel");
-				}
-
 				this.scheduleUpdate();
-				this.handleScrollActivity();
-			}, { passive: true });
 
-			window.addEventListener("wheel", () => {
-				if (!this.scrollGestureActive || this.scrollGestureType !== "wheel") {
-					this.beginScrollGesture("wheel");
+				/* Section hints nur für echte Touch-Scroll-Gesten */
+				if (this.scrollGestureActive && this.scrollGestureType === "touch") {
+					this.handleScrollActivity();
+				} else {
+					this.hide();
 				}
 			}, { passive: true });
 
@@ -2067,12 +2063,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			}, { passive: true });
 
 			window.addEventListener("touchend", () => {
-				this.lastScrollTs = performance.now();
-				this.scheduleHideAfterScrollEnd();
+				if (this.scrollGestureType === "touch") {
+					this.lastScrollTs = performance.now();
+					this.scheduleHideAfterScrollEnd();
+				}
+			}, { passive: true });
+
+			window.addEventListener("touchcancel", () => {
+				if (this.scrollGestureType === "touch") {
+					this.hide();
+					this.endScrollGesture();
+				}
 			}, { passive: true });
 
 			window.addEventListener("pointerdown", (e) => {
-				if (e.pointerType === "mouse" && !this.scrollGestureActive) {
+				if (e.pointerType === "mouse") {
 					this.hide();
 				}
 			}, { passive: true });
@@ -2080,6 +2085,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if ("onscrollend" in document) {
 				document.addEventListener("scrollend", () => {
 					if (state.programmaticScroll) return;
+					if (this.scrollGestureType !== "touch") return;
+
 					this.lastScrollTs = performance.now();
 					this.scheduleHideAfterScrollEnd();
 				}, { passive: true });
