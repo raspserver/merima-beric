@@ -1235,6 +1235,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		touchScrollActive: false,
 
+		lastTouchLikeInputTs: 0,
+		lastScrollTs: 0,
+		scrollHideFallbackTimer: null,
+		touchLikeGraceMs: 1400,
+
 		labels: {
 			about: "ÜBER MICH",
 			gallery: "VIDEO-FUN",
@@ -1885,8 +1890,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		refreshTimingVars() {
-			this.hideDelayMs = utils.getRootTimeMs("--section-hint-hide-delay", 500);
-			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 1000);
+			this.hideDelayMs = utils.getRootTimeMs("--section-hint-hide-delay", 1000);
+			this.fadeDurationMs = utils.getRootTimeMs("--section-hint-fade-duration", 500);
 		},
 
 		clearScrollEndTimer() {
@@ -1896,16 +1901,17 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		},
 
-		markTouchScrollActive() {
-			this.touchScrollActive = true;
+		markTouchLikeInput() {
+			this.lastTouchLikeInputTs = performance.now();
 		},
 
-		clearTouchScrollActive() {
-			this.touchScrollActive = false;
+		clearTouchLikeState() {
+			this.lastTouchLikeInputTs = 0;
 		},
 
 		shouldShowForCurrentScroll() {
-			return this.touchScrollActive;
+			const now = performance.now();
+			return (now - this.lastTouchLikeInputTs) <= this.touchLikeGraceMs;
 		},
 
 		show() {
@@ -1935,6 +1941,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
+			this.lastScrollTs = performance.now();
+
 			if (!this.shouldShowForCurrentScroll()) {
 				return;
 			}
@@ -1947,8 +1955,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.clearScrollEndTimer();
 
 			this.scrollEndTimer = setTimeout(() => {
-				this.hide();
-				this.clearTouchScrollActive();
+				const idleFor = performance.now() - this.lastScrollTs;
+
+				if (idleFor >= this.hideDelayMs) {
+					this.hide();
+					this.clearTouchLikeState();
+					return;
+				}
+
+				this.scheduleHideAfterScrollEnd();
 			}, this.hideDelayMs);
 		},
 
@@ -1956,7 +1971,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.root) return;
 
 			this.clearScrollEndTimer();
-			this.clearTouchScrollActive();
+			this.clearTouchLikeState();
 			this.isVisible = false;
 
 			this.root.classList.add("is-instant-hidden");
@@ -1984,19 +1999,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		bindEvents() {
 			window.addEventListener("scroll", () => {
 				this.scheduleUpdate();
-
-				if (this.shouldShowForCurrentScroll()) {
-					this.handleScrollActivity();
-				}
+				this.handleScrollActivity();
 			}, { passive: true });
 
 			window.addEventListener("wheel", () => {
-				this.clearTouchScrollActive();
+				this.clearTouchLikeState();
 				this.hide();
 			}, { passive: true });
 
 			window.addEventListener("touchstart", () => {
-				this.markTouchScrollActive();
+				this.markTouchLikeInput();
 
 				if (state.programmaticScroll) {
 					scrollEngine.cancelActiveScroll();
@@ -2004,16 +2016,27 @@ document.addEventListener("DOMContentLoaded", () => {
 			}, { passive: true });
 
 			window.addEventListener("touchmove", () => {
-				this.markTouchScrollActive();
+				this.markTouchLikeInput();
+			}, { passive: true });
+
+			window.addEventListener("touchend", () => {
+				this.markTouchLikeInput();
 			}, { passive: true });
 
 			window.addEventListener("pointerdown", (e) => {
 				if (e.pointerType === "touch") {
-					this.markTouchScrollActive();
+					this.markTouchLikeInput();
 				} else if (e.pointerType === "mouse") {
-					this.clearTouchScrollActive();
+					this.clearTouchLikeState();
 				}
 			}, { passive: true });
+
+			if ("onscrollend" in document) {
+				document.addEventListener("scrollend", () => {
+					this.hide();
+					this.clearTouchLikeState();
+				}, { passive: true });
+			}
 
 			window.addEventListener("resize", () => {
 				this.metricsCache.clear();
@@ -2037,11 +2060,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				window.visualViewport.addEventListener("scroll", () => {
 					this.scheduleUpdate();
-
-					if (this.shouldShowForCurrentScroll()) {
-						this.handleScrollActivity();
-					}
+					this.handleScrollActivity();
 				}, { passive: true });
+
+				if ("onscrollend" in window.visualViewport) {
+					window.visualViewport.addEventListener("scrollend", () => {
+						this.hide();
+						this.clearTouchLikeState();
+					}, { passive: true });
+				}
 			}
 		},
 
