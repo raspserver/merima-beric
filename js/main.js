@@ -2229,11 +2229,8 @@ document.addEventListener("DOMContentLoaded", () => {
 					this.hide();
 				}
 			}, { passive: true });
-
+	
 			window.addEventListener("touchstart", () => {
-				if (state.programmaticScroll) {
-					scrollEngine.cancelActiveScroll();
-				}
 				this.beginScrollGesture("touch");
 			}, { passive: true });
 
@@ -3042,14 +3039,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	   USER SCROLL INTERRUPT
 	========================================================= */
 	function bindUserScrollInterrupts() {
-		const interrupt = () => {
+		window.addEventListener("wheel", () => {
 			scrollEngine.cancelActiveScroll();
-		};
-
-		window.addEventListener("wheel", interrupt, { passive: true });
-		window.addEventListener("touchstart", interrupt, { passive: true });
+			state.touchScrollActive = false;
+			state.targetGestureStretch = 0;
+			navbarModule.startAnimation();
+		}, { passive: true });
 
 		window.addEventListener("touchstart", () => {
+			scrollEngine.cancelActiveScroll();
 			state.touchScrollActive = true;
 		}, { passive: true });
 
@@ -3060,12 +3058,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, { passive: true });
 
 		window.addEventListener("touchcancel", () => {
-			state.touchScrollActive = false;
-			state.targetGestureStretch = 0;
-			navbarModule.startAnimation();
-		}, { passive: true });
-
-		window.addEventListener("wheel", () => {
 			state.touchScrollActive = false;
 			state.targetGestureStretch = 0;
 			navbarModule.startAnimation();
