@@ -1333,6 +1333,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollGestureActive: false,
 		scrollGestureStartY: null,
 		scrollGestureType: null,
+		
+		scrollGestureAccumulatedDistance: 0,
+		lastObservedScrollY: window.scrollY,
 
 		hideDelayMs: utils.getRootTimeMs("--section-hint-hide-delay", 1000),
 		fadeDurationMs: utils.getRootTimeMs("--section-hint-fade-duration", 500),
@@ -2024,12 +2027,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hideCompleteTimer = null;
 			}, this.fadeDurationMs);
 		},
-
+		
 		beginScrollGesture(type) {
 			this.clearScrollEndTimer();
 			this.clearHideCompleteTimer();
 
-			// Jede neue Touch-Geste beginnt wie in Chrome bei Null
+			// Jede neue Touch-Geste beginnt bei 0
 			this.hasUnlockedScrollHints = false;
 			this.isVisible = false;
 
@@ -2041,12 +2044,27 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.scrollGestureActive = true;
 			this.scrollGestureType = type;
 			this.scrollGestureStartY = window.scrollY;
+
+			// Neu:
+			this.scrollGestureAccumulatedDistance = 0;
+			this.lastObservedScrollY = window.scrollY;
 		},
 
 		endScrollGesture() {
 			this.scrollGestureActive = false;
 			this.scrollGestureType = null;
 			this.scrollGestureStartY = null;
+		},
+		
+		accumulateScrollDistance() {
+			const currentY = window.scrollY;
+			const delta = Math.abs(currentY - this.lastObservedScrollY);
+
+			if (delta > 0) {
+				this.scrollGestureAccumulatedDistance += delta;
+			}
+
+			this.lastObservedScrollY = currentY;
 		},
 
 		show() {
@@ -2088,6 +2106,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.lastScrollTs = performance.now();
 
+			// Neu: jede Scrollbewegung dieser Touch-Sequenz mitzählen
+			this.accumulateScrollDistance();
+
 			if (!this.hasUnlockedScrollHints) {
 				if (!this.hasReachedShowScrollDistance()) {
 					this.hide();
@@ -2100,7 +2121,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.show();
 			this.scheduleHideAfterScrollEnd();
 		},
-
+		
 		scheduleHideAfterScrollEnd() {
 			this.clearScrollEndTimer();
 
@@ -2148,10 +2169,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				document.body.classList.remove("in-gallery");
 			}
 		},
-
+		
 		hasReachedShowScrollDistance() {
-			if (this.scrollGestureStartY === null) return false;
-			return Math.abs(window.scrollY - this.scrollGestureStartY) >= this.showScrollDistancePx;
+			return this.scrollGestureAccumulatedDistance >= this.showScrollDistancePx;
 		},
 
 		bindEvents() {
