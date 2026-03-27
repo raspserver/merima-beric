@@ -1333,13 +1333,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollGestureActive: false,
 		scrollGestureStartY: null,
 		scrollGestureType: null,
-		
+
 		scrollGestureAccumulatedDistance: 0,
 		lastObservedScrollY: window.scrollY,
 
+		// Neu für Safari/iOS:
+		touchContactActive: false,
+		waitingForFreshTouchMove: false,
+		countingCurrentTouchSequence: false,
+
 		hideDelayMs: utils.getRootTimeMs("--section-hint-hide-delay", 1000),
 		fadeDurationMs: utils.getRootTimeMs("--section-hint-fade-duration", 500),
-		showScrollDistancePx: utils.getRootNumber("--section-hint-show-scroll-distance", 200),
+		showScrollDistancePx: utils.getRootLengthPx(
+			"--section-hint-show-scroll-distance",
+			window.innerHeight
+		),
 
 		labels: {
 			about: "ÜBER MICH",
@@ -2012,7 +2020,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hideCompleteTimer = null;
 			}
 		},
-	
+
 		scheduleRelockAfterFullyHidden() {
 			this.clearHideCompleteTimer();
 
@@ -2027,12 +2035,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hideCompleteTimer = null;
 			}, this.fadeDurationMs);
 		},
-		
+
 		beginScrollGesture(type) {
 			this.clearScrollEndTimer();
 			this.clearHideCompleteTimer();
 
-			// Jede neue Touch-Geste beginnt bei 0
 			this.hasUnlockedScrollHints = false;
 			this.isVisible = false;
 
@@ -2041,11 +2048,32 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 			document.body.classList.remove("hints-visible");
 
-			this.scrollGestureActive = true;
 			this.scrollGestureType = type;
 			this.scrollGestureStartY = window.scrollY;
+			this.scrollGestureAccumulatedDistance = 0;
+			this.lastObservedScrollY = window.scrollY;
 
-			// Neu:
+			if (type === "touch") {
+				// Neuer Fingerkontakt:
+				// alte Safari-Inertia NICHT in neue Geste hineinrechnen.
+				this.touchContactActive = true;
+				this.waitingForFreshTouchMove = true;
+				this.countingCurrentTouchSequence = false;
+				this.scrollGestureActive = false;
+				return;
+			}
+
+			this.scrollGestureActive = true;
+		},
+
+		startCountingFreshTouchGesture() {
+			if (this.scrollGestureType !== "touch") return;
+
+			this.waitingForFreshTouchMove = false;
+			this.countingCurrentTouchSequence = true;
+			this.scrollGestureActive = true;
+
+			// Exakter Neustart der Distanzmessung ab dem ersten echten touchmove
 			this.scrollGestureAccumulatedDistance = 0;
 			this.lastObservedScrollY = window.scrollY;
 		},
@@ -2054,8 +2082,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.scrollGestureActive = false;
 			this.scrollGestureType = null;
 			this.scrollGestureStartY = null;
+
+			this.touchContactActive = false;
+			this.waitingForFreshTouchMove = false;
+			this.countingCurrentTouchSequence = false;
 		},
-		
+
 		accumulateScrollDistance() {
 			const currentY = window.scrollY;
 			const delta = Math.abs(currentY - this.lastObservedScrollY);
@@ -2090,23 +2122,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.scheduleRelockAfterFullyHidden();
 		},
-		
+
 		handleScrollActivity() {
 			if (state.programmaticScroll) {
 				this.hideImmediatelyForProgrammaticScroll();
 				return;
 			}
 
+			// Kritisch für Safari/iOS:
+			// Solange nach touchstart noch kein frisches touchmove kam,
+			// darf Rest-Inertia NICHT in die neue Zählung eingehen.
+			if (this.scrollGestureType === "touch" && this.waitingForFreshTouchMove) {
+				this.lastObservedScrollY = window.scrollY;
+				this.hide();
+				return;
+			}
+
 			const touchSequenceStillRelevant =
-				this.scrollGestureActive || this.scrollGestureType === "touch";
+				this.scrollGestureActive || this.countingCurrentTouchSequence;
 
 			if (!touchSequenceStillRelevant) {
 				return;
 			}
 
 			this.lastScrollTs = performance.now();
-
-			// Neu: jede Scrollbewegung dieser Touch-Sequenz mitzählen
 			this.accumulateScrollDistance();
 
 			if (!this.hasUnlockedScrollHints) {
@@ -2121,7 +2160,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.show();
 			this.scheduleHideAfterScrollEnd();
 		},
-		
+
 		scheduleHideAfterScrollEnd() {
 			this.clearScrollEndTimer();
 
@@ -2169,7 +2208,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				document.body.classList.remove("in-gallery");
 			}
 		},
-		
+
 		hasReachedShowScrollDistance() {
 			return this.scrollGestureAccumulatedDistance >= this.showScrollDistancePx;
 		},
@@ -2183,8 +2222,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					return;
 				}
 
-				// Solange die aktuelle Scrollphase von einer Touch-Geste stammt,
-				// soll auch Momentum/Inertia noch mitgezählt werden.
+				// Nur Touch-Gesten bzw. deren Inertia dürfen die Hints steuern
 				if (this.scrollGestureType === "touch") {
 					this.handleScrollActivity();
 				} else {
@@ -2198,29 +2236,48 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 				this.beginScrollGesture("touch");
 			}, { passive: true });
-			
+
 			window.addEventListener("touchmove", () => {
-				if (!this.scrollGestureActive) {
+				if (this.scrollGestureType !== "touch") {
 					this.beginScrollGesture("touch");
 				}
-			}, { passive: true });
-				
-			window.addEventListener("touchend", () => {
-				if (this.scrollGestureType === "touch") {
-					this.lastScrollTs = performance.now();
 
-					// Finger ist weg, aber Momentum derselben Touch-Geste darf weiterzählen
-					this.scrollGestureActive = false;
-
-					this.scheduleHideAfterScrollEnd();
+				// Erst das erste echte neue touchmove startet die neue Zählung
+				if (this.waitingForFreshTouchMove) {
+					this.startCountingFreshTouchGesture();
 				}
+			}, { passive: true });
+
+			window.addEventListener("touchend", () => {
+				if (this.scrollGestureType !== "touch") return;
+
+				this.touchContactActive = false;
+				this.lastScrollTs = performance.now();
+
+				if (this.countingCurrentTouchSequence) {
+					// Diese Geste hat wirklich aktiv gescrollt,
+					// also darf ihre Inertia weiterzählen.
+					this.scrollGestureActive = true;
+					this.scheduleHideAfterScrollEnd();
+					return;
+				}
+
+				// Nur Fingerkontakt ohne frische neue Scroll-Geste
+				this.waitingForFreshTouchMove = false;
+				this.scrollGestureActive = false;
+				this.countingCurrentTouchSequence = false;
+				this.hide();
 			}, { passive: true });
 
 			window.addEventListener("touchcancel", () => {
-				if (this.scrollGestureType === "touch") {
-					this.hide();
-					this.endScrollGesture();
-				}
+				if (this.scrollGestureType !== "touch") return;
+
+				this.touchContactActive = false;
+				this.waitingForFreshTouchMove = false;
+				this.countingCurrentTouchSequence = false;
+
+				this.hide();
+				this.endScrollGesture();
 			}, { passive: true });
 
 			window.addEventListener("pointerdown", (e) => {
@@ -2274,7 +2331,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.bindEvents();
 		}
 	};
-
+	
 	/* =========================================================
 	   GALLERY MODULE
 	========================================================= */
