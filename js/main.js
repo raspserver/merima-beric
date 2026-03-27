@@ -739,7 +739,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			state.targetGestureStretch = 0;
 		},
-
+	
 		handleScroll() {
 			if (!DOM.navbar) return;
 
@@ -751,6 +751,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (!state.programmaticScroll && Math.abs(deltaY) > SETTINGS.thresholds.directionLock) {
 				state.scrollDirection = deltaY > 0 ? "down" : "up";
+			}
+
+			// Manuellen Hero-Top-Zustand freigeben, sobald man nicht mehr ganz oben ist.
+			// Ab dann soll wieder die normale Scroll-Logik übernehmen.
+			if (state.manualNavbarOpen && currentY > 5) {
+				state.manualNavbarOpen = false;
 			}
 
 			state.lastScrollY = currentY;
@@ -2858,28 +2864,34 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		},
-		
+			
 		bindHeroClickBehavior() {
 			DOM.hero?.addEventListener("click", (e) => {
 				if (!DOM.navbar) return;
 				if (utils.isMobileViewport() && navbarModule.isOpen()) return;
 
 				const clickedCTA = e.target.closest(".cta-button");
-
 				if (clickedCTA) return;
 
 				const visible = parseFloat(
 					getComputedStyle(DOM.navbar).getPropertyValue("--nav-visible")
 				);
 
-				const newTarget = visible < 0.5 ? 1 : 0;
+				const openManually = visible < 0.5;
 
-				state.targetVisible = newTarget;
-				state.targetCompact = newTarget;
-				state.targetSurface = newTarget;
-				state.manualNavbarOpen = newTarget === 1;
+				if (openManually) {
+					state.manualNavbarOpen = true;
+					state.targetVisible = 1;
+					state.targetCompact = 1;
+					state.targetSurface = 1;
+				} else {
+					state.manualNavbarOpen = false;
+					state.targetVisible = 0;
+					state.targetCompact = 0;
+					state.targetSurface = 0;
+				}
+
 				state.targetGestureStretch = 0;
-
 				navbarModule.startAnimation();
 			});
 		},
