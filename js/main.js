@@ -2132,13 +2132,20 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hideImmediatelyForProgrammaticScroll();
 				return;
 			}
-
-			// Kritisch für Safari/iOS:
-			// Solange nach touchstart noch kein frisches touchmove kam,
-			// darf Rest-Inertia NICHT in die neue Zählung eingehen.
+			
 			if (this.scrollGestureType === "touch" && this.waitingForFreshTouchMove) {
+				// Solange noch kein frisches touchmove kam, keine neue Distanz zählen.
+				// Aber: wenn die Hints bereits freigeschaltet sind, nicht mehr ausblenden.
 				this.lastObservedScrollY = window.scrollY;
-				this.hide();
+
+				if (!this.hasUnlockedScrollHints) {
+					this.hide();
+					return;
+				}
+
+				// Bereits freigeschaltet: kleine Scrolls sollen die Hints sichtbar halten.
+				this.show();
+				this.scheduleHideAfterScrollEnd();
 				return;
 			}
 
