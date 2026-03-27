@@ -2242,7 +2242,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					this.hide();
 				}
 			}, { passive: true });
-	
+
 			window.addEventListener("touchstart", () => {
 				this.beginScrollGesture("touch");
 			}, { passive: true });
@@ -2256,8 +2256,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (this.waitingForFreshTouchMove) {
 					this.startCountingFreshTouchGesture();
 				}
-			}, { passive: true });		
-			
+			}, { passive: true });
+
 			window.addEventListener("touchend", () => {
 				if (this.scrollGestureType !== "touch") return;
 
@@ -2287,10 +2287,58 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.endScrollGesture();
 			}, { passive: true });
 
+			// Zusatz für Edge / Windows Hybridgeräte:
+			// Touch über Pointer Events genauso behandeln wie klassische touch* Events
 			window.addEventListener("pointerdown", (e) => {
+				if (e.pointerType === "touch") {
+					this.beginScrollGesture("touch");
+					return;
+				}
+
 				if (e.pointerType === "mouse") {
 					this.hide();
 				}
+			}, { passive: true });
+
+			window.addEventListener("pointermove", (e) => {
+				if (e.pointerType !== "touch") return;
+
+				if (this.scrollGestureType !== "touch") {
+					this.beginScrollGesture("touch");
+				}
+
+				if (this.waitingForFreshTouchMove) {
+					this.startCountingFreshTouchGesture();
+				}
+			}, { passive: true });
+
+			window.addEventListener("pointerup", (e) => {
+				if (e.pointerType !== "touch") return;
+
+				this.touchContactActive = false;
+				this.lastScrollTs = performance.now();
+
+				if (this.countingCurrentTouchSequence || this.hasUnlockedScrollHints) {
+					this.scrollGestureActive = true;
+					this.scheduleHideAfterScrollEnd();
+					return;
+				}
+
+				this.waitingForFreshTouchMove = false;
+				this.scrollGestureActive = false;
+				this.countingCurrentTouchSequence = false;
+				this.hide();
+			}, { passive: true });
+
+			window.addEventListener("pointercancel", (e) => {
+				if (e.pointerType !== "touch") return;
+
+				this.touchContactActive = false;
+				this.waitingForFreshTouchMove = false;
+				this.countingCurrentTouchSequence = false;
+
+				this.hide();
+				this.endScrollGesture();
 			}, { passive: true });
 
 			if ("onscrollend" in document) {
