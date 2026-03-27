@@ -2440,7 +2440,7 @@ section > .section-scroll-head + * {
 	position: relative;
 	isolation: isolate;
 
-	margin: 0 auto 1rem;
+	margin: 0 auto 0.1rem;
 	padding: 0 5%;
 	box-sizing: border-box;
 
