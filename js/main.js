@@ -1419,51 +1419,61 @@ document.addEventListener("DOMContentLoaded", () => {
         priority: config.priority || 0,
       };
     },
-
+    
     buildGeometry(context) {
-      const gap = this.getBoundaryGapPx();
-      const navbarBottom = this.getNavbarBottom();
-      const viewportBottom = this.getVisualViewportBottom();
-      const { current, next, overnext } = context;
+	  const gap = this.getBoundaryGapPx();
+	  const navbarBottom = this.getNavbarBottom();
+	  const viewportBottom = this.getVisualViewportBottom();
+	  const lowerThirdY = viewportBottom * (2 / 3);
+	  const { current, next, overnext } = context;
 
-      const text = {
-        currentForward: this.makeText(current, "forward"),
-        nextForward: next ? this.makeText(next, "forward") : "",
-        nextBackward: next ? this.makeText(next, "backward") : "",
-        overnextBackward: overnext ? this.makeText(overnext, "backward") : "",
-      };
+	  const text = {
+		currentForward: this.makeText(current, "forward"),
+		nextForward: next ? this.makeText(next, "forward") : "",
+		nextBackward: next ? this.makeText(next, "backward") : "",
+		overnextBackward: overnext ? this.makeText(overnext, "backward") : "",
+	  };
 
-      const nextRect = next?.getBoundingClientRect() || null;
-      const overnextRect = overnext?.getBoundingClientRect() || null;
-      const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
-      const overnextChangeY = overnextRect ? overnextRect.top : Number.POSITIVE_INFINITY;
+	  const nextRect = next?.getBoundingClientRect() || null;
+	  const overnextRect = overnext?.getBoundingClientRect() || null;
+	  const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
+	  const overnextChangeY = overnextRect ? overnextRect.top : Number.POSITIVE_INFINITY;
 
-      const anchorHeights = {
-        currentForward: this.getAnchorHeightForText(text.currentForward),
-        nextForward: this.getAnchorHeightForText(text.nextForward),
-        nextBackward: this.getAnchorHeightForText(text.nextBackward),
-        overnextBackward: this.getAnchorHeightForText(text.overnextBackward),
-      };
+	  const anchorHeights = {
+		currentForward: this.getAnchorHeightForText(text.currentForward),
+		nextForward: this.getAnchorHeightForText(text.nextForward),
+		nextBackward: this.getAnchorHeightForText(text.nextBackward),
+		overnextBackward: this.getAnchorHeightForText(text.overnextBackward),
+	  };
 
-      return {
-        gap,
-        changeY,
-        overnextChangeY,
-        docks: {
-          top: { current: navbarBottom + gap + anchorHeights.currentForward / 2 },
-          bottom: {
-            next: next ? viewportBottom - gap - anchorHeights.nextBackward / 2 : 0,
-            overnext: overnext ? viewportBottom - gap - anchorHeights.overnextBackward / 2 : 0,
-          },
-        },
-        band: { top: navbarBottom, bottom: viewportBottom },
-        transition: {
-          nextForwardBelowBoundary: next ? changeY + gap + anchorHeights.nextForward / 2 : 0,
-          nextBackwardAboveBoundary: next ? changeY - gap - anchorHeights.nextBackward / 2 : 0,
-          overnextBackwardAboveBoundary: overnext ? overnextChangeY - gap - anchorHeights.overnextBackward / 2 : 0,
-        },
-      };
-    },
+	  return {
+		gap,
+		changeY,
+		overnextChangeY,
+		docks: {
+		  top: {
+			current: navbarBottom + gap + anchorHeights.currentForward / 2,
+		  },
+		  bottom: {
+			next: next ? viewportBottom - gap - anchorHeights.nextBackward / 2 : 0,
+			overnext: overnext ? viewportBottom - gap - anchorHeights.overnextBackward / 2 : 0,
+		  },
+		  lowerThird: {
+			next: next ? lowerThirdY - gap - anchorHeights.nextBackward / 2 : 0,
+			overnext: overnext ? lowerThirdY - gap - anchorHeights.overnextBackward / 2 : 0,
+		  },
+		},
+		band: {
+		  top: navbarBottom,
+		  bottom: viewportBottom,
+		},
+		transition: {
+		  nextForwardBelowBoundary: next ? changeY + gap + anchorHeights.nextForward / 2 : 0,
+		  nextBackwardAboveBoundary: next ? changeY - gap - anchorHeights.nextBackward / 2 : 0,
+		  overnextBackwardAboveBoundary: overnext ? overnextChangeY - gap - anchorHeights.overnextBackward / 2 : 0,
+		},
+	  };
+	},
 
     buildPlacements(context, geometry) {
       const { current, next, overnext } = context;
@@ -1482,47 +1492,49 @@ document.addEventListener("DOMContentLoaded", () => {
         }));
         return placements;
       }
-
+   
       if (isHomeCurrent) {
-        if (nextZone === "entering" || nextZone === "passing") {
-          push(this.createPlacement(next, {
-            role: "transition",
-            variant: "forward",
-            top: geometry.transition.nextForwardBelowBoundary,
-            priority: 100,
-          }));
-        }
+		  if (nextZone === "entering" || nextZone === "passing") {
+			push(this.createPlacement(next, {
+			  role: "transition",
+			  variant: "forward",
+			  top: geometry.transition.nextForwardBelowBoundary,
+			  priority: 100,
+			}));
+		  }
 
-        if (overnext) {
-          if (overnextZone !== "outside") {
-            push(this.createPlacement(overnext, {
-              role: "transition",
-              variant: "backward",
-              top: geometry.transition.overnextBackwardAboveBoundary,
-              priority: 60,
-            }));
-          } else if (nextZone === "entering") {
-            push(this.createPlacement(overnext, {
-              role: "bottomDock",
-              variant: "backward",
-              top: geometry.docks.bottom.overnext,
-              priority: 60,
-            }));
-          }
-        }
+		  if (overnext) {
+			if (overnextZone !== "outside") {
+			  push(this.createPlacement(overnext, {
+				role: "transition",
+				variant: "backward",
+				top: geometry.transition.overnextBackwardAboveBoundary,
+				priority: 60,
+			  }));
+			} else if (nextZone === "entering") {
+			  push(this.createPlacement(overnext, {
+				role: "bottomDock",
+				variant: "backward",
+				top: geometry.docks.lowerThird.overnext,
+				priority: 60,
+			  }));
+			}
+		  }
 
-        if (nextZone === "outside" || nextZone === "leaving") {
-          push(this.createPlacement(next, {
-            role: "bottomDock",
-            variant: "backward",
-            top: geometry.docks.bottom.next,
-            priority: 70,
-          }));
-        }
+		  if (nextZone === "outside" || nextZone === "leaving") {
+			if (geometry.changeY > geometry.docks.lowerThird.next + geometry.gap) {
+			  push(this.createPlacement(next, {
+				role: "bottomDock",
+				variant: "backward",
+				top: geometry.docks.lowerThird.next,
+				priority: 70,
+			  }));
+			}
+		  }
 
-        return placements;
-      }
-
+		  return placements;
+		}
+      
       if (nextZone === "outside") {
         push(this.createPlacement(current, {
           role: "topDock",
