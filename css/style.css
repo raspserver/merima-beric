@@ -2427,10 +2427,6 @@ section > .section-scroll-head + * {
 	overflow: clip;
 }
 
-
-
-
-
 .gallery .section-title {
 	margin-bottom: 4rem;
 	text-align: center;
@@ -2444,7 +2440,7 @@ section > .section-scroll-head + * {
 	position: relative;
 	isolation: isolate;
 
-	margin: 0 auto 40rem;
+	margin: 0 auto 4rem;
 	padding: 0 5%;
 	box-sizing: border-box;
 
