@@ -2035,18 +2035,21 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hideCompleteTimer = null;
 			}, this.fadeDurationMs);
 		},
-
+		
 		beginScrollGesture(type) {
 			this.clearScrollEndTimer();
 			this.clearHideCompleteTimer();
 
-			this.hasUnlockedScrollHints = false;
-			this.isVisible = false;
+			// NICHT bei jeder neuen Geste wieder relocken.
+			// Nur wenn noch nie freigeschaltet wurde, bleiben sie zunächst hidden.
+			if (!this.hasUnlockedScrollHints) {
+				this.isVisible = false;
 
-			if (this.root) {
-				this.root.classList.remove("is-visible");
+				if (this.root) {
+					this.root.classList.remove("is-visible");
+				}
+				document.body.classList.remove("hints-visible");
 			}
-			document.body.classList.remove("hints-visible");
 
 			this.scrollGestureType = type;
 			this.scrollGestureStartY = window.scrollY;
@@ -2054,12 +2057,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.lastObservedScrollY = window.scrollY;
 
 			if (type === "touch") {
-				// Neuer Fingerkontakt:
-				// alte Safari-Inertia NICHT in neue Geste hineinrechnen.
 				this.touchContactActive = true;
 				this.waitingForFreshTouchMove = true;
 				this.countingCurrentTouchSequence = false;
-				this.scrollGestureActive = false;
+
+				// Wenn bereits freigeschaltet, bleibt die Scroll-Geste aktiv
+				// und weitere Bewegungen halten die Hints sichtbar.
+				this.scrollGestureActive = this.hasUnlockedScrollHints;
 				return;
 			}
 
@@ -2243,23 +2247,20 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (this.waitingForFreshTouchMove) {
 					this.startCountingFreshTouchGesture();
 				}
-			}, { passive: true });
-
+			}, { passive: true });		
+			
 			window.addEventListener("touchend", () => {
 				if (this.scrollGestureType !== "touch") return;
 
 				this.touchContactActive = false;
 				this.lastScrollTs = performance.now();
 
-				if (this.countingCurrentTouchSequence) {
-					// Diese Geste hat wirklich aktiv gescrollt,
-					// also darf ihre Inertia weiterzählen.
+				if (this.countingCurrentTouchSequence || this.hasUnlockedScrollHints) {
 					this.scrollGestureActive = true;
 					this.scheduleHideAfterScrollEnd();
 					return;
 				}
 
-				// Nur Fingerkontakt ohne frische neue Scroll-Geste
 				this.waitingForFreshTouchMove = false;
 				this.scrollGestureActive = false;
 				this.countingCurrentTouchSequence = false;
