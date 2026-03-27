@@ -2024,6 +2024,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 
 		beginScrollGesture(type) {
+			this.clearScrollEndTimer();
+			this.clearHideCompleteTimer();
+
+			// Jede neue Touch-Geste beginnt wie in Chrome bei Null
+			this.hasUnlockedScrollHints = false;
+			this.isVisible = false;
+
+			if (this.root) {
+				this.root.classList.remove("is-visible");
+			}
+			document.body.classList.remove("hints-visible");
+
 			this.scrollGestureActive = true;
 			this.scrollGestureType = type;
 			this.scrollGestureStartY = window.scrollY;
@@ -2154,16 +2166,23 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 				this.beginScrollGesture("touch");
 			}, { passive: true });
-
+			
 			window.addEventListener("touchmove", () => {
 				if (!this.scrollGestureActive) {
 					this.beginScrollGesture("touch");
 				}
 			}, { passive: true });
-
+			
 			window.addEventListener("touchend", () => {
 				if (this.scrollGestureType === "touch") {
 					this.lastScrollTs = performance.now();
+
+					// Geste ist beendet -> nächste Berührung startet neu
+					this.scrollGestureActive = false;
+					this.scrollGestureType = null;
+					this.scrollGestureStartY = null;
+					this.hasUnlockedScrollHints = false;
+
 					this.scheduleHideAfterScrollEnd();
 				}
 			}, { passive: true });
