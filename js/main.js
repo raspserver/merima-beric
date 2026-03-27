@@ -2148,9 +2148,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.scheduleHideAfterScrollEnd();
 				return;
 			}
-
+			
 			const touchSequenceStillRelevant =
-				this.scrollGestureActive || this.countingCurrentTouchSequence;
+				this.hasUnlockedScrollHints ||
+				this.scrollGestureActive ||
+				this.countingCurrentTouchSequence;
 
 			if (!touchSequenceStillRelevant) {
 				return;
