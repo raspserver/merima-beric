@@ -1722,7 +1722,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				priority
 			};
 		},
-
+	
 		buildGeometry(context) {
 			const gap = this.getBoundaryGapPx();
 			const navbarBottom = this.getNavbarBottom();
@@ -1738,7 +1738,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			};
 
 			const nextRect = next?.getBoundingClientRect() || null;
+			const overnextRect = overnext?.getBoundingClientRect() || null;
+
 			const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
+			const overnextChangeY = overnextRect ? overnextRect.top : Number.POSITIVE_INFINITY;
 
 			const anchorHeights = {
 				currentForward: this.getAnchorHeightForText(text.currentForward),
@@ -1770,8 +1773,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				nextForwardBelowBoundary: next
 					? changeY + gap + anchorHeights.nextForward / 2
 					: 0,
+
 				nextBackwardAboveBoundary: next
 					? changeY - gap - anchorHeights.nextBackward / 2
+					: 0,
+
+				overnextBackwardAboveBoundary: overnext
+					? overnextChangeY - gap - anchorHeights.overnextBackward / 2
 					: 0
 			};
 
@@ -1781,6 +1789,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				anchorHeights,
 				band,
 				changeY,
+				overnextChangeY,
 				docks,
 				transition
 			};
@@ -1793,9 +1802,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				current?.classList?.contains("hero") ||
 				current?.id === "home";
 
-			const zone = next
+			const nextZone = next
 				? this.getTransitionZone(
 					geometry.changeY,
+					geometry.band.top,
+					geometry.band.bottom
+				)
+				: "outside";
+
+			const overnextZone = overnext
+				? this.getTransitionZone(
+					geometry.overnextChangeY,
 					geometry.band.top,
 					geometry.band.bottom
 				)
@@ -1821,7 +1838,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			if (isHomeCurrent) {
-				if (zone === "entering") {
+				if (nextZone === "entering") {
 					pushPlacement(
 						this.createPlacement(next, {
 							role: "transition",
@@ -1831,17 +1848,30 @@ document.addEventListener("DOMContentLoaded", () => {
 						})
 					);
 
-					pushPlacement(
-						this.createPlacement(overnext, {
-							role: "bottomDock",
-							variant: "backward",
-							top: geometry.docks.bottom.overnext,
-							priority: 60
-						})
-					);
+					if (overnext) {
+						if (overnextZone !== "outside") {
+							pushPlacement(
+								this.createPlacement(overnext, {
+									role: "transition",
+									variant: "backward",
+									top: geometry.transition.overnextBackwardAboveBoundary,
+									priority: 60
+								})
+							);
+						} else {
+							pushPlacement(
+								this.createPlacement(overnext, {
+									role: "bottomDock",
+									variant: "backward",
+									top: geometry.docks.bottom.overnext,
+									priority: 60
+								})
+							);
+						}
+					}
 				}
 
-				if (zone === "passing") {
+				if (nextZone === "passing") {
 					pushPlacement(
 						this.createPlacement(next, {
 							role: "transition",
@@ -1850,12 +1880,38 @@ document.addEventListener("DOMContentLoaded", () => {
 							priority: 100
 						})
 					);
+
+					if (overnext) {
+						if (overnextZone !== "outside") {
+							pushPlacement(
+								this.createPlacement(overnext, {
+									role: "transition",
+									variant: "backward",
+									top: geometry.transition.overnextBackwardAboveBoundary,
+									priority: 60
+								})
+							);
+						}
+					}
+				}
+
+				if (nextZone === "outside" || nextZone === "leaving") {
+					if (next) {
+						pushPlacement(
+							this.createPlacement(next, {
+								role: "bottomDock",
+								variant: "backward",
+								top: geometry.docks.bottom.next,
+								priority: 70
+							})
+						);
+					}
 				}
 
 				return placements;
 			}
-
-			if (zone === "outside") {
+	
+			if (nextZone === "outside") {
 				pushPlacement(
 					this.createPlacement(current, {
 						role: "topDock",
@@ -1865,19 +1921,21 @@ document.addEventListener("DOMContentLoaded", () => {
 					})
 				);
 
-				pushPlacement(
-					this.createPlacement(next, {
-						role: "bottomDock",
-						variant: "backward",
-						top: geometry.docks.bottom.next,
-						priority: 70
-					})
-				);
+				if (next) {
+					pushPlacement(
+						this.createPlacement(next, {
+							role: "bottomDock",
+							variant: "backward",
+							top: geometry.docks.bottom.next,
+							priority: 70
+						})
+					);
+				}
 
 				return placements;
 			}
 
-			if (zone === "entering") {
+			if (nextZone === "entering") {
 				pushPlacement(
 					this.createPlacement(next, {
 						role: "transition",
@@ -1887,19 +1945,32 @@ document.addEventListener("DOMContentLoaded", () => {
 					})
 				);
 
-				pushPlacement(
-					this.createPlacement(overnext, {
-						role: "bottomDock",
-						variant: "backward",
-						top: geometry.docks.bottom.overnext,
-						priority: 60
-					})
-				);
+				if (overnext) {
+					if (overnextZone !== "outside") {
+						pushPlacement(
+							this.createPlacement(overnext, {
+								role: "transition",
+								variant: "backward",
+								top: geometry.transition.overnextBackwardAboveBoundary,
+								priority: 60
+							})
+						);
+					} else {
+						pushPlacement(
+							this.createPlacement(overnext, {
+								role: "bottomDock",
+								variant: "backward",
+								top: geometry.docks.bottom.overnext,
+								priority: 60
+							})
+						);
+					}
+				}
 
 				return placements;
 			}
 
-			if (zone === "passing") {
+			if (nextZone === "passing") {
 				pushPlacement(
 					this.createPlacement(current, {
 						role: "topDock",
@@ -1921,7 +1992,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				return placements;
 			}
 
-			if (zone === "leaving") {
+			if (nextZone === "leaving") {
 				pushPlacement(
 					this.createPlacement(current, {
 						role: "topDock",
@@ -1945,7 +2016,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			return placements;
 		},
-
+		
 		renderPlacements(placements) {
 			const visiblePlacements = (placements || [])
 				.filter(Boolean)
