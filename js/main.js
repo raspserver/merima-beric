@@ -2072,18 +2072,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.scheduleRelockAfterFullyHidden();
 		},
-
+		
 		handleScrollActivity() {
 			if (state.programmaticScroll) {
 				this.hideImmediatelyForProgrammaticScroll();
 				return;
 			}
 
-			this.lastScrollTs = performance.now();
+			const touchSequenceStillRelevant =
+				this.scrollGestureActive || this.scrollGestureType === "touch";
 
-			if (!this.scrollGestureActive) {
+			if (!touchSequenceStillRelevant) {
 				return;
 			}
+
+			this.lastScrollTs = performance.now();
 
 			if (!this.hasUnlockedScrollHints) {
 				if (!this.hasReachedShowScrollDistance()) {
