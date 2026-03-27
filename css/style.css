@@ -2424,7 +2424,7 @@ section > .section-scroll-head + * {
 
 	position: relative;
 	isolation: isolate;
-	overflow: clip;
+	overflow: visible; 
 }
 
 .gallery .section-title {
