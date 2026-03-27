@@ -2009,13 +2009,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.hideCompleteTimer = null;
 			}
 		},
-
+	
 		scheduleRelockAfterFullyHidden() {
 			this.clearHideCompleteTimer();
 
 			this.hideCompleteTimer = setTimeout(() => {
 				if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
 					this.hasUnlockedScrollHints = false;
+					this.scrollGestureType = null;
+					this.scrollGestureStartY = null;
 					this.endScrollGesture();
 				}
 
@@ -2153,7 +2155,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.addEventListener("scroll", () => {
 				this.scheduleUpdate();
 
-				if (this.scrollGestureActive && this.scrollGestureType === "touch") {
+				if (state.programmaticScroll) {
+					this.hideImmediatelyForProgrammaticScroll();
+					return;
+				}
+
+				// Solange die aktuelle Scrollphase von einer Touch-Geste stammt,
+				// soll auch Momentum/Inertia noch mitgezählt werden.
+				if (this.scrollGestureType === "touch") {
 					this.handleScrollActivity();
 				} else {
 					this.hide();
@@ -2172,16 +2181,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					this.beginScrollGesture("touch");
 				}
 			}, { passive: true });
-			
+				
 			window.addEventListener("touchend", () => {
 				if (this.scrollGestureType === "touch") {
 					this.lastScrollTs = performance.now();
 
-					// Geste ist beendet -> nächste Berührung startet neu
+					// Finger ist weg, aber Momentum derselben Touch-Geste darf weiterzählen
 					this.scrollGestureActive = false;
-					this.scrollGestureType = null;
-					this.scrollGestureStartY = null;
-					this.hasUnlockedScrollHints = false;
 
 					this.scheduleHideAfterScrollEnd();
 				}
