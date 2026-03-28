@@ -1587,7 +1587,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 
 		  return placements;
-		}
+		},
 
 	  buildPlacements(context, geometry) {
 		const specialHomeAbout = this.buildHomeAboutSpecialPlacements(context, geometry);
