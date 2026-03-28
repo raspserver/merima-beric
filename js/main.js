@@ -1582,7 +1582,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  return [];
 		}
 
-		// mittleres + oberes Drittel: #about oberhalb der Grenze
+		// mittleres + oberes Drittel: #about unterhalb der Grenze
 		push(this.createPlacement(about, {
 		  role: "transition",
 		  variant: "forward",
