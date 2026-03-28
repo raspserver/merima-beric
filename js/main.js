@@ -1490,11 +1490,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		};
 	  },
 
-
-
-
-
-
 	  buildHomeAboutSpecialPlacements(context, geometry) {
 		const about = context.sections.find((section) => section?.id === "about");
 		const gallery = context.sections.find((section) => section?.id === "gallery");
@@ -1591,7 +1586,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		push(this.createPlacement(about, {
 		  role: "transition",
 		  variant: "forward",
-		  top: aboutAboveBoundaryForwardTop,
+		  top: aboutBelowBoundaryTop
 		  priority: 100,
 		}));
 
