@@ -1862,8 +1862,24 @@ document.addEventListener("DOMContentLoaded", () => {
 	  },
 
 	  hasReachedShowScrollDistance() {
-		return this.scrollGestureAccumulatedDistance >= this.showScrollDistancePx;
-	  },
+		  if (this.scrollGestureAccumulatedDistance >= this.showScrollDistancePx) {
+			return true;
+		  }
+
+		  // Sonderfall: ganz oben gestartet und #about soll schon sichtbar werden,
+		  // sobald die home/about-Grenze ins mittlere Drittel wandert.
+		  const context = this.getSectionContext();
+		  if (!context) return false;
+
+		  const geometry = this.buildGeometry(context);
+		  const specialPlacements = this.buildHomeAboutSpecialPlacements(context, geometry);
+
+		  return !!specialPlacements?.some(
+			(placement) =>
+			  placement?.section?.id === "about" &&
+			  (placement.opacity ?? 1) > 0.001
+		  );
+		},
 
 	  show() {
 		if (!this.root) return;
