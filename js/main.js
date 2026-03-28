@@ -1254,17 +1254,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 
 		  const rect = section.getBoundingClientRect();
-		  
+
+		  // Sonderfall für erste echte Section (#about)
 		  if (section.id === "about") {
-			  // Für #about nicht zu früh umschalten.
-			  // Die eigentliche Hint-Logik übernimmt buildHomeAboutSpecialPlacements().
-			  if (rect.top <= navbarBottom) {
-				currentIndex = i;
-			  } else {
-				break;
-			  }
-			  continue;
+			const switchLine = scrollingUp ? navbarBottom : lowerThirdY;
+
+			if (rect.top <= switchLine) {
+			  currentIndex = i;
+			} else {
+			  break;
 			}
+			continue;
+		  }
 
 		  if (rect.top <= navbarBottom) {
 			currentIndex = i;
@@ -1587,7 +1588,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 
 		  return placements;
-		},
+		}
 
 	  buildPlacements(context, geometry) {
 		const specialHomeAbout = this.buildHomeAboutSpecialPlacements(context, geometry);
