@@ -1254,18 +1254,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 
 		  const rect = section.getBoundingClientRect();
-
-		  // Sonderfall für erste echte Section (#about)
+		  
 		  if (section.id === "about") {
-			const switchLine = scrollingUp ? navbarBottom : lowerThirdY;
-
-			if (rect.top <= switchLine) {
-			  currentIndex = i;
-			} else {
-			  break;
+			  // Für #about nicht zu früh umschalten.
+			  // Die eigentliche Hint-Logik übernimmt buildHomeAboutSpecialPlacements().
+			  if (rect.top <= navbarBottom) {
+				currentIndex = i;
+			  } else {
+				break;
+			  }
+			  continue;
 			}
-			continue;
-		  }
 
 		  if (rect.top <= navbarBottom) {
 			currentIndex = i;
@@ -1489,119 +1488,106 @@ document.addEventListener("DOMContentLoaded", () => {
 		  },
 		};
 	  },
-
+ 
 	  buildHomeAboutSpecialPlacements(context, geometry) {
-		const about = context.sections.find((section) => section?.id === "about");
-		const gallery = context.sections.find((section) => section?.id === "gallery");
+		  const about = context.sections.find((section) => section?.id === "about");
+		  const gallery = context.sections.find((section) => section?.id === "gallery");
 
-		if (!about) return null;
+		  if (!about) return null;
 
-		const boundaryY = about.getBoundingClientRect().top;
-		const viewportBottom = geometry.band.bottom;
-		const navbarBottom = geometry.band.top;
+		  const boundaryY = about.getBoundingClientRect().top;
+		  const viewportBottom = geometry.band.bottom;
+		  const navbarBottom = geometry.band.top;
 
-		// Nur aktiv, solange die Grenze home/about im Sichtfeld ist
-		if (!Number.isFinite(boundaryY) || boundaryY <= navbarBottom || boundaryY >= viewportBottom) {
-		  return null;
-		}
+		  // Drittelgrenzen
+		  const upperThirdEnd = viewportBottom / 3;
+		  const middleThirdEnd = viewportBottom * (2 / 3);
 
-		const topThirdEnd = viewportBottom / 3;
-		const middleThirdEnd = viewportBottom * (2 / 3);
-		const scrollingUp = state.scrollDirection === "up";
+		  // Nur solange die home/about-Grenze sichtbar ist
+		  if (!Number.isFinite(boundaryY) || boundaryY <= navbarBottom || boundaryY >= viewportBottom) {
+			return null;
+		  }
 
-		const placements = [];
-		const push = (placement) => placement?.section && placements.push(placement);
+		  const scrollingUp = state.scrollDirection === "up";
+		  const placements = [];
+		  const push = (placement) => placement?.section && placements.push(placement);
 
-		const aboutForwardText = this.makeText(about, "forward");
-		const aboutBackwardText = this.makeText(about, "backward");
-		const galleryBackwardText = gallery ? this.makeText(gallery, "backward") : "";
+		  const aboutForwardText = this.makeText(about, "forward");
+		  const aboutBackwardText = this.makeText(about, "backward");
+		  const galleryBackwardText = gallery ? this.makeText(gallery, "backward") : "";
 
-		const aboutForwardHeight = this.getAnchorHeightForText(aboutForwardText);
-		const aboutBackwardHeight = this.getAnchorHeightForText(aboutBackwardText);
-		const galleryBackwardHeight = gallery ? this.getAnchorHeightForText(galleryBackwardText) : 0;
+		  const aboutForwardHeight = this.getAnchorHeightForText(aboutForwardText);
+		  const aboutBackwardHeight = this.getAnchorHeightForText(aboutBackwardText);
+		  const galleryBackwardHeight = gallery ? this.getAnchorHeightForText(galleryBackwardText) : 0;
 
-		const aboutBelowBoundaryTop = boundaryY + geometry.gap + aboutForwardHeight / 2;
-		const aboutAboveBoundaryForwardTop = boundaryY - geometry.gap - aboutForwardHeight / 2;
-		const aboutAboveBoundaryBackwardTop = boundaryY - geometry.gap - aboutBackwardHeight / 2;
-		const galleryBottomTop = gallery
-		  ? viewportBottom - geometry.gap - galleryBackwardHeight / 2
-		  : 0;
+		  const aboutBelowBoundaryTop = boundaryY + geometry.gap + aboutForwardHeight / 2;
+		  const aboutAboveBoundaryForwardTop = boundaryY - geometry.gap - aboutForwardHeight / 2;
+		  const aboutAboveBoundaryBackwardTop = boundaryY - geometry.gap - aboutBackwardHeight / 2;
+		  const galleryBottomTop = gallery
+			? viewportBottom - geometry.gap - galleryBackwardHeight / 2
+			: 0;
 
-		if (scrollingUp) {
-		  // von #about nach oben Richtung #home
+		  if (!scrollingUp) {
+			// SCROLL DOWN: #about soll erscheinen,
+			// sobald die Grenze vom unteren ins mittlere Drittel wandert.
+			if (boundaryY < middleThirdEnd) {
+			  push(this.createPlacement(about, {
+				role: "transition",
+				variant: "forward",
+				top: aboutAboveBoundaryForwardTop,
+				priority: 100,
+			  }));
+			}
 
-		  if (boundaryY < middleThirdEnd) {
-			// oberes + mittleres Drittel:
-			// #about unterhalb der Grenze mitlaufend
-			push(this.createPlacement(about, {
-			  role: "transition",
-			  variant: "forward",
-			  top: aboutBelowBoundaryTop,
-			  priority: 100,
-			}));
-
-			// #gallery unten stehen lassen, im mittleren Drittel ausfaden
-			if (gallery) {
-			  let galleryOpacity = 1;
-
-			  if (boundaryY >= topThirdEnd) {
-				const fadeProgress = (boundaryY - topThirdEnd) / (middleThirdEnd - topThirdEnd);
-				galleryOpacity = Math.max(0, 1 - fadeProgress);
-			  }
-
-			  if (galleryOpacity > 0.001) {
-				push(this.createPlacement(gallery, {
-				  role: "bottomDock",
-				  variant: "backward",
-				  top: galleryBottomTop,
-				  opacity: galleryOpacity,
-				  priority: 60,
-				}));
-			  }
+			// #gallery erst zusätzlich, wenn die Grenze ins obere Drittel kommt
+			if (gallery && boundaryY < upperThirdEnd) {
+			  push(this.createPlacement(gallery, {
+				role: "bottomDock",
+				variant: "backward",
+				top: galleryBottomTop,
+				priority: 60,
+			  }));
 			}
 
 			return placements;
 		  }
 
-		  // unteres Drittel:
-		  // #about oberhalb der Grenze, Richtungswechsel auf <<
-		  push(this.createPlacement(about, {
-			role: "transition",
-			variant: "backward",
-			top: aboutAboveBoundaryBackwardTop,
-			priority: 100,
-		  }));
+		  // SCROLL UP
+		  if (boundaryY < middleThirdEnd) {
+			if (boundaryY < upperThirdEnd) {
+			  push(this.createPlacement(about, {
+				role: "transition",
+				variant: "forward",
+				top: aboutBelowBoundaryTop,
+				priority: 100,
+			  }));
+
+			  if (gallery) {
+				const fadeProgress = boundaryY / upperThirdEnd;
+				const galleryOpacity = Math.max(0, Math.min(1, fadeProgress));
+
+				if (galleryOpacity > 0.001) {
+				  push(this.createPlacement(gallery, {
+					role: "bottomDock",
+					variant: "backward",
+					top: galleryBottomTop,
+					opacity: galleryOpacity,
+					priority: 60,
+				  }));
+				}
+			  }
+			} else {
+			  push(this.createPlacement(about, {
+				role: "transition",
+				variant: "backward",
+				top: aboutAboveBoundaryBackwardTop,
+				priority: 100,
+			  }));
+			}
+		  }
 
 		  return placements;
 		}
-
-		// scrolling down: von #home nach unten Richtung #about
-
-		// unteres Drittel: noch keine Hints
-		if (boundaryY >= middleThirdEnd) {
-		  return [];
-		}
-
-		// mittleres + oberes Drittel: #about oberhalb der Grenze
-		push(this.createPlacement(about, {
-		  role: "transition",
-		  variant: "forward",
-		  top: aboutAboveBoundaryForwardTop,
-		  priority: 100,
-		}));
-
-		// erst im oberen Drittel zusätzlich #gallery unten anzeigen
-		if (gallery && boundaryY < topThirdEnd) {
-		  push(this.createPlacement(gallery, {
-			role: "bottomDock",
-			variant: "backward",
-			top: galleryBottomTop,
-			priority: 60,
-		  }));
-		}
-
-		return placements;
-	  },
 
 	  buildPlacements(context, geometry) {
 		const specialHomeAbout = this.buildHomeAboutSpecialPlacements(context, geometry);
@@ -1862,24 +1848,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	  },
 
 	  hasReachedShowScrollDistance() {
-		  if (this.scrollGestureAccumulatedDistance >= this.showScrollDistancePx) {
-			return true;
-		  }
-
-		  // Sonderfall: ganz oben gestartet und #about soll schon sichtbar werden,
-		  // sobald die home/about-Grenze ins mittlere Drittel wandert.
-		  const context = this.getSectionContext();
-		  if (!context) return false;
-
-		  const geometry = this.buildGeometry(context);
-		  const specialPlacements = this.buildHomeAboutSpecialPlacements(context, geometry);
-
-		  return !!specialPlacements?.some(
-			(placement) =>
-			  placement?.section?.id === "about" &&
-			  (placement.opacity ?? 1) > 0.001
-		  );
-		},
+		return this.scrollGestureAccumulatedDistance >= this.showScrollDistancePx;
+	  },
 
 	  show() {
 		if (!this.root) return;
