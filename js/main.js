@@ -1122,7 +1122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
  
-  const scrollSectionHintModule = {
+	const scrollSectionHintModule = {
 	  root: null,
 	  measurer: null,
 	  metricsCache: new Map(),
@@ -1235,214 +1235,53 @@ document.addEventListener("DOMContentLoaded", () => {
 	  },
 
 	  getSectionContext() {
-		  const sections = this.getContentSections();
-		  if (!sections.length) return null;
+		const sections = this.getContentSections();
+		if (!sections.length) return null;
 
-		  const navbarBottom = this.getNavbarBottom();
-		  const viewportBottom = this.getVisualViewportBottom();
-		  const lowerThirdY = viewportBottom * (2 / 3);
-		  const scrollingUp = state.scrollDirection === "up";
+		const navbarBottom = this.getNavbarBottom();
+		const viewportBottom = this.getVisualViewportBottom();
+		const lowerThirdY = viewportBottom * (2 / 3);
+		const scrollingUp = state.scrollDirection === "up";
 
-		  let currentIndex = 0;
+		let currentIndex = 0;
 
-		  for (let i = 0; i < sections.length; i += 1) {
-			const section = sections[i];
+		for (let i = 0; i < sections.length; i += 1) {
+		  const section = sections[i];
 
-			if (section.classList?.contains("hero")) {
-			  currentIndex = i;
-			  continue;
-			}
+		  if (section.classList?.contains("hero")) {
+			currentIndex = i;
+			continue;
+		  }
 
-			const rect = section.getBoundingClientRect();
+		  const rect = section.getBoundingClientRect();
 
-			// Sonderfall nur für die erste echte Section nach der Hero:
-			// - beim Herunterscrollen: Umschalten erst im unteren Drittel
-			// - beim Hochschrollen: Umschalten schon an der Navbar-Kante
-			if (section.id === "about") {
-			  const switchLine = scrollingUp ? navbarBottom : lowerThirdY;
+		  // Sonderfall für erste echte Section (#about)
+		  if (section.id === "about") {
+			const switchLine = scrollingUp ? navbarBottom : lowerThirdY;
 
-			  if (rect.top <= switchLine) {
-				currentIndex = i;
-			  } else {
-				break;
-			  }
-			  continue;
-			}
-
-			// Alle weiteren Sections wie bisher
-			if (rect.top <= navbarBottom) {
+			if (rect.top <= switchLine) {
 			  currentIndex = i;
 			} else {
 			  break;
 			}
+			continue;
 		  }
 
-		  return {
-			sections,
-			currentIndex,
-			current: sections[currentIndex] || null,
-			next: sections[currentIndex + 1] || null,
-			overnext: sections[currentIndex + 2] || null,
-		  };
-		},
-
-		buildPlacements(context, geometry) {
-		  const { current, next, overnext } = context;
-		  const placements = [];
-		  const push = (placement) => placement?.section && placements.push(placement);
-
-		  const isHomeCurrent = current?.classList?.contains("hero") || current?.id === "home";
-		  const scrollingUp = state.scrollDirection === "up";
-
-		  const nextZone = next
-			? this.getTransitionZone(geometry.changeY, geometry.band.top, geometry.band.bottom)
-			: "outside";
-
-		  const overnextZone = overnext
-			? this.getTransitionZone(geometry.overnextChangeY, geometry.band.top, geometry.band.bottom)
-			: "outside";
-
-		  if (!isHomeCurrent && !next) {
-			push(this.createPlacement(current, {
-			  role: "topDock",
-			  variant: "forward",
-			  top: geometry.docks.top.current,
-			  priority: 100,
-			}));
-			return placements;
+		  if (rect.top <= navbarBottom) {
+			currentIndex = i;
+		  } else {
+			break;
 		  }
+		}
 
-		  // HERO / HOME als aktuelle Section
-		  if (isHomeCurrent) {
-			// Robuster Sonderfall:
-			// Beim Hochschrollen aus #about zurück in die Hero
-			// soll der Hint nicht ins untere Drittel springen,
-			// sondern oben angedockt bleiben.
-			if (scrollingUp) {
-			  if (next) {
-				push(this.createPlacement(next, {
-				  role: "topDock",
-				  variant: "forward",
-				  top: geometry.docks.top.current,
-				  priority: 100,
-				}));
-			  }
-			  return placements;
-			}
-
-			// Standardverhalten beim Herunterscrollen
-			if (nextZone === "entering" || nextZone === "passing") {
-			  push(this.createPlacement(next, {
-				role: "transition",
-				variant: "forward",
-				top: geometry.transition.nextForwardBelowBoundary,
-				priority: 100,
-			  }));
-			}
-
-			if (overnext) {
-			  if (overnextZone !== "outside") {
-				push(this.createPlacement(overnext, {
-				  role: "transition",
-				  variant: "backward",
-				  top: geometry.transition.overnextBackwardAboveBoundary,
-				  priority: 60,
-				}));
-			  } else if (nextZone === "entering") {
-				push(this.createPlacement(overnext, {
-				  role: "bottomDock",
-				  variant: "backward",
-				  top: geometry.docks.lowerThird.overnext,
-				  priority: 60,
-				}));
-			  }
-			}
-
-			if (nextZone === "outside" || nextZone === "leaving") {
-			  if (geometry.changeY > geometry.docks.lowerThird.next + geometry.gap) {
-				push(this.createPlacement(next, {
-				  role: "bottomDock",
-				  variant: "backward",
-				  top: geometry.docks.lowerThird.next,
-				  priority: 70,
-				}));
-			  }
-			}
-
-			return placements;
-		  }
-
-		  if (nextZone === "outside") {
-			push(this.createPlacement(current, {
-			  role: "topDock",
-			  variant: "forward",
-			  top: geometry.docks.top.current,
-			  priority: 100,
-			}));
-			push(this.createPlacement(next, {
-			  role: "bottomDock",
-			  variant: "backward",
-			  top: geometry.docks.bottom.next,
-			  priority: 70,
-			}));
-			return placements;
-		  }
-
-		  if (nextZone === "entering") {
-			push(this.createPlacement(next, {
-			  role: "transition",
-			  variant: "forward",
-			  top: geometry.transition.nextForwardBelowBoundary,
-			  priority: 100,
-			}));
-
-			if (overnext) {
-			  push(this.createPlacement(overnext, {
-				role: overnextZone !== "outside" ? "transition" : "bottomDock",
-				variant: "backward",
-				top: overnextZone !== "outside"
-				  ? geometry.transition.overnextBackwardAboveBoundary
-				  : geometry.docks.bottom.overnext,
-				priority: 60,
-			  }));
-			}
-
-			return placements;
-		  }
-
-		  if (nextZone === "passing") {
-			push(this.createPlacement(current, {
-			  role: "topDock",
-			  variant: "forward",
-			  top: geometry.docks.top.current,
-			  priority: 90,
-			}));
-			push(this.createPlacement(next, {
-			  role: "transition",
-			  variant: "forward",
-			  top: geometry.transition.nextForwardBelowBoundary,
-			  priority: 100,
-			}));
-			return placements;
-		  }
-
-		  if (nextZone === "leaving") {
-			push(this.createPlacement(current, {
-			  role: "topDock",
-			  variant: "forward",
-			  top: geometry.docks.top.current,
-			  priority: 90,
-			}));
-			push(this.createPlacement(next, {
-			  role: "transition",
-			  variant: "backward",
-			  top: geometry.transition.nextBackwardAboveBoundary,
-			  priority: 100,
-			}));
-		  }
-
-		  return placements;
-		},
+		return {
+		  sections,
+		  currentIndex,
+		  current: sections[currentIndex] || null,
+		  next: sections[currentIndex + 1] || null,
+		  overnext: sections[currentIndex + 2] || null,
+		};
+	  },
 
 	  measureHint(text) {
 		const key = text || " ";
@@ -1595,7 +1434,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  priority: config.priority || 0,
 		};
 	  },
-	  
+
 	  buildGeometry(context) {
 		const gap = this.getBoundaryGapPx();
 		const navbarBottom = this.getNavbarBottom();
@@ -1649,6 +1488,262 @@ document.addEventListener("DOMContentLoaded", () => {
 			overnextBackwardAboveBoundary: overnext ? overnextChangeY - gap - anchorHeights.overnextBackward / 2 : 0,
 		  },
 		};
+	  },
+
+	  buildHomeAboutSpecialPlacements(context, geometry) {
+		const about = context.sections.find((section) => section?.id === "about");
+		const gallery = context.sections.find((section) => section?.id === "gallery");
+
+		if (!about) return null;
+
+		const boundaryY = about.getBoundingClientRect().top;
+		const viewportBottom = geometry.band.bottom;
+		const navbarBottom = geometry.band.top;
+
+		// Nur aktiv, solange die Grenze home/about im Sichtfeld ist
+		if (!Number.isFinite(boundaryY) || boundaryY <= navbarBottom || boundaryY >= viewportBottom) {
+		  return null;
+		}
+
+		const topThirdEnd = viewportBottom / 3;
+		const middleThirdEnd = viewportBottom * (2 / 3);
+		const scrollingUp = state.scrollDirection === "up";
+
+		const placements = [];
+		const push = (placement) => placement?.section && placements.push(placement);
+
+		const aboutForwardText = this.makeText(about, "forward");
+		const aboutBackwardText = this.makeText(about, "backward");
+		const galleryBackwardText = gallery ? this.makeText(gallery, "backward") : "";
+
+		const aboutForwardHeight = this.getAnchorHeightForText(aboutForwardText);
+		const aboutBackwardHeight = this.getAnchorHeightForText(aboutBackwardText);
+		const galleryBackwardHeight = gallery ? this.getAnchorHeightForText(galleryBackwardText) : 0;
+
+		const aboutBelowBoundaryTop = boundaryY + geometry.gap + aboutForwardHeight / 2;
+		const aboutAboveBoundaryForwardTop = boundaryY - geometry.gap - aboutForwardHeight / 2;
+		const aboutAboveBoundaryBackwardTop = boundaryY - geometry.gap - aboutBackwardHeight / 2;
+		const galleryBottomTop = gallery
+		  ? viewportBottom - geometry.gap - galleryBackwardHeight / 2
+		  : 0;
+
+		if (scrollingUp) {
+		  // von #about nach oben Richtung #home
+
+		  if (boundaryY < middleThirdEnd) {
+			// oberes + mittleres Drittel:
+			// #about unterhalb der Grenze mitlaufend
+			push(this.createPlacement(about, {
+			  role: "transition",
+			  variant: "forward",
+			  top: aboutBelowBoundaryTop,
+			  priority: 100,
+			}));
+
+			// #gallery unten stehen lassen, im mittleren Drittel ausfaden
+			if (gallery) {
+			  let galleryOpacity = 1;
+
+			  if (boundaryY >= topThirdEnd) {
+				const fadeProgress = (boundaryY - topThirdEnd) / (middleThirdEnd - topThirdEnd);
+				galleryOpacity = Math.max(0, 1 - fadeProgress);
+			  }
+
+			  if (galleryOpacity > 0.001) {
+				push(this.createPlacement(gallery, {
+				  role: "bottomDock",
+				  variant: "backward",
+				  top: galleryBottomTop,
+				  opacity: galleryOpacity,
+				  priority: 60,
+				}));
+			  }
+			}
+
+			return placements;
+		  }
+
+		  // unteres Drittel:
+		  // #about oberhalb der Grenze, Richtungswechsel auf <<
+		  push(this.createPlacement(about, {
+			role: "transition",
+			variant: "backward",
+			top: aboutAboveBoundaryBackwardTop,
+			priority: 100,
+		  }));
+
+		  return placements;
+		}
+
+		// scrolling down: von #home nach unten Richtung #about
+
+		// unteres Drittel: noch keine Hints
+		if (boundaryY >= middleThirdEnd) {
+		  return [];
+		}
+
+		// mittleres + oberes Drittel: #about oberhalb der Grenze
+		push(this.createPlacement(about, {
+		  role: "transition",
+		  variant: "forward",
+		  top: aboutAboveBoundaryForwardTop,
+		  priority: 100,
+		}));
+
+		// erst im oberen Drittel zusätzlich #gallery unten anzeigen
+		if (gallery && boundaryY < topThirdEnd) {
+		  push(this.createPlacement(gallery, {
+			role: "bottomDock",
+			variant: "backward",
+			top: galleryBottomTop,
+			priority: 60,
+		  }));
+		}
+
+		return placements;
+	  },
+
+	  buildPlacements(context, geometry) {
+		const specialHomeAbout = this.buildHomeAboutSpecialPlacements(context, geometry);
+		if (specialHomeAbout) return specialHomeAbout;
+
+		const { current, next, overnext } = context;
+		const placements = [];
+		const push = (placement) => placement?.section && placements.push(placement);
+
+		const isHomeCurrent = current?.classList?.contains("hero") || current?.id === "home";
+
+		const nextZone = next
+		  ? this.getTransitionZone(geometry.changeY, geometry.band.top, geometry.band.bottom)
+		  : "outside";
+
+		const overnextZone = overnext
+		  ? this.getTransitionZone(geometry.overnextChangeY, geometry.band.top, geometry.band.bottom)
+		  : "outside";
+
+		if (!isHomeCurrent && !next) {
+		  push(this.createPlacement(current, {
+			role: "topDock",
+			variant: "forward",
+			top: geometry.docks.top.current,
+			priority: 100,
+		  }));
+		  return placements;
+		}
+
+		// HERO / HOME als aktuelle Section
+		if (isHomeCurrent) {
+		  if (nextZone === "entering" || nextZone === "passing") {
+			push(this.createPlacement(next, {
+			  role: "transition",
+			  variant: "forward",
+			  top: geometry.transition.nextForwardBelowBoundary,
+			  priority: 100,
+			}));
+		  }
+
+		  if (overnext) {
+			if (overnextZone !== "outside") {
+			  push(this.createPlacement(overnext, {
+				role: "transition",
+				variant: "backward",
+				top: geometry.transition.overnextBackwardAboveBoundary,
+				priority: 60,
+			  }));
+			} else if (nextZone === "entering") {
+			  push(this.createPlacement(overnext, {
+				role: "bottomDock",
+				variant: "backward",
+				top: geometry.docks.lowerThird.overnext,
+				priority: 60,
+			  }));
+			}
+		  }
+
+		  if (nextZone === "outside" || nextZone === "leaving") {
+			if (geometry.changeY > geometry.docks.lowerThird.next + geometry.gap) {
+			  push(this.createPlacement(next, {
+				role: "bottomDock",
+				variant: "backward",
+				top: geometry.docks.lowerThird.next,
+				priority: 70,
+			  }));
+			}
+		  }
+
+		  return placements;
+		}
+
+		if (nextZone === "outside") {
+		  push(this.createPlacement(current, {
+			role: "topDock",
+			variant: "forward",
+			top: geometry.docks.top.current,
+			priority: 100,
+		  }));
+		  push(this.createPlacement(next, {
+			role: "bottomDock",
+			variant: "backward",
+			top: geometry.docks.bottom.next,
+			priority: 70,
+		  }));
+		  return placements;
+		}
+
+		if (nextZone === "entering") {
+		  push(this.createPlacement(next, {
+			role: "transition",
+			variant: "forward",
+			top: geometry.transition.nextForwardBelowBoundary,
+			priority: 100,
+		  }));
+
+		  if (overnext) {
+			push(this.createPlacement(overnext, {
+			  role: overnextZone !== "outside" ? "transition" : "bottomDock",
+			  variant: "backward",
+			  top: overnextZone !== "outside"
+				? geometry.transition.overnextBackwardAboveBoundary
+				: geometry.docks.bottom.overnext,
+			  priority: 60,
+			}));
+		  }
+
+		  return placements;
+		}
+
+		if (nextZone === "passing") {
+		  push(this.createPlacement(current, {
+			role: "topDock",
+			variant: "forward",
+			top: geometry.docks.top.current,
+			priority: 90,
+		  }));
+		  push(this.createPlacement(next, {
+			role: "transition",
+			variant: "forward",
+			top: geometry.transition.nextForwardBelowBoundary,
+			priority: 100,
+		  }));
+		  return placements;
+		}
+
+		if (nextZone === "leaving") {
+		  push(this.createPlacement(current, {
+			role: "topDock",
+			variant: "forward",
+			top: geometry.docks.top.current,
+			priority: 90,
+		  }));
+		  push(this.createPlacement(next, {
+			role: "transition",
+			variant: "backward",
+			top: geometry.transition.nextBackwardAboveBoundary,
+			priority: 100,
+		  }));
+		}
+
+		return placements;
 	  },
 
 	  renderPlacements(placements) {
