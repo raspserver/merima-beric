@@ -1489,106 +1489,124 @@ document.addEventListener("DOMContentLoaded", () => {
 		  },
 		};
 	  },
- 
+
+
+
+
+
+
 	  buildHomeAboutSpecialPlacements(context, geometry) {
-		  const about = context.sections.find((section) => section?.id === "about");
-		  const gallery = context.sections.find((section) => section?.id === "gallery");
+		const about = context.sections.find((section) => section?.id === "about");
+		const gallery = context.sections.find((section) => section?.id === "gallery");
 
-		  if (!about) return null;
+		if (!about) return null;
 
-		  const boundaryY = about.getBoundingClientRect().top;
-		  const viewportBottom = geometry.band.bottom;
-		  const navbarBottom = geometry.band.top;
+		const boundaryY = about.getBoundingClientRect().top;
+		const viewportBottom = geometry.band.bottom;
+		const navbarBottom = geometry.band.top;
 
-		  // Drittelgrenzen
-		  const upperThirdEnd = viewportBottom / 3;
-		  const middleThirdEnd = viewportBottom * (2 / 3);
+		// Nur aktiv, solange die Grenze home/about im Sichtfeld ist
+		if (!Number.isFinite(boundaryY) || boundaryY <= navbarBottom || boundaryY >= viewportBottom) {
+		  return null;
+		}
 
-		  // Nur solange die home/about-Grenze sichtbar ist
-		  if (!Number.isFinite(boundaryY) || boundaryY <= navbarBottom || boundaryY >= viewportBottom) {
-			return null;
-		  }
+		const topThirdEnd = viewportBottom / 3;
+		const middleThirdEnd = viewportBottom * (2 / 3);
+		const scrollingUp = state.scrollDirection === "up";
 
-		  const scrollingUp = state.scrollDirection === "up";
-		  const placements = [];
-		  const push = (placement) => placement?.section && placements.push(placement);
+		const placements = [];
+		const push = (placement) => placement?.section && placements.push(placement);
 
-		  const aboutForwardText = this.makeText(about, "forward");
-		  const aboutBackwardText = this.makeText(about, "backward");
-		  const galleryBackwardText = gallery ? this.makeText(gallery, "backward") : "";
+		const aboutForwardText = this.makeText(about, "forward");
+		const aboutBackwardText = this.makeText(about, "backward");
+		const galleryBackwardText = gallery ? this.makeText(gallery, "backward") : "";
 
-		  const aboutForwardHeight = this.getAnchorHeightForText(aboutForwardText);
-		  const aboutBackwardHeight = this.getAnchorHeightForText(aboutBackwardText);
-		  const galleryBackwardHeight = gallery ? this.getAnchorHeightForText(galleryBackwardText) : 0;
+		const aboutForwardHeight = this.getAnchorHeightForText(aboutForwardText);
+		const aboutBackwardHeight = this.getAnchorHeightForText(aboutBackwardText);
+		const galleryBackwardHeight = gallery ? this.getAnchorHeightForText(galleryBackwardText) : 0;
 
-		  const aboutBelowBoundaryTop = boundaryY + geometry.gap + aboutForwardHeight / 2;
-		  const aboutAboveBoundaryForwardTop = boundaryY - geometry.gap - aboutForwardHeight / 2;
-		  const aboutAboveBoundaryBackwardTop = boundaryY - geometry.gap - aboutBackwardHeight / 2;
-		  const galleryBottomTop = gallery
-			? viewportBottom - geometry.gap - galleryBackwardHeight / 2
-			: 0;
+		const aboutBelowBoundaryTop = boundaryY + geometry.gap + aboutForwardHeight / 2;
+		const aboutAboveBoundaryForwardTop = boundaryY - geometry.gap - aboutForwardHeight / 2;
+		const aboutAboveBoundaryBackwardTop = boundaryY - geometry.gap - aboutBackwardHeight / 2;
+		const galleryBottomTop = gallery
+		  ? viewportBottom - geometry.gap - galleryBackwardHeight / 2
+		  : 0;
 
-		  if (!scrollingUp) {
-			// SCROLL DOWN: #about soll erscheinen,
-			// sobald die Grenze vom unteren ins mittlere Drittel wandert.
-			if (boundaryY < middleThirdEnd) {
-			  push(this.createPlacement(about, {
-				role: "transition",
-				variant: "forward",
-				top: aboutAboveBoundaryForwardTop,
-				priority: 100,
-			  }));
-			}
+		if (scrollingUp) {
+		  // von #about nach oben Richtung #home
 
-			// #gallery erst zusätzlich, wenn die Grenze ins obere Drittel kommt
-			if (gallery && boundaryY < upperThirdEnd) {
-			  push(this.createPlacement(gallery, {
-				role: "bottomDock",
-				variant: "backward",
-				top: galleryBottomTop,
-				priority: 60,
-			  }));
+		  if (boundaryY < middleThirdEnd) {
+			// oberes + mittleres Drittel:
+			// #about unterhalb der Grenze mitlaufend
+			push(this.createPlacement(about, {
+			  role: "transition",
+			  variant: "forward",
+			  top: aboutBelowBoundaryTop,
+			  priority: 100,
+			}));
+
+			// #gallery unten stehen lassen, im mittleren Drittel ausfaden
+			if (gallery) {
+			  let galleryOpacity = 1;
+
+			  if (boundaryY >= topThirdEnd) {
+				const fadeProgress = (boundaryY - topThirdEnd) / (middleThirdEnd - topThirdEnd);
+				galleryOpacity = Math.max(0, 1 - fadeProgress);
+			  }
+
+			  if (galleryOpacity > 0.001) {
+				push(this.createPlacement(gallery, {
+				  role: "bottomDock",
+				  variant: "backward",
+				  top: galleryBottomTop,
+				  opacity: galleryOpacity,
+				  priority: 60,
+				}));
+			  }
 			}
 
 			return placements;
 		  }
 
-		  // SCROLL UP
-		  if (boundaryY < middleThirdEnd) {
-			if (boundaryY < upperThirdEnd) {
-			  push(this.createPlacement(about, {
-				role: "transition",
-				variant: "forward",
-				top: aboutBelowBoundaryTop,
-				priority: 100,
-			  }));
-
-			  if (gallery) {
-				const fadeProgress = boundaryY / upperThirdEnd;
-				const galleryOpacity = Math.max(0, Math.min(1, fadeProgress));
-
-				if (galleryOpacity > 0.001) {
-				  push(this.createPlacement(gallery, {
-					role: "bottomDock",
-					variant: "backward",
-					top: galleryBottomTop,
-					opacity: galleryOpacity,
-					priority: 60,
-				  }));
-				}
-			  }
-			} else {
-			  push(this.createPlacement(about, {
-				role: "transition",
-				variant: "backward",
-				top: aboutAboveBoundaryBackwardTop,
-				priority: 100,
-			  }));
-			}
-		  }
+		  // unteres Drittel:
+		  // #about oberhalb der Grenze, Richtungswechsel auf <<
+		  push(this.createPlacement(about, {
+			role: "transition",
+			variant: "backward",
+			top: aboutAboveBoundaryBackwardTop,
+			priority: 100,
+		  }));
 
 		  return placements;
 		}
+
+		// scrolling down: von #home nach unten Richtung #about
+
+		// unteres Drittel: noch keine Hints
+		if (boundaryY >= middleThirdEnd) {
+		  return [];
+		}
+
+		// mittleres + oberes Drittel: #about oberhalb der Grenze
+		push(this.createPlacement(about, {
+		  role: "transition",
+		  variant: "forward",
+		  top: aboutAboveBoundaryForwardTop,
+		  priority: 100,
+		}));
+
+		// erst im oberen Drittel zusätzlich #gallery unten anzeigen
+		if (gallery && boundaryY < topThirdEnd) {
+		  push(this.createPlacement(gallery, {
+			role: "bottomDock",
+			variant: "backward",
+			top: galleryBottomTop,
+			priority: 60,
+		  }));
+		}
+
+		return placements;
+	  },
 
 	  buildPlacements(context, geometry) {
 		const specialHomeAbout = this.buildHomeAboutSpecialPlacements(context, geometry);
