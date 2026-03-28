@@ -1586,7 +1586,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		push(this.createPlacement(about, {
 		  role: "transition",
 		  variant: "forward",
-		  top: aboutBelowBoundaryTop
+		  top: aboutBelowBoundaryTop,
 		  priority: 100,
 		}));
 
