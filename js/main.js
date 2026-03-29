@@ -2454,6 +2454,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	  },
 
+
+
+
+
+
+
 	  bindEvents() {
 		const onTouchStart = () => {
 		  if (this.isIosSafari()) {
@@ -2564,6 +2570,91 @@ document.addEventListener("DOMContentLoaded", () => {
 		  );
 		}
 	  },
+
+	  bindEvents() {
+		  const onTouchStart = () => {
+			if (this.isIosSafari()) {
+			  this.resetForNewIosTouchGesture();
+			  return;
+			}
+
+			this.beginGesture("touch");
+		  };
+
+		  const onTouchEndLike = () => {
+			this.gesture.lastTouchEndTs = performance.now();
+
+			// Jede Touch-Geste ist hier beendet.
+			// Auf iOS zählt ab jetzt Momentum nicht mehr weiter.
+			this.endGesture();
+
+			this.lastScrollTs = performance.now();
+			this.lastObservedScrollY = window.scrollY;
+			this.scheduleHideAfterScrollEnd();
+		  };
+
+		  window.addEventListener(
+			"scroll",
+			() => {
+			  this.scheduleUpdate();
+
+			  if (state.scroll.programmatic) {
+				this.hideImmediatelyForProgrammaticScroll();
+				return;
+			  }
+
+			  this.handleScrollActivity();
+			},
+			{ passive: true }
+		  );
+
+		  // Touch nur über Touch-Events behandeln
+		  window.addEventListener("touchstart", onTouchStart, { passive: true });
+		  window.addEventListener("touchend", onTouchEndLike, { passive: true });
+		  window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
+
+		  // Maus separat behandeln, aber Touch hier ignorieren
+		  window.addEventListener(
+			"pointerdown",
+			(e) => {
+			  if (e.pointerType === "mouse") {
+				this.hide();
+			  }
+			},
+			{ passive: true }
+		  );
+
+		  if ("onscrollend" in document) {
+			document.addEventListener(
+			  "scrollend",
+			  () => {
+				if (!state.scroll.programmatic && this.gesture.type === "touch") {
+				  this.lastScrollTs = performance.now();
+				  this.scheduleHideAfterScrollEnd();
+				}
+			  },
+			  { passive: true }
+			);
+		  }
+
+		  const onResize = () => {
+			this.metricsCache.clear();
+			this.refreshTimingVars();
+			this.scheduleUpdate();
+		  };
+
+		  window.addEventListener("resize", onResize);
+		  window.addEventListener("orientationchange", () => setTimeout(onResize, 120));
+
+		  if (window.visualViewport) {
+			window.visualViewport.addEventListener("resize", onResize);
+			window.visualViewport.addEventListener(
+			  "scroll",
+			  () => this.scheduleUpdate(),
+			  { passive: true }
+			);
+		  }
+		},
 
 	  init() {
 		this.build();
