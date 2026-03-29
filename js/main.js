@@ -2286,14 +2286,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }, this.fadeDurationMs);
     },
 
-    beginGesture(type) {
+	beginGesture(type) {
 	  this.clearScrollEndTimer();
 	  this.clearHideCompleteTimer();
+
 	  this.gesture.type = type;
 	  this.gesture.active = true;
+	  this.gesture.distance = 0;           // wichtig
 	  this.lastObservedScrollY = window.scrollY;
 	},
-    
+
     endGesture() {
       this.gesture.type = null;
       this.gesture.active = false;
@@ -2338,15 +2340,22 @@ document.addEventListener("DOMContentLoaded", () => {
     scheduleHide() {
       this.scheduleHideAfterScrollEnd();
     },
-    
-    handleScrollActivity() {
+	
+	handleScrollActivity() {
 	  if (state.scroll.programmatic) {
 		this.hideImmediatelyForProgrammaticScroll();
 		return;
 	  }
 
 	  this.lastScrollTs = performance.now();
-	  this.accumulateScrollDistance();
+
+	  // Nur echte Touch-Gesten dürfen den Unlock-Fortschritt aufbauen
+	  if (this.gesture.type === "touch" && this.gesture.active) {
+		this.accumulateScrollDistance();
+	  } else {
+		this.scheduleHideAfterScrollEnd();
+		return;
+	  }
 
 	  if (!this.hasUnlockedScrollHints) {
 		if (!this.hasReachedShowScrollDistance()) {
@@ -2404,12 +2413,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     bindEvents() {
       const onTouchStart = () => this.beginGesture("touch");
-  
-      const onTouchEndLike = () => {
-		  this.lastScrollTs = performance.now();
-		  this.scheduleHideAfterScrollEnd();
-		}; 
-
+		
+		const onTouchEndLike = () => {
+	  this.gesture.active = false;   // Finger ist weg
+	  this.lastScrollTs = performance.now();
+	  this.scheduleHideAfterScrollEnd();
+	};
+		
       window.addEventListener(
         "scroll",
         () => {
