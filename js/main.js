@@ -1414,7 +1414,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------
   // 11) SCROLL-HINT-SYSTEM
   // ---------------------------------------------------------------------
-    const scrollSectionHintModule = {
+	const scrollSectionHintModule = {
 	  root: null,
 	  measurer: null,
 	  metricsCache: new Map(),
@@ -1435,6 +1435,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		distance: 0,
 		lastTouchStartTs: 0,
 		lastTouchEndTs: 0,
+
+		fingerDown: false,
+		waitingForFirstMove: false,
 	  },
 
 	  lastObservedScrollY: window.scrollY,
@@ -2296,53 +2299,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		return isIOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS;
 	  },
-	  
+
 	  ensureTouchGestureForIosScroll() {
-		  if (!this.isIosSafari()) return;
-		  if (state.scroll.programmatic) return;
+		if (!this.isIosSafari()) return;
+		if (state.scroll.programmatic) return;
 
-		  const previousY = this.lastObservedScrollY;
-		  const currentY = window.scrollY;
-		  const delta = Math.abs(currentY - previousY);
-
-		  if (delta <= 0) return;
-
-		  // Safari/iOS kann bei aneinandergereihten langsamen Wischgesten
-		  // ein neues touchstart gelegentlich nicht sauber liefern.
-		  // Dann erzwingen wir beim ersten echten Scroll-Delta einen kompletten
-		  // Neustart der Touch-Geste inklusive Reset der Hint-Freischaltung.
-		  if (!this.gesture.active) {
-			this.beginGesture("touch");
-			this.lastObservedScrollY = currentY;
-		  }
-		},
+		// Auf iOS Safari keine synthetische neue Touch-Geste aus Scroll-Delta erzeugen.
+		// Wir halten nur die Referenzposition aktuell.
+		this.lastObservedScrollY = window.scrollY;
+	  },
 
 	  beginGesture(type) {
-		  this.clearScrollEndTimer();
-		  this.clearHideCompleteTimer();
+		this.clearScrollEndTimer();
+		this.clearHideCompleteTimer();
 
-		  // Jede neue Touch-Berührung startet bewusst eine neue Scroll-Geste.
-		  // Dadurch darf die Mindest-Scrollstrecke NICHT von der vorherigen
-		  // Wischgeste übernommen werden.
-		  if (type === "touch") {
-			this.hasUnlockedScrollHints = false;
+		if (type === "touch") {
+		  this.hasUnlockedScrollHints = false;
 
-			if (this.isVisible) {
-			  this.isVisible = false;
-			  this.root?.classList.remove("is-visible");
-			  document.body.classList.remove("hints-visible");
-			}
+		  if (this.isVisible) {
+			this.isVisible = false;
+			this.root?.classList.remove("is-visible");
+			document.body.classList.remove("hints-visible");
 		  }
 
-		  this.gesture.type = type;
-		  this.gesture.active = true;
-		  this.gesture.distance = 0;
-		  this.lastObservedScrollY = window.scrollY;
+		  this.gesture.fingerDown = true;
+		  this.gesture.waitingForFirstMove = true;
+		  this.gesture.lastTouchStartTs = performance.now();
+		}
 
-		  if (type === "touch") {
-			this.gesture.lastTouchStartTs = performance.now();
-		  }
-		},
+		this.gesture.type = type;
+		this.gesture.active = true;
+		this.gesture.distance = 0;
+		this.lastObservedScrollY = window.scrollY;
+	  },
+
+	  activateTouchCounting() {
+		if (!this.gesture.fingerDown) return;
+
+		this.gesture.waitingForFirstMove = false;
+		this.gesture.distance = 0;
+		this.lastObservedScrollY = window.scrollY;
+	  },
 
 	  endGesture({ keepType = false } = {}) {
 		if (!keepType) {
@@ -2351,10 +2348,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.gesture.active = false;
 		this.gesture.distance = 0;
+		this.gesture.fingerDown = false;
+		this.gesture.waitingForFirstMove = false;
 	  },
 
 	  accumulateScrollDistance() {
 		const currentY = window.scrollY;
+
+		if (this.isIosSafari() && this.gesture.type === "touch") {
+		  if (this.gesture.waitingForFirstMove) {
+			this.lastObservedScrollY = currentY;
+			return;
+		  }
+
+		  if (!this.gesture.fingerDown) {
+			this.lastObservedScrollY = currentY;
+			return;
+		  }
+		}
+
 		const delta = Math.abs(currentY - this.lastObservedScrollY);
 
 		if (delta > 0) this.gesture.distance += delta;
@@ -2458,11 +2470,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	  bindEvents() {
 		const onTouchStart = () => this.beginGesture("touch");
 
+		const onTouchMove = () => {
+		  if (!this.gesture.fingerDown) return;
+		  if (this.gesture.waitingForFirstMove) {
+			this.activateTouchCounting();
+		  }
+		};
+
 		const onTouchEndLike = () => {
 		  this.gesture.lastTouchEndTs = performance.now();
 
-		  // Jede Wischgeste endet hier wirklich.
-		  // Dadurch wird bei der nächsten separaten Wischgeste wieder von 0 gezählt.
 		  this.endGesture();
 
 		  this.lastScrollTs = performance.now();
@@ -2487,10 +2504,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		);
 
 		window.addEventListener("touchstart", onTouchStart, { passive: true });
+		window.addEventListener("touchmove", onTouchMove, { passive: true });
 		window.addEventListener("touchend", onTouchEndLike, { passive: true });
 		window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
 
 		document.addEventListener("touchstart", onTouchStart, {
+		  passive: true,
+		  capture: true,
+		});
+		document.addEventListener("touchmove", onTouchMove, {
 		  passive: true,
 		  capture: true,
 		});
@@ -2508,6 +2530,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		  (e) => {
 			if (e.pointerType === "touch") onTouchStart();
 			if (e.pointerType === "mouse") this.hide();
+		  },
+		  { passive: true }
+		);
+
+		window.addEventListener(
+		  "pointermove",
+		  (e) => {
+			if (e.pointerType === "touch" && this.gesture.waitingForFirstMove) {
+			  this.activateTouchCounting();
+			}
 		  },
 		  { passive: true }
 		);
