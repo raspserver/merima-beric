@@ -2389,12 +2389,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.lastScrollTs = performance.now();
 
-		if (this.gesture.type === "touch") {
-		  this.accumulateScrollDistance();
-		} else {
-		  this.scheduleHideAfterScrollEnd();
-		  return;
-		}
+		this.accumulateScrollDistance();
 
 		if (!this.hasUnlockedScrollHints) {
 		  if (!this.hasReachedShowScrollDistance()) {
