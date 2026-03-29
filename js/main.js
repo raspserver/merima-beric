@@ -1430,7 +1430,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  lastScrollTs: 0,
 
 	  gesture: {
-		type: null, // "touch" | null
+		type: null,
 		active: false,
 		distance: 0,
 		lastTouchStartTs: 0,
@@ -2284,48 +2284,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, this.fadeDurationMs);
 	  },
 
-	  isIosSafari() {
-		const ua = navigator.userAgent || "";
-		const isIOS =
-		  /iP(ad|hone|od)/.test(ua) ||
-		  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
-		const isWebKit = /WebKit/i.test(ua);
-		const isCriOS = /CriOS/i.test(ua);
-		const isFxiOS = /FxiOS/i.test(ua);
-		const isEdgiOS = /EdgiOS/i.test(ua);
-
-		return isIOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS;
-	  },
-
-	  resetForNewIosTouchGesture() {
-		if (!this.isIosSafari()) return;
-
-		this.clearScrollEndTimer();
-		this.clearHideCompleteTimer();
-
-		this.gesture.type = "touch";
-		this.gesture.active = true;
-
-		// absichtlich NICHT zurücksetzen:
-		// this.gesture.distance = 0;
-		// this.hasUnlockedScrollHints = false;
-
-		this.lastObservedScrollY = window.scrollY;
-		this.lastScrollTs = performance.now();
-	  },
-
 	  beginGesture(type) {
 		this.clearScrollEndTimer();
 		this.clearHideCompleteTimer();
 
 		this.gesture.type = type;
 		this.gesture.active = true;
-
-		if (!(type === "touch" && this.isIosSafari())) {
-		  this.gesture.distance = 0;
-		}
-
+		this.gesture.distance = 0;
 		this.lastObservedScrollY = window.scrollY;
 
 		if (type === "touch") {
@@ -2391,15 +2356,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		this.lastScrollTs = performance.now();
-
-		// Safari/iOS:
-		// nur während echter aktiver Touch-Geste zählen
-		if (this.isIosSafari() && !this.gesture.active) {
-		  this.lastObservedScrollY = window.scrollY;
-		  this.scheduleHideAfterScrollEnd();
-		  return;
-		}
-
 		this.accumulateScrollDistance();
 
 		if (!this.hasUnlockedScrollHints) {
@@ -2457,18 +2413,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  bindEvents() {
 		const onTouchStart = () => {
-		  if (this.isIosSafari()) {
-			this.resetForNewIosTouchGesture();
-			return;
-		  }
-
 		  this.beginGesture("touch");
 		};
 
 		const onTouchEndLike = () => {
 		  this.gesture.lastTouchEndTs = performance.now();
-
-		  // Distanz behalten, damit iOS mehrere Gesten kumuliert
 		  this.endGesture({ resetDistance: false });
 
 		  this.lastScrollTs = performance.now();
@@ -2521,6 +2470,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const onResize = () => {
 		  this.metricsCache.clear();
 		  this.refreshTimingVars();
+		  this.lastObservedScrollY = window.scrollY;
 		  this.scheduleUpdate();
 		};
 
@@ -2542,6 +2492,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.refreshTimingVars();
 		this.bindHintClicks();
 		this.hide();
+		this.lastObservedScrollY = window.scrollY;
 		this.update();
 		this.bindEvents();
 	  },
