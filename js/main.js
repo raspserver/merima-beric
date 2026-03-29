@@ -2296,29 +2296,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		return isIOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS;
 	  },
-
-	  ensureTouchGestureForIosScroll() {
-		if (!this.isIosSafari()) return;
-		if (state.scroll.programmatic) return;
-
-		const previousY = this.lastObservedScrollY;
-		const currentY = window.scrollY;
-		const delta = Math.abs(currentY - previousY);
-
-		// Nur reagieren, wenn wirklich ein neuer Scrollimpuls da ist
-		if (delta <= 0) return;
-
-		// Wenn Safari das touchstart der neuen Wischgeste verschluckt hat,
-		// erzeugen wir beim ersten echten Scroll-Delta selbst eine neue Geste.
-		if (!this.gesture.active) {
-		  this.beginGesture("touch");
-
-		  // Diese neue Geste beginnt ab JETZT bei 0.
-		  // Deshalb nicht das vorige Delta übernehmen.
-		  this.lastObservedScrollY = currentY;
-		}
-	  },
 	  
+	  ensureTouchGestureForIosScroll() {
+		  if (!this.isIosSafari()) return;
+		  if (state.scroll.programmatic) return;
+
+		  const previousY = this.lastObservedScrollY;
+		  const currentY = window.scrollY;
+		  const delta = Math.abs(currentY - previousY);
+
+		  if (delta <= 0) return;
+
+		  // Safari/iOS kann bei aneinandergereihten langsamen Wischgesten
+		  // ein neues touchstart gelegentlich nicht sauber liefern.
+		  // Dann erzwingen wir beim ersten echten Scroll-Delta einen kompletten
+		  // Neustart der Touch-Geste inklusive Reset der Hint-Freischaltung.
+		  if (!this.gesture.active) {
+			this.beginGesture("touch");
+			this.lastObservedScrollY = currentY;
+		  }
+		},
+
 	  beginGesture(type) {
 		  this.clearScrollEndTimer();
 		  this.clearHideCompleteTimer();
