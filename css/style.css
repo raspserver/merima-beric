@@ -59,8 +59,8 @@
 	--section-hint-size: 0.82rem;
 	--section-hint-letter-spacing: 0.22em;
 	--section-hint-hide-delay: 2.0s;
-	--section-hint-show-duration: 0.18s;
-	--section-hint-fade-duration: 0.5s;
+	--section-hint-show-duration: 0.5s;
+	--section-hint-fade-duration: 1.0s;
 	--section-hint-visibility: 0.4;
 	--section-hint-show-scroll-distance: calc(200svh);
 
