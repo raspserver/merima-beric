@@ -1429,12 +1429,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  hideCompleteTimer: null,
 	  lastScrollTs: 0,
 
-	  showDelayMs: 500,
-	  hideDelayMs: 1000,
-	  fadeDurationMs: 500,
-	  visibilityTimer: null,
-	  pendingVisibility: null,
-
 	  gesture: {
 		type: null,
 		active: false,
@@ -1444,6 +1438,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	  },
 
 	  lastObservedScrollY: window.scrollY,
+	  hideDelayMs: 1000,
+	  fadeDurationMs: 500,
 	  showScrollDistancePx: window.innerHeight,
 
 	  labels: {
@@ -2260,7 +2256,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  refreshTimingVars() {
 		this.hideDelayMs = cssVar.timeMs("--section-hint-hide-delay", 1000);
 		this.fadeDurationMs = cssVar.timeMs("--section-hint-fade-duration", 500);
-		this.showDelayMs = cssVar.timeMs("--section-hint-show-duration", 500);
 		this.showScrollDistancePx = cssVar.lengthPx(
 		  "--section-hint-show-scroll-distance",
 		  window.innerHeight
@@ -2273,11 +2268,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  clearHideCompleteTimer() {
 		this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
-	  },
-
-	  clearVisibilityTimer() {
-		this.visibilityTimer = utils.clearTimer(this.visibilityTimer);
-		this.pendingVisibility = null;
 	  },
 
 	  scheduleRelockAfterFullyHidden() {
@@ -2332,7 +2322,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		return this.gesture.distance >= this.showScrollDistancePx;
 	  },
 
-	  applyVisibleState() {
+	  show() {
 		if (!this.root) return;
 
 		this.clearHideCompleteTimer();
@@ -2345,7 +2335,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		document.body.classList.add("hints-visible");
 	  },
 
-	  applyHiddenState() {
+	  hide() {
 		if (!this.root) return;
 
 		this.isVisible = false;
@@ -2353,45 +2343,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		document.body.classList.remove("hints-visible");
 
 		this.scheduleRelockAfterFullyHidden();
-	  },
-
-	  scheduleVisibility(shouldShow) {
-		if (!this.root) return;
-
-		const alreadyInTargetState =
-		  (shouldShow && this.isVisible) || (!shouldShow && !this.isVisible);
-
-		if (alreadyInTargetState && this.pendingVisibility === null) return;
-		if (this.pendingVisibility === shouldShow) return;
-
-		this.clearVisibilityTimer();
-		this.pendingVisibility = shouldShow;
-
-		this.visibilityTimer = setTimeout(() => {
-		  if (this.pendingVisibility !== shouldShow) return;
-
-		  if (shouldShow) {
-			this.applyVisibleState();
-		  } else {
-			this.applyHiddenState();
-		  }
-
-		  this.visibilityTimer = null;
-		  this.pendingVisibility = null;
-		}, this.showDelayMs);
-	  },
-
-	  show() {
-		this.scheduleVisibility(true);
-	  },
-
-	  hide() {
-		this.clearVisibilityTimer();
-		this.applyHiddenState();
-	  },
-
-	  hideWithScrollDelay() {
-		this.scheduleVisibility(false);
 	  },
 
 	  scheduleHide() {
@@ -2409,7 +2360,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (!this.hasUnlockedScrollHints) {
 		  if (!this.hasReachedShowScrollDistance()) {
-			this.hideWithScrollDelay();
+			this.hide();
 			this.scheduleHideAfterScrollEnd();
 			return;
 		  }
@@ -2439,7 +2390,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  hideImmediatelyForProgrammaticScroll() {
 		if (!this.root) return;
 
-		this.clearVisibilityTimer();
 		this.clearScrollEndTimer();
 		this.clearHideCompleteTimer();
 		this.endGesture({ resetDistance: true });
@@ -2547,7 +2497,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.bindEvents();
 	  },
 	};
-  
+
   // ---------------------------------------------------------------------
   // 12) GALLERY-MODUL
   // ---------------------------------------------------------------------
