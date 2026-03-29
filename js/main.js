@@ -2296,7 +2296,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  return isIOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS;
 		},
-
+		
 		ensureTouchGestureForIosScroll() {
 		  if (!this.isIosSafari()) return;
 		  if (state.scroll.programmatic) return;
@@ -2305,33 +2305,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		  const currentY = window.scrollY;
 		  const delta = Math.abs(currentY - previousY);
 
+		  // Nur reagieren, wenn wirklich ein neuer Scrollimpuls da ist
 		  if (delta <= 0) return;
 
-		  const now = performance.now();
-
-		  // Fall 1:
-		  // Safari liefert Scroll-Events, obwohl die Touch-Geste logisch neu ist.
-		  // Wenn gerade keine aktive Touch-Geste läuft und seit dem letzten touchend
-		  // ein kleiner Abstand vergangen ist, behandeln wir das als neue Wischgeste.
-		  if (
-			this.gesture.type === "touch" &&
-			!this.gesture.active &&
-			now - this.gesture.lastTouchEndTs > 120
-		  ) {
+		  // Wenn Safari das touchstart der neuen Wischgeste verschluckt hat,
+		  // erzeugen wir beim ersten echten Scroll-Delta selbst eine neue Geste.
+		  if (!this.gesture.active) {
 			this.beginGesture("touch");
 
-			// erstes echtes Delta nicht verlieren
-			this.lastObservedScrollY = previousY;
-			return;
-		  }
-
-		  // Fall 2:
-		  // Es gibt noch gar keine Touch-Geste
-		  if (this.gesture.type !== "touch") {
-			this.beginGesture("touch");
-
-			// erstes echtes Delta nicht verlieren
-			this.lastObservedScrollY = previousY;
+			// Wichtig:
+			// Die aktuelle Bewegung soll noch NICHT auf die alte Geste addiert werden.
+			// Deshalb auf die aktuelle Scrollposition synchronisieren und erst ab
+			// dem nächsten Scroll-Delta zählen.
+			this.lastObservedScrollY = currentY;
 		  }
 		},
 
@@ -2434,7 +2420,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (idleFor >= this.hideDelayMs) {
 			  this.hide();
-			  this.endGesture();
 			  return;
 			}
 
@@ -2469,15 +2454,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		bindEvents() {
 		  const onTouchStart = () => this.beginGesture("touch");
 		  
-		  const onTouchEndLike = () => {
-			  this.gesture.active = false;
+			const onTouchEndLike = () => {
 			  this.gesture.lastTouchEndTs = performance.now();
+
+			  // Jede Wischgeste endet hier wirklich.
+			  // Dadurch kann über mehrere einzelne Wischgesten nichts mehr
+			  // versehentlich weiter aufsummiert werden.
+			  this.endGesture();
 
 			  this.lastScrollTs = performance.now();
 			  this.lastObservedScrollY = window.scrollY;
 			  this.scheduleHideAfterScrollEnd();
 			};
-		  
+
 		  window.addEventListener(
 			"scroll",
 			() => {
