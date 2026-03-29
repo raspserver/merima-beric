@@ -1,19 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
   /*
     =====================================================================
-    MERIMA BERIC - MAIN.JS V3
-    Schlankere Version mit deutscher Kommentierung
+    MERIMA BERIC - MAIN.JS V2
+    Bereinigte Version mit deutscher Kommentierung
     =====================================================================
 
     Ziele dieser Version:
-    - bestehendes Verhalten weitgehend erhalten
-    - Scroll-Hint-System kompakter organisiert
-    - CTA-Magnetik in generische Mini-Engine ausgelagert
-    - weniger doppelte Zustände / weniger Wiederholung
-    - klare Modultrennung
+    - gleiche Grundidee wie bisher
+    - weniger verstreute Zustände
+    - wiederholte Animationen zusammengezogen
+    - Scroll-/Nav-Logik klarer getrennt
+    - bessere Lesbarkeit und Wartbarkeit
 
     Hinweis:
-    Diese Version ist als Drop-in-Datei gedacht und ersetzt deine V2.
+    Diese Version bleibt nah an deinem bisherigen Verhalten.
+    Sie ist keine komplette Neuentwicklung, sondern eine strukturierte V2.
   */
 
   // ---------------------------------------------------------------------
@@ -446,6 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
 
+      // Springs nach Update der Physics-Werte synchronisieren
       springs.navVisible.stiffness = this.values.navVisibleStiffness;
       springs.navVisible.damping = this.values.navVisibleDamping;
 
@@ -491,314 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------------------------------------------
-  // 8) GENERISCHE MINI-ENGINE FÜR MAGNETISCHE BUTTONS
-  // ---------------------------------------------------------------------
-  function createMagneticEngine(selector, options = {}) {
-    const items = [...document.querySelectorAll(selector)].map((button) => ({
-      button,
-      near: false,
-      values: {
-        x: 0,
-        y: 0,
-        scale: 1,
-        shadowY: 0,
-        shadowBlur: 0,
-        shadowAlpha: 0,
-        labelX: 0,
-        labelY: 0,
-        labelScale: 1,
-        glossX: 50,
-        glossY: 50,
-        glossOpacity: 0,
-      },
-      target: {
-        x: 0,
-        y: 0,
-        scale: 1,
-        shadowY: 0,
-        shadowBlur: 0,
-        shadowAlpha: 0,
-        labelX: 0,
-        labelY: 0,
-        labelScale: 1,
-        glossX: 50,
-        glossY: 50,
-        glossOpacity: 0,
-      },
-      velocity: {
-        x: 0,
-        y: 0,
-        scale: 0,
-        shadowY: 0,
-        shadowBlur: 0,
-        shadowAlpha: 0,
-        labelX: 0,
-        labelY: 0,
-        labelScale: 0,
-        glossX: 0,
-        glossY: 0,
-        glossOpacity: 0,
-      },
-    }));
-
-    const cfg = {
-      maxDistance: 1,
-      springNear: 0.16,
-      springFar: 0.11,
-      dampingNear: 0.78,
-      dampingFar: 0.82,
-      isDisabled: () => false,
-      ...options,
-    };
-
-    let running = false;
-    let lastFrame = 0;
-
-    const keys = [
-      "x",
-      "y",
-      "scale",
-      "shadowY",
-      "shadowBlur",
-      "shadowAlpha",
-      "labelX",
-      "labelY",
-      "labelScale",
-      "glossX",
-      "glossY",
-      "glossOpacity",
-    ];
-
-    function setButtonVars(item) {
-      utils.setVars(item.button, {
-        "--magnetic-x": `${item.values.x.toFixed(2)}px`,
-        "--magnetic-y": `${item.values.y.toFixed(2)}px`,
-        "--magnetic-scale": item.values.scale.toFixed(4),
-        "--magnetic-shadow-y": `${item.values.shadowY.toFixed(2)}px`,
-        "--magnetic-shadow-blur": `${item.values.shadowBlur.toFixed(2)}px`,
-        "--magnetic-shadow-alpha": item.values.shadowAlpha.toFixed(3),
-        "--label-x": `${item.values.labelX.toFixed(2)}px`,
-        "--label-y": `${item.values.labelY.toFixed(2)}px`,
-        "--label-scale": item.values.labelScale.toFixed(4),
-        "--gloss-x": `${item.values.glossX.toFixed(2)}%`,
-        "--gloss-y": `${item.values.glossY.toFixed(2)}%`,
-        "--gloss-opacity": item.values.glossOpacity.toFixed(3),
-      });
-    }
-
-    function reset(item, hard = false) {
-      item.near = false;
-      item.button.classList.remove("is-magnetic-near", "is-hovered");
-
-      Object.assign(item.target, {
-        x: 0,
-        y: 0,
-        scale: 1,
-        shadowY: 0,
-        shadowBlur: 0,
-        shadowAlpha: 0,
-        labelX: 0,
-        labelY: 0,
-        labelScale: 1,
-        glossX: 50,
-        glossY: 50,
-        glossOpacity: 0,
-      });
-
-      if (!hard) return;
-
-      Object.assign(item.values, item.target);
-      Object.keys(item.velocity).forEach((key) => {
-        item.velocity[key] = 0;
-      });
-
-      setButtonVars(item);
-    }
-
-    function resetAll(hard = false) {
-      items.forEach((item) => reset(item, hard));
-      start();
-    }
-
-    function step(current, target, velocity, spring, damping, delta) {
-      const force = (target - current) * spring;
-      velocity += force * delta;
-      velocity *= Math.pow(damping, delta);
-      current += velocity * delta;
-      return { current, velocity };
-    }
-
-    function animate(now) {
-      let delta = (now - lastFrame) / 16.67;
-      lastFrame = now;
-      delta = Math.min(delta, 2);
-
-      let moving = false;
-
-      items.forEach((item) => {
-        const spring = item.near ? cfg.springNear : cfg.springFar;
-        const damping = item.near ? cfg.dampingNear : cfg.dampingFar;
-
-        keys.forEach((key) => {
-          const next = step(
-            item.values[key],
-            item.target[key],
-            item.velocity[key],
-            spring,
-            damping,
-            delta
-          );
-
-          item.values[key] = next.current;
-          item.velocity[key] = next.velocity;
-
-          if (
-            Math.abs(item.target[key] - item.values[key]) > 0.01 ||
-            Math.abs(item.velocity[key]) > 0.01
-          ) {
-            moving = true;
-          }
-        });
-
-        setButtonVars(item);
-      });
-
-      if (!moving) {
-        running = false;
-        return;
-      }
-
-      requestAnimationFrame(animate);
-    }
-
-    function start() {
-      if (running) return;
-      running = true;
-      lastFrame = performance.now();
-      requestAnimationFrame(animate);
-    }
-
-    function applyPointer(item, clientX, clientY) {
-      if (cfg.isDisabled()) {
-        reset(item);
-        return;
-      }
-
-      const rect = item.button.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const dx = clientX - centerX;
-      const dy = clientY - centerY;
-
-      const nx = dx / (rect.width * 1.15);
-      const ny = dy / (rect.height * 1.9);
-      const distance = Math.sqrt(nx * nx + ny * ny);
-
-      if (distance > cfg.maxDistance) {
-        reset(item);
-        return;
-      }
-
-      item.near = true;
-      item.button.classList.add("is-magnetic-near");
-
-      const proximity = 1 - distance;
-      const eased = 1 - Math.pow(1 - proximity, 3);
-      const shaped = Math.pow(eased, 1.6);
-
-      const innerNX = dx / (rect.width / 2);
-      const innerNY = dy / (rect.height / 2);
-      const innerDistance = Math.sqrt(innerNX * innerNX + innerNY * innerNY);
-      const inside = innerDistance <= 1;
-      const innerProximity = inside ? 1 - innerDistance : 0;
-
-      const innerBoost = inside
-        ? Math.pow(1 - Math.pow(1 - innerProximity, 3), 1.15)
-        : 0;
-
-      const strength = inside
-        ? Math.min(0.32 * shaped + 0.68 * innerBoost, 1)
-        : Math.min(0.62 * shaped, 0.5);
-
-      const length = Math.hypot(dx, dy) || 1;
-      const dirX = dx / length;
-      const dirY = dy / length;
-
-      Object.assign(item.target, {
-        x: dirX * Math.min(rect.width * 0.12, 15) * strength,
-        y: dirY * Math.min(rect.height * 0.26, 11) * strength,
-        scale: 1 + strength * 0.014,
-
-        shadowY: 10 + strength * 12,
-        shadowBlur: 28 + strength * 20,
-        shadowAlpha: 0.12 + strength * 0.18,
-
-        labelX:
-          dirX * Math.min(rect.width * 0.065, 10) * Math.min(strength * 1.18, 1),
-        labelY:
-          dirY *
-          Math.min(rect.height * 0.11, 6) *
-          Math.min(strength * 1.18, 1),
-        labelScale: 1 + strength * 0.01,
-
-        glossX: clamp(((clientX - rect.left) / rect.width) * 100, 0, 100),
-        glossY: clamp(((clientY - rect.top) / rect.height) * 100, 0, 100),
-        glossOpacity: 0.18 + strength * 0.24,
-      });
-    }
-
-    function bind() {
-      window.addEventListener(
-        "pointermove",
-        (e) => {
-          if (e.pointerType !== "mouse") {
-            resetAll();
-            return;
-          }
-
-          items.forEach((item) => applyPointer(item, e.clientX, e.clientY));
-          start();
-        },
-        { passive: true }
-      );
-
-      window.addEventListener("pointerleave", () => resetAll());
-
-      items.forEach((item) => {
-        item.button.addEventListener("blur", () => {
-          reset(item);
-          start();
-        });
-
-        item.button.addEventListener("pointerenter", (e) => {
-          if (e.pointerType === "mouse" && !cfg.isDisabled()) {
-            item.button.classList.add("is-hovered");
-          }
-        });
-
-        item.button.addEventListener("pointerleave", () => {
-          item.button.classList.remove("is-hovered");
-        });
-
-        item.button.addEventListener("pointerdown", (e) => {
-          if (e.pointerType !== "mouse") {
-            item.button.classList.remove("is-hovered");
-          }
-        });
-      });
-    }
-
-    return {
-      items,
-      bind,
-      start,
-      resetAll,
-    };
-  }
-
-  // ---------------------------------------------------------------------
-  // 9) SCROLL-ENGINE
+  // 8) SCROLL-ENGINE
   // ---------------------------------------------------------------------
   const scrollEngine = {
     easeOutElastic(t) {
@@ -1100,7 +795,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 10) NAVBAR-MODUL
+  // 9) NAVBAR-MODUL
   // ---------------------------------------------------------------------
   const navbarModule = {
     isOpen() {
@@ -1318,7 +1013,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const scrollY = window.scrollY;
       const progress = Math.min(scrollY / SETTINGS.thresholds.inertia, 1);
 
-      state.hero.parallax.target = scrollY * physics.values.heroParallaxFactor;
+      state.hero.parallax.target =
+        scrollY * physics.values.heroParallaxFactor;
 
       utils.setVars(DOM.hero, {
         "--hero-scale": 1 - progress * physics.values.heroScaleScrollFactor,
@@ -1534,7 +1230,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 11) SECTION-NAVIGATION
+  // 10) SECTION-NAVIGATION
   // ---------------------------------------------------------------------
   const sectionNavigationModule = {
     buildOrderedSections() {
@@ -1716,699 +1412,1144 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 12) SCROLL-HINT-SYSTEM (KOMPAKTERE V3-FASSUNG)
+  // 11) SCROLL-HINT-SYSTEM
   // ---------------------------------------------------------------------
-  const scrollSectionHintModule = {
-    root: null,
-    measurer: null,
-    hintSlots: [],
-    metricsCache: new Map(),
-    raf: null,
-
-    state: {
-      visible: false,
-      unlocked: false,
-      lastScrollTs: 0,
-      lastObservedY: window.scrollY,
-      distance: 0,
-      timers: {
-        scrollEnd: null,
-        visibility: null,
-        relock: null,
-      },
-    },
-
-    config: {
-      maxVisibleHints: 2,
-      showDelayMs: 500,
-      hideDelayMs: 1000,
-      fadeDurationMs: 500,
-      showScrollDistancePx: window.innerHeight,
-    },
-
-    labels: {
-      about: "ÜBER MICH",
-      gallery: "VIDEO-FUN",
-      services: "LEISTUNGEN",
-      pricing: "PREISE",
-      testimonials: "BEWERTUNGEN",
-      contact: "KONTAKT",
-    },
-
-    build() {
-      if (this.root) return;
-
-      this.root = document.createElement("div");
-      this.root.className = "scroll-section-hints";
-      this.root.setAttribute("aria-hidden", "true");
-
-      this.root.innerHTML = Array.from(
-        { length: this.config.maxVisibleHints },
-        (_, i) => `
-          <div class="scroll-section-hint-anchor scroll-section-hint-anchor--${i}" tabindex="0" role="button">
-            <div class="scroll-section-hint scroll-section-hint--${i}">
-              <span class="scroll-section-hint-text scroll-section-hint-base"></span>
-            </div>
-          </div>
-        `
-      ).join("");
-
-      document.body.appendChild(this.root);
-
-      this.measurer = document.createElement("span");
-      this.measurer.className = "scroll-section-hint-measurer";
-      document.body.appendChild(this.measurer);
-
-      this.hintSlots = [...this.root.querySelectorAll(".scroll-section-hint")];
-    },
-
-    timer(name, fn, delay) {
-      clearTimeout(this.state.timers[name]);
-      this.state.timers[name] = setTimeout(() => {
-        this.state.timers[name] = null;
-        fn();
-      }, delay);
-    },
-
-    clearTimer(name) {
-      clearTimeout(this.state.timers[name]);
-      this.state.timers[name] = null;
-    },
-
-    refreshConfig() {
-      this.config.showDelayMs = cssVar.timeMs("--section-hint-show-duration", 500);
-      this.config.hideDelayMs = cssVar.timeMs("--section-hint-hide-delay", 1000);
-      this.config.fadeDurationMs = cssVar.timeMs("--section-hint-fade-duration", 500);
-      this.config.showScrollDistancePx = cssVar.lengthPx(
-        "--section-hint-show-scroll-distance",
-        window.innerHeight
-      );
-    },
-
-    getSections() {
-      return state.orderedSections.filter((section) => {
-        if (!section) return false;
-        if (section.classList?.contains("hero")) return true;
-        return !!section.id && !!this.labels[section.id];
-      });
-    },
-
-    getViewportBottom() {
-      return (
-        window.visualViewport?.height ||
-        window.innerHeight ||
-        document.documentElement.clientHeight
-      );
-    },
-
-    getNavbarBottom() {
-      return DOM.navbar
-        ? DOM.navbar.getBoundingClientRect().bottom
-        : cssVar.number("--nav-height", 78);
-    },
-
-    gapPx() {
-      return cssVar.remPx("--section-hint-boundary-gap", 4.8);
-    },
-
-    makeText(section, variant = "forward") {
-      if (!section?.id || !this.labels[section.id]) return "";
-      return variant === "forward"
-        ? `>> ${this.labels[section.id]} >>`
-        : `<< ${this.labels[section.id]} <<`;
-    },
-
-    measure(text) {
-      const key = text || " ";
-      if (this.metricsCache.has(key)) return this.metricsCache.get(key);
-
-      this.measurer.textContent = key;
-      const rect = this.measurer.getBoundingClientRect();
-      const value = { width: rect.width || 0, height: rect.height || 0 };
-      this.metricsCache.set(key, value);
-      return value;
-    },
-
-    anchorHeight(text) {
-      return Math.max(48, this.measure(text).width + 16);
-    },
-
-    parseColor(color) {
-      if (!color) return null;
-
-      const value = color.trim().toLowerCase();
-      const rgb = value.match(/rgba?\(([^)]+)\)/);
-
-      if (rgb) {
-        const parts = rgb[1].split(",").map((p) => parseFloat(p.trim()));
-        if (parts.length >= 3 && parts.slice(0, 3).every(Number.isFinite)) {
-          return { r: parts[0], g: parts[1], b: parts[2] };
-        }
-      }
-
-      const hex = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
-      if (!hex) return null;
-
-      let h = hex[1];
-      if (h.length === 3) h = h.split("").map((c) => c + c).join("");
-      const intVal = parseInt(h, 16);
-
-      return {
-        r: (intVal >> 16) & 255,
-        g: (intVal >> 8) & 255,
-        b: intVal & 255,
-      };
-    },
-
-    luminance({ r, g, b }) {
-      const normalize = (c) => {
-        const v = c / 255;
-        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-      };
-
-      return (
-        0.2126 * normalize(r) +
-        0.7152 * normalize(g) +
-        0.0722 * normalize(b)
-      );
-    },
-
-    getSectionTheme(sectionEl) {
-      if (!sectionEl) return "dark";
-
-      const explicit = sectionEl.dataset.hintTheme;
-      if (explicit === "light" || explicit === "dark") return explicit;
-
-      const bg = getComputedStyle(sectionEl).backgroundColor;
-      const rgb = this.parseColor(bg) || { r: 250, g: 250, b: 248 };
-      return this.luminance(rgb) < 0.42 ? "light" : "dark";
-    },
-
-    currentContext() {
-      const sections = this.getSections();
-      if (!sections.length) return null;
-
-      const navBottom = this.getNavbarBottom();
-      const viewportBottom = this.getViewportBottom();
-      const lowerThirdY = viewportBottom * (2 / 3);
-      const scrollingUp = state.scrollDirection === "up";
-
-      let currentIndex = 0;
-
-      for (let i = 0; i < sections.length; i += 1) {
-        const section = sections[i];
-
-        if (section.classList?.contains("hero")) {
-          currentIndex = i;
-          continue;
-        }
-
-        const rect = section.getBoundingClientRect();
-
-        if (section.id === "about") {
-          const switchLine = scrollingUp ? navBottom : lowerThirdY;
-          if (rect.top <= switchLine) currentIndex = i;
-          else break;
-          continue;
-        }
-
-        if (rect.top <= navBottom) currentIndex = i;
-        else break;
-      }
-
-      return {
-        sections,
-        current: sections[currentIndex] || null,
-        next: sections[currentIndex + 1] || null,
-        overnext: sections[currentIndex + 2] || null,
-      };
-    },
-
-    createPlacement(section, variant, top, priority = 0, opacity = 1) {
-      if (!section) return null;
-      return { section, variant, top, priority, opacity };
-    },
-
-    buildPlacements(ctx) {
-      if (!ctx?.current) return [];
-
-      const { current, next, overnext, sections } = ctx;
-      const gap = this.gapPx();
-      const navBottom = this.getNavbarBottom();
-      const viewportBottom = this.getViewportBottom();
-      const lowerThirdY = viewportBottom * (2 / 3);
-
-      const placements = [];
-      const push = (...items) => items.filter(Boolean).forEach((item) => placements.push(item));
-
-      const isHome = current.classList?.contains("hero") || current.id === "home";
-
-      const nextRect = next?.getBoundingClientRect();
-      const overnextRect = overnext?.getBoundingClientRect();
-
-      const nextTop = nextRect?.top ?? Infinity;
-      const overnextTop = overnextRect?.top ?? Infinity;
-
-      const nextForwardTop = next
-        ? nextTop + gap + this.anchorHeight(this.makeText(next, "forward")) / 2
-        : 0;
-
-      const nextBackwardTop = next
-        ? nextTop - gap - this.anchorHeight(this.makeText(next, "backward")) / 2
-        : 0;
-
-      const overnextBackwardTop = overnext
-        ? overnextTop -
-          gap -
-          this.anchorHeight(this.makeText(overnext, "backward")) / 2
-        : 0;
-
-      const currentDockTop =
-        navBottom + gap + this.anchorHeight(this.makeText(current, "forward")) / 2;
-
-      const nextDockBottom = next
-        ? viewportBottom -
-          gap -
-          this.anchorHeight(this.makeText(next, "backward")) / 2
-        : 0;
-
-      const nextDockLower = next
-        ? lowerThirdY -
-          gap -
-          this.anchorHeight(this.makeText(next, "backward")) / 2
-        : 0;
-
-      const overnextDockBottom = overnext
-        ? viewportBottom -
-          gap -
-          this.anchorHeight(this.makeText(overnext, "backward")) / 2
-        : 0;
-
-      const overnextDockLower = overnext
-        ? lowerThirdY -
-          gap -
-          this.anchorHeight(this.makeText(overnext, "backward")) / 2
-        : 0;
-
-      const zone = (y) => {
-        if (!Number.isFinite(y) || y <= navBottom || y >= viewportBottom) {
-          return "outside";
-        }
-
-        const rel = y - navBottom;
-        const third = (viewportBottom - navBottom) / 3;
-
-        if (rel < third) return "entering";
-        if (rel < third * 2) return "passing";
-        return "leaving";
-      };
-
-      const nextZone = zone(nextTop);
-      const overnextZone = zone(overnextTop);
-
-      // ---------------------------------------------------------------
-      // Spezialfall Home -> About / Gallery
-      // ---------------------------------------------------------------
-      const about = sections.find((s) => s?.id === "about");
-      const gallery = sections.find((s) => s?.id === "gallery");
-
-      if (about && current.classList?.contains("hero")) {
-        const boundaryY = about.getBoundingClientRect().top;
-
-        if (boundaryY > navBottom && boundaryY < viewportBottom) {
-          const topThirdEnd = viewportBottom / 3;
-          const middleThirdEnd = viewportBottom * (2 / 3);
-          const scrollingUp = state.scrollDirection === "up";
-
-          const aboutForwardTop =
-            boundaryY + gap + this.anchorHeight(this.makeText(about, "forward")) / 2;
-
-          const aboutBackwardTop =
-            boundaryY - gap - this.anchorHeight(this.makeText(about, "backward")) / 2;
-
-          const galleryBottomTop = gallery
-            ? viewportBottom -
-              gap -
-              this.anchorHeight(this.makeText(gallery, "backward")) / 2
-            : 0;
-
-          if (scrollingUp) {
-            if (boundaryY < topThirdEnd) {
-              push(
-                this.createPlacement(about, "forward", aboutForwardTop, 100),
-                gallery && this.createPlacement(gallery, "backward", galleryBottomTop, 60)
-              );
-              return placements;
-            }
-
-            if (boundaryY < middleThirdEnd) {
-              push(this.createPlacement(about, "forward", aboutForwardTop, 100));
-              return placements;
-            }
-
-            push(this.createPlacement(about, "backward", aboutBackwardTop, 100));
-            return placements;
-          }
-
-          if (boundaryY < middleThirdEnd) {
-            push(this.createPlacement(about, "forward", aboutForwardTop, 100));
-            if (gallery && boundaryY < topThirdEnd) {
-              push(this.createPlacement(gallery, "backward", galleryBottomTop, 60));
-            }
-            return placements;
-          }
-
-          return placements;
-        }
-      }
-
-      // ---------------------------------------------------------------
-      // Normalfälle außerhalb des Home-Spezialfalls
-      // ---------------------------------------------------------------
-      if (!isHome && !next) {
-        push(this.createPlacement(current, "forward", currentDockTop, 100));
-        return placements;
-      }
-
-      if (isHome) {
-        if (nextZone === "entering" || nextZone === "passing") {
-          push(this.createPlacement(next, "forward", nextForwardTop, 100));
-        }
-
-        if (overnext) {
-          push(
-            overnextZone !== "outside"
-              ? this.createPlacement(overnext, "backward", overnextBackwardTop, 60)
-              : nextZone === "entering"
-              ? this.createPlacement(overnext, "backward", overnextDockLower, 60)
-              : null
-          );
-        }
-
-        if (
-          (nextZone === "outside" || nextZone === "leaving") &&
-          nextTop > nextDockLower + gap
-        ) {
-          push(this.createPlacement(next, "backward", nextDockLower, 70));
-        }
-
-        return placements;
-      }
-
-      if (nextZone === "outside") {
-        push(
-          this.createPlacement(current, "forward", currentDockTop, 100),
-          this.createPlacement(next, "backward", nextDockBottom, 70)
-        );
-        return placements;
-      }
-
-      if (nextZone === "entering") {
-        push(this.createPlacement(next, "forward", nextForwardTop, 100));
-
-        if (overnext) {
-          push(
-            overnextZone !== "outside"
-              ? this.createPlacement(overnext, "backward", overnextBackwardTop, 60)
-              : this.createPlacement(overnext, "backward", overnextDockBottom, 60)
-          );
-        }
-
-        return placements;
-      }
-
-      if (nextZone === "passing") {
-        push(
-          this.createPlacement(current, "forward", currentDockTop, 90),
-          this.createPlacement(next, "forward", nextForwardTop, 100)
-        );
-        return placements;
-      }
-
-      if (nextZone === "leaving") {
-        push(
-          this.createPlacement(current, "forward", currentDockTop, 90),
-          this.createPlacement(next, "backward", nextBackwardTop, 100)
-        );
-      }
-
-      return placements;
-    },
-
-    setHint(hintEl, placement = null) {
-      const anchor = hintEl?.parentElement;
-      const base = hintEl?.querySelector(".scroll-section-hint-base");
-
-      if (!hintEl || !anchor || !base || !placement?.section) {
-        if (base) base.textContent = "";
-        if (hintEl) hintEl.style.opacity = "0";
-
-        if (anchor) {
-          anchor.dataset.scrollTarget = "";
-          anchor.style.pointerEvents = "none";
-          anchor.style.opacity = "0";
-          anchor.setAttribute("aria-hidden", "true");
-        }
-
-        return;
-      }
-
-      const text = this.makeText(placement.section, placement.variant);
-      const opacity =
-        clamp(placement.opacity ?? 1, 0, 1) *
-        cssVar.number("--section-hint-visibility", 0.5);
-
-      const metrics = this.measure(text);
-
-      base.textContent = text;
-      hintEl.style.opacity = String(opacity);
-      hintEl.style.top = "50%";
-      hintEl.style.left = "50%";
-      hintEl.dataset.theme = this.getSectionTheme(placement.section);
-
-      anchor.dataset.scrollTarget = placement.section.id
-        ? `#${placement.section.id}`
-        : "";
-
-      anchor.style.top = `${Math.round(placement.top)}px`;
-      anchor.style.width = `${Math.max(48, metrics.height + 16)}px`;
-      anchor.style.height = `${Math.max(48, metrics.width + 16)}px`;
-      anchor.style.pointerEvents = "auto";
-      anchor.style.opacity = "1";
-      anchor.setAttribute("aria-hidden", "false");
-    },
-
-    render() {
-      if (!this.root) return;
-
-      const ctx = this.currentContext();
-      document.body.classList.toggle("in-gallery", ctx?.current?.id === "gallery");
-
-      const placements = this.buildPlacements(ctx)
-        .filter(Boolean)
-        .sort((a, b) => (a.top - b.top) || ((b.priority ?? 0) - (a.priority ?? 0)));
-
-      this.hintSlots.forEach((hintEl, i) => {
-        this.setHint(hintEl, placements[i] || null);
-      });
-    },
-
-    scheduleRender() {
-      if (this.raf) return;
-
-      this.raf = requestAnimationFrame(() => {
-        this.raf = null;
-        this.render();
-      });
-    },
-
-    applyVisible(show) {
-      this.state.visible = show;
-      this.root.classList.toggle("is-visible", show);
-      document.body.classList.toggle("hints-visible", show);
-
-      if (!show) {
-        this.timer("relock", () => {
-          if (!this.state.visible) {
-            this.state.unlocked = false;
-            this.state.distance = 0;
-          }
-        }, this.config.fadeDurationMs);
-      } else {
-        this.clearTimer("relock");
-      }
-    },
-
-    show() {
-      this.clearTimer("visibility");
-      this.timer("visibility", () => this.applyVisible(true), this.config.showDelayMs);
-    },
-
-    hide() {
-      this.clearTimer("visibility");
-      this.applyVisible(false);
-    },
-
-    hideWithScrollDelay() {
-      this.clearTimer("visibility");
-      this.timer("visibility", () => this.applyVisible(false), this.config.showDelayMs);
-    },
-
-    scheduleHide() {
-      this.scheduleHideAfterIdle();
-    },
-
-    hideImmediatelyForProgrammaticScroll() {
-      if (!this.root) return;
-
-      ["scrollEnd", "visibility", "relock"].forEach((name) => this.clearTimer(name));
-
-      this.state.visible = false;
-      this.state.unlocked = false;
-      this.state.distance = 0;
-
-      this.root.classList.add("is-instant-hidden");
-      this.root.classList.remove("is-visible");
-      document.body.classList.remove("hints-visible");
-      document.body.classList.add("hints-instant-hide");
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          this.root?.classList.remove("is-instant-hidden");
-          document.body.classList.remove("hints-instant-hide");
-        });
-      });
-    },
-
-    onScrollActivity() {
-      if (state.scroll.programmatic) {
-        this.hideImmediatelyForProgrammaticScroll();
-        return;
-      }
-
-      const currentY = window.scrollY;
-      this.state.lastScrollTs = performance.now();
-      this.state.distance += Math.abs(currentY - this.state.lastObservedY);
-      this.state.lastObservedY = currentY;
-
-      if (!this.state.unlocked) {
-        if (this.state.distance < this.config.showScrollDistancePx) {
-          this.hideWithScrollDelay();
-          this.scheduleHideAfterIdle();
-          return;
-        }
-
-        this.state.unlocked = true;
-      }
-
-      this.show();
-      this.scheduleHideAfterIdle();
-    },
-
-    scheduleHideAfterIdle() {
-      this.clearTimer("scrollEnd");
-
-      this.timer("scrollEnd", () => {
-        const idleFor = performance.now() - this.state.lastScrollTs;
-
-        if (idleFor >= this.config.hideDelayMs) {
-          this.hide();
-        } else {
-          this.scheduleHideAfterIdle();
-        }
-      }, this.config.hideDelayMs);
-    },
-
-    bindClicks() {
-      this.hintSlots.forEach((hintEl) => {
-        const anchor = hintEl.parentElement;
-        if (!anchor) return;
-
-        const go = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-
-          const targetSelector = anchor.dataset.scrollTarget;
-          const opacity = parseFloat(hintEl.style.opacity || "0");
-          const text = hintEl.textContent || "";
-
-          if (!targetSelector || opacity <= 0.01) return;
-
-          scrollEngine.goTo(
-            targetSelector,
-            text.includes(">>") ? "down" : "up-section"
-          );
-        };
-
-        anchor.addEventListener("click", go);
-        anchor.addEventListener("touchstart", go, { passive: false });
-        anchor.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") go(e);
-        });
-      });
-    },
-
-    bindEvents() {
-      window.addEventListener(
-        "scroll",
-        () => {
-          this.scheduleRender();
-          this.onScrollActivity();
-        },
-        { passive: true }
-      );
-
-      window.addEventListener(
-        "pointerdown",
-        (e) => {
-          if (e.pointerType === "mouse") this.hide();
-        },
-        { passive: true }
-      );
-
-      const onResize = () => {
-        this.metricsCache.clear();
-        this.refreshConfig();
-        this.state.lastObservedY = window.scrollY;
-        this.scheduleRender();
-      };
-
-      window.addEventListener("resize", onResize);
-      window.addEventListener("orientationchange", () => setTimeout(onResize, 120));
-
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", onResize);
-        window.visualViewport.addEventListener("scroll", () => this.scheduleRender(), {
-          passive: true,
-        });
-      }
-
-      if ("onscrollend" in document) {
-        document.addEventListener(
-          "scrollend",
-          () => {
-            if (!state.scroll.programmatic) {
-              this.state.lastScrollTs = performance.now();
-              this.scheduleHideAfterIdle();
-            }
-          },
-          { passive: true }
-        );
-      }
-    },
-
-    init() {
-      this.build();
-      this.refreshConfig();
-      this.bindClicks();
-      this.bindEvents();
-      this.hide();
-      this.render();
-    },
-  };
-
+	const scrollSectionHintModule = {
+	  root: null,
+	  measurer: null,
+	  metricsCache: new Map(),
+	  hintSlots: [],
+	  updateRaf: null,
+
+	  maxVisibleHints: 2,
+	  isVisible: false,
+	  hasUnlockedScrollHints: false,
+
+	  scrollEndTimer: null,
+	  hideCompleteTimer: null,
+	  lastScrollTs: 0,
+
+	  showDelayMs: 500,
+	  hideDelayMs: 1000,
+	  fadeDurationMs: 500,
+	  visibilityTimer: null,
+	  pendingVisibility: null,
+
+	  gesture: {
+		type: null,
+		active: false,
+		distance: 0,
+		lastTouchStartTs: 0,
+		lastTouchEndTs: 0,
+	  },
+
+	  lastObservedScrollY: window.scrollY,
+	  showScrollDistancePx: window.innerHeight,
+
+	  labels: {
+		about: "ÜBER MICH",
+		gallery: "VIDEO-FUN",
+		services: "LEISTUNGEN",
+		pricing: "PREISE",
+		testimonials: "BEWERTUNGEN",
+		contact: "KONTAKT",
+	  },
+
+	  build() {
+		if (this.root) return;
+
+		this.root = document.createElement("div");
+		this.root.className = "scroll-section-hints";
+		this.root.setAttribute("aria-hidden", "true");
+
+		this.root.innerHTML = Array.from(
+		  { length: this.maxVisibleHints },
+		  (_, index) => `
+			<div class="scroll-section-hint-anchor scroll-section-hint-anchor--${index}">
+			  <div class="scroll-section-hint scroll-section-hint--${index}">
+				<span class="scroll-section-hint-text scroll-section-hint-base"></span>
+			  </div>
+			</div>
+		  `
+		).join("");
+
+		document.body.appendChild(this.root);
+
+		this.measurer = document.createElement("span");
+		this.measurer.className = "scroll-section-hint-measurer";
+		document.body.appendChild(this.measurer);
+
+		this.hintSlots = [...this.root.querySelectorAll(".scroll-section-hint")];
+	  },
+
+	  bindHintClicks() {
+		this.hintSlots.forEach((hintEl) => {
+		  const anchor = hintEl?.parentElement;
+		  if (!anchor) return;
+
+		  anchor.setAttribute("tabindex", "0");
+		  anchor.setAttribute("role", "button");
+
+		  const goToHintTarget = () => {
+			const targetSelector = anchor.dataset.scrollTarget;
+			const opacity = parseFloat(hintEl.style.opacity || "0");
+			const text = hintEl.textContent || "";
+
+			if (!targetSelector || opacity <= 0.01) return;
+
+			scrollEngine.goTo(
+			  targetSelector,
+			  text.includes(">>") ? "down" : "up-section"
+			);
+		  };
+
+		  const triggerNavigation = (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			goToHintTarget();
+		  };
+
+		  anchor.addEventListener(
+			"pointerdown",
+			(e) => {
+			  if (e.pointerType !== "mouse") triggerNavigation(e);
+			},
+			{ passive: false }
+		  );
+
+		  anchor.addEventListener("touchstart", triggerNavigation, {
+			passive: false,
+		  });
+
+		  anchor.addEventListener("click", (e) => {
+			if (!e.pointerType || e.pointerType === "mouse") {
+			  triggerNavigation(e);
+			}
+		  });
+
+		  anchor.addEventListener("keydown", (e) => {
+			if (e.key === "Enter" || e.key === " ") triggerNavigation(e);
+		  });
+		});
+	  },
+
+	  getContentSections() {
+		return state.orderedSections.filter((section) => {
+		  if (!section) return false;
+		  if (section.classList?.contains("hero")) return true;
+		  return !!section.id && !!this.labels[section.id];
+		});
+	  },
+
+	  getVisualViewportBottom() {
+		return window.visualViewport
+		  ? window.visualViewport.height
+		  : window.innerHeight || document.documentElement.clientHeight;
+	  },
+
+	  getBoundaryGapPx() {
+		return cssVar.remPx("--section-hint-boundary-gap", 4.8);
+	  },
+
+	  getNavbarBottom() {
+		return DOM.navbar
+		  ? DOM.navbar.getBoundingClientRect().bottom
+		  : cssVar.number("--nav-height", 78);
+	  },
+
+	  getSectionContext() {
+		const sections = this.getContentSections();
+		if (!sections.length) return null;
+
+		const navbarBottom = this.getNavbarBottom();
+		const viewportBottom = this.getVisualViewportBottom();
+		const lowerThirdY = viewportBottom * (2 / 3);
+		const scrollingUp = state.scrollDirection === "up";
+
+		let currentIndex = 0;
+
+		for (let i = 0; i < sections.length; i += 1) {
+		  const section = sections[i];
+
+		  if (section.classList?.contains("hero")) {
+			currentIndex = i;
+			continue;
+		  }
+
+		  const rect = section.getBoundingClientRect();
+
+		  if (section.id === "about") {
+			const switchLine = scrollingUp ? navbarBottom : lowerThirdY;
+
+			if (rect.top <= switchLine) {
+			  currentIndex = i;
+			} else {
+			  break;
+			}
+
+			continue;
+		  }
+
+		  if (rect.top <= navbarBottom) {
+			currentIndex = i;
+		  } else {
+			break;
+		  }
+		}
+
+		return {
+		  sections,
+		  currentIndex,
+		  current: sections[currentIndex] || null,
+		  next: sections[currentIndex + 1] || null,
+		  overnext: sections[currentIndex + 2] || null,
+		};
+	  },
+
+	  measureHint(text) {
+		const key = text || " ";
+		const cached = this.metricsCache.get(key);
+
+		if (cached || !this.measurer) {
+		  return cached || { width: 0, height: 0 };
+		}
+
+		this.measurer.textContent = key;
+
+		const rect = this.measurer.getBoundingClientRect();
+		const metrics = {
+		  width: rect.width || 0,
+		  height: rect.height || 0,
+		};
+
+		this.metricsCache.set(key, metrics);
+		return metrics;
+	  },
+
+	  getAnchorHeightForText(text) {
+		return Math.max(48, this.measureHint(text).width + 16);
+	  },
+
+	  makeText(section, variant = "forward") {
+		if (!section?.id || !this.labels[section.id]) return "";
+
+		return variant === "forward"
+		  ? `>> ${this.labels[section.id]} >>`
+		  : `<< ${this.labels[section.id]} <<`;
+	  },
+
+	  getRgbFromColorString(color) {
+		if (!color) return null;
+
+		const value = color.trim().toLowerCase();
+
+		if (value === "transparent" || value === "rgba(0, 0, 0, 0)") return null;
+
+		const rgbMatch = value.match(/rgba?\(([^)]+)\)/);
+		if (rgbMatch) {
+		  const parts = rgbMatch[1]
+			.split(",")
+			.map((part) => parseFloat(part.trim()));
+
+		  if (parts.length >= 3 && parts.slice(0, 3).every(Number.isFinite)) {
+			return { r: parts[0], g: parts[1], b: parts[2] };
+		  }
+		}
+
+		const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+		if (!hexMatch) return null;
+
+		let hex = hexMatch[1];
+		if (hex.length === 3) {
+		  hex = hex
+			.split("")
+			.map((ch) => ch + ch)
+			.join("");
+		}
+
+		const intVal = parseInt(hex, 16);
+
+		return {
+		  r: (intVal >> 16) & 255,
+		  g: (intVal >> 8) & 255,
+		  b: intVal & 255,
+		};
+	  },
+
+	  getRelativeLuminance({ r, g, b }) {
+		const normalize = (channel) => {
+		  const v = channel / 255;
+		  return v <= 0.03928
+			? v / 12.92
+			: Math.pow((v + 0.055) / 1.055, 2.4);
+		};
+
+		return (
+		  0.2126 * normalize(r) +
+		  0.7152 * normalize(g) +
+		  0.0722 * normalize(b)
+		);
+	  },
+
+	  getSectionTheme(sectionEl) {
+		if (!sectionEl) return "dark";
+
+		const explicitTheme = sectionEl.dataset.hintTheme;
+		if (explicitTheme === "light" || explicitTheme === "dark") {
+		  return explicitTheme;
+		}
+
+		const style = getComputedStyle(sectionEl);
+		const rgb =
+		  this.getRgbFromColorString(style.backgroundColor) ||
+		  this.getRgbFromColorString(getComputedStyle(document.body).backgroundColor) || {
+			r: 250,
+			g: 250,
+			b: 248,
+		  };
+
+		return this.getRelativeLuminance(rgb) < 0.42 ? "light" : "dark";
+	  },
+
+	  getSectionAtViewportY(viewportY) {
+		return (
+		  this.getContentSections().find((section) => {
+			const rect = section.getBoundingClientRect();
+			return viewportY >= rect.top && viewportY <= rect.bottom;
+		  }) || null
+		);
+	  },
+
+	  getThemeAtViewportY(viewportY, fallbackSection = null) {
+		return this.getSectionTheme(
+		  this.getSectionAtViewportY(viewportY) || fallbackSection
+		);
+	  },
+
+	  setAnchorCenterY(hintEl, centerYPx) {
+		const anchor = hintEl?.parentElement;
+		if (anchor) anchor.style.top = `${Math.round(centerYPx)}px`;
+	  },
+
+	  setHint(
+		hintEl,
+		{ text = "", top = 0, opacity = 0, theme = "dark", target = "" } = {}
+	  ) {
+		if (!hintEl) return;
+
+		const anchor = hintEl.parentElement;
+		const base = hintEl.querySelector(".scroll-section-hint-base");
+		const visible = !!text && opacity > 0.001;
+
+		if (base) base.textContent = text;
+
+		this.setAnchorCenterY(hintEl, top);
+
+		hintEl.style.opacity = `${
+		  clamp(opacity, 0, 1) * cssVar.number("--section-hint-visibility", 0.5)
+		}`;
+
+		hintEl.dataset.theme = theme;
+		hintEl.classList.toggle("is-empty", !visible);
+
+		if (anchor) {
+		  const metrics = this.measureHint(text);
+
+		  anchor.dataset.scrollTarget = target || "";
+		  anchor.style.width = `${Math.max(48, metrics.height + 16)}px`;
+		  anchor.style.height = `${Math.max(48, metrics.width + 16)}px`;
+		  anchor.style.pointerEvents = visible ? "auto" : "none";
+		  anchor.style.opacity = visible ? "1" : "0";
+		  anchor.setAttribute("aria-hidden", visible ? "false" : "true");
+		}
+	  },
+
+	  applyHint(hintEl, placement) {
+		if (!placement?.section) {
+		  this.hideHint(hintEl);
+		  return;
+		}
+
+		this.setHint(hintEl, {
+		  text: this.makeText(placement.section, placement.variant),
+		  top: placement.top,
+		  opacity: placement.opacity ?? 1,
+		  theme: this.getThemeAtViewportY(placement.top, placement.section),
+		  target: placement.section.id ? `#${placement.section.id}` : "",
+		});
+	  },
+
+	  hideHint(hintEl) {
+		this.setHint(hintEl, {
+		  text: "",
+		  top: 0,
+		  opacity: 0,
+		  target: "",
+		});
+	  },
+
+	  hideAll() {
+		this.hintSlots.forEach((hintEl) => this.hideHint(hintEl));
+	  },
+
+	  getTransitionZone(changeY, bandTop, bandBottom) {
+		if (!Number.isFinite(changeY) || changeY <= bandTop || changeY >= bandBottom) {
+		  return "outside";
+		}
+
+		const rel = changeY - bandTop;
+		const third = (bandBottom - bandTop) / 3;
+
+		if (rel < third) return "entering";
+		if (rel < third * 2) return "passing";
+		return "leaving";
+	  },
+
+	  createPlacement(section, config = {}) {
+		if (!section) return null;
+
+		return {
+		  section,
+		  role: config.role || "transition",
+		  variant: config.variant || "forward",
+		  top: config.top || 0,
+		  opacity: config.opacity ?? 1,
+		  priority: config.priority || 0,
+		};
+	  },
+
+	  buildGeometry(context) {
+		const gap = this.getBoundaryGapPx();
+		const navbarBottom = this.getNavbarBottom();
+		const viewportBottom = this.getVisualViewportBottom();
+		const lowerThirdY = viewportBottom * (2 / 3);
+
+		const { current, next, overnext } = context;
+
+		const text = {
+		  currentForward: this.makeText(current, "forward"),
+		  nextForward: next ? this.makeText(next, "forward") : "",
+		  nextBackward: next ? this.makeText(next, "backward") : "",
+		  overnextBackward: overnext ? this.makeText(overnext, "backward") : "",
+		};
+
+		const nextRect = next?.getBoundingClientRect() || null;
+		const overnextRect = overnext?.getBoundingClientRect() || null;
+
+		const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
+		const overnextChangeY = overnextRect
+		  ? overnextRect.top
+		  : Number.POSITIVE_INFINITY;
+
+		const anchorHeights = {
+		  currentForward: this.getAnchorHeightForText(text.currentForward),
+		  nextForward: this.getAnchorHeightForText(text.nextForward),
+		  nextBackward: this.getAnchorHeightForText(text.nextBackward),
+		  overnextBackward: this.getAnchorHeightForText(text.overnextBackward),
+		};
+
+		return {
+		  gap,
+		  changeY,
+		  overnextChangeY,
+
+		  docks: {
+			top: {
+			  current: navbarBottom + gap + anchorHeights.currentForward / 2,
+			},
+
+			bottom: {
+			  next: next
+				? viewportBottom - gap - anchorHeights.nextBackward / 2
+				: 0,
+			  overnext: overnext
+				? viewportBottom - gap - anchorHeights.overnextBackward / 2
+				: 0,
+			},
+
+			lowerThird: {
+			  next: next
+				? lowerThirdY - gap - anchorHeights.nextBackward / 2
+				: 0,
+			  overnext: overnext
+				? lowerThirdY - gap - anchorHeights.overnextBackward / 2
+				: 0,
+			},
+		  },
+
+		  band: {
+			top: navbarBottom,
+			bottom: viewportBottom,
+		  },
+
+		  transition: {
+			nextForwardBelowBoundary: next
+			  ? changeY + gap + anchorHeights.nextForward / 2
+			  : 0,
+
+			nextBackwardAboveBoundary: next
+			  ? changeY - gap - anchorHeights.nextBackward / 2
+			  : 0,
+
+			overnextBackwardAboveBoundary: overnext
+			  ? overnextChangeY - gap - anchorHeights.overnextBackward / 2
+			  : 0,
+		  },
+		};
+	  },
+
+	  buildHomeAboutSpecialPlacements(context, geometry) {
+		const about = context.sections.find((section) => section?.id === "about");
+		const gallery = context.sections.find((section) => section?.id === "gallery");
+
+		if (!about) return null;
+
+		const boundaryY = about.getBoundingClientRect().top;
+		const viewportBottom = geometry.band.bottom;
+		const navbarBottom = geometry.band.top;
+
+		if (
+		  !Number.isFinite(boundaryY) ||
+		  boundaryY <= navbarBottom ||
+		  boundaryY >= viewportBottom
+		) {
+		  return null;
+		}
+
+		const topThirdEnd = viewportBottom / 3;
+		const middleThirdEnd = viewportBottom * (2 / 3);
+		const scrollingUp = state.scrollDirection === "up";
+
+		const placements = [];
+		const push = (placement) => placement?.section && placements.push(placement);
+
+		const aboutForwardText = this.makeText(about, "forward");
+		const aboutBackwardText = this.makeText(about, "backward");
+		const galleryBackwardText = gallery ? this.makeText(gallery, "backward") : "";
+
+		const aboutForwardHeight = this.getAnchorHeightForText(aboutForwardText);
+		const aboutBackwardHeight = this.getAnchorHeightForText(aboutBackwardText);
+		const galleryBackwardHeight = gallery
+		  ? this.getAnchorHeightForText(galleryBackwardText)
+		  : 0;
+
+		const aboutBelowBoundaryTop =
+		  boundaryY + geometry.gap + aboutForwardHeight / 2;
+
+		const aboutAboveBoundaryBackwardTop =
+		  boundaryY - geometry.gap - aboutBackwardHeight / 2;
+
+		const galleryBottomTop = gallery
+		  ? viewportBottom - geometry.gap - galleryBackwardHeight / 2
+		  : 0;
+
+		if (scrollingUp) {
+		  if (boundaryY < topThirdEnd) {
+			push(
+			  this.createPlacement(about, {
+				role: "transition",
+				variant: "forward",
+				top: aboutBelowBoundaryTop,
+				priority: 100,
+			  })
+			);
+
+			if (gallery) {
+			  push(
+				this.createPlacement(gallery, {
+				  role: "bottomDock",
+				  variant: "backward",
+				  top: galleryBottomTop,
+				  priority: 60,
+				})
+			  );
+			}
+
+			return placements;
+		  }
+
+		  if (boundaryY < middleThirdEnd) {
+			push(
+			  this.createPlacement(about, {
+				role: "transition",
+				variant: "forward",
+				top: aboutBelowBoundaryTop,
+				priority: 100,
+			  })
+			);
+
+			return placements;
+		  }
+
+		  push(
+			this.createPlacement(about, {
+			  role: "transition",
+			  variant: "backward",
+			  top: aboutAboveBoundaryBackwardTop,
+			  priority: 100,
+			})
+		  );
+
+		  return placements;
+		}
+
+		if (boundaryY >= middleThirdEnd) {
+		  return [];
+		}
+
+		push(
+		  this.createPlacement(about, {
+			role: "transition",
+			variant: "forward",
+			top: aboutBelowBoundaryTop,
+			priority: 100,
+		  })
+		);
+
+		if (gallery && boundaryY < topThirdEnd) {
+		  push(
+			this.createPlacement(gallery, {
+			  role: "bottomDock",
+			  variant: "backward",
+			  top: galleryBottomTop,
+			  priority: 60,
+			})
+		  );
+		}
+
+		return placements;
+	  },
+
+	  buildPlacements(context, geometry) {
+		const specialHomeAbout = this.buildHomeAboutSpecialPlacements(
+		  context,
+		  geometry
+		);
+		if (specialHomeAbout) return specialHomeAbout;
+
+		const { current, next, overnext } = context;
+		const placements = [];
+		const push = (placement) => placement?.section && placements.push(placement);
+
+		const isHomeCurrent =
+		  current?.classList?.contains("hero") || current?.id === "home";
+
+		const nextZone = next
+		  ? this.getTransitionZone(geometry.changeY, geometry.band.top, geometry.band.bottom)
+		  : "outside";
+
+		const overnextZone = overnext
+		  ? this.getTransitionZone(
+			  geometry.overnextChangeY,
+			  geometry.band.top,
+			  geometry.band.bottom
+			)
+		  : "outside";
+
+		if (!isHomeCurrent && !next) {
+		  push(
+			this.createPlacement(current, {
+			  role: "topDock",
+			  variant: "forward",
+			  top: geometry.docks.top.current,
+			  priority: 100,
+			})
+		  );
+
+		  return placements;
+		}
+
+		if (isHomeCurrent) {
+		  if (nextZone === "entering" || nextZone === "passing") {
+			push(
+			  this.createPlacement(next, {
+				role: "transition",
+				variant: "forward",
+				top: geometry.transition.nextForwardBelowBoundary,
+				priority: 100,
+			  })
+			);
+		  }
+
+		  if (overnext) {
+			if (overnextZone !== "outside") {
+			  push(
+				this.createPlacement(overnext, {
+				  role: "transition",
+				  variant: "backward",
+				  top: geometry.transition.overnextBackwardAboveBoundary,
+				  priority: 60,
+				})
+			  );
+			} else if (nextZone === "entering") {
+			  push(
+				this.createPlacement(overnext, {
+				  role: "bottomDock",
+				  variant: "backward",
+				  top: geometry.docks.lowerThird.overnext,
+				  priority: 60,
+				})
+			  );
+			}
+		  }
+
+		  if (nextZone === "outside" || nextZone === "leaving") {
+			if (geometry.changeY > geometry.docks.lowerThird.next + geometry.gap) {
+			  push(
+				this.createPlacement(next, {
+				  role: "bottomDock",
+				  variant: "backward",
+				  top: geometry.docks.lowerThird.next,
+				  priority: 70,
+				})
+			  );
+			}
+		  }
+
+		  return placements;
+		}
+
+		if (nextZone === "outside") {
+		  push(
+			this.createPlacement(current, {
+			  role: "topDock",
+			  variant: "forward",
+			  top: geometry.docks.top.current,
+			  priority: 100,
+			})
+		  );
+
+		  push(
+			this.createPlacement(next, {
+			  role: "bottomDock",
+			  variant: "backward",
+			  top: geometry.docks.bottom.next,
+			  priority: 70,
+			})
+		  );
+
+		  return placements;
+		}
+
+		if (nextZone === "entering") {
+		  push(
+			this.createPlacement(next, {
+			  role: "transition",
+			  variant: "forward",
+			  top: geometry.transition.nextForwardBelowBoundary,
+			  priority: 100,
+			})
+		  );
+
+		  if (overnext) {
+			push(
+			  this.createPlacement(overnext, {
+				role: overnextZone !== "outside" ? "transition" : "bottomDock",
+				variant: "backward",
+				top:
+				  overnextZone !== "outside"
+					? geometry.transition.overnextBackwardAboveBoundary
+					: geometry.docks.bottom.overnext,
+				priority: 60,
+			  })
+			);
+		  }
+
+		  return placements;
+		}
+
+		if (nextZone === "passing") {
+		  push(
+			this.createPlacement(current, {
+			  role: "topDock",
+			  variant: "forward",
+			  top: geometry.docks.top.current,
+			  priority: 90,
+			})
+		  );
+
+		  push(
+			this.createPlacement(next, {
+			  role: "transition",
+			  variant: "forward",
+			  top: geometry.transition.nextForwardBelowBoundary,
+			  priority: 100,
+			})
+		  );
+
+		  return placements;
+		}
+
+		if (nextZone === "leaving") {
+		  push(
+			this.createPlacement(current, {
+			  role: "topDock",
+			  variant: "forward",
+			  top: geometry.docks.top.current,
+			  priority: 90,
+			})
+		  );
+
+		  push(
+			this.createPlacement(next, {
+			  role: "transition",
+			  variant: "backward",
+			  top: geometry.transition.nextBackwardAboveBoundary,
+			  priority: 100,
+			})
+		  );
+		}
+
+		return placements;
+	  },
+
+	  renderPlacements(placements) {
+		const visiblePlacements = (placements || [])
+		  .filter(Boolean)
+		  .filter(
+			(placement) => placement.section && (placement.opacity ?? 1) > 0.001
+		  )
+		  .sort((a, b) =>
+			a.top !== b.top ? a.top - b.top : (b.priority ?? 0) - (a.priority ?? 0)
+		  );
+
+		if (!visiblePlacements.length) {
+		  this.hideAll();
+		  return;
+		}
+
+		this.hintSlots.forEach((hintEl, index) => {
+		  const placement = visiblePlacements[index];
+		  if (placement) {
+			this.applyHint(hintEl, placement);
+		  } else {
+			this.hideHint(hintEl);
+		  }
+		});
+	  },
+
+	  updateGalleryBodyState(currentSection) {
+		document.body.classList.toggle("in-gallery", currentSection?.id === "gallery");
+	  },
+
+	  update() {
+		if (!this.root) return;
+
+		const context = this.getSectionContext();
+		this.updateGalleryBodyState(context?.current || null);
+
+		if (!context?.current) {
+		  this.hideAll();
+		  return;
+		}
+
+		this.renderPlacements(
+		  this.buildPlacements(context, this.buildGeometry(context))
+		);
+	  },
+
+	  scheduleUpdate() {
+		if (this.updateRaf) return;
+
+		this.updateRaf = requestAnimationFrame(() => {
+		  this.updateRaf = null;
+		  this.update();
+		});
+	  },
+
+	  refreshTimingVars() {
+		this.hideDelayMs = cssVar.timeMs("--section-hint-hide-delay", 1000);
+		this.fadeDurationMs = cssVar.timeMs("--section-hint-fade-duration", 500);
+		this.showDelayMs = cssVar.timeMs("--section-hint-show-duration", 500);
+		this.showScrollDistancePx = cssVar.lengthPx(
+		  "--section-hint-show-scroll-distance",
+		  window.innerHeight
+		);
+	  },
+
+	  clearScrollEndTimer() {
+		this.scrollEndTimer = utils.clearTimer(this.scrollEndTimer);
+	  },
+
+	  clearHideCompleteTimer() {
+		this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
+	  },
+
+	  clearVisibilityTimer() {
+		this.visibilityTimer = utils.clearTimer(this.visibilityTimer);
+		this.pendingVisibility = null;
+	  },
+
+	  scheduleRelockAfterFullyHidden() {
+		this.clearHideCompleteTimer();
+
+		this.hideCompleteTimer = setTimeout(() => {
+		  if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
+			this.hasUnlockedScrollHints = false;
+			this.gesture.distance = 0;
+			this.endGesture({ resetDistance: true });
+		  }
+
+		  this.hideCompleteTimer = null;
+		}, this.fadeDurationMs);
+	  },
+
+	  beginGesture(type) {
+		this.clearScrollEndTimer();
+		this.clearHideCompleteTimer();
+
+		this.gesture.type = type;
+		this.gesture.active = true;
+		this.gesture.distance = 0;
+		this.lastObservedScrollY = window.scrollY;
+
+		if (type === "touch") {
+		  this.gesture.lastTouchStartTs = performance.now();
+		}
+	  },
+
+	  endGesture({ keepType = false, resetDistance = false } = {}) {
+		if (!keepType) {
+		  this.gesture.type = null;
+		}
+
+		this.gesture.active = false;
+
+		if (resetDistance) {
+		  this.gesture.distance = 0;
+		}
+	  },
+
+	  accumulateScrollDistance() {
+		const currentY = window.scrollY;
+		const delta = Math.abs(currentY - this.lastObservedScrollY);
+
+		if (delta > 0) this.gesture.distance += delta;
+		this.lastObservedScrollY = currentY;
+	  },
+
+	  hasReachedShowScrollDistance() {
+		return this.gesture.distance >= this.showScrollDistancePx;
+	  },
+
+	  applyVisibleState() {
+		if (!this.root) return;
+
+		this.clearHideCompleteTimer();
+		this.isVisible = true;
+
+		this.root.classList.remove("is-instant-hidden");
+		document.body.classList.remove("hints-instant-hide");
+
+		this.root.classList.add("is-visible");
+		document.body.classList.add("hints-visible");
+	  },
+
+	  applyHiddenState() {
+		if (!this.root) return;
+
+		this.isVisible = false;
+		this.root.classList.remove("is-visible");
+		document.body.classList.remove("hints-visible");
+
+		this.scheduleRelockAfterFullyHidden();
+	  },
+
+	  scheduleVisibility(shouldShow) {
+		if (!this.root) return;
+
+		const alreadyInTargetState =
+		  (shouldShow && this.isVisible) || (!shouldShow && !this.isVisible);
+
+		if (alreadyInTargetState && this.pendingVisibility === null) return;
+		if (this.pendingVisibility === shouldShow) return;
+
+		this.clearVisibilityTimer();
+		this.pendingVisibility = shouldShow;
+
+		this.visibilityTimer = setTimeout(() => {
+		  if (this.pendingVisibility !== shouldShow) return;
+
+		  if (shouldShow) {
+			this.applyVisibleState();
+		  } else {
+			this.applyHiddenState();
+		  }
+
+		  this.visibilityTimer = null;
+		  this.pendingVisibility = null;
+		}, this.showDelayMs);
+	  },
+
+	  show() {
+		this.scheduleVisibility(true);
+	  },
+
+	  hide() {
+		this.clearVisibilityTimer();
+		this.applyHiddenState();
+	  },
+
+	  hideWithScrollDelay() {
+		this.scheduleVisibility(false);
+	  },
+
+	  scheduleHide() {
+		this.scheduleHideAfterScrollEnd();
+	  },
+
+	  handleScrollActivity() {
+		if (state.scroll.programmatic) {
+		  this.hideImmediatelyForProgrammaticScroll();
+		  return;
+		}
+
+		this.lastScrollTs = performance.now();
+		this.accumulateScrollDistance();
+
+		if (!this.hasUnlockedScrollHints) {
+		  if (!this.hasReachedShowScrollDistance()) {
+			this.hideWithScrollDelay();
+			this.scheduleHideAfterScrollEnd();
+			return;
+		  }
+
+		  this.hasUnlockedScrollHints = true;
+		}
+
+		this.show();
+		this.scheduleHideAfterScrollEnd();
+	  },
+
+	  scheduleHideAfterScrollEnd() {
+		this.clearScrollEndTimer();
+
+		this.scrollEndTimer = setTimeout(() => {
+		  const idleFor = performance.now() - this.lastScrollTs;
+
+		  if (idleFor >= this.hideDelayMs) {
+			this.hide();
+			return;
+		  }
+
+		  this.scheduleHideAfterScrollEnd();
+		}, this.hideDelayMs);
+	  },
+
+	  hideImmediatelyForProgrammaticScroll() {
+		if (!this.root) return;
+
+		this.clearVisibilityTimer();
+		this.clearScrollEndTimer();
+		this.clearHideCompleteTimer();
+		this.endGesture({ resetDistance: true });
+
+		this.isVisible = false;
+		this.hasUnlockedScrollHints = false;
+
+		this.root.classList.add("is-instant-hidden");
+		document.body.classList.add("hints-instant-hide");
+
+		this.root.classList.remove("is-visible");
+		document.body.classList.remove("hints-visible");
+
+		requestAnimationFrame(() => {
+		  requestAnimationFrame(() => {
+			this.root?.classList.remove("is-instant-hidden");
+			document.body.classList.remove("hints-instant-hide");
+		  });
+		});
+	  },
+
+	  bindEvents() {
+		const onTouchStart = () => {
+		  this.beginGesture("touch");
+		};
+
+		const onTouchEndLike = () => {
+		  this.gesture.lastTouchEndTs = performance.now();
+		  this.endGesture({ resetDistance: false });
+
+		  this.lastScrollTs = performance.now();
+		  this.lastObservedScrollY = window.scrollY;
+		  this.scheduleHideAfterScrollEnd();
+		};
+
+		window.addEventListener(
+		  "scroll",
+		  () => {
+			this.scheduleUpdate();
+
+			if (state.scroll.programmatic) {
+			  this.hideImmediatelyForProgrammaticScroll();
+			  return;
+			}
+
+			this.handleScrollActivity();
+		  },
+		  { passive: true }
+		);
+
+		window.addEventListener("touchstart", onTouchStart, { passive: true });
+		window.addEventListener("touchend", onTouchEndLike, { passive: true });
+		window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
+
+		window.addEventListener(
+		  "pointerdown",
+		  (e) => {
+			if (e.pointerType === "mouse") {
+			  this.hide();
+			}
+		  },
+		  { passive: true }
+		);
+
+		if ("onscrollend" in document) {
+		  document.addEventListener(
+			"scrollend",
+			() => {
+			  if (!state.scroll.programmatic) {
+				this.lastScrollTs = performance.now();
+				this.scheduleHideAfterScrollEnd();
+			  }
+			},
+			{ passive: true }
+		  );
+		}
+
+		const onResize = () => {
+		  this.metricsCache.clear();
+		  this.refreshTimingVars();
+		  this.lastObservedScrollY = window.scrollY;
+		  this.scheduleUpdate();
+		};
+
+		window.addEventListener("resize", onResize);
+		window.addEventListener("orientationchange", () => setTimeout(onResize, 120));
+
+		if (window.visualViewport) {
+		  window.visualViewport.addEventListener("resize", onResize);
+		  window.visualViewport.addEventListener(
+			"scroll",
+			() => this.scheduleUpdate(),
+			{ passive: true }
+		  );
+		}
+	  },
+
+	  init() {
+		this.build();
+		this.refreshTimingVars();
+		this.bindHintClicks();
+		this.hide();
+		this.lastObservedScrollY = window.scrollY;
+		this.update();
+		this.bindEvents();
+	  },
+	};
+  
   // ---------------------------------------------------------------------
-  // 13) GALLERY-MODUL
+  // 12) GALLERY-MODUL
   // ---------------------------------------------------------------------
   const galleryModule = {
     videos: [],
@@ -2636,13 +2777,241 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 14) UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
+  // 13) UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
   // ---------------------------------------------------------------------
   const uiModule = {
-    magnetic: null,
+    ctaMagneticButtons: [],
+    ctaMagneticRunning: false,
+    ctaMagneticLastFrame: 0,
+
+    createMagneticItem(button) {
+      return {
+        button,
+        label: button.querySelector(".cta-label"),
+        gloss: button.querySelector(".cta-gloss"),
+        isNear: false,
+
+        targetX: 0,
+        targetY: 0,
+        targetScale: 1,
+        targetShadowY: 0,
+        targetShadowBlur: 0,
+        targetShadowAlpha: 0,
+
+        currentX: 0,
+        currentY: 0,
+        currentScale: 1,
+        currentShadowY: 0,
+        currentShadowBlur: 0,
+        currentShadowAlpha: 0,
+
+        velocityX: 0,
+        velocityY: 0,
+        velocityScale: 0,
+        velocityShadowY: 0,
+        velocityShadowBlur: 0,
+        velocityShadowAlpha: 0,
+
+        targetLabelX: 0,
+        targetLabelY: 0,
+        targetLabelScale: 1,
+        currentLabelX: 0,
+        currentLabelY: 0,
+        currentLabelScale: 1,
+        velocityLabelX: 0,
+        velocityLabelY: 0,
+        velocityLabelScale: 0,
+
+        targetGlossX: 50,
+        targetGlossY: 50,
+        targetGlossOpacity: 0,
+        currentGlossX: 50,
+        currentGlossY: 50,
+        currentGlossOpacity: 0,
+        velocityGlossX: 0,
+        velocityGlossY: 0,
+        velocityGlossOpacity: 0,
+      };
+    },
+
+    resetMagneticItem(item) {
+      item.isNear = false;
+      item.button.classList.remove("is-magnetic-near", "is-hovered");
+
+      item.targetX = 0;
+      item.targetY = 0;
+      item.targetScale = 1;
+      item.targetShadowY = 0;
+      item.targetShadowBlur = 0;
+      item.targetShadowAlpha = 0;
+
+      item.targetLabelX = 0;
+      item.targetLabelY = 0;
+      item.targetLabelScale = 1;
+
+      item.targetGlossX = 50;
+      item.targetGlossY = 50;
+      item.targetGlossOpacity = 0;
+    },
 
     resetCtaMagnetic() {
-      this.magnetic?.resetAll(true);
+      this.ctaMagneticButtons.forEach((item) => {
+        this.resetMagneticItem(item);
+
+        item.currentX = 0;
+        item.currentY = 0;
+        item.currentScale = 1;
+        item.currentShadowY = 0;
+        item.currentShadowBlur = 0;
+        item.currentShadowAlpha = 0;
+
+        item.velocityX = 0;
+        item.velocityY = 0;
+        item.velocityScale = 0;
+        item.velocityShadowY = 0;
+        item.velocityShadowBlur = 0;
+        item.velocityShadowAlpha = 0;
+
+        item.currentLabelX = 0;
+        item.currentLabelY = 0;
+        item.currentLabelScale = 1;
+        item.velocityLabelX = 0;
+        item.velocityLabelY = 0;
+        item.velocityLabelScale = 0;
+
+        item.currentGlossX = 50;
+        item.currentGlossY = 50;
+        item.currentGlossOpacity = 0;
+        item.velocityGlossX = 0;
+        item.velocityGlossY = 0;
+        item.velocityGlossOpacity = 0;
+
+        utils.setVars(item.button, {
+          "--magnetic-x": "0px",
+          "--magnetic-y": "0px",
+          "--magnetic-scale": "1",
+          "--magnetic-shadow-y": "0px",
+          "--magnetic-shadow-blur": "0px",
+          "--magnetic-shadow-alpha": "0",
+          "--label-x": "0px",
+          "--label-y": "0px",
+          "--label-scale": "1",
+          "--gloss-x": "50%",
+          "--gloss-y": "50%",
+          "--gloss-opacity": "0",
+        });
+      });
+    },
+
+    startCtaMagneticAnimation() {
+      if (this.ctaMagneticRunning) return;
+
+      this.ctaMagneticRunning = true;
+      this.ctaMagneticLastFrame = performance.now();
+
+      requestAnimationFrame(this.animateCtaMagnetic.bind(this));
+    },
+
+    animateCtaMagnetic(now) {
+      this.ctaMagneticRunning = true;
+
+      let delta = (now - this.ctaMagneticLastFrame) / 16.67;
+      this.ctaMagneticLastFrame = now;
+      delta = Math.min(delta, 2);
+
+      let hasMotion = false;
+
+      this.ctaMagneticButtons.forEach((item) => {
+        const spring = item.isNear ? 0.16 : 0.11;
+        const damping = item.isNear ? 0.78 : 0.82;
+
+        const stepSpring = (current, target, velocity) => {
+          const force = (target - current) * spring;
+          velocity += force * delta;
+          velocity *= Math.pow(damping, delta);
+          current += velocity * delta;
+          return { current, velocity };
+        };
+
+        [
+          "X",
+          "Y",
+          "Scale",
+          "ShadowY",
+          "ShadowBlur",
+          "ShadowAlpha",
+          "LabelX",
+          "LabelY",
+          "LabelScale",
+          "GlossX",
+          "GlossY",
+          "GlossOpacity",
+        ].forEach((suffix) => {
+          const currentKey = `current${suffix}`;
+          const targetKey = `target${suffix}`;
+          const velocityKey = `velocity${suffix}`;
+
+          const result = stepSpring(
+            item[currentKey],
+            item[targetKey],
+            item[velocityKey]
+          );
+
+          item[currentKey] = result.current;
+          item[velocityKey] = result.velocity;
+        });
+
+        utils.setVars(item.button, {
+          "--magnetic-x": `${item.currentX.toFixed(2)}px`,
+          "--magnetic-y": `${item.currentY.toFixed(2)}px`,
+          "--magnetic-scale": item.currentScale.toFixed(4),
+          "--magnetic-shadow-y": `${item.currentShadowY.toFixed(2)}px`,
+          "--magnetic-shadow-blur": `${item.currentShadowBlur.toFixed(2)}px`,
+          "--magnetic-shadow-alpha": item.currentShadowAlpha.toFixed(3),
+          "--label-x": `${item.currentLabelX.toFixed(2)}px`,
+          "--label-y": `${item.currentLabelY.toFixed(2)}px`,
+          "--label-scale": item.currentLabelScale.toFixed(4),
+          "--gloss-x": `${item.currentGlossX.toFixed(2)}%`,
+          "--gloss-y": `${item.currentGlossY.toFixed(2)}%`,
+          "--gloss-opacity": item.currentGlossOpacity.toFixed(3),
+        });
+
+        const moving = [
+          Math.abs(item.targetX - item.currentX) > 0.01,
+          Math.abs(item.targetY - item.currentY) > 0.01,
+          Math.abs(item.targetScale - item.currentScale) > 0.001,
+          Math.abs(item.targetShadowY - item.currentShadowY) > 0.01,
+          Math.abs(item.targetShadowBlur - item.currentShadowBlur) > 0.01,
+          Math.abs(item.targetShadowAlpha - item.currentShadowAlpha) > 0.001,
+          Math.abs(item.targetLabelX - item.currentLabelX) > 0.01,
+          Math.abs(item.targetLabelY - item.currentLabelY) > 0.01,
+          Math.abs(item.targetLabelScale - item.currentLabelScale) > 0.001,
+          Math.abs(item.targetGlossX - item.currentGlossX) > 0.01,
+          Math.abs(item.targetGlossY - item.currentGlossY) > 0.01,
+          Math.abs(item.targetGlossOpacity - item.currentGlossOpacity) > 0.001,
+          Math.abs(item.velocityX) > 0.01,
+          Math.abs(item.velocityY) > 0.01,
+          Math.abs(item.velocityScale) > 0.001,
+          Math.abs(item.velocityShadowY) > 0.01,
+          Math.abs(item.velocityShadowBlur) > 0.01,
+          Math.abs(item.velocityShadowAlpha) > 0.001,
+          Math.abs(item.velocityLabelX) > 0.01,
+          Math.abs(item.velocityLabelY) > 0.01,
+          Math.abs(item.velocityLabelScale) > 0.001,
+          Math.abs(item.velocityGlossX) > 0.01,
+          Math.abs(item.velocityGlossY) > 0.01,
+          Math.abs(item.velocityGlossOpacity) > 0.001,
+        ].some(Boolean);
+
+        if (moving) hasMotion = true;
+      });
+
+      if (!hasMotion) {
+        this.ctaMagneticRunning = false;
+        return;
+      }
+
+      requestAnimationFrame(this.animateCtaMagnetic.bind(this));
     },
 
     bindCTA() {
@@ -2659,14 +3028,149 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollEngine.goTo("#contact", "down");
       });
 
-      this.magnetic = createMagneticEngine(".cta-button", {
-        isDisabled: () =>
+      this.ctaMagneticButtons = [...document.querySelectorAll(".cta-button")].map(
+        (button) => this.createMagneticItem(button)
+      );
+
+      const applyMagneticField = (item, clientX, clientY) => {
+        if (
           document.body.classList.contains("nav-menu-open") ||
           (utils.isMobileViewport() && navbarModule.isOpen()) ||
-          document.body.classList.contains("suppress-cta-hover"),
+          document.body.classList.contains("suppress-cta-hover")
+        ) {
+          this.resetMagneticItem(item);
+          return;
+        }
+
+        const rect = item.button.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const dx = clientX - centerX;
+        const dy = clientY - centerY;
+
+        const nx = dx / (rect.width * 1.15);
+        const ny = dy / (rect.height * 1.9);
+        const rawDistance = Math.sqrt(nx * nx + ny * ny);
+
+        if (rawDistance > 1) {
+          this.resetMagneticItem(item);
+          return;
+        }
+
+        item.isNear = true;
+        item.button.classList.add("is-magnetic-near");
+
+        const proximity = 1 - rawDistance;
+        const eased = 1 - Math.pow(1 - proximity, 3);
+        const shaped = Math.pow(eased, 1.6);
+
+        const innerNX = dx / (rect.width / 2);
+        const innerNY = dy / (rect.height / 2);
+        const innerDistance = Math.sqrt(innerNX * innerNX + innerNY * innerNY);
+
+        const insideButton = innerDistance <= 1;
+        const innerProximity = insideButton ? 1 - innerDistance : 0;
+
+        const innerBoost = insideButton
+          ? Math.pow(1 - Math.pow(1 - innerProximity, 3), 1.15)
+          : 0;
+
+        const combinedStrength = insideButton
+          ? Math.min(0.32 * shaped + 0.68 * innerBoost, 1)
+          : Math.min(0.62 * shaped, 0.5);
+
+        const length = Math.hypot(dx, dy) || 1;
+        const dirX = dx / length;
+        const dirY = dy / length;
+
+        item.targetX = dirX * Math.min(rect.width * 0.12, 15) * combinedStrength;
+        item.targetY = dirY * Math.min(rect.height * 0.26, 11) * combinedStrength;
+        item.targetScale = 1 + combinedStrength * 0.014;
+
+        item.targetShadowY = 10 + combinedStrength * 12;
+        item.targetShadowBlur = 28 + combinedStrength * 20;
+        item.targetShadowAlpha = 0.12 + combinedStrength * 0.18;
+
+        item.targetLabelX =
+          dirX *
+          Math.min(rect.width * 0.065, 10) *
+          Math.min(combinedStrength * 1.18, 1);
+
+        item.targetLabelY =
+          dirY *
+          Math.min(rect.height * 0.11, 6) *
+          Math.min(combinedStrength * 1.18, 1);
+
+        item.targetLabelScale = 1 + combinedStrength * 0.01;
+
+        item.targetGlossX = clamp(
+          ((clientX - rect.left) / rect.width) * 100,
+          0,
+          100
+        );
+
+        item.targetGlossY = clamp(
+          ((clientY - rect.top) / rect.height) * 100,
+          0,
+          100
+        );
+
+        item.targetGlossOpacity = 0.18 + combinedStrength * 0.24;
+      };
+
+      window.addEventListener(
+        "pointermove",
+        (e) => {
+          if (e.pointerType !== "mouse") {
+            this.ctaMagneticButtons.forEach((item) =>
+              this.resetMagneticItem(item)
+            );
+            this.startCtaMagneticAnimation();
+            return;
+          }
+
+          this.ctaMagneticButtons.forEach((item) =>
+            applyMagneticField(item, e.clientX, e.clientY)
+          );
+
+          this.startCtaMagneticAnimation();
+        },
+        { passive: true }
+      );
+
+      window.addEventListener("pointerleave", () => {
+        this.ctaMagneticButtons.forEach((item) => this.resetMagneticItem(item));
+        this.startCtaMagneticAnimation();
       });
 
-      this.magnetic.bind();
+      this.ctaMagneticButtons.forEach((item) => {
+        item.button.addEventListener("blur", () => {
+          this.resetMagneticItem(item);
+          item.button.classList.remove("is-hovered");
+          this.startCtaMagneticAnimation();
+        });
+
+        item.button.addEventListener("pointerenter", (e) => {
+          if (
+            e.pointerType === "mouse" &&
+            !document.body.classList.contains("suppress-cta-hover") &&
+            !document.body.classList.contains("nav-menu-open")
+          ) {
+            item.button.classList.add("is-hovered");
+          }
+        });
+
+        item.button.addEventListener("pointerleave", () => {
+          item.button.classList.remove("is-hovered");
+        });
+
+        item.button.addEventListener("pointerdown", (e) => {
+          if (e.pointerType !== "mouse") {
+            item.button.classList.remove("is-hovered");
+          }
+        });
+      });
     },
 
     bindHeroClickBehavior() {
@@ -2734,7 +3238,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 15) USER-SCROLL-INTERRUPTS
+  // 14) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
   function bindUserScrollInterrupts() {
     window.addEventListener(
@@ -2768,7 +3272,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------------------------------------------
-  // 16) POSITIONIERUNG DER SCROLL-HINT-SPALTE
+  // 15) POSITIONIERUNG DER SCROLL-HINT-SPALTE
   // ---------------------------------------------------------------------
   const scrollSectionHintPositionModule = {
     update() {
@@ -2832,7 +3336,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 17) PERFORMANCE-MODUL
+  // 16) PERFORMANCE-MODUL
   // ---------------------------------------------------------------------
   const performanceModule = {
     fpsSampleFrames: 45,
@@ -2876,7 +3380,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 18) INITIALISIERUNG
+  // 17) INITIALISIERUNG
   // ---------------------------------------------------------------------
   function init() {
     // performanceModule.init(); // optional wieder aktivieren
