@@ -2346,33 +2346,29 @@ document.addEventListener("DOMContentLoaded", () => {
     scheduleHide() {
       this.scheduleHideAfterScrollEnd();
     },
-
+    
     handleScrollActivity() {
-      if (state.scroll.programmatic) {
-        this.hideImmediatelyForProgrammaticScroll();
-        return;
-      }
+	  if (state.scroll.programmatic) {
+		this.hideImmediatelyForProgrammaticScroll();
+		return;
+	  }
 
-      if (this.gesture.type !== "touch" || !this.gesture.active) {
-        this.hide();
-        return;
-      }
+	  this.lastScrollTs = performance.now();
+	  this.accumulateScrollDistance();
 
-      this.lastScrollTs = performance.now();
-      this.accumulateScrollDistance();
+	  if (!this.hasUnlockedScrollHints) {
+		if (!this.hasReachedShowScrollDistance()) {
+		  this.hide();
+		  this.scheduleHideAfterScrollEnd();
+		  return;
+		}
 
-      if (!this.hasUnlockedScrollHints) {
-        if (!this.hasReachedShowScrollDistance()) {
-          this.hide();
-          return;
-        }
+		this.hasUnlockedScrollHints = true;
+	  }
 
-        this.hasUnlockedScrollHints = true;
-      }
-
-      this.show();
-      this.scheduleHideAfterScrollEnd();
-    },
+	  this.show();
+	  this.scheduleHideAfterScrollEnd();
+	},
 
     scheduleHideAfterScrollEnd() {
       this.clearScrollEndTimer();
@@ -2440,12 +2436,8 @@ document.addEventListener("DOMContentLoaded", () => {
             this.hideImmediatelyForProgrammaticScroll();
             return;
           }
-
-          if (this.gesture.type === "touch") {
-            this.handleScrollActivity();
-          } else {
-            this.hide();
-          }
+          
+          this.handleScrollActivity();
         },
         { passive: true }
       );
