@@ -2321,19 +2321,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.clearScrollEndTimer();
 		  this.clearHideCompleteTimer();
 
-		  // Jede neue Touch-Berührung startet bewusst eine neue Scroll-Geste.
-		  // Dadurch darf die Mindest-Scrollstrecke NICHT von der vorherigen
-		  // Wischgeste übernommen werden.
-		  if (type === "touch") {
-			this.hasUnlockedScrollHints = false;
-
-			if (this.isVisible) {
-			  this.isVisible = false;
-			  this.root?.classList.remove("is-visible");
-			  document.body.classList.remove("hints-visible");
-			}
-		  }
-
 		  this.gesture.type = type;
 		  this.gesture.active = true;
 		  this.gesture.distance = 0;
