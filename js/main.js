@@ -304,6 +304,11 @@ document.addEventListener("DOMContentLoaded", () => {
     touch: {
       active: false,
     },
+    
+    input: {
+		lastInteractionType: null, // "touch" | "mouse" | "keyboard" | null
+		lastTouchTs: 0,
+	  },
 
     ui: {
       suppressCtaHoverCleanup: null,
@@ -2246,9 +2251,46 @@ document.addEventListener("DOMContentLoaded", () => {
 	  );
 	},
 
+	isTouchDrivenScroll() {
+	  if (state.scroll.programmatic) return false;
+
+	  const now = performance.now();
+	  const recentTouch = now - state.input.lastTouchTs < 1200;
+
+	  return (
+		state.touch.active ||
+		(state.input.lastInteractionType === "touch" && recentTouch)
+	  );
+	},
+
+	hideImmediatelyForNonTouchInput() {
+	  if (!this.root) return;
+
+	  ["scrollEnd", "visibility", "relock"].forEach((name) => this.clearTimer(name));
+
+	  this.state.visible = false;
+
+	  this.root.classList.add("is-instant-hidden");
+	  this.root.classList.remove("is-visible");
+	  document.body.classList.remove("hints-visible");
+	  document.body.classList.add("hints-instant-hide");
+
+	  requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+		  this.root?.classList.remove("is-instant-hidden");
+		  document.body.classList.remove("hints-instant-hide");
+		});
+	  });
+	},
+	
 	onScrollActivity() {
 	  if (state.scroll.programmatic) {
 		this.hideImmediatelyForProgrammaticScroll();
+		return;
+	  }
+
+	  if (!this.isTouchDrivenScroll()) {
+		this.hideImmediatelyForNonTouchInput();
 		return;
 	  }
 
@@ -2268,12 +2310,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.state.unlocked = true;
 	  }
 
-	  // Ab hier: beim Scrollen sichtbar werden dürfen,
-	  // ohne dass der Show-Timer bei jedem Event resetet wird
+	  // Nur touch-getriebener Scroll darf Hints zeigen
 	  this.show();
 	  this.scheduleHideAfterIdle();
 	},
-
+	
     hide() {
       this.clearTimer("visibility");
       this.applyVisible(false);
@@ -2364,12 +2405,14 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       window.addEventListener(
-        "pointerdown",
-        (e) => {
-          if (e.pointerType === "mouse") this.hide();
-        },
-        { passive: true }
-      );
+		  "pointerdown",
+		  (e) => {
+			if (e.pointerType === "mouse" || e.pointerType === "pen") {
+			  this.hideImmediatelyForNonTouchInput();
+			}
+		  },
+		  { passive: true }
+		);
 
       const onResize = () => {
         this.metricsCache.clear();
@@ -2788,35 +2831,87 @@ document.addEventListener("DOMContentLoaded", () => {
   // 15) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
   function bindUserScrollInterrupts() {
-    window.addEventListener(
-      "wheel",
-      () => {
-        scrollEngine.cancelActiveScroll();
-        state.touch.active = false;
-        state.nav.gestureStretch.target = 0;
-        navbarModule.startAnimation();
-      },
-      { passive: true }
-    );
+	  window.addEventListener(
+		"wheel",
+		() => {
+		  state.input.lastInteractionType = "mouse";
+		  scrollEngine.cancelActiveScroll();
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		  navbarModule.startAnimation();
+		  scrollSectionHintModule.hideImmediatelyForNonTouchInput?.();
+		},
+		{ passive: true }
+	  );
 
-    const endTouchScroll = () => {
-      state.touch.active = false;
-      state.nav.gestureStretch.target = 0;
-      navbarModule.startAnimation();
-    };
+	  const endTouchScroll = () => {
+		state.touch.active = false;
+		state.nav.gestureStretch.target = 0;
+		navbarModule.startAnimation();
+	  };
 
-    window.addEventListener(
-      "touchstart",
-      () => {
-        scrollEngine.cancelActiveScroll();
-        state.touch.active = true;
-      },
-      { passive: true }
-    );
+	  window.addEventListener(
+		"touchstart",
+		() => {
+		  state.input.lastInteractionType = "touch";
+		  state.input.lastTouchTs = performance.now();
+		  scrollEngine.cancelActiveScroll();
+		  state.touch.active = true;
+		},
+		{ passive: true }
+	  );
 
-    window.addEventListener("touchend", endTouchScroll, { passive: true });
-    window.addEventListener("touchcancel", endTouchScroll, { passive: true });
-  }
+	  window.addEventListener(
+		"touchmove",
+		() => {
+		  state.input.lastInteractionType = "touch";
+		  state.input.lastTouchTs = performance.now();
+		  state.touch.active = true;
+		},
+		{ passive: true }
+	  );
+
+	  window.addEventListener("touchend", endTouchScroll, { passive: true });
+	  window.addEventListener("touchcancel", endTouchScroll, { passive: true });
+
+	  window.addEventListener(
+		"keydown",
+		(e) => {
+		  const scrollKeys = [
+			"ArrowUp",
+			"ArrowDown",
+			"PageUp",
+			"PageDown",
+			"Home",
+			"End",
+			" ",
+			"Spacebar",
+		  ];
+
+		  if (!scrollKeys.includes(e.key)) return;
+
+		  state.input.lastInteractionType = "keyboard";
+		  state.touch.active = false;
+		  scrollSectionHintModule.hideImmediatelyForNonTouchInput?.();
+		},
+		{ passive: true }
+	  );
+
+	  window.addEventListener(
+		"pointerdown",
+		(e) => {
+		  if (e.pointerType === "touch") {
+			state.input.lastInteractionType = "touch";
+			state.input.lastTouchTs = performance.now();
+		  } else if (e.pointerType === "mouse" || e.pointerType === "pen") {
+			state.input.lastInteractionType = "mouse";
+			state.touch.active = false;
+			scrollSectionHintModule.hideImmediatelyForNonTouchInput?.();
+		  }
+		},
+		{ passive: true }
+	  );
+	}
 
   // ---------------------------------------------------------------------
   // 16) POSITIONIERUNG DER SCROLL-HINT-SPALTE
