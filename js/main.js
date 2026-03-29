@@ -2269,19 +2269,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	  clearHideCompleteTimer() {
 		this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
 	  },
-
+	  
 	  scheduleRelockAfterFullyHidden() {
-		this.clearHideCompleteTimer();
+		  this.clearHideCompleteTimer();
 
-		this.hideCompleteTimer = setTimeout(() => {
-		  if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
-			this.hasUnlockedScrollHints = false;
-			this.endGesture();
-		  }
+		  this.hideCompleteTimer = setTimeout(() => {
+			if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
+			  this.hasUnlockedScrollHints = false;
+			  this.gesture.distance = 0;
+			  this.endGesture();
+			}
 
-		  this.hideCompleteTimer = null;
-		}, this.fadeDurationMs);
-	  },
+			this.hideCompleteTimer = null;
+		  }, this.fadeDurationMs);
+		},
 
 	  isIosSafari() {
 		const ua = navigator.userAgent || "";
