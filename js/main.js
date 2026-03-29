@@ -2269,20 +2269,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	  clearHideCompleteTimer() {
 		this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
 	  },
-	  
+
 	  scheduleRelockAfterFullyHidden() {
-		  this.clearHideCompleteTimer();
+		this.clearHideCompleteTimer();
 
-		  this.hideCompleteTimer = setTimeout(() => {
-			if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
-			  this.hasUnlockedScrollHints = false;
-			  this.gesture.distance = 0;
-			  this.endGesture();
-			}
+		this.hideCompleteTimer = setTimeout(() => {
+		  if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
+			this.hasUnlockedScrollHints = false;
+			this.gesture.distance = 0;
+			this.endGesture({ resetDistance: true });
+		  }
 
-			this.hideCompleteTimer = null;
-		  }, this.fadeDurationMs);
-		},
+		  this.hideCompleteTimer = null;
+		}, this.fadeDurationMs);
+	  },
 
 	  isIosSafari() {
 		const ua = navigator.userAgent || "";
@@ -2297,52 +2297,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		return isIOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS;
 	  },
-  
+
 	  resetForNewIosTouchGesture() {
-		  if (!this.isIosSafari()) return;
+		if (!this.isIosSafari()) return;
 
-		  this.clearScrollEndTimer();
-		  this.clearHideCompleteTimer();
+		this.clearScrollEndTimer();
+		this.clearHideCompleteTimer();
 
-		  this.gesture.type = "touch";
-		  this.gesture.active = true;
-		  // NICHT zurücksetzen:
-		  // this.gesture.distance = 0;
+		this.gesture.type = "touch";
+		this.gesture.active = true;
 
-		  this.lastObservedScrollY = window.scrollY;
-		  this.lastScrollTs = performance.now();
+		// absichtlich NICHT zurücksetzen:
+		// this.gesture.distance = 0;
+		// this.hasUnlockedScrollHints = false;
 
-		  // NICHT zurücksetzen:
-		  // this.hasUnlockedScrollHints = false;
-		  // this.hide();
-		},
- 
+		this.lastObservedScrollY = window.scrollY;
+		this.lastScrollTs = performance.now();
+	  },
+
 	  beginGesture(type) {
-		  this.clearScrollEndTimer();
-		  this.clearHideCompleteTimer();
+		this.clearScrollEndTimer();
+		this.clearHideCompleteTimer();
 
-		  this.gesture.type = type;
-		  this.gesture.active = true;
+		this.gesture.type = type;
+		this.gesture.active = true;
 
-		  // Nur bei Nicht-iOS neu starten
-		  if (!(type === "touch" && this.isIosSafari())) {
-			this.gesture.distance = 0;
-		  }
+		if (!(type === "touch" && this.isIosSafari())) {
+		  this.gesture.distance = 0;
+		}
 
-		  this.lastObservedScrollY = window.scrollY;
+		this.lastObservedScrollY = window.scrollY;
 
-		  if (type === "touch") {
-			this.gesture.lastTouchStartTs = performance.now();
-		  }
-		},
+		if (type === "touch") {
+		  this.gesture.lastTouchStartTs = performance.now();
+		}
+	  },
 
-	  endGesture({ keepType = false } = {}) {
+	  endGesture({ keepType = false, resetDistance = false } = {}) {
 		if (!keepType) {
 		  this.gesture.type = null;
 		}
 
 		this.gesture.active = false;
-		this.gesture.distance = 0;
+
+		if (resetDistance) {
+		  this.gesture.distance = 0;
+		}
 	  },
 
 	  accumulateScrollDistance() {
@@ -2393,8 +2393,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.lastScrollTs = performance.now();
 
 		// Safari/iOS:
-		// nur echte aktive Fingerberührung darf Distanz sammeln.
-		// Momentum nach touchend darf NICHT weiterzählen.
+		// nur während echter aktiver Touch-Geste zählen
 		if (this.isIosSafari() && !this.gesture.active) {
 		  this.lastObservedScrollY = window.scrollY;
 		  this.scheduleHideAfterScrollEnd();
@@ -2437,7 +2436,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.clearScrollEndTimer();
 		this.clearHideCompleteTimer();
-		this.endGesture();
+		this.endGesture({ resetDistance: true });
 
 		this.isVisible = false;
 		this.hasUnlockedScrollHints = false;
@@ -2456,12 +2455,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	  },
 
-
-
-
-
-
-
 	  bindEvents() {
 		const onTouchStart = () => {
 		  if (this.isIosSafari()) {
@@ -2475,9 +2468,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		const onTouchEndLike = () => {
 		  this.gesture.lastTouchEndTs = performance.now();
 
-		  // Jede Touch-Geste ist hier beendet.
-		  // Auf iOS zählt ab jetzt Momentum nicht mehr weiter.
-		  this.endGesture();
+		  // Distanz behalten, damit iOS mehrere Gesten kumuliert
+		  this.endGesture({ resetDistance: false });
 
 		  this.lastScrollTs = performance.now();
 		  this.lastObservedScrollY = window.scrollY;
@@ -2503,40 +2495,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener("touchend", onTouchEndLike, { passive: true });
 		window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
 
-		document.addEventListener("touchstart", onTouchStart, {
-		  passive: true,
-		  capture: true,
-		});
-		document.addEventListener("touchend", onTouchEndLike, {
-		  passive: true,
-		  capture: true,
-		});
-		document.addEventListener("touchcancel", onTouchEndLike, {
-		  passive: true,
-		  capture: true,
-		});
-
 		window.addEventListener(
 		  "pointerdown",
 		  (e) => {
-			if (e.pointerType === "touch") onTouchStart();
-			if (e.pointerType === "mouse") this.hide();
-		  },
-		  { passive: true }
-		);
-
-		window.addEventListener(
-		  "pointerup",
-		  (e) => {
-			if (e.pointerType === "touch") onTouchEndLike();
-		  },
-		  { passive: true }
-		);
-
-		window.addEventListener(
-		  "pointercancel",
-		  (e) => {
-			if (e.pointerType === "touch") onTouchEndLike();
+			if (e.pointerType === "mouse") {
+			  this.hide();
+			}
 		  },
 		  { passive: true }
 		);
@@ -2545,7 +2509,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  document.addEventListener(
 			"scrollend",
 			() => {
-			  if (!state.scroll.programmatic && this.gesture.type === "touch") {
+			  if (!state.scroll.programmatic) {
 				this.lastScrollTs = performance.now();
 				this.scheduleHideAfterScrollEnd();
 			  }
@@ -2572,91 +2536,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		  );
 		}
 	  },
-
-	  bindEvents() {
-		  const onTouchStart = () => {
-			if (this.isIosSafari()) {
-			  this.resetForNewIosTouchGesture();
-			  return;
-			}
-
-			this.beginGesture("touch");
-		  };
-
-		  const onTouchEndLike = () => {
-			this.gesture.lastTouchEndTs = performance.now();
-
-			// Jede Touch-Geste ist hier beendet.
-			// Auf iOS zählt ab jetzt Momentum nicht mehr weiter.
-			this.endGesture();
-
-			this.lastScrollTs = performance.now();
-			this.lastObservedScrollY = window.scrollY;
-			this.scheduleHideAfterScrollEnd();
-		  };
-
-		  window.addEventListener(
-			"scroll",
-			() => {
-			  this.scheduleUpdate();
-
-			  if (state.scroll.programmatic) {
-				this.hideImmediatelyForProgrammaticScroll();
-				return;
-			  }
-
-			  this.handleScrollActivity();
-			},
-			{ passive: true }
-		  );
-
-		  // Touch nur über Touch-Events behandeln
-		  window.addEventListener("touchstart", onTouchStart, { passive: true });
-		  window.addEventListener("touchend", onTouchEndLike, { passive: true });
-		  window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
-
-		  // Maus separat behandeln, aber Touch hier ignorieren
-		  window.addEventListener(
-			"pointerdown",
-			(e) => {
-			  if (e.pointerType === "mouse") {
-				this.hide();
-			  }
-			},
-			{ passive: true }
-		  );
-
-		  if ("onscrollend" in document) {
-			document.addEventListener(
-			  "scrollend",
-			  () => {
-				if (!state.scroll.programmatic && this.gesture.type === "touch") {
-				  this.lastScrollTs = performance.now();
-				  this.scheduleHideAfterScrollEnd();
-				}
-			  },
-			  { passive: true }
-			);
-		  }
-
-		  const onResize = () => {
-			this.metricsCache.clear();
-			this.refreshTimingVars();
-			this.scheduleUpdate();
-		  };
-
-		  window.addEventListener("resize", onResize);
-		  window.addEventListener("orientationchange", () => setTimeout(onResize, 120));
-
-		  if (window.visualViewport) {
-			window.visualViewport.addEventListener("resize", onResize);
-			window.visualViewport.addEventListener(
-			  "scroll",
-			  () => this.scheduleUpdate(),
-			  { passive: true }
-			);
-		  }
-		},
 
 	  init() {
 		this.build();
