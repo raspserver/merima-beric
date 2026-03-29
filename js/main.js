@@ -2228,11 +2228,51 @@ document.addEventListener("DOMContentLoaded", () => {
         this.clearTimer("relock");
       }
     },
-
+    
     show() {
-      this.clearTimer("visibility");
-      this.timer("visibility", () => this.applyVisible(true), this.config.showDelayMs);
-    },
+	  // Schon sichtbar? Nichts neu timen.
+	  if (this.state.visible) {
+		this.clearTimer("relock");
+		return;
+	  }
+
+	  // Läuft bereits ein Show-Timer? Nicht erneut starten.
+	  if (this.state.timers.visibility) return;
+
+	  this.timer(
+		"visibility",
+		() => this.applyVisible(true),
+		this.config.showDelayMs
+	  );
+	},
+
+	onScrollActivity() {
+	  if (state.scroll.programmatic) {
+		this.hideImmediatelyForProgrammaticScroll();
+		return;
+	  }
+
+	  const currentY = window.scrollY;
+	  this.state.lastScrollTs = performance.now();
+	  this.state.distance += Math.abs(currentY - this.state.lastObservedY);
+	  this.state.lastObservedY = currentY;
+
+	  // Noch nicht freigeschaltet: erst Mindestscrollstrecke sammeln
+	  if (!this.state.unlocked) {
+		if (this.state.distance < this.config.showScrollDistancePx) {
+		  this.hideWithScrollDelay();
+		  this.scheduleHideAfterIdle();
+		  return;
+		}
+
+		this.state.unlocked = true;
+	  }
+
+	  // Ab hier: beim Scrollen sichtbar werden dürfen,
+	  // ohne dass der Show-Timer bei jedem Event resetet wird
+	  this.show();
+	  this.scheduleHideAfterIdle();
+	},
 
     hide() {
       this.clearTimer("visibility");
@@ -2268,31 +2308,6 @@ document.addEventListener("DOMContentLoaded", () => {
           document.body.classList.remove("hints-instant-hide");
         });
       });
-    },
-
-    onScrollActivity() {
-      if (state.scroll.programmatic) {
-        this.hideImmediatelyForProgrammaticScroll();
-        return;
-      }
-
-      const currentY = window.scrollY;
-      this.state.lastScrollTs = performance.now();
-      this.state.distance += Math.abs(currentY - this.state.lastObservedY);
-      this.state.lastObservedY = currentY;
-
-      if (!this.state.unlocked) {
-        if (this.state.distance < this.config.showScrollDistancePx) {
-          this.hideWithScrollDelay();
-          this.scheduleHideAfterIdle();
-          return;
-        }
-
-        this.state.unlocked = true;
-      }
-
-      this.show();
-      this.scheduleHideAfterIdle();
     },
 
     scheduleHideAfterIdle() {
