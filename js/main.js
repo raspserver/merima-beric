@@ -2318,20 +2318,33 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.lastObservedScrollY = currentY;
 		}
 	  },
-
+	  
 	  beginGesture(type) {
-		this.clearScrollEndTimer();
-		this.clearHideCompleteTimer();
+		  this.clearScrollEndTimer();
+		  this.clearHideCompleteTimer();
 
-		this.gesture.type = type;
-		this.gesture.active = true;
-		this.gesture.distance = 0;
-		this.lastObservedScrollY = window.scrollY;
+		  // Jede neue Touch-Berührung startet bewusst eine neue Scroll-Geste.
+		  // Dadurch darf die Mindest-Scrollstrecke NICHT von der vorherigen
+		  // Wischgeste übernommen werden.
+		  if (type === "touch") {
+			this.hasUnlockedScrollHints = false;
 
-		if (type === "touch") {
-		  this.gesture.lastTouchStartTs = performance.now();
-		}
-	  },
+			if (this.isVisible) {
+			  this.isVisible = false;
+			  this.root?.classList.remove("is-visible");
+			  document.body.classList.remove("hints-visible");
+			}
+		  }
+
+		  this.gesture.type = type;
+		  this.gesture.active = true;
+		  this.gesture.distance = 0;
+		  this.lastObservedScrollY = window.scrollY;
+
+		  if (type === "touch") {
+			this.gesture.lastTouchStartTs = performance.now();
+		  }
+		},
 
 	  endGesture({ keepType = false } = {}) {
 		if (!keepType) {
