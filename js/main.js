@@ -1414,7 +1414,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------
   // 11) SCROLL-HINT-SYSTEM
   // ---------------------------------------------------------------------
-	const scrollSectionHintModule = {
+  const scrollSectionHintModule = {
 	  root: null,
 	  measurer: null,
 	  metricsCache: new Map(),
@@ -2322,6 +2322,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		return this.gesture.distance >= this.showScrollDistancePx;
 	  },
 
+	  isTouchDriven() {
+		const now = performance.now();
+
+		return (
+		  this.gesture.type === "touch" ||
+		  this.gesture.active ||
+		  now - this.gesture.lastTouchStartTs < 1200 ||
+		  now - this.gesture.lastTouchEndTs < 500
+		);
+	  },
+
+	  resetTouchEligibility() {
+		this.hasUnlockedScrollHints = false;
+		this.gesture.distance = 0;
+		this.gesture.type = null;
+		this.gesture.active = false;
+	  },
+
 	  show() {
 		if (!this.root) return;
 
@@ -2352,6 +2370,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	  handleScrollActivity() {
 		if (state.scroll.programmatic) {
 		  this.hideImmediatelyForProgrammaticScroll();
+		  return;
+		}
+
+		// Nur Touch darf Section-Hints freischalten
+		if (!this.isTouchDriven()) {
+		  this.hide();
 		  return;
 		}
 
@@ -2392,10 +2416,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.clearScrollEndTimer();
 		this.clearHideCompleteTimer();
-		this.endGesture({ resetDistance: true });
+		this.resetTouchEligibility();
 
 		this.isVisible = false;
-		this.hasUnlockedScrollHints = false;
 
 		this.root.classList.add("is-instant-hidden");
 		document.body.classList.add("hints-instant-hide");
@@ -2444,15 +2467,31 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener("touchend", onTouchEndLike, { passive: true });
 		window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
 
+		// Maus / Pen / Touchpad / Wheel / Tastatur dürfen Hints nicht aktivieren
 		window.addEventListener(
 		  "pointerdown",
 		  (e) => {
-			if (e.pointerType === "mouse") {
+			if (e.pointerType !== "touch") {
+			  this.resetTouchEligibility();
 			  this.hide();
 			}
 		  },
 		  { passive: true }
 		);
+
+		window.addEventListener(
+		  "wheel",
+		  () => {
+			this.resetTouchEligibility();
+			this.hide();
+		  },
+		  { passive: true }
+		);
+
+		window.addEventListener("keydown", () => {
+		  this.resetTouchEligibility();
+		  this.hide();
+		});
 
 		if ("onscrollend" in document) {
 		  document.addEventListener(
