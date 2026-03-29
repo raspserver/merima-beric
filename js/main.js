@@ -2296,28 +2296,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  return isIOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS;
 		},
-
+		
 		beginGesture(type) {
 		  this.clearScrollEndTimer();
 		  this.clearHideCompleteTimer();
 
 		  this.gesture.type = type;
 		  this.gesture.active = true;
-		  this.gesture.distance = 0;
+
+		  // NICHT bei jeder neuen Touch-Geste zurücksetzen
+		  // this.gesture.distance = 0;
+
 		  this.lastObservedScrollY = window.scrollY;
 
 		  if (type === "touch") {
 			this.gesture.lastTouchStartTs = performance.now();
 		  }
 		},
-
+		
 		endGesture({ keepType = false } = {}) {
 		  if (!keepType) {
 			this.gesture.type = null;
 		  }
 
 		  this.gesture.active = false;
-		  this.gesture.distance = 0;
+		  // this.gesture.distance = 0;  // entfernen
 		},
 
 		accumulateScrollDistance() {
