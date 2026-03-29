@@ -2277,11 +2277,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
 			  this.hasUnlockedScrollHints = false;
 			  this.endGesture();
+			  this.gesture.distance = 0;   // HIER zurücksetzen
 			}
 
 			this.hideCompleteTimer = null;
 		  }, this.fadeDurationMs);
-		},
+		},	
 
 		isIosSafari() {
 		  const ua = navigator.userAgent || "";
