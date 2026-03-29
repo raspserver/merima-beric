@@ -2348,6 +2348,10 @@ section > .section-scroll-head + * {
 
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
+	
+	transition:
+		top 0.22s ease,
+		opacity 0.22s ease;
 }
 
 .scroll-section-hint {
@@ -2371,6 +2375,9 @@ section > .section-scroll-head + * {
 
 	transform-origin: center center;
 	transform: translate(-50%, -50%) rotate(-90deg);
+
+	transition:
+		opacity 0.22s ease;
 
 	pointer-events: none;
 }
