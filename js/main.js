@@ -2296,30 +2296,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  return isIOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS;
 		},
-		
-		ensureTouchGestureForIosScroll() {
-		  if (!this.isIosSafari()) return;
-		  if (state.scroll.programmatic) return;
-
-		  const previousY = this.lastObservedScrollY;
-		  const currentY = window.scrollY;
-		  const delta = Math.abs(currentY - previousY);
-
-		  // Nur reagieren, wenn wirklich ein neuer Scrollimpuls da ist
-		  if (delta <= 0) return;
-
-		  // Wenn Safari das touchstart der neuen Wischgeste verschluckt hat,
-		  // erzeugen wir beim ersten echten Scroll-Delta selbst eine neue Geste.
-		  if (!this.gesture.active) {
-			this.beginGesture("touch");
-
-			// Wichtig:
-			// Die aktuelle Bewegung soll noch NICHT auf die alte Geste addiert werden.
-			// Deshalb auf die aktuelle Scrollposition synchronisieren und erst ab
-			// dem nächsten Scroll-Delta zählen.
-			this.lastObservedScrollY = currentY;
-		  }
-		},
 
 		beginGesture(type) {
 		  this.clearScrollEndTimer();
@@ -2466,64 +2442,33 @@ document.addEventListener("DOMContentLoaded", () => {
 			  this.lastObservedScrollY = window.scrollY;
 			  this.scheduleHideAfterScrollEnd();
 			};
-
+  
 		  window.addEventListener(
-			"scroll",
-			() => {
-			  this.scheduleUpdate();
+			  "scroll",
+			  () => {
+				this.scheduleUpdate();
 
-			  if (state.scroll.programmatic) {
-				this.hideImmediatelyForProgrammaticScroll();
-				return;
-			  }
+				if (state.scroll.programmatic) {
+				  this.hideImmediatelyForProgrammaticScroll();
+				  return;
+				}
 
-			  this.ensureTouchGestureForIosScroll();
-			  this.handleScrollActivity();
-			},
-			{ passive: true }
-		  );
+				this.handleScrollActivity();
+			  },
+			  { passive: true }
+			);	  
+		  
+		window.addEventListener("touchstart", onTouchStart, { passive: true });
+		window.addEventListener("touchend", onTouchEndLike, { passive: true });
+		window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
 
-		  window.addEventListener("touchstart", onTouchStart, { passive: true });
-		  window.addEventListener("touchend", onTouchEndLike, { passive: true });
-		  window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
-
-		  document.addEventListener("touchstart", onTouchStart, {
-			passive: true,
-			capture: true,
-		  });
-		  document.addEventListener("touchend", onTouchEndLike, {
-			passive: true,
-			capture: true,
-		  });
-		  document.addEventListener("touchcancel", onTouchEndLike, {
-			passive: true,
-			capture: true,
-		  });
-
-		  window.addEventListener(
-			"pointerdown",
-			(e) => {
-			  if (e.pointerType === "touch") onTouchStart();
-			  if (e.pointerType === "mouse") this.hide();
-			},
-			{ passive: true }
-		  );
-
-		  window.addEventListener(
-			"pointerup",
-			(e) => {
-			  if (e.pointerType === "touch") onTouchEndLike();
-			},
-			{ passive: true }
-		  );
-
-		  window.addEventListener(
-			"pointercancel",
-			(e) => {
-			  if (e.pointerType === "touch") onTouchEndLike();
-			},
-			{ passive: true }
-		  );
+		window.addEventListener(
+		  "pointerdown",
+		  (e) => {
+			if (e.pointerType === "mouse") this.hide();
+		  },
+		  { passive: true }
+		);
 
 		  if ("onscrollend" in document) {
 			document.addEventListener(
