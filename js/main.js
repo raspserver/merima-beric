@@ -2296,43 +2296,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		return isIOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS;
 	  },
-
+  
 	  resetForNewIosTouchGesture() {
-		if (!this.isIosSafari()) return;
+		  if (!this.isIosSafari()) return;
 
-		this.clearScrollEndTimer();
-		this.clearHideCompleteTimer();
+		  this.clearScrollEndTimer();
+		  this.clearHideCompleteTimer();
 
-		this.gesture.type = "touch";
-		this.gesture.active = true;
-		this.gesture.distance = 0;
-		this.lastObservedScrollY = window.scrollY;
-		this.lastScrollTs = performance.now();
+		  this.gesture.type = "touch";
+		  this.gesture.active = true;
+		  // NICHT zurücksetzen:
+		  // this.gesture.distance = 0;
 
-		// neue Berührung = neuer Versuch
-		this.hasUnlockedScrollHints = false;
-		this.hide();
-	  },
+		  this.lastObservedScrollY = window.scrollY;
+		  this.lastScrollTs = performance.now();
 
+		  // NICHT zurücksetzen:
+		  // this.hasUnlockedScrollHints = false;
+		  // this.hide();
+		},
+ 
 	  beginGesture(type) {
-		this.clearScrollEndTimer();
-		this.clearHideCompleteTimer();
+		  this.clearScrollEndTimer();
+		  this.clearHideCompleteTimer();
 
-		this.gesture.type = type;
-		this.gesture.active = true;
-		this.gesture.distance = 0;
-		this.lastObservedScrollY = window.scrollY;
+		  this.gesture.type = type;
+		  this.gesture.active = true;
 
-		if (type === "touch") {
-		  this.gesture.lastTouchStartTs = performance.now();
-
-		  // Auf Safari/iOS soll jede neue Fingerberührung den Zähler neu starten
-		  if (this.isIosSafari()) {
-			this.hasUnlockedScrollHints = false;
-			this.hide();
+		  // Nur bei Nicht-iOS neu starten
+		  if (!(type === "touch" && this.isIosSafari())) {
+			this.gesture.distance = 0;
 		  }
-		}
-	  },
+
+		  this.lastObservedScrollY = window.scrollY;
+
+		  if (type === "touch") {
+			this.gesture.lastTouchStartTs = performance.now();
+		  }
+		},
 
 	  endGesture({ keepType = false } = {}) {
 		if (!keepType) {
