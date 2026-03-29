@@ -1428,13 +1428,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		scrollEndTimer: null,
 		hideCompleteTimer: null,
 		lastScrollTs: 0,
-
+		
 		gesture: {
 		  type: null,       // "touch" | null
 		  active: false,
 		  distance: 0,
+		  lastTouchStartTs: 0,
+		  lastTouchEndTs: 0,
 		},
-
+		
 		lastObservedScrollY: window.scrollY,
 		hideDelayMs: 1000,
 		fadeDurationMs: 500,
@@ -2298,7 +2300,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		ensureTouchGestureForIosScroll() {
 		  if (!this.isIosSafari()) return;
 		  if (state.scroll.programmatic) return;
-		  if (this.gesture.type === "touch") return;
 
 		  const previousY = this.lastObservedScrollY;
 		  const currentY = window.scrollY;
@@ -2306,10 +2307,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  if (delta <= 0) return;
 
-		  this.beginGesture("touch");
+		  const now = performance.now();
 
-		  // erstes echtes Scroll-Delta nicht verlieren
-		  this.lastObservedScrollY = previousY;
+		  // Fall 1:
+		  // Safari liefert Scroll-Events, obwohl die Touch-Geste logisch neu ist.
+		  // Wenn gerade keine aktive Touch-Geste läuft und seit dem letzten touchend
+		  // ein kleiner Abstand vergangen ist, behandeln wir das als neue Wischgeste.
+		  if (
+			this.gesture.type === "touch" &&
+			!this.gesture.active &&
+			now - this.gesture.lastTouchEndTs > 120
+		  ) {
+			this.beginGesture("touch");
+
+			// erstes echtes Delta nicht verlieren
+			this.lastObservedScrollY = previousY;
+			return;
+		  }
+
+		  // Fall 2:
+		  // Es gibt noch gar keine Touch-Geste
+		  if (this.gesture.type !== "touch") {
+			this.beginGesture("touch");
+
+			// erstes echtes Delta nicht verlieren
+			this.lastObservedScrollY = previousY;
+		  }
 		},
 
 		beginGesture(type) {
@@ -2320,10 +2343,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.gesture.active = true;
 		  this.gesture.distance = 0;
 		  this.lastObservedScrollY = window.scrollY;
+
+		  if (type === "touch") {
+			this.gesture.lastTouchStartTs = performance.now();
+		  }
 		},
 
-		endGesture() {
-		  this.gesture.type = null;
+		endGesture({ keepType = false } = {}) {
+		  if (!keepType) {
+			this.gesture.type = null;
+		  }
+
 		  this.gesture.active = false;
 		  this.gesture.distance = 0;
 		},
