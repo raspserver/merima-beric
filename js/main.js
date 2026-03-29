@@ -2287,21 +2287,13 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     beginGesture(type) {
-      this.clearScrollEndTimer();
-      this.clearHideCompleteTimer();
-
-      if (!this.hasUnlockedScrollHints) {
-        this.isVisible = false;
-        this.root?.classList.remove("is-visible");
-        document.body.classList.remove("hints-visible");
-      }
-
-      this.gesture.type = type;
-      this.gesture.active = true;
-      this.gesture.distance = 0;
-      this.lastObservedScrollY = window.scrollY;
-    },
-
+	  this.clearScrollEndTimer();
+	  this.clearHideCompleteTimer();
+	  this.gesture.type = type;
+	  this.gesture.active = true;
+	  this.lastObservedScrollY = window.scrollY;
+	},
+    
     endGesture() {
       this.gesture.type = null;
       this.gesture.active = false;
@@ -2412,20 +2404,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     bindEvents() {
       const onTouchStart = () => this.beginGesture("touch");
-
+  
       const onTouchEndLike = () => {
-        if (this.gesture.type !== "touch") return;
-
-        this.lastScrollTs = performance.now();
-
-        if (this.hasUnlockedScrollHints) {
-          this.scheduleHideAfterScrollEnd();
-          return;
-        }
-
-        this.hide();
-        this.endGesture();
-      };
+		  this.lastScrollTs = performance.now();
+		  this.scheduleHideAfterScrollEnd();
+		}; 
 
       window.addEventListener(
         "scroll",
