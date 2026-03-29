@@ -2312,8 +2312,8 @@ section > .section-scroll-head + * {
 	opacity: 1;
 	visibility: visible;
 	transition:
-		opacity var(--section-hint-show-duration) ease,
-		visibility 0s linear 0s;
+    opacity var(--section-hint-show-duration) ease,
+    visibility 0s linear 0s;
 }
 
 /* Sofortiges Ausblenden ohne Fade */
