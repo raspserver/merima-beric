@@ -1525,38 +1525,57 @@ document.addEventListener("DOMContentLoaded", () => {
 		  const galleryBottomTop = gallery
 			? viewportBottom - geometry.gap - galleryBackwardHeight / 2
 			: 0;
-
+		  
 		  if (scrollingUp) {
-			// von #about nach oben Richtung #home
-			if (boundaryY < middleThirdEnd) {
+			  // von #about nach oben Richtung #home
+
+			  // Oberes Drittel:
+			  // #about an der Grenze + #gallery unten links
+			  if (boundaryY < topThirdEnd) {
+				push(this.createPlacement(about, {
+				  role: "transition",
+				  variant: "forward",
+				  top: aboutBelowBoundaryTop,
+				  priority: 100,
+				}));
+
+				if (gallery) {
+				  push(this.createPlacement(gallery, {
+					role: "bottomDock",
+					variant: "backward",
+					top: galleryBottomTop,
+					priority: 60,
+				  }));
+				}
+
+				return placements;
+			  }
+
+			  // Mittleres Drittel:
+			  // #gallery ist bereits ausgeblendet,
+			  // #about bleibt noch an der Grenze sichtbar
+			  if (boundaryY < middleThirdEnd) {
+				push(this.createPlacement(about, {
+				  role: "transition",
+				  variant: "forward",
+				  top: aboutBelowBoundaryTop,
+				  priority: 100,
+				}));
+
+				return placements;
+			  }
+
+			  // Unteres Drittel:
+			  // Wechsel auf rückwärts gerichteten About-Hint
 			  push(this.createPlacement(about, {
 				role: "transition",
-				variant: "forward",
-				top: aboutBelowBoundaryTop,
+				variant: "backward",
+				top: aboutAboveBoundaryBackwardTop,
 				priority: 100,
 			  }));
 
-			  if (gallery) {
-				push(this.createPlacement(gallery, {
-				  role: "bottomDock",
-				  variant: "backward",
-				  top: galleryBottomTop,
-				  priority: 60,
-				}));
-			  }
-
 			  return placements;
 			}
-
-			push(this.createPlacement(about, {
-			  role: "transition",
-			  variant: "backward",
-			  top: aboutAboveBoundaryBackwardTop,
-			  priority: 100,
-			}));
-
-			return placements;
-		  }
 
 		  // scrolling down: von #home nach unten Richtung #about
 
