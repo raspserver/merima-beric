@@ -2468,14 +2468,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		bindEvents() {
 		  const onTouchStart = () => this.beginGesture("touch");
-
+		  
 		  const onTouchEndLike = () => {
-			this.gesture.active = false;
-			this.lastScrollTs = performance.now();
-			this.lastObservedScrollY = window.scrollY;
-			this.scheduleHideAfterScrollEnd();
-		  };
+			  this.gesture.active = false;
+			  this.gesture.lastTouchEndTs = performance.now();
 
+			  this.lastScrollTs = performance.now();
+			  this.lastObservedScrollY = window.scrollY;
+			  this.scheduleHideAfterScrollEnd();
+			};
+		  
 		  window.addEventListener(
 			"scroll",
 			() => {
