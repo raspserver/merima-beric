@@ -1,15 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
   /*
     =====================================================================
-    MERIMA BERIC - MAIN.JS V3.1
-    Kleine Bugfix-/Cleanup-Fassung mit deutscher Kommentierung
+    MERIMA BERIC - MAIN.JS V3
+    Schlankere Version mit deutscher Kommentierung
     =====================================================================
 
-    Änderungen gegenüber V3:
-    - Gallery-Offset robuster: Padding + Gap werden direkt aus CSS gelesen
-    - Scroll-Hint-Timing sauber getrennt: Show-Delay vs. Show-Duration
-    - ein paar kleine Stabilitätsverbesserungen in der Gallery
-    - kleine Defensive-Verbesserungen bei Transition-/Resize-Fällen
+    Ziele dieser Version:
+    - bestehendes Verhalten weitgehend erhalten
+    - Scroll-Hint-System kompakter organisiert
+    - CTA-Magnetik in generische Mini-Engine ausgelagert
+    - weniger doppelte Zustände / weniger Wiederholung
+    - klare Modultrennung
+
+    Hinweis:
+    Diese Version ist als Drop-in-Datei gedacht und ersetzt deine V2.
   */
 
   // ---------------------------------------------------------------------
@@ -304,11 +308,6 @@ document.addEventListener("DOMContentLoaded", () => {
     touch: {
       active: false,
     },
-    
-    input: {
-		lastInteractionType: null, // "touch" | "mouse" | "keyboard" | null
-		lastTouchTs: 0,
-	  },
 
     ui: {
       suppressCtaHoverCleanup: null,
@@ -1717,7 +1716,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 12) SCROLL-HINT-SYSTEM
+  // 12) SCROLL-HINT-SYSTEM (KOMPAKTERE V3-FASSUNG)
   // ---------------------------------------------------------------------
   const scrollSectionHintModule = {
     root: null,
@@ -1797,7 +1796,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     refreshConfig() {
-      this.config.showDelayMs = cssVar.timeMs("--section-hint-show-delay", 500);
+      this.config.showDelayMs = cssVar.timeMs("--section-hint-show-duration", 500);
       this.config.hideDelayMs = cssVar.timeMs("--section-hint-hide-delay", 1000);
       this.config.fadeDurationMs = cssVar.timeMs("--section-hint-fade-duration", 500);
       this.config.showScrollDistancePx = cssVar.lengthPx(
@@ -2027,6 +2026,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const nextZone = zone(nextTop);
       const overnextZone = zone(overnextTop);
 
+      // ---------------------------------------------------------------
+      // Spezialfall Home -> About / Gallery
+      // ---------------------------------------------------------------
       const about = sections.find((s) => s?.id === "about");
       const gallery = sections.find((s) => s?.id === "gallery");
 
@@ -2080,6 +2082,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
+      // ---------------------------------------------------------------
+      // Normalfälle außerhalb des Home-Spezialfalls
+      // ---------------------------------------------------------------
       if (!isHome && !next) {
         push(this.createPlacement(current, "forward", currentDockTop, 100));
         return placements;
@@ -2233,88 +2238,12 @@ document.addEventListener("DOMContentLoaded", () => {
         this.clearTimer("relock");
       }
     },
-    
+
     show() {
-	  // Schon sichtbar? Nichts neu timen.
-	  if (this.state.visible) {
-		this.clearTimer("relock");
-		return;
-	  }
+      this.clearTimer("visibility");
+      this.timer("visibility", () => this.applyVisible(true), this.config.showDelayMs);
+    },
 
-	  // Läuft bereits ein Show-Timer? Nicht erneut starten.
-	  if (this.state.timers.visibility) return;
-
-	  this.timer(
-		"visibility",
-		() => this.applyVisible(true),
-		this.config.showDelayMs
-	  );
-	},
-
-	isTouchDrivenScroll() {
-	  if (state.scroll.programmatic) return false;
-
-	  const now = performance.now();
-	  const recentTouch = now - state.input.lastTouchTs < 1200;
-
-	  return (
-		state.touch.active ||
-		(state.input.lastInteractionType === "touch" && recentTouch)
-	  );
-	},
-
-	hideImmediatelyForNonTouchInput() {
-	  if (!this.root) return;
-
-	  ["scrollEnd", "visibility", "relock"].forEach((name) => this.clearTimer(name));
-
-	  this.state.visible = false;
-
-	  this.root.classList.add("is-instant-hidden");
-	  this.root.classList.remove("is-visible");
-	  document.body.classList.remove("hints-visible");
-	  document.body.classList.add("hints-instant-hide");
-
-	  requestAnimationFrame(() => {
-		requestAnimationFrame(() => {
-		  this.root?.classList.remove("is-instant-hidden");
-		  document.body.classList.remove("hints-instant-hide");
-		});
-	  });
-	},
-	
-	onScrollActivity() {
-	  if (state.scroll.programmatic) {
-		this.hideImmediatelyForProgrammaticScroll();
-		return;
-	  }
-
-	  if (!this.isTouchDrivenScroll()) {
-		this.hideImmediatelyForNonTouchInput();
-		return;
-	  }
-
-	  const currentY = window.scrollY;
-	  this.state.lastScrollTs = performance.now();
-	  this.state.distance += Math.abs(currentY - this.state.lastObservedY);
-	  this.state.lastObservedY = currentY;
-
-	  // Noch nicht freigeschaltet: erst Mindestscrollstrecke sammeln
-	  if (!this.state.unlocked) {
-		if (this.state.distance < this.config.showScrollDistancePx) {
-		  this.hideWithScrollDelay();
-		  this.scheduleHideAfterIdle();
-		  return;
-		}
-
-		this.state.unlocked = true;
-	  }
-
-	  // Nur touch-getriebener Scroll darf Hints zeigen
-	  this.show();
-	  this.scheduleHideAfterIdle();
-	},
-	
     hide() {
       this.clearTimer("visibility");
       this.applyVisible(false);
@@ -2349,6 +2278,31 @@ document.addEventListener("DOMContentLoaded", () => {
           document.body.classList.remove("hints-instant-hide");
         });
       });
+    },
+
+    onScrollActivity() {
+      if (state.scroll.programmatic) {
+        this.hideImmediatelyForProgrammaticScroll();
+        return;
+      }
+
+      const currentY = window.scrollY;
+      this.state.lastScrollTs = performance.now();
+      this.state.distance += Math.abs(currentY - this.state.lastObservedY);
+      this.state.lastObservedY = currentY;
+
+      if (!this.state.unlocked) {
+        if (this.state.distance < this.config.showScrollDistancePx) {
+          this.hideWithScrollDelay();
+          this.scheduleHideAfterIdle();
+          return;
+        }
+
+        this.state.unlocked = true;
+      }
+
+      this.show();
+      this.scheduleHideAfterIdle();
     },
 
     scheduleHideAfterIdle() {
@@ -2405,14 +2359,12 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       window.addEventListener(
-		  "pointerdown",
-		  (e) => {
-			if (e.pointerType === "mouse" || e.pointerType === "pen") {
-			  this.hideImmediatelyForNonTouchInput();
-			}
-		  },
-		  { passive: true }
-		);
+        "pointerdown",
+        (e) => {
+          if (e.pointerType === "mouse") this.hide();
+        },
+        { passive: true }
+      );
 
       const onResize = () => {
         this.metricsCache.clear();
@@ -2464,34 +2416,6 @@ document.addEventListener("DOMContentLoaded", () => {
     isAnimating: false,
     startX: 0,
     isDragging: false,
-
-    getSlider() {
-      return DOM.track?.parentElement || null;
-    },
-
-    getSliderMetrics() {
-      const slider = this.getSlider();
-      const firstVideo = this.videos[0];
-      if (!slider || !firstVideo || !DOM.track) return null;
-
-      const sliderStyle = getComputedStyle(slider);
-      const trackStyle = getComputedStyle(DOM.track);
-
-      const paddingLeft = parseFloat(sliderStyle.paddingLeft) || 0;
-      const gap =
-        parseFloat(trackStyle.columnGap) ||
-        parseFloat(trackStyle.gap) ||
-        0;
-
-      const videoWidth = firstVideo.getBoundingClientRect().width;
-
-      return {
-        slider,
-        videoWidth,
-        paddingLeft,
-        gap,
-      };
-    },
 
     buildVideos() {
       if (!DOM.track) return;
@@ -2558,12 +2482,9 @@ document.addEventListener("DOMContentLoaded", () => {
     setPosition(index, animate = true) {
       if (!this.videos.length || !DOM.track) return;
 
-      const metrics = this.getSliderMetrics();
-      if (!metrics) return;
-
-      const { videoWidth, paddingLeft, gap } = metrics;
-      const slideStride = videoWidth + gap;
-      const offset = index * slideStride - paddingLeft;
+      const videoWidth = this.videos[0].offsetWidth;
+      const padding = DOM.track.parentElement.offsetWidth * 0.1;
+      const offset = videoWidth * index - padding;
 
       DOM.track.style.transition = animate
         ? "transform 0.6s cubic-bezier(.16,.84,.44,1)"
@@ -2573,7 +2494,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     moveTo(index, autoPlay = false) {
-      if (this.isAnimating || !this.videos.length) return;
+      if (this.isAnimating) return;
 
       this.isAnimating = true;
       this.currentIndex = index;
@@ -2589,9 +2510,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bindTrackEvents() {
       if (!DOM.track) return;
 
-      DOM.track.addEventListener("transitionend", (e) => {
-        if (e.target !== DOM.track) return;
-
+      DOM.track.addEventListener("transitionend", () => {
         this.isAnimating = false;
 
         if (this.currentIndex === this.videos.length - 1) {
@@ -2632,15 +2551,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (!this.isDragging || !this.videos.length) return;
 
-          const metrics = this.getSliderMetrics();
-          if (!metrics) return;
-
           const diff = e.touches[0].clientX - this.startX;
-          const { videoWidth, paddingLeft, gap } = metrics;
-          const slideStride = videoWidth + gap;
+          const videoWidth = this.videos[0].offsetWidth;
+          const padding = DOM.track.parentElement.offsetWidth * 0.1;
 
           DOM.track.style.transform = `translateX(${
-            -(this.currentIndex * slideStride - paddingLeft) + diff
+            -this.currentIndex * videoWidth + diff - padding
           }px)`;
         },
         { passive: false }
@@ -2670,16 +2586,6 @@ document.addEventListener("DOMContentLoaded", () => {
           this.isDragging = false;
         },
         { passive: false }
-      );
-
-      DOM.track.addEventListener(
-        "touchcancel",
-        () => {
-          if (!this.isDragging) return;
-          this.isDragging = false;
-          this.setPosition(this.currentIndex, true);
-        },
-        { passive: true }
       );
     },
 
@@ -2714,7 +2620,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       window.addEventListener("resize", () => {
-        requestAnimationFrame(() => this.setPosition(this.currentIndex, false));
+        this.setPosition(this.currentIndex, false);
       });
     },
 
@@ -2831,87 +2737,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // 15) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
   function bindUserScrollInterrupts() {
-	  window.addEventListener(
-		"wheel",
-		() => {
-		  state.input.lastInteractionType = "mouse";
-		  scrollEngine.cancelActiveScroll();
-		  state.touch.active = false;
-		  state.nav.gestureStretch.target = 0;
-		  navbarModule.startAnimation();
-		  scrollSectionHintModule.hideImmediatelyForNonTouchInput?.();
-		},
-		{ passive: true }
-	  );
+    window.addEventListener(
+      "wheel",
+      () => {
+        scrollEngine.cancelActiveScroll();
+        state.touch.active = false;
+        state.nav.gestureStretch.target = 0;
+        navbarModule.startAnimation();
+      },
+      { passive: true }
+    );
 
-	  const endTouchScroll = () => {
-		state.touch.active = false;
-		state.nav.gestureStretch.target = 0;
-		navbarModule.startAnimation();
-	  };
+    const endTouchScroll = () => {
+      state.touch.active = false;
+      state.nav.gestureStretch.target = 0;
+      navbarModule.startAnimation();
+    };
 
-	  window.addEventListener(
-		"touchstart",
-		() => {
-		  state.input.lastInteractionType = "touch";
-		  state.input.lastTouchTs = performance.now();
-		  scrollEngine.cancelActiveScroll();
-		  state.touch.active = true;
-		},
-		{ passive: true }
-	  );
+    window.addEventListener(
+      "touchstart",
+      () => {
+        scrollEngine.cancelActiveScroll();
+        state.touch.active = true;
+      },
+      { passive: true }
+    );
 
-	  window.addEventListener(
-		"touchmove",
-		() => {
-		  state.input.lastInteractionType = "touch";
-		  state.input.lastTouchTs = performance.now();
-		  state.touch.active = true;
-		},
-		{ passive: true }
-	  );
-
-	  window.addEventListener("touchend", endTouchScroll, { passive: true });
-	  window.addEventListener("touchcancel", endTouchScroll, { passive: true });
-
-	  window.addEventListener(
-		"keydown",
-		(e) => {
-		  const scrollKeys = [
-			"ArrowUp",
-			"ArrowDown",
-			"PageUp",
-			"PageDown",
-			"Home",
-			"End",
-			" ",
-			"Spacebar",
-		  ];
-
-		  if (!scrollKeys.includes(e.key)) return;
-
-		  state.input.lastInteractionType = "keyboard";
-		  state.touch.active = false;
-		  scrollSectionHintModule.hideImmediatelyForNonTouchInput?.();
-		},
-		{ passive: true }
-	  );
-
-	  window.addEventListener(
-		"pointerdown",
-		(e) => {
-		  if (e.pointerType === "touch") {
-			state.input.lastInteractionType = "touch";
-			state.input.lastTouchTs = performance.now();
-		  } else if (e.pointerType === "mouse" || e.pointerType === "pen") {
-			state.input.lastInteractionType = "mouse";
-			state.touch.active = false;
-			scrollSectionHintModule.hideImmediatelyForNonTouchInput?.();
-		  }
-		},
-		{ passive: true }
-	  );
-	}
+    window.addEventListener("touchend", endTouchScroll, { passive: true });
+    window.addEventListener("touchcancel", endTouchScroll, { passive: true });
+  }
 
   // ---------------------------------------------------------------------
   // 16) POSITIONIERUNG DER SCROLL-HINT-SPALTE
