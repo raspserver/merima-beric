@@ -1480,6 +1480,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		document.body.appendChild(this.measurer);
 
 		this.hintSlots = [...this.root.querySelectorAll(".scroll-section-hint")];
+
+		this.hintSlots.forEach((hintEl) => {
+		  hintEl.__hintState = {
+			visible: false,
+			timer: null,
+			lastPayload: null,
+		  };
+		});
 	  },
 
 	  bindHintClicks() {
@@ -1731,37 +1739,102 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (anchor) anchor.style.top = `${Math.round(centerYPx)}px`;
 	  },
 
-	  setHint(
-		hintEl,
-		{ text = "", top = 0, opacity = 0, theme = "dark", target = "" } = {}
-	  ) {
+	  clearHintTimer(hintEl) {
+		const state = hintEl?.__hintState;
+		if (!state) return;
+
+		if (state.timer) {
+		  clearTimeout(state.timer);
+		  state.timer = null;
+		}
+	  },
+
+	  applyHintNow(hintEl, payload) {
 		if (!hintEl) return;
 
 		const anchor = hintEl.parentElement;
 		const base = hintEl.querySelector(".scroll-section-hint-base");
-		const visible = !!text && opacity > 0.001;
+		const visible = !!payload?.text && (payload.opacity ?? 0) > 0.001;
 
-		if (base) base.textContent = text;
+		if (base) base.textContent = payload?.text || "";
 
-		this.setAnchorCenterY(hintEl, top);
+		this.setAnchorCenterY(hintEl, payload?.top || 0);
 
 		hintEl.style.opacity = `${
-		  clamp(opacity, 0, 1) * cssVar.number("--section-hint-visibility", 0.5)
+		  clamp(payload?.opacity ?? 0, 0, 1) *
+		  cssVar.number("--section-hint-visibility", 0.5)
 		}`;
 
-		hintEl.dataset.theme = theme;
+		hintEl.dataset.theme = payload?.theme || "dark";
 		hintEl.classList.toggle("is-empty", !visible);
 
 		if (anchor) {
-		  const metrics = this.measureHint(text);
+		  const metrics = this.measureHint(payload?.text || "");
 
-		  anchor.dataset.scrollTarget = target || "";
+		  anchor.dataset.scrollTarget = payload?.target || "";
 		  anchor.style.width = `${Math.max(48, metrics.height + 16)}px`;
 		  anchor.style.height = `${Math.max(48, metrics.width + 16)}px`;
 		  anchor.style.pointerEvents = visible ? "auto" : "none";
 		  anchor.style.opacity = visible ? "1" : "0";
 		  anchor.setAttribute("aria-hidden", visible ? "false" : "true");
 		}
+
+		if (hintEl.__hintState) {
+		  hintEl.__hintState.visible = visible;
+		  hintEl.__hintState.lastPayload = payload;
+		  hintEl.__hintState.timer = null;
+		}
+	  },
+
+	  scheduleHintState(hintEl, payload) {
+		if (!hintEl) return;
+
+		const stateObj = hintEl.__hintState || {
+		  visible: false,
+		  timer: null,
+		  lastPayload: null,
+		};
+		hintEl.__hintState = stateObj;
+
+		const nextVisible = !!payload?.text && (payload.opacity ?? 0) > 0.001;
+
+		const sameAsCurrent =
+		  stateObj.lastPayload &&
+		  stateObj.visible === nextVisible &&
+		  stateObj.lastPayload.text === (payload?.text || "") &&
+		  Math.abs((stateObj.lastPayload.top || 0) - (payload?.top || 0)) < 0.5 &&
+		  Math.abs((stateObj.lastPayload.opacity || 0) - (payload?.opacity || 0)) < 0.001 &&
+		  (stateObj.lastPayload.theme || "dark") === (payload?.theme || "dark") &&
+		  (stateObj.lastPayload.target || "") === (payload?.target || "");
+
+		if (sameAsCurrent) return;
+
+		this.clearHintTimer(hintEl);
+
+		stateObj.timer = setTimeout(() => {
+		  this.applyHintNow(hintEl, payload);
+		}, this.showDelayMs);
+	  },
+
+	  applyImmediateHint(hintEl, placement) {
+		if (!placement?.section) {
+		  this.applyHintNow(hintEl, {
+			text: "",
+			top: 0,
+			opacity: 0,
+			theme: "dark",
+			target: "",
+		  });
+		  return;
+		}
+
+		this.applyHintNow(hintEl, {
+		  text: this.makeText(placement.section, placement.variant),
+		  top: placement.top,
+		  opacity: placement.opacity ?? 1,
+		  theme: this.getThemeAtViewportY(placement.top, placement.section),
+		  target: placement.section.id ? `#${placement.section.id}` : "",
+		});
 	  },
 
 	  applyHint(hintEl, placement) {
@@ -1770,7 +1843,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  return;
 		}
 
-		this.setHint(hintEl, {
+		this.scheduleHintState(hintEl, {
 		  text: this.makeText(placement.section, placement.variant),
 		  top: placement.top,
 		  opacity: placement.opacity ?? 1,
@@ -1780,16 +1853,30 @@ document.addEventListener("DOMContentLoaded", () => {
 	  },
 
 	  hideHint(hintEl) {
-		this.setHint(hintEl, {
+		this.scheduleHintState(hintEl, {
 		  text: "",
 		  top: 0,
 		  opacity: 0,
+		  theme: "dark",
 		  target: "",
 		});
 	  },
 
 	  hideAll() {
 		this.hintSlots.forEach((hintEl) => this.hideHint(hintEl));
+	  },
+
+	  hideAllImmediately() {
+		this.hintSlots.forEach((hintEl) => {
+		  this.clearHintTimer(hintEl);
+		  this.applyHintNow(hintEl, {
+			text: "",
+			top: 0,
+			opacity: 0,
+			theme: "dark",
+			target: "",
+		  });
+		});
 	  },
 
 	  getTransitionZone(changeY, bandTop, bandBottom) {
@@ -2228,6 +2315,31 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	  },
 
+	  renderPlacementsImmediately(placements) {
+		const visiblePlacements = (placements || [])
+		  .filter(Boolean)
+		  .filter(
+			(placement) => placement.section && (placement.opacity ?? 1) > 0.001
+		  )
+		  .sort((a, b) =>
+			a.top !== b.top ? a.top - b.top : (b.priority ?? 0) - (a.priority ?? 0)
+		  );
+
+		if (!visiblePlacements.length) {
+		  this.hideAllImmediately();
+		  return;
+		}
+
+		this.hintSlots.forEach((hintEl, index) => {
+		  const placement = visiblePlacements[index];
+		  if (placement) {
+			this.applyImmediateHint(hintEl, placement);
+		  } else {
+			this.applyImmediateHint(hintEl, null);
+		  }
+		});
+	  },
+
 	  updateGalleryBodyState(currentSection) {
 		document.body.classList.toggle("in-gallery", currentSection?.id === "gallery");
 	  },
@@ -2244,6 +2356,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		this.renderPlacements(
+		  this.buildPlacements(context, this.buildGeometry(context))
+		);
+	  },
+
+	  updateImmediately() {
+		if (!this.root) return;
+
+		const context = this.getSectionContext();
+		this.updateGalleryBodyState(context?.current || null);
+
+		if (!context?.current) {
+		  this.hideAllImmediately();
+		  return;
+		}
+
+		this.renderPlacementsImmediately(
 		  this.buildPlacements(context, this.buildGeometry(context))
 		);
 	  },
@@ -2391,7 +2519,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  },
 
 	  hideWithScrollDelay() {
-		this.scheduleVisibility(false);
+		this.hide();
 	  },
 
 	  scheduleHide() {
@@ -2415,9 +2543,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 
 		  this.hasUnlockedScrollHints = true;
+		  this.updateImmediately();
 		}
 
 		this.show();
+		this.scheduleUpdate();
 		this.scheduleHideAfterScrollEnd();
 	  },
 
@@ -2444,6 +2574,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.clearHideCompleteTimer();
 		this.endGesture({ resetDistance: true });
 
+		this.hintSlots.forEach((hintEl) => {
+		  this.clearHintTimer(hintEl);
+		  if (hintEl.__hintState) {
+			hintEl.__hintState.visible = false;
+			hintEl.__hintState.lastPayload = null;
+		  }
+		});
+
 		this.isVisible = false;
 		this.hasUnlockedScrollHints = false;
 
@@ -2452,6 +2590,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.root.classList.remove("is-visible");
 		document.body.classList.remove("hints-visible");
+
+		this.hideAllImmediately();
 
 		requestAnimationFrame(() => {
 		  requestAnimationFrame(() => {
@@ -2521,7 +2661,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.metricsCache.clear();
 		  this.refreshTimingVars();
 		  this.lastObservedScrollY = window.scrollY;
-		  this.scheduleUpdate();
+		  this.updateImmediately();
 		};
 
 		window.addEventListener("resize", onResize);
@@ -2543,11 +2683,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.bindHintClicks();
 		this.hide();
 		this.lastObservedScrollY = window.scrollY;
-		this.update();
+		this.updateImmediately();
 		this.bindEvents();
 	  },
 	};
-  
+	
   // ---------------------------------------------------------------------
   // 12) GALLERY-MODUL
   // ---------------------------------------------------------------------
