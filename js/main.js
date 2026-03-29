@@ -2349,13 +2349,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  this.lastScrollTs = performance.now();
 
-	  // Nur echte Touch-Gesten dürfen den Unlock-Fortschritt aufbauen
-	  if (this.gesture.type === "touch" && this.gesture.active) {
-		this.accumulateScrollDistance();
-	  } else {
-		this.scheduleHideAfterScrollEnd();
-		return;
-	  }
+	  if (this.gesture.type === "touch") {
+		  this.accumulateScrollDistance();
+		} else {
+		  this.scheduleHideAfterScrollEnd();
+		  return;
+		}
 
 	  if (!this.hasUnlockedScrollHints) {
 		if (!this.hasReachedShowScrollDistance()) {
@@ -2413,13 +2412,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     bindEvents() {
       const onTouchStart = () => this.beginGesture("touch");
-		
+
 		const onTouchEndLike = () => {
-	  this.gesture.active = false;   // Finger ist weg
-	  this.lastScrollTs = performance.now();
-	  this.scheduleHideAfterScrollEnd();
-	};
-		
+		  this.gesture.active = false;   // nur Fingerstatus
+		  this.lastScrollTs = performance.now();
+		  this.scheduleHideAfterScrollEnd();
+		};
+	
       window.addEventListener(
         "scroll",
         () => {
