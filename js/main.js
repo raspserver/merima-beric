@@ -3191,35 +3191,59 @@ document.addEventListener("DOMContentLoaded", () => {
   // 14) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
   function bindUserScrollInterrupts() {
-    window.addEventListener(
-      "wheel",
-      () => {
-        scrollEngine.cancelActiveScroll();
-        state.touch.active = false;
-        state.nav.gestureStretch.target = 0;
-        navbarModule.startAnimation();
-      },
-      { passive: true }
-    );
+	  let touchReleaseTimer = null;
 
-    const endTouchScroll = () => {
-      state.touch.active = false;
-      state.nav.gestureStretch.target = 0;
-      navbarModule.startAnimation();
-    };
+	  window.addEventListener(
+		"wheel",
+		() => {
+		  scrollEngine.cancelActiveScroll();
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		  navbarModule.startAnimation();
+		},
+		{ passive: true }
+	  );
 
-    window.addEventListener(
-      "touchstart",
-      () => {
-        scrollEngine.cancelActiveScroll();
-        state.touch.active = true;
-      },
-      { passive: true }
-    );
+	  const releaseTouchState = () => {
+		clearTimeout(touchReleaseTimer);
 
-    window.addEventListener("touchend", endTouchScroll, { passive: true });
-    window.addEventListener("touchcancel", endTouchScroll, { passive: true });
-  }
+		// iOS Safari: Scroll / Momentum läuft oft noch nach touchend weiter
+		touchReleaseTimer = setTimeout(() => {
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		  navbarModule.startAnimation();
+		}, 180);
+	  };
+
+	  window.addEventListener(
+		"touchstart",
+		() => {
+		  clearTimeout(touchReleaseTimer);
+		  scrollEngine.cancelActiveScroll();
+		  state.touch.active = true;
+		},
+		{ passive: true }
+	  );
+
+	  window.addEventListener("touchend", releaseTouchState, { passive: true });
+	  window.addEventListener("touchcancel", releaseTouchState, { passive: true });
+
+	  window.addEventListener(
+		"scroll",
+		() => {
+		  // solange gescrollt wird, Touch-Gestenlogik noch aktiv halten
+		  if (state.touch.active) {
+			clearTimeout(touchReleaseTimer);
+			touchReleaseTimer = setTimeout(() => {
+			  state.touch.active = false;
+			  state.nav.gestureStretch.target = 0;
+			  navbarModule.startAnimation();
+			}, 120);
+		  }
+		},
+		{ passive: true }
+	  );
+	}
 
   // ---------------------------------------------------------------------
   // 15) POSITIONIERUNG DER SCROLL-HINT-SPALTE
