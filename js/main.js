@@ -1423,11 +1423,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  maxVisibleHints: 2,
 	  isVisible: false,
-	  hasUnlockedScrollHints: false,
 
 	  scrollEndTimer: null,
 	  hideCompleteTimer: null,
 	  lastScrollTs: 0,
+	  lastObservedScrollY: window.scrollY,
+
+	  hideDelayMs: 1000,
+	  fadeDurationMs: 500,
+	  showScrollDistancePx: window.innerHeight,
 
 	  gesture: {
 		type: null,
@@ -1435,12 +1439,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		distance: 0,
 		lastTouchStartTs: 0,
 		lastTouchEndTs: 0,
-	  },
 
-	  lastObservedScrollY: window.scrollY,
-	  hideDelayMs: 1000,
-	  fadeDurationMs: 500,
-	  showScrollDistancePx: window.innerHeight,
+		// neue Session-Logik
+		sessionHadTouch: false,
+		sessionUnlocked: false,
+	  },
 
 	  labels: {
 		about: "ÜBER MICH",
@@ -2270,18 +2273,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
 	  },
 
-	  scheduleRelockAfterFullyHidden() {
-		this.clearHideCompleteTimer();
-
-		this.hideCompleteTimer = setTimeout(() => {
-		  if (!this.isVisible && !this.root?.classList.contains("is-visible")) {
-			this.hasUnlockedScrollHints = false;
-			this.gesture.distance = 0;
-			this.endGesture({ resetDistance: true });
-		  }
-
-		  this.hideCompleteTimer = null;
-		}, this.fadeDurationMs);
+	  resetSession() {
+		this.gesture.type = null;
+		this.gesture.active = false;
+		this.gesture.distance = 0;
+		this.gesture.sessionHadTouch = false;
+		this.gesture.sessionUnlocked = false;
 	  },
 
 	  beginGesture(type) {
@@ -2291,6 +2288,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.gesture.type = type;
 		this.gesture.active = true;
 		this.gesture.distance = 0;
+		this.gesture.sessionUnlocked = false;
+		this.gesture.sessionHadTouch = type === "touch";
 		this.lastObservedScrollY = window.scrollY;
 
 		if (type === "touch") {
@@ -2307,6 +2306,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (resetDistance) {
 		  this.gesture.distance = 0;
+		  this.gesture.sessionUnlocked = false;
+		  this.gesture.sessionHadTouch = false;
 		}
 	  },
 
@@ -2320,24 +2321,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  hasReachedShowScrollDistance() {
 		return this.gesture.distance >= this.showScrollDistancePx;
-	  },
-
-	  isTouchDriven() {
-		const now = performance.now();
-
-		return (
-		  this.gesture.type === "touch" ||
-		  this.gesture.active ||
-		  now - this.gesture.lastTouchStartTs < 1200 ||
-		  now - this.gesture.lastTouchEndTs < 500
-		);
-	  },
-
-	  resetTouchEligibility() {
-		this.hasUnlockedScrollHints = false;
-		this.gesture.distance = 0;
-		this.gesture.type = null;
-		this.gesture.active = false;
 	  },
 
 	  show() {
@@ -2363,6 +2346,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.scheduleRelockAfterFullyHidden();
 	  },
 
+	  scheduleRelockAfterFullyHidden() {
+		this.clearHideCompleteTimer();
+
+		this.hideCompleteTimer = setTimeout(() => {
+		  this.hideCompleteTimer = null;
+		}, this.fadeDurationMs);
+	  },
+
 	  scheduleHide() {
 		this.scheduleHideAfterScrollEnd();
 	  },
@@ -2373,25 +2364,28 @@ document.addEventListener("DOMContentLoaded", () => {
 		  return;
 		}
 
-		// Nur Touch darf Section-Hints freischalten
-		if (!this.isTouchDriven()) {
-		  this.hide();
-		  return;
-		}
-
 		this.lastScrollTs = performance.now();
 		this.accumulateScrollDistance();
 
-		if (!this.hasUnlockedScrollHints) {
+		// Nur Scroll-Sessions mit echter Touch-Geste dürfen Hints aktivieren
+		if (!this.gesture.sessionHadTouch) {
+		  this.hide();
+		  this.scheduleHideAfterScrollEnd();
+		  return;
+		}
+
+		// Mindestscrollstrecke nur bis zur Freischaltung prüfen
+		if (!this.gesture.sessionUnlocked) {
 		  if (!this.hasReachedShowScrollDistance()) {
 			this.hide();
 			this.scheduleHideAfterScrollEnd();
 			return;
 		  }
 
-		  this.hasUnlockedScrollHints = true;
+		  this.gesture.sessionUnlocked = true;
 		}
 
+		// Nach Freischaltung sichtbar bleiben, auch wenn touchend schon war
 		this.show();
 		this.scheduleHideAfterScrollEnd();
 	  },
@@ -2404,6 +2398,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  if (idleFor >= this.hideDelayMs) {
 			this.hide();
+			this.resetSession();
 			return;
 		  }
 
@@ -2416,7 +2411,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.clearScrollEndTimer();
 		this.clearHideCompleteTimer();
-		this.resetTouchEligibility();
+		this.resetSession();
 
 		this.isVisible = false;
 
@@ -2467,12 +2462,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener("touchend", onTouchEndLike, { passive: true });
 		window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
 
-		// Maus / Pen / Touchpad / Wheel / Tastatur dürfen Hints nicht aktivieren
+		// Nicht-Touch-Eingaben dürfen keine Session freischalten
 		window.addEventListener(
 		  "pointerdown",
 		  (e) => {
 			if (e.pointerType !== "touch") {
-			  this.resetTouchEligibility();
+			  this.resetSession();
 			  this.hide();
 			}
 		  },
@@ -2482,14 +2477,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener(
 		  "wheel",
 		  () => {
-			this.resetTouchEligibility();
+			this.resetSession();
 			this.hide();
 		  },
 		  { passive: true }
 		);
 
 		window.addEventListener("keydown", () => {
-		  this.resetTouchEligibility();
+		  this.resetSession();
 		  this.hide();
 		});
 
