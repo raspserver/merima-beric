@@ -3285,7 +3285,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  state.touch.active = false;
 		  state.nav.gestureStretch.target = 0;
 		  navbarModule.startAnimation();
-		}, 180);
+		}, 320);
 	  };
 
 	  window.addEventListener(
@@ -3311,7 +3311,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			  state.touch.active = false;
 			  state.nav.gestureStretch.target = 0;
 			  navbarModule.startAnimation();
-			}, 320);
+			}, 220);
 		  }
 		},
 		{ passive: true }
