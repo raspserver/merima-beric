@@ -1435,6 +1435,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	  fadeDurationMs: 500,
 	  showScrollDistancePx: window.innerHeight,
 
+	  // WICHTIG:
+	  // Erst wenn so lange wirklich keine Scroll-Aktivität mehr kam,
+	  // gilt die Bewegung als beendet.
+	  scrollIdleThresholdMs: 280,
+
 	  gesture: {
 		type: null,
 		active: false,
@@ -2367,14 +2372,25 @@ document.addEventListener("DOMContentLoaded", () => {
 		  if (!this.gesture.sessionUnlocked) return;
 		  if (!this.isVisible) return;
 
-		  // Nur als gestoppt werten, wenn wirklich kurz kein Scroll mehr kam
-		  if (performance.now() - this.lastScrollTs < 120) {
+		  const now = performance.now();
+		  const timeSinceLastScroll = now - this.lastScrollTs;
+
+		  // Solange Finger / Touch-Session noch aktiv ist:
+		  // niemals als gestoppt behandeln
+		  if (state.touch.active) {
+			this.scheduleStopDetection();
+			return;
+		  }
+
+		  // Solange noch kürzlich Scroll-Events kamen:
+		  // ebenfalls weiter warten
+		  if (timeSinceLastScroll < this.scrollIdleThresholdMs) {
 			this.scheduleStopDetection();
 			return;
 		  }
 
 		  this.startHideCountdown();
-		}, 140);
+		}, this.scrollIdleThresholdMs);
 	  },
 
 	  scheduleHide() {
@@ -2390,11 +2406,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.lastScrollTs = performance.now();
 		this.accumulateScrollDistance();
 
-		// Nur Touch-gestartete Session darf freischalten
+		// Jede echte Scroll-Aktivität bricht laufende Hide-/Stop-Logik ab
+		this.clearHideTimer();
+		this.clearHideCompleteTimer();
+		this.clearStopDetection();
+
+		// Nur Touch-gestartete Session darf die Hints freischalten
 		if (!this.gesture.sessionHadTouch && !this.gesture.sessionUnlocked) {
 		  this.hide();
-		  this.clearHideTimer();
-		  this.clearStopDetection();
 		  return;
 		}
 
@@ -2402,20 +2421,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (!this.gesture.sessionUnlocked) {
 		  if (!this.hasReachedShowScrollDistance()) {
 			this.hide();
-			this.clearHideTimer();
-			this.clearStopDetection();
 			return;
 		  }
 
 		  this.gesture.sessionUnlocked = true;
 		}
 
-		// Während echter Scroll-Aktivität sichtbar halten
+		// Während Scroll-Aktivität sichtbar halten
 		this.show();
-		this.clearHideTimer();
-		this.clearStopDetection();
 
-		// Fallback für Browser/Phasen ohne scrollend
+		// Jetzt erst wieder auf echten Stillstand warten
 		this.scheduleStopDetection();
 	  },
 
@@ -2451,8 +2466,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		const onTouchEndLike = () => {
 		  this.gesture.lastTouchEndTs = performance.now();
 
-		  // Touch endet, Momentum kann aber weiterlaufen.
-		  // Deshalb hier noch NICHT ausblenden.
+		  // Touch-Ende heißt NICHT automatisch Scroll-Ende.
+		  // Momentum auf Android/Chrome kann weiterlaufen.
 		  this.gesture.active = false;
 		  this.lastObservedScrollY = window.scrollY;
 		};
@@ -2507,13 +2522,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.hide();
 		});
 
+		// scrollend nur vorsichtig verwenden
 		if ("onscrollend" in document) {
 		  document.addEventListener(
 			"scrollend",
 			() => {
-			  if (!state.scroll.programmatic && this.gesture.sessionUnlocked) {
-				this.startHideCountdown();
-			  }
+			  if (state.scroll.programmatic) return;
+			  if (!this.gesture.sessionUnlocked) return;
+			  if (state.touch.active) return;
+
+			  const now = performance.now();
+			  if (now - this.lastScrollTs < this.scrollIdleThresholdMs) return;
+
+			  this.startHideCountdown();
 			},
 			{ passive: true }
 		  );
