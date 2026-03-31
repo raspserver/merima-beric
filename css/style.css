@@ -877,7 +877,6 @@ html.low-fps .hero-inner {
 	}
 }
 
-
 .cta-button {
 	position: relative;
 	z-index: 6;
@@ -1111,6 +1110,80 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	opacity: var(--gloss-opacity);
 	transition: opacity 0.25s ease;
 	will-change: opacity, background;
+}
+
+.hero-calendar {
+	width: min(100%, 800px);
+	max-height: 0;
+	opacity: 0;
+	overflow: hidden;
+	pointer-events: none;
+	transform: translateY(-12px);
+	transition:
+		max-height 0.55s cubic-bezier(.16,.84,.44,1),
+		opacity 0.35s ease,
+		transform 0.45s cubic-bezier(.16,.84,.44,1);
+}
+
+.hero-calendar.is-open {
+	max-height: 650px;
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.hero-calendar iframe {
+	display: block;
+	width: 100%;
+	height: clamp(420px, 60vh, 600px);
+	border: 0;
+	background: #fff;
+}
+
+.cta-button.calendar-open,
+.cta-button.calendar-open.is-hovered,
+.cta-button.calendar-open.is-magnetic-near,
+.cta-button.calendar-open:active,
+.cta-button.calendar-open:focus,
+.cta-button.calendar-open:focus-visible {
+	--magnetic-x: 0px;
+	--magnetic-y: 0px;
+	--hover-lift: 0px;
+	--magnetic-scale: 1;
+	--magnetic-shadow-y: 0px;
+	--magnetic-shadow-blur: 0px;
+	--magnetic-shadow-alpha: 0;
+
+	--label-x: 0px;
+	--label-y: 0px;
+	--label-scale: 1;
+
+	--gloss-opacity: 0;
+
+	box-shadow: none;
+}
+
+.cta-button.calendar-open .cta-shell,
+.cta-button.calendar-open:hover .cta-shell,
+.cta-button.calendar-open.is-hovered .cta-shell {
+	background: var(--primary-color);
+	border-color: var(--primary-color);
+}
+
+.cta-button.calendar-open .cta-label,
+.cta-button.calendar-open:hover .cta-label,
+.cta-button.calendar-open.is-hovered .cta-label {
+	color: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+	.hero-calendar {
+		width: 100%;
+	}
+
+	.hero-calendar iframe {
+		height: clamp(360px, 55vh, 520px);
+	}
 }
 
 /* =========================
