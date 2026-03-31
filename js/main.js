@@ -1426,26 +1426,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  hideTimer: null,
 	  hideCompleteTimer: null,
-	  stopDetectTimer: null,
 	  stopCheckRaf: null,
 
 	  lastScrollTs: 0,
 	  lastObservedScrollY: window.scrollY,
 	  lastStopCheckY: window.scrollY,
+	  stableSinceTs: 0,
 
 	  hideDelayMs: 1000,
 	  fadeDurationMs: 500,
 	  showScrollDistancePx: window.innerHeight,
 
-	  /* Erst wenn so lange zunächst keine neue Scroll-Aktivität mehr kam,
-		 startet die echte Stillstands-Prüfung. */
-	  scrollIdleThresholdMs: 420,
-
-	  /* Echte Bewegungsprüfung */
-	  stableScrollFrames: 0,
-	  requiredStableFrames: 6,
-	  stopCheckIntervalMs: 90,
-	  movementTolerancePx: 0.5,
+	  /* Erst wenn scrollY für diese Zeit wirklich stabil bleibt,
+		 gilt der Scroll als beendet. */
+	  restStableMs: 220,
+	  movementTolerancePx: 0.25,
 
 	  gesture: {
 		type: null,
@@ -2286,17 +2281,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
 	  },
 
-	  clearStopCheckRaf() {
+	  clearStopDetection() {
 		if (this.stopCheckRaf) {
 		  cancelAnimationFrame(this.stopCheckRaf);
 		  this.stopCheckRaf = null;
 		}
-	  },
 
-	  clearStopDetection() {
-		this.stopDetectTimer = utils.clearTimer(this.stopDetectTimer);
-		this.clearStopCheckRaf();
-		this.stableScrollFrames = 0;
+		this.stableSinceTs = 0;
 	  },
 
 	  resetSession() {
@@ -2320,7 +2311,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.gesture.sessionHadTouch = type === "touch";
 		this.lastObservedScrollY = window.scrollY;
 		this.lastStopCheckY = window.scrollY;
-		this.stableScrollFrames = 0;
+		this.stableSinceTs = 0;
 
 		if (type === "touch") {
 		  this.gesture.lastTouchStartTs = performance.now();
@@ -2383,39 +2374,37 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.clearStopDetection();
 
 		this.lastStopCheckY = window.scrollY;
-		this.stableScrollFrames = 0;
+		this.stableSinceTs = 0;
 
-		this.stopDetectTimer = setTimeout(() => {
-		  this.stopDetectTimer = null;
+		const check = (now) => {
+		  if (state.scroll.programmatic) return;
+		  if (!this.gesture.sessionUnlocked) return;
+		  if (!this.isVisible) return;
 
-		  const check = () => {
-			if (state.scroll.programmatic) return;
-			if (!this.gesture.sessionUnlocked) return;
-			if (!this.isVisible) return;
+		  /* Solange Touch/Momentum-Kontext noch aktiv ist,
+			 weiter prüfen statt zu früh zu verstecken. */
+		  const currentY = window.scrollY;
+		  const delta = Math.abs(currentY - this.lastStopCheckY);
 
-			const currentY = window.scrollY;
-			const delta = Math.abs(currentY - this.lastStopCheckY);
-
-			if (delta <= this.movementTolerancePx) {
-			  this.stableScrollFrames += 1;
-			} else {
-			  this.stableScrollFrames = 0;
-			  this.lastStopCheckY = currentY;
+		  if (delta <= this.movementTolerancePx) {
+			if (!this.stableSinceTs) {
+			  this.stableSinceTs = now;
 			}
 
-			if (this.stableScrollFrames >= this.requiredStableFrames) {
-			  this.clearStopCheckRaf();
+			if (now - this.stableSinceTs >= this.restStableMs) {
+			  this.stopCheckRaf = null;
 			  this.startHideCountdown();
 			  return;
 			}
+		  } else {
+			this.stableSinceTs = 0;
+			this.lastStopCheckY = currentY;
+		  }
 
-			this.stopCheckRaf = requestAnimationFrame(() => {
-			  setTimeout(check, this.stopCheckIntervalMs);
-			});
-		  };
+		  this.stopCheckRaf = requestAnimationFrame(check);
+		};
 
-		  check();
-		}, this.scrollIdleThresholdMs);
+		this.stopCheckRaf = requestAnimationFrame(check);
 	  },
 
 	  scheduleHide() {
@@ -2487,10 +2476,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.gesture.active = false;
 		  this.lastObservedScrollY = window.scrollY;
 
-		  /* Wichtig:
-			 Touch-Ende bedeutet NICHT Scroll-Ende.
-			 Momentum darf weiterlaufen.
-			 Deshalb hier KEIN startHideCountdown(). */
+		  /* Kein Hide hier:
+			 touchend ist nicht gleich scroll end. */
 		};
 
 		window.addEventListener(
@@ -2549,7 +2536,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			() => {
 			  if (state.scroll.programmatic) return;
 			  if (!this.gesture.sessionUnlocked) return;
-			  if (state.touch.active) return;
 
 			  this.scheduleStopDetection();
 			},
