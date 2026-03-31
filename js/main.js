@@ -3311,7 +3311,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			  state.touch.active = false;
 			  state.nav.gestureStretch.target = 0;
 			  navbarModule.startAnimation();
-			}, 120);
+			}, 320);
 		  }
 		},
 		{ passive: true }
