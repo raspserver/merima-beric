@@ -3282,13 +3282,32 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------
   // 14) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
-  function bindUserScrollInterrupts() {
+	function bindUserScrollInterrupts() {
 	  let touchReleaseTimer = null;
+
+	  const clearTouchReleaseTimer = () => {
+		if (touchReleaseTimer) {
+		  clearTimeout(touchReleaseTimer);
+		  touchReleaseTimer = null;
+		}
+	  };
+
+	  const releaseTouchStateDelayed = (delay = 420) => {
+		clearTouchReleaseTimer();
+
+		touchReleaseTimer = setTimeout(() => {
+		  touchReleaseTimer = null;
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		  navbarModule.startAnimation();
+		}, delay);
+	  };
 
 	  window.addEventListener(
 		"wheel",
 		() => {
 		  scrollEngine.cancelActiveScroll();
+		  clearTouchReleaseTimer();
 		  state.touch.active = false;
 		  state.nav.gestureStretch.target = 0;
 		  navbarModule.startAnimation();
@@ -3296,45 +3315,84 @@ document.addEventListener("DOMContentLoaded", () => {
 		{ passive: true }
 	  );
 
-	  const releaseTouchState = () => {
-		clearTimeout(touchReleaseTimer);
-
-		// iOS Safari: Scroll / Momentum läuft oft noch nach touchend weiter
-		touchReleaseTimer = setTimeout(() => {
-		  state.touch.active = false;
-		  state.nav.gestureStretch.target = 0;
-		  navbarModule.startAnimation();
-		}, 320);
-	  };
-
 	  window.addEventListener(
 		"touchstart",
 		() => {
-		  clearTimeout(touchReleaseTimer);
+		  clearTouchReleaseTimer();
 		  scrollEngine.cancelActiveScroll();
 		  state.touch.active = true;
 		},
 		{ passive: true }
 	  );
 
-	  window.addEventListener("touchend", releaseTouchState, { passive: true });
-	  window.addEventListener("touchcancel", releaseTouchState, { passive: true });
+	  window.addEventListener(
+		"touchmove",
+		() => {
+		  clearTouchReleaseTimer();
+		  state.touch.active = true;
+		},
+		{ passive: true }
+	  );
+
+	  window.addEventListener(
+		"touchend",
+		() => {
+		  /* Wichtig:
+			 Touch-Ende ist nicht Scroll-Ende.
+			 Momentum kann weiterlaufen. */
+		  releaseTouchStateDelayed(420);
+		},
+		{ passive: true }
+	  );
+
+	  window.addEventListener(
+		"touchcancel",
+		() => {
+		  releaseTouchStateDelayed(420);
+		},
+		{ passive: true }
+	  );
 
 	  window.addEventListener(
 		"scroll",
 		() => {
-		  // solange gescrollt wird, Touch-Gestenlogik noch aktiv halten
+		  /* Solange Scroll-Events noch eintreffen,
+			 Touch-Zustand noch etwas halten. */
 		  if (state.touch.active) {
-			clearTimeout(touchReleaseTimer);
-			touchReleaseTimer = setTimeout(() => {
-			  state.touch.active = false;
-			  state.nav.gestureStretch.target = 0;
-			  navbarModule.startAnimation();
-			}, 220);
+			releaseTouchStateDelayed(420);
 		  }
 		},
 		{ passive: true }
 	  );
+
+	  window.addEventListener(
+		"pointerdown",
+		(e) => {
+		  if (e.pointerType === "mouse") {
+			clearTouchReleaseTimer();
+			state.touch.active = false;
+			state.nav.gestureStretch.target = 0;
+			navbarModule.startAnimation();
+		  }
+		},
+		{ passive: true }
+	  );
+
+	  window.addEventListener("blur", () => {
+		clearTouchReleaseTimer();
+		state.touch.active = false;
+		state.nav.gestureStretch.target = 0;
+		navbarModule.startAnimation();
+	  });
+
+	  document.addEventListener("visibilitychange", () => {
+		if (document.hidden) {
+		  clearTouchReleaseTimer();
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		  navbarModule.startAnimation();
+		}
+	  });
 	}
 
   // ---------------------------------------------------------------------
