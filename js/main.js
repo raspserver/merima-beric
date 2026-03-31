@@ -2380,57 +2380,72 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.hideCompleteTimer = null;
 		}, this.fadeDurationMs);
 	  },
-
+	  
 	  startHideCountdown() {
-		this.clearHideTimer();
+		  this.clearHideTimer();
 
-		this.hideTimer = setTimeout(() => {
-		  this.hide();
-		  this.resetSession();
-		}, this.hideDelayMs);
-	  },
+		  this.hideTimer = setTimeout(() => {
+			this.hide();
 
+			// Erst NACH dem Ausblenden / nach der Delay wieder sperren
+			this.relockScrollDistanceAfterStop();
+
+			// Touch-Session darf danach beendet sein
+			this.gesture.type = null;
+			this.gesture.sessionHadTouch = false;
+		  }, this.hideDelayMs);
+		},  
+	  
 	  scheduleStopDetection() {
-		this.clearStopDetection();
+		  this.clearStopDetection();
 
-		this.lastStopCheckY = window.scrollY;
-		this.stableSinceTs = 0;
+		  this.lastStopCheckY = window.scrollY;
+		  this.stableSinceTs = 0;
 
-		const check = (now) => {
-		  if (state.scroll.programmatic) return;
-		  if (!this.gesture.sessionUnlocked) return;
-		  if (!this.isVisible) return;
+		  const check = (now) => {
+			if (state.scroll.programmatic) return;
 
-		  /* Solange Touch/Momentum-Kontext noch aktiv ist,
-			 weiter prüfen statt zu früh zu verstecken. */
-		  const currentY = window.scrollY;
-		  const delta = Math.abs(currentY - this.lastStopCheckY);
+			const currentY = window.scrollY;
+			const delta = Math.abs(currentY - this.lastStopCheckY);
 
-		  if (delta <= this.movementTolerancePx) {
-			if (!this.stableSinceTs) {
-			  this.stableSinceTs = now;
+			if (delta <= this.movementTolerancePx) {
+			  if (!this.stableSinceTs) {
+				this.stableSinceTs = now;
+			  }
+
+			  if (now - this.stableSinceTs >= this.restStableMs) {
+				this.stopCheckRaf = null;
+
+				// FALL A:
+				// Schwelle noch nicht erreicht -> sofort Distanz zurücksetzen
+				if (!this.gesture.sessionUnlocked) {
+				  this.relockScrollDistanceAfterStop();
+				  this.hide();
+				  return;
+				}
+
+				// FALL B:
+				// Schwelle erreicht / Hints sichtbar -> erst hide-delay abwarten,
+				// dann ausblenden und danach Distanz zurücksetzen
+				if (this.isVisible) {
+				  this.startHideCountdown();
+				  return;
+				}
+
+				// Fallback
+				this.relockScrollDistanceAfterStop();
+				return;
+			  }
+			} else {
+			  this.stableSinceTs = 0;
+			  this.lastStopCheckY = currentY;
 			}
 
-			if (now - this.stableSinceTs >= this.restStableMs) {
-			  this.stopCheckRaf = null;
-
-			  // Nach jedem echten Anhalten des Scrollens Zähler auf Null setzen
-			  this.relockScrollDistanceAfterStop();
-
-			  this.startHideCountdown();
-			  return;
-			}
-
-		  } else {
-			this.stableSinceTs = 0;
-			this.lastStopCheckY = currentY;
-		  }
+			this.stopCheckRaf = requestAnimationFrame(check);
+		  };
 
 		  this.stopCheckRaf = requestAnimationFrame(check);
-		};
-
-		this.stopCheckRaf = requestAnimationFrame(check);
-	  },
+		},
 
 	  scheduleHide() {
 		this.scheduleStopDetection();
@@ -2453,10 +2468,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.hide();
 		  return;
 		}
-
+		
 		if (!this.gesture.sessionUnlocked) {
 		  if (!this.hasReachedShowScrollDistance()) {
 			this.hide();
+
+			// Wichtig:
+			// Auch unterhalb der Schwelle weiter prüfen,
+			// damit bei Stillstand sofort auf 0 zurückgesetzt wird
+			this.scheduleStopDetection();
 			return;
 		  }
 
