@@ -1440,7 +1440,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		lastTouchStartTs: 0,
 		lastTouchEndTs: 0,
 
-		// neue Session-Logik
+		// Session-Status:
+		// sessionHadTouch = diese Scroll-Session wurde per Touch gestartet
+		// sessionUnlocked = Mindestscrollstrecke erreicht, Hints dürfen sichtbar bleiben
 		sessionHadTouch: false,
 		sessionUnlocked: false,
 	  },
@@ -2297,20 +2299,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	  },
 
-	  endGesture({ keepType = false, resetDistance = false } = {}) {
-		if (!keepType) {
-		  this.gesture.type = null;
-		}
-
-		this.gesture.active = false;
-
-		if (resetDistance) {
-		  this.gesture.distance = 0;
-		  this.gesture.sessionUnlocked = false;
-		  this.gesture.sessionHadTouch = false;
-		}
-	  },
-
 	  accumulateScrollDistance() {
 		const currentY = window.scrollY;
 		const delta = Math.abs(currentY - this.lastObservedScrollY);
@@ -2367,14 +2355,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.lastScrollTs = performance.now();
 		this.accumulateScrollDistance();
 
-		// Nur Scroll-Sessions mit echter Touch-Geste dürfen Hints aktivieren
-		if (!this.gesture.sessionHadTouch) {
+		// Nur Touch-basierte Sessions dürfen die Hints aktivieren.
+		// Sobald die Session freigeschaltet ist, bleibt sie bis zum
+		// echten Scroll-Ende bestehen – auch nach touchend.
+		if (!this.gesture.sessionHadTouch && !this.gesture.sessionUnlocked) {
 		  this.hide();
 		  this.scheduleHideAfterScrollEnd();
 		  return;
 		}
 
-		// Mindestscrollstrecke nur bis zur Freischaltung prüfen
+		// Mindestdistanz nur bis zur Freischaltung prüfen
 		if (!this.gesture.sessionUnlocked) {
 		  if (!this.hasReachedShowScrollDistance()) {
 			this.hide();
@@ -2385,7 +2375,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.gesture.sessionUnlocked = true;
 		}
 
-		// Nach Freischaltung sichtbar bleiben, auch wenn touchend schon war
+		// Ab Freischaltung sichtbar halten, solange Scroll-Events weiterkommen
 		this.show();
 		this.scheduleHideAfterScrollEnd();
 	  },
@@ -2436,7 +2426,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const onTouchEndLike = () => {
 		  this.gesture.lastTouchEndTs = performance.now();
-		  this.endGesture({ resetDistance: false });
+
+		  // Wichtig:
+		  // Touchkontakt ist vorbei, aber die Scroll-Session darf
+		  // weiterleben, solange Momentum-Scroll noch Scroll-Events liefert.
+		  this.gesture.active = false;
 
 		  this.lastScrollTs = performance.now();
 		  this.lastObservedScrollY = window.scrollY;
@@ -2462,11 +2456,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener("touchend", onTouchEndLike, { passive: true });
 		window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
 
-		// Nicht-Touch-Eingaben dürfen keine Session freischalten
+		// Nicht-Touch-Eingaben sollen keine Touch-Session tragen
 		window.addEventListener(
 		  "pointerdown",
 		  (e) => {
-			if (e.pointerType !== "touch") {
+			if (e.pointerType === "mouse") {
 			  this.resetSession();
 			  this.hide();
 			}
