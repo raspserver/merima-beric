@@ -1427,18 +1427,25 @@ document.addEventListener("DOMContentLoaded", () => {
 	  hideTimer: null,
 	  hideCompleteTimer: null,
 	  stopDetectTimer: null,
+	  stopCheckRaf: null,
 
 	  lastScrollTs: 0,
 	  lastObservedScrollY: window.scrollY,
+	  lastStopCheckY: window.scrollY,
 
 	  hideDelayMs: 1000,
 	  fadeDurationMs: 500,
 	  showScrollDistancePx: window.innerHeight,
 
-	  // WICHTIG:
-	  // Erst wenn so lange wirklich keine Scroll-Aktivität mehr kam,
-	  // gilt die Bewegung als beendet.
-	  scrollIdleThresholdMs: 280,
+	  /* Erst wenn so lange zunächst keine neue Scroll-Aktivität mehr kam,
+		 startet die echte Stillstands-Prüfung. */
+	  scrollIdleThresholdMs: 420,
+
+	  /* Echte Bewegungsprüfung */
+	  stableScrollFrames: 0,
+	  requiredStableFrames: 6,
+	  stopCheckIntervalMs: 90,
+	  movementTolerancePx: 0.5,
 
 	  gesture: {
 		type: null,
@@ -1447,7 +1454,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		lastTouchStartTs: 0,
 		lastTouchEndTs: 0,
 
-		// Session-Status
 		sessionHadTouch: false,
 		sessionUnlocked: false,
 	  },
@@ -2280,8 +2286,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
 	  },
 
+	  clearStopCheckRaf() {
+		if (this.stopCheckRaf) {
+		  cancelAnimationFrame(this.stopCheckRaf);
+		  this.stopCheckRaf = null;
+		}
+	  },
+
 	  clearStopDetection() {
 		this.stopDetectTimer = utils.clearTimer(this.stopDetectTimer);
+		this.clearStopCheckRaf();
+		this.stableScrollFrames = 0;
 	  },
 
 	  resetSession() {
@@ -2304,6 +2319,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.gesture.sessionUnlocked = false;
 		this.gesture.sessionHadTouch = type === "touch";
 		this.lastObservedScrollY = window.scrollY;
+		this.lastStopCheckY = window.scrollY;
+		this.stableScrollFrames = 0;
 
 		if (type === "touch") {
 		  this.gesture.lastTouchStartTs = performance.now();
@@ -2365,31 +2382,39 @@ document.addEventListener("DOMContentLoaded", () => {
 	  scheduleStopDetection() {
 		this.clearStopDetection();
 
+		this.lastStopCheckY = window.scrollY;
+		this.stableScrollFrames = 0;
+
 		this.stopDetectTimer = setTimeout(() => {
 		  this.stopDetectTimer = null;
 
-		  if (state.scroll.programmatic) return;
-		  if (!this.gesture.sessionUnlocked) return;
-		  if (!this.isVisible) return;
+		  const check = () => {
+			if (state.scroll.programmatic) return;
+			if (!this.gesture.sessionUnlocked) return;
+			if (!this.isVisible) return;
 
-		  const now = performance.now();
-		  const timeSinceLastScroll = now - this.lastScrollTs;
+			const currentY = window.scrollY;
+			const delta = Math.abs(currentY - this.lastStopCheckY);
 
-		  // Solange Finger / Touch-Session noch aktiv ist:
-		  // niemals als gestoppt behandeln
-		  if (state.touch.active) {
-			this.scheduleStopDetection();
-			return;
-		  }
+			if (delta <= this.movementTolerancePx) {
+			  this.stableScrollFrames += 1;
+			} else {
+			  this.stableScrollFrames = 0;
+			  this.lastStopCheckY = currentY;
+			}
 
-		  // Solange noch kürzlich Scroll-Events kamen:
-		  // ebenfalls weiter warten
-		  if (timeSinceLastScroll < this.scrollIdleThresholdMs) {
-			this.scheduleStopDetection();
-			return;
-		  }
+			if (this.stableScrollFrames >= this.requiredStableFrames) {
+			  this.clearStopCheckRaf();
+			  this.startHideCountdown();
+			  return;
+			}
 
-		  this.startHideCountdown();
+			this.stopCheckRaf = requestAnimationFrame(() => {
+			  setTimeout(check, this.stopCheckIntervalMs);
+			});
+		  };
+
+		  check();
 		}, this.scrollIdleThresholdMs);
 	  },
 
@@ -2406,18 +2431,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.lastScrollTs = performance.now();
 		this.accumulateScrollDistance();
 
-		// Jede echte Scroll-Aktivität bricht laufende Hide-/Stop-Logik ab
 		this.clearHideTimer();
 		this.clearHideCompleteTimer();
 		this.clearStopDetection();
 
-		// Nur Touch-gestartete Session darf die Hints freischalten
 		if (!this.gesture.sessionHadTouch && !this.gesture.sessionUnlocked) {
 		  this.hide();
 		  return;
 		}
 
-		// Mindestdistanz erst erreichen
 		if (!this.gesture.sessionUnlocked) {
 		  if (!this.hasReachedShowScrollDistance()) {
 			this.hide();
@@ -2427,10 +2449,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.gesture.sessionUnlocked = true;
 		}
 
-		// Während Scroll-Aktivität sichtbar halten
 		this.show();
-
-		// Jetzt erst wieder auf echten Stillstand warten
 		this.scheduleStopDetection();
 	  },
 
@@ -2465,11 +2484,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const onTouchEndLike = () => {
 		  this.gesture.lastTouchEndTs = performance.now();
-
-		  // Touch-Ende heißt NICHT automatisch Scroll-Ende.
-		  // Momentum auf Android/Chrome kann weiterlaufen.
 		  this.gesture.active = false;
 		  this.lastObservedScrollY = window.scrollY;
+
+		  /* Wichtig:
+			 Touch-Ende bedeutet NICHT Scroll-Ende.
+			 Momentum darf weiterlaufen.
+			 Deshalb hier KEIN startHideCountdown(). */
 		};
 
 		window.addEventListener(
@@ -2522,7 +2543,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.hide();
 		});
 
-		// scrollend nur vorsichtig verwenden
 		if ("onscrollend" in document) {
 		  document.addEventListener(
 			"scrollend",
@@ -2531,10 +2551,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			  if (!this.gesture.sessionUnlocked) return;
 			  if (state.touch.active) return;
 
-			  const now = performance.now();
-			  if (now - this.lastScrollTs < this.scrollIdleThresholdMs) return;
-
-			  this.startHideCountdown();
+			  this.scheduleStopDetection();
 			},
 			{ passive: true }
 		  );
@@ -2544,6 +2561,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.metricsCache.clear();
 		  this.refreshTimingVars();
 		  this.lastObservedScrollY = window.scrollY;
+		  this.lastStopCheckY = window.scrollY;
 		  this.scheduleUpdate();
 		};
 
@@ -2566,6 +2584,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.bindHintClicks();
 		this.hide();
 		this.lastObservedScrollY = window.scrollY;
+		this.lastStopCheckY = window.scrollY;
 		this.update();
 		this.bindEvents();
 	  },
