@@ -3292,7 +3292,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	  };
 
-	  const releaseTouchStateDelayed = (delay = 420) => {
+	  const releaseTouchStateDelayed = (delay = 700) => {
 		clearTouchReleaseTimer();
 
 		touchReleaseTimer = setTimeout(() => {
@@ -3303,80 +3303,47 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, delay);
 	  };
 
-	  window.addEventListener(
-		"wheel",
-		() => {
-		  scrollEngine.cancelActiveScroll();
+	  window.addEventListener("wheel", () => {
+		scrollEngine.cancelActiveScroll();
+		clearTouchReleaseTimer();
+		state.touch.active = false;
+		state.nav.gestureStretch.target = 0;
+		navbarModule.startAnimation();
+	  }, { passive: true });
+
+	  window.addEventListener("touchstart", () => {
+		clearTouchReleaseTimer();
+		scrollEngine.cancelActiveScroll();
+		state.touch.active = true;
+	  }, { passive: true });
+
+	  window.addEventListener("touchmove", () => {
+		clearTouchReleaseTimer();
+		state.touch.active = true;
+	  }, { passive: true });
+
+	  window.addEventListener("touchend", () => {
+		releaseTouchStateDelayed(700);
+	  }, { passive: true });
+
+	  window.addEventListener("touchcancel", () => {
+		releaseTouchStateDelayed(700);
+	  }, { passive: true });
+
+	  window.addEventListener("scroll", () => {
+		if (state.touch.active) {
+		  releaseTouchStateDelayed(700);
+		}
+	  }, { passive: true });
+
+	  window.addEventListener("pointerdown", (e) => {
+		if (e.pointerType === "mouse") {
 		  clearTouchReleaseTimer();
 		  state.touch.active = false;
 		  state.nav.gestureStretch.target = 0;
 		  navbarModule.startAnimation();
-		},
-		{ passive: true }
-	  );
-
-	  window.addEventListener(
-		"touchstart",
-		() => {
-		  clearTouchReleaseTimer();
-		  scrollEngine.cancelActiveScroll();
-		  state.touch.active = true;
-		},
-		{ passive: true }
-	  );
-
-	  window.addEventListener(
-		"touchmove",
-		() => {
-		  clearTouchReleaseTimer();
-		  state.touch.active = true;
-		},
-		{ passive: true }
-	  );
-
-	  window.addEventListener(
-		"touchend",
-		() => {
-		  /* Wichtig:
-			 Touch-Ende ist nicht Scroll-Ende.
-			 Momentum kann weiterlaufen. */
-		  releaseTouchStateDelayed(420);
-		},
-		{ passive: true }
-	  );
-
-	  window.addEventListener(
-		"touchcancel",
-		() => {
-		  releaseTouchStateDelayed(420);
-		},
-		{ passive: true }
-	  );
-
-	  window.addEventListener(
-		"scroll",
-		() => {
-		  /* Solange Scroll-Events noch eintreffen,
-			 Touch-Zustand noch etwas halten. */
-		  if (state.touch.active) {
-			releaseTouchStateDelayed(420);
-		  }
-		},
-		{ passive: true }
-	  );
-
-	  window.addEventListener(
-		"pointerdown",
-		(e) => {
-		  if (e.pointerType === "mouse") {
-			clearTouchReleaseTimer();
-			state.touch.active = false;
-			state.nav.gestureStretch.target = 0;
-			navbarModule.startAnimation();
-		  }
-		},
-		{ passive: true }
-	  );
+		}
+	  }, { passive: true });
 
 	  window.addEventListener("blur", () => {
 		clearTouchReleaseTimer();
