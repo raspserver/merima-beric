@@ -1414,745 +1414,553 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------
   // 11) SCROLL-HINT-SYSTEM
   // ---------------------------------------------------------------------
-  const scrollSectionHintModule = {
-		root: null,
-		measurer: null,
-		metricsCache: new Map(),
-		hintSlots: [],
-		updateRaf: null,
+	const scrollSectionHintModule = {
+	  root: null,
+	  measurer: null,
+	  metricsCache: new Map(),
+	  hintSlots: [],
+	  updateRaf: null,
 
-		maxVisibleHints: 2,
-		isVisible: false,
+	  maxVisibleHints: 2,
+	  isVisible: false,
 
-		hideTimer: null,
-		hideCompleteTimer: null,
-		stopWatchRaf: null,
-		stableFrames: 0,
-		lastStopWatchY: window.scrollY,
+	  hideTimer: null,
+	  hideCompleteTimer: null,
+	  stopDetectTimer: null,
 
-		lastScrollTs: 0,
-		lastObservedScrollY: window.scrollY,
+	  lastScrollTs: 0,
+	  lastObservedScrollY: window.scrollY,
 
-		hideDelayMs: 1000,
-		fadeDurationMs: 500,
-		showScrollDistancePx: window.innerHeight,
+	  hideDelayMs: 1000,
+	  fadeDurationMs: 500,
+	  showScrollDistancePx: window.innerHeight,
 
-		gesture: {
-		  type: null,
-		  active: false,
-		  distance: 0,
-		  lastTouchStartTs: 0,
-		  lastTouchEndTs: 0,
+	  gesture: {
+		type: null,
+		active: false,
+		distance: 0,
+		lastTouchStartTs: 0,
+		lastTouchEndTs: 0,
 
-		  // Session-Status
-		  sessionHadTouch: false,
-		  sessionUnlocked: false,
-		},
+		// Session-Status
+		sessionHadTouch: false,
+		sessionUnlocked: false,
+	  },
 
-		labels: {
-		  about: "ÜBER MICH",
-		  gallery: "VIDEO-FUN",
-		  services: "LEISTUNGEN",
-		  pricing: "PREISE",
-		  testimonials: "BEWERTUNGEN",
-		  contact: "KONTAKT",
-		},
+	  labels: {
+		about: "ÜBER MICH",
+		gallery: "VIDEO-FUN",
+		services: "LEISTUNGEN",
+		pricing: "PREISE",
+		testimonials: "BEWERTUNGEN",
+		contact: "KONTAKT",
+	  },
 
-		build() {
-		  if (this.root) return;
+	  build() {
+		if (this.root) return;
 
-		  this.root = document.createElement("div");
-		  this.root.className = "scroll-section-hints";
-		  this.root.setAttribute("aria-hidden", "true");
+		this.root = document.createElement("div");
+		this.root.className = "scroll-section-hints";
+		this.root.setAttribute("aria-hidden", "true");
 
-		  this.root.innerHTML = Array.from(
-			{ length: this.maxVisibleHints },
-			(_, index) => `
-			  <div class="scroll-section-hint-anchor scroll-section-hint-anchor--${index}">
-				<div class="scroll-section-hint scroll-section-hint--${index}">
-				  <span class="scroll-section-hint-text scroll-section-hint-base"></span>
-				</div>
+		this.root.innerHTML = Array.from(
+		  { length: this.maxVisibleHints },
+		  (_, index) => `
+			<div class="scroll-section-hint-anchor scroll-section-hint-anchor--${index}">
+			  <div class="scroll-section-hint scroll-section-hint--${index}">
+				<span class="scroll-section-hint-text scroll-section-hint-base"></span>
 			  </div>
-			`
-		  ).join("");
+			</div>
+		  `
+		).join("");
 
-		  document.body.appendChild(this.root);
+		document.body.appendChild(this.root);
 
-		  this.measurer = document.createElement("span");
-		  this.measurer.className = "scroll-section-hint-measurer";
-		  document.body.appendChild(this.measurer);
+		this.measurer = document.createElement("span");
+		this.measurer.className = "scroll-section-hint-measurer";
+		document.body.appendChild(this.measurer);
 
-		  this.hintSlots = [...this.root.querySelectorAll(".scroll-section-hint")];
-		},
+		this.hintSlots = [...this.root.querySelectorAll(".scroll-section-hint")];
+	  },
 
-		bindHintClicks() {
-		  this.hintSlots.forEach((hintEl) => {
-			const anchor = hintEl?.parentElement;
-			if (!anchor) return;
+	  bindHintClicks() {
+		this.hintSlots.forEach((hintEl) => {
+		  const anchor = hintEl?.parentElement;
+		  if (!anchor) return;
 
-			anchor.setAttribute("tabindex", "0");
-			anchor.setAttribute("role", "button");
+		  anchor.setAttribute("tabindex", "0");
+		  anchor.setAttribute("role", "button");
 
-			const goToHintTarget = () => {
-			  const targetSelector = anchor.dataset.scrollTarget;
-			  const opacity = parseFloat(hintEl.style.opacity || "0");
-			  const text = hintEl.textContent || "";
+		  const goToHintTarget = () => {
+			const targetSelector = anchor.dataset.scrollTarget;
+			const opacity = parseFloat(hintEl.style.opacity || "0");
+			const text = hintEl.textContent || "";
 
-			  if (!targetSelector || opacity <= 0.01) return;
+			if (!targetSelector || opacity <= 0.01) return;
 
-			  scrollEngine.goTo(
-				targetSelector,
-				text.includes(">>") ? "down" : "up-section"
-			  );
-			};
-
-			const triggerNavigation = (e) => {
-			  e.preventDefault();
-			  e.stopPropagation();
-			  goToHintTarget();
-			};
-
-			anchor.addEventListener(
-			  "pointerdown",
-			  (e) => {
-				if (e.pointerType !== "mouse") triggerNavigation(e);
-			  },
-			  { passive: false }
+			scrollEngine.goTo(
+			  targetSelector,
+			  text.includes(">>") ? "down" : "up-section"
 			);
+		  };
 
-			anchor.addEventListener("touchstart", triggerNavigation, {
-			  passive: false,
-			});
+		  const triggerNavigation = (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			goToHintTarget();
+		  };
 
-			anchor.addEventListener("click", (e) => {
-			  if (!e.pointerType || e.pointerType === "mouse") {
-				triggerNavigation(e);
-			  }
-			});
+		  anchor.addEventListener(
+			"pointerdown",
+			(e) => {
+			  if (e.pointerType !== "mouse") triggerNavigation(e);
+			},
+			{ passive: false }
+		  );
 
-			anchor.addEventListener("keydown", (e) => {
-			  if (e.key === "Enter" || e.key === " ") triggerNavigation(e);
-			});
+		  anchor.addEventListener("touchstart", triggerNavigation, {
+			passive: false,
 		  });
-		},
 
-		getContentSections() {
-		  return state.orderedSections.filter((section) => {
-			if (!section) return false;
-			if (section.classList?.contains("hero")) return true;
-			return !!section.id && !!this.labels[section.id];
+		  anchor.addEventListener("click", (e) => {
+			if (!e.pointerType || e.pointerType === "mouse") {
+			  triggerNavigation(e);
+			}
 		  });
-		},
 
-		getVisualViewportBottom() {
-		  return window.visualViewport
-			? window.visualViewport.height
-			: window.innerHeight || document.documentElement.clientHeight;
-		},
+		  anchor.addEventListener("keydown", (e) => {
+			if (e.key === "Enter" || e.key === " ") triggerNavigation(e);
+		  });
+		});
+	  },
 
-		getBoundaryGapPx() {
-		  return cssVar.remPx("--section-hint-boundary-gap", 4.8);
-		},
+	  getContentSections() {
+		return state.orderedSections.filter((section) => {
+		  if (!section) return false;
+		  if (section.classList?.contains("hero")) return true;
+		  return !!section.id && !!this.labels[section.id];
+		});
+	  },
 
-		getNavbarBottom() {
-		  return DOM.navbar
-			? DOM.navbar.getBoundingClientRect().bottom
-			: cssVar.number("--nav-height", 78);
-		},
+	  getVisualViewportBottom() {
+		return window.visualViewport
+		  ? window.visualViewport.height
+		  : window.innerHeight || document.documentElement.clientHeight;
+	  },
 
-		getSectionContext() {
-		  const sections = this.getContentSections();
-		  if (!sections.length) return null;
+	  getBoundaryGapPx() {
+		return cssVar.remPx("--section-hint-boundary-gap", 4.8);
+	  },
 
-		  const navbarBottom = this.getNavbarBottom();
-		  const viewportBottom = this.getVisualViewportBottom();
-		  const lowerThirdY = viewportBottom * (2 / 3);
-		  const scrollingUp = state.scrollDirection === "up";
+	  getNavbarBottom() {
+		return DOM.navbar
+		  ? DOM.navbar.getBoundingClientRect().bottom
+		  : cssVar.number("--nav-height", 78);
+	  },
 
-		  let currentIndex = 0;
+	  getSectionContext() {
+		const sections = this.getContentSections();
+		if (!sections.length) return null;
 
-		  for (let i = 0; i < sections.length; i += 1) {
-			const section = sections[i];
+		const navbarBottom = this.getNavbarBottom();
+		const viewportBottom = this.getVisualViewportBottom();
+		const lowerThirdY = viewportBottom * (2 / 3);
+		const scrollingUp = state.scrollDirection === "up";
 
-			if (section.classList?.contains("hero")) {
-			  currentIndex = i;
-			  continue;
-			}
+		let currentIndex = 0;
 
-			const rect = section.getBoundingClientRect();
+		for (let i = 0; i < sections.length; i += 1) {
+		  const section = sections[i];
 
-			if (section.id === "about") {
-			  const switchLine = scrollingUp ? navbarBottom : lowerThirdY;
+		  if (section.classList?.contains("hero")) {
+			currentIndex = i;
+			continue;
+		  }
 
-			  if (rect.top <= switchLine) {
-				currentIndex = i;
-			  } else {
-				break;
-			  }
+		  const rect = section.getBoundingClientRect();
 
-			  continue;
-			}
+		  if (section.id === "about") {
+			const switchLine = scrollingUp ? navbarBottom : lowerThirdY;
 
-			if (rect.top <= navbarBottom) {
+			if (rect.top <= switchLine) {
 			  currentIndex = i;
 			} else {
 			  break;
 			}
+
+			continue;
 		  }
 
-		  return {
-			sections,
-			currentIndex,
-			current: sections[currentIndex] || null,
-			next: sections[currentIndex + 1] || null,
-			overnext: sections[currentIndex + 2] || null,
+		  if (rect.top <= navbarBottom) {
+			currentIndex = i;
+		  } else {
+			break;
+		  }
+		}
+
+		return {
+		  sections,
+		  currentIndex,
+		  current: sections[currentIndex] || null,
+		  next: sections[currentIndex + 1] || null,
+		  overnext: sections[currentIndex + 2] || null,
+		};
+	  },
+
+	  measureHint(text) {
+		const key = text || " ";
+		const cached = this.metricsCache.get(key);
+
+		if (cached || !this.measurer) {
+		  return cached || { width: 0, height: 0 };
+		}
+
+		this.measurer.textContent = key;
+
+		const rect = this.measurer.getBoundingClientRect();
+		const metrics = {
+		  width: rect.width || 0,
+		  height: rect.height || 0,
+		};
+
+		this.metricsCache.set(key, metrics);
+		return metrics;
+	  },
+
+	  getAnchorHeightForText(text) {
+		return Math.max(48, this.measureHint(text).width + 16);
+	  },
+
+	  makeText(section, variant = "forward") {
+		if (!section?.id || !this.labels[section.id]) return "";
+
+		return variant === "forward"
+		  ? `>> ${this.labels[section.id]} >>`
+		  : `<< ${this.labels[section.id]} <<`;
+	  },
+
+	  getRgbFromColorString(color) {
+		if (!color) return null;
+
+		const value = color.trim().toLowerCase();
+
+		if (value === "transparent" || value === "rgba(0, 0, 0, 0)") return null;
+
+		const rgbMatch = value.match(/rgba?\(([^)]+)\)/);
+		if (rgbMatch) {
+		  const parts = rgbMatch[1]
+			.split(",")
+			.map((part) => parseFloat(part.trim()));
+
+		  if (parts.length >= 3 && parts.slice(0, 3).every(Number.isFinite)) {
+			return { r: parts[0], g: parts[1], b: parts[2] };
+		  }
+		}
+
+		const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+		if (!hexMatch) return null;
+
+		let hex = hexMatch[1];
+		if (hex.length === 3) {
+		  hex = hex
+			.split("")
+			.map((ch) => ch + ch)
+			.join("");
+		}
+
+		const intVal = parseInt(hex, 16);
+
+		return {
+		  r: (intVal >> 16) & 255,
+		  g: (intVal >> 8) & 255,
+		  b: intVal & 255,
+		};
+	  },
+
+	  getRelativeLuminance({ r, g, b }) {
+		const normalize = (channel) => {
+		  const v = channel / 255;
+		  return v <= 0.03928
+			? v / 12.92
+			: Math.pow((v + 0.055) / 1.055, 2.4);
+		};
+
+		return (
+		  0.2126 * normalize(r) +
+		  0.7152 * normalize(g) +
+		  0.0722 * normalize(b)
+		);
+	  },
+
+	  getSectionTheme(sectionEl) {
+		if (!sectionEl) return "dark";
+
+		const explicitTheme = sectionEl.dataset.hintTheme;
+		if (explicitTheme === "light" || explicitTheme === "dark") {
+		  return explicitTheme;
+		}
+
+		const style = getComputedStyle(sectionEl);
+		const rgb =
+		  this.getRgbFromColorString(style.backgroundColor) ||
+		  this.getRgbFromColorString(getComputedStyle(document.body).backgroundColor) || {
+			r: 250,
+			g: 250,
+			b: 248,
 		  };
-		},
 
-		measureHint(text) {
-		  const key = text || " ";
-		  const cached = this.metricsCache.get(key);
+		return this.getRelativeLuminance(rgb) < 0.42 ? "light" : "dark";
+	  },
 
-		  if (cached || !this.measurer) {
-			return cached || { width: 0, height: 0 };
-		  }
+	  getSectionAtViewportY(viewportY) {
+		return (
+		  this.getContentSections().find((section) => {
+			const rect = section.getBoundingClientRect();
+			return viewportY >= rect.top && viewportY <= rect.bottom;
+		  }) || null
+		);
+	  },
 
-		  this.measurer.textContent = key;
+	  getThemeAtViewportY(viewportY, fallbackSection = null) {
+		return this.getSectionTheme(
+		  this.getSectionAtViewportY(viewportY) || fallbackSection
+		);
+	  },
 
-		  const rect = this.measurer.getBoundingClientRect();
-		  const metrics = {
-			width: rect.width || 0,
-			height: rect.height || 0,
-		  };
+	  setAnchorCenterY(hintEl, centerYPx) {
+		const anchor = hintEl?.parentElement;
+		if (anchor) anchor.style.top = `${Math.round(centerYPx)}px`;
+	  },
 
-		  this.metricsCache.set(key, metrics);
-		  return metrics;
-		},
+	  setHint(
+		hintEl,
+		{ text = "", top = 0, opacity = 0, theme = "dark", target = "" } = {}
+	  ) {
+		if (!hintEl) return;
 
-		getAnchorHeightForText(text) {
-		  return Math.max(48, this.measureHint(text).width + 16);
-		},
+		const anchor = hintEl.parentElement;
+		const base = hintEl.querySelector(".scroll-section-hint-base");
+		const visible = !!text && opacity > 0.001;
 
-		makeText(section, variant = "forward") {
-		  if (!section?.id || !this.labels[section.id]) return "";
+		if (base) base.textContent = text;
 
-		  return variant === "forward"
-			? `>> ${this.labels[section.id]} >>`
-			: `<< ${this.labels[section.id]} <<`;
-		},
+		this.setAnchorCenterY(hintEl, top);
 
-		getRgbFromColorString(color) {
-		  if (!color) return null;
+		hintEl.style.opacity = `${
+		  clamp(opacity, 0, 1) * cssVar.number("--section-hint-visibility", 0.5)
+		}`;
 
-		  const value = color.trim().toLowerCase();
+		hintEl.dataset.theme = theme;
+		hintEl.classList.toggle("is-empty", !visible);
 
-		  if (value === "transparent" || value === "rgba(0, 0, 0, 0)") return null;
+		if (anchor) {
+		  const metrics = this.measureHint(text);
 
-		  const rgbMatch = value.match(/rgba?\(([^)]+)\)/);
-		  if (rgbMatch) {
-			const parts = rgbMatch[1]
-			  .split(",")
-			  .map((part) => parseFloat(part.trim()));
+		  anchor.dataset.scrollTarget = target || "";
+		  anchor.style.width = `${Math.max(48, metrics.height + 16)}px`;
+		  anchor.style.height = `${Math.max(48, metrics.width + 16)}px`;
+		  anchor.style.pointerEvents = visible ? "auto" : "none";
+		  anchor.style.opacity = visible ? "1" : "0";
+		  anchor.setAttribute("aria-hidden", visible ? "false" : "true");
+		}
+	  },
 
-			if (parts.length >= 3 && parts.slice(0, 3).every(Number.isFinite)) {
-			  return { r: parts[0], g: parts[1], b: parts[2] };
-			}
-		  }
+	  applyHint(hintEl, placement) {
+		if (!placement?.section) {
+		  this.hideHint(hintEl);
+		  return;
+		}
 
-		  const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
-		  if (!hexMatch) return null;
+		this.setHint(hintEl, {
+		  text: this.makeText(placement.section, placement.variant),
+		  top: placement.top,
+		  opacity: placement.opacity ?? 1,
+		  theme: this.getThemeAtViewportY(placement.top, placement.section),
+		  target: placement.section.id ? `#${placement.section.id}` : "",
+		});
+	  },
 
-		  let hex = hexMatch[1];
-		  if (hex.length === 3) {
-			hex = hex
-			  .split("")
-			  .map((ch) => ch + ch)
-			  .join("");
-		  }
+	  hideHint(hintEl) {
+		this.setHint(hintEl, {
+		  text: "",
+		  top: 0,
+		  opacity: 0,
+		  target: "",
+		});
+	  },
 
-		  const intVal = parseInt(hex, 16);
+	  hideAll() {
+		this.hintSlots.forEach((hintEl) => this.hideHint(hintEl));
+	  },
 
-		  return {
-			r: (intVal >> 16) & 255,
-			g: (intVal >> 8) & 255,
-			b: intVal & 255,
-		  };
-		},
+	  getTransitionZone(changeY, bandTop, bandBottom) {
+		if (!Number.isFinite(changeY) || changeY <= bandTop || changeY >= bandBottom) {
+		  return "outside";
+		}
 
-		getRelativeLuminance({ r, g, b }) {
-		  const normalize = (channel) => {
-			const v = channel / 255;
-			return v <= 0.03928
-			  ? v / 12.92
-			  : Math.pow((v + 0.055) / 1.055, 2.4);
-		  };
+		const rel = changeY - bandTop;
+		const third = (bandBottom - bandTop) / 3;
 
-		  return (
-			0.2126 * normalize(r) +
-			0.7152 * normalize(g) +
-			0.0722 * normalize(b)
-		  );
-		},
+		if (rel < third) return "entering";
+		if (rel < third * 2) return "passing";
+		return "leaving";
+	  },
 
-		getSectionTheme(sectionEl) {
-		  if (!sectionEl) return "dark";
+	  createPlacement(section, config = {}) {
+		if (!section) return null;
 
-		  const explicitTheme = sectionEl.dataset.hintTheme;
-		  if (explicitTheme === "light" || explicitTheme === "dark") {
-			return explicitTheme;
-		  }
+		return {
+		  section,
+		  role: config.role || "transition",
+		  variant: config.variant || "forward",
+		  top: config.top || 0,
+		  opacity: config.opacity ?? 1,
+		  priority: config.priority || 0,
+		};
+	  },
 
-		  const style = getComputedStyle(sectionEl);
-		  const rgb =
-			this.getRgbFromColorString(style.backgroundColor) ||
-			this.getRgbFromColorString(getComputedStyle(document.body).backgroundColor) || {
-			  r: 250,
-			  g: 250,
-			  b: 248,
-			};
+	  buildGeometry(context) {
+		const gap = this.getBoundaryGapPx();
+		const navbarBottom = this.getNavbarBottom();
+		const viewportBottom = this.getVisualViewportBottom();
+		const lowerThirdY = viewportBottom * (2 / 3);
 
-		  return this.getRelativeLuminance(rgb) < 0.42 ? "light" : "dark";
-		},
+		const { current, next, overnext } = context;
 
-		getSectionAtViewportY(viewportY) {
-		  return (
-			this.getContentSections().find((section) => {
-			  const rect = section.getBoundingClientRect();
-			  return viewportY >= rect.top && viewportY <= rect.bottom;
-			}) || null
-		  );
-		},
+		const text = {
+		  currentForward: this.makeText(current, "forward"),
+		  nextForward: next ? this.makeText(next, "forward") : "",
+		  nextBackward: next ? this.makeText(next, "backward") : "",
+		  overnextBackward: overnext ? this.makeText(overnext, "backward") : "",
+		};
 
-		getThemeAtViewportY(viewportY, fallbackSection = null) {
-		  return this.getSectionTheme(
-			this.getSectionAtViewportY(viewportY) || fallbackSection
-		  );
-		},
+		const nextRect = next?.getBoundingClientRect() || null;
+		const overnextRect = overnext?.getBoundingClientRect() || null;
 
-		setAnchorCenterY(hintEl, centerYPx) {
-		  const anchor = hintEl?.parentElement;
-		  if (anchor) anchor.style.top = `${Math.round(centerYPx)}px`;
-		},
+		const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
+		const overnextChangeY = overnextRect
+		  ? overnextRect.top
+		  : Number.POSITIVE_INFINITY;
 
-		setHint(
-		  hintEl,
-		  { text = "", top = 0, opacity = 0, theme = "dark", target = "" } = {}
+		const anchorHeights = {
+		  currentForward: this.getAnchorHeightForText(text.currentForward),
+		  nextForward: this.getAnchorHeightForText(text.nextForward),
+		  nextBackward: this.getAnchorHeightForText(text.nextBackward),
+		  overnextBackward: this.getAnchorHeightForText(text.overnextBackward),
+		};
+
+		return {
+		  gap,
+		  changeY,
+		  overnextChangeY,
+
+		  docks: {
+			top: {
+			  current: navbarBottom + gap + anchorHeights.currentForward / 2,
+			},
+
+			bottom: {
+			  next: next
+				? viewportBottom - gap - anchorHeights.nextBackward / 2
+				: 0,
+			  overnext: overnext
+				? viewportBottom - gap - anchorHeights.overnextBackward / 2
+				: 0,
+			},
+
+			lowerThird: {
+			  next: next
+				? lowerThirdY - gap - anchorHeights.nextBackward / 2
+				: 0,
+			  overnext: overnext
+				? lowerThirdY - gap - anchorHeights.overnextBackward / 2
+				: 0,
+			},
+		  },
+
+		  band: {
+			top: navbarBottom,
+			bottom: viewportBottom,
+		  },
+
+		  transition: {
+			nextForwardBelowBoundary: next
+			  ? changeY + gap + anchorHeights.nextForward / 2
+			  : 0,
+
+			nextBackwardAboveBoundary: next
+			  ? changeY - gap - anchorHeights.nextBackward / 2
+			  : 0,
+
+			overnextBackwardAboveBoundary: overnext
+			  ? overnextChangeY - gap - anchorHeights.overnextBackward / 2
+			  : 0,
+		  },
+		};
+	  },
+
+	  buildHomeAboutSpecialPlacements(context, geometry) {
+		const about = context.sections.find((section) => section?.id === "about");
+		const gallery = context.sections.find((section) => section?.id === "gallery");
+
+		if (!about) return null;
+
+		const boundaryY = about.getBoundingClientRect().top;
+		const viewportBottom = geometry.band.bottom;
+		const navbarBottom = geometry.band.top;
+
+		if (
+		  !Number.isFinite(boundaryY) ||
+		  boundaryY <= navbarBottom ||
+		  boundaryY >= viewportBottom
 		) {
-		  if (!hintEl) return;
+		  return null;
+		}
 
-		  const anchor = hintEl.parentElement;
-		  const base = hintEl.querySelector(".scroll-section-hint-base");
-		  const visible = !!text && opacity > 0.001;
+		const topThirdEnd = viewportBottom / 3;
+		const middleThirdEnd = viewportBottom * (2 / 3);
+		const scrollingUp = state.scrollDirection === "up";
 
-		  if (base) base.textContent = text;
+		const placements = [];
+		const push = (placement) => placement?.section && placements.push(placement);
 
-		  this.setAnchorCenterY(hintEl, top);
+		const aboutForwardText = this.makeText(about, "forward");
+		const aboutBackwardText = this.makeText(about, "backward");
+		const galleryBackwardText = gallery ? this.makeText(gallery, "backward") : "";
 
-		  hintEl.style.opacity = `${
-			clamp(opacity, 0, 1) * cssVar.number("--section-hint-visibility", 0.5)
-		  }`;
+		const aboutForwardHeight = this.getAnchorHeightForText(aboutForwardText);
+		const aboutBackwardHeight = this.getAnchorHeightForText(aboutBackwardText);
+		const galleryBackwardHeight = gallery
+		  ? this.getAnchorHeightForText(galleryBackwardText)
+		  : 0;
 
-		  hintEl.dataset.theme = theme;
-		  hintEl.classList.toggle("is-empty", !visible);
+		const aboutBelowBoundaryTop =
+		  boundaryY + geometry.gap + aboutForwardHeight / 2;
 
-		  if (anchor) {
-			const metrics = this.measureHint(text);
+		const aboutAboveBoundaryBackwardTop =
+		  boundaryY - geometry.gap - aboutBackwardHeight / 2;
 
-			anchor.dataset.scrollTarget = target || "";
-			anchor.style.width = `${Math.max(48, metrics.height + 16)}px`;
-			anchor.style.height = `${Math.max(48, metrics.width + 16)}px`;
-			anchor.style.pointerEvents = visible ? "auto" : "none";
-			anchor.style.opacity = visible ? "1" : "0";
-			anchor.setAttribute("aria-hidden", visible ? "false" : "true");
-		  }
-		},
+		const galleryBottomTop = gallery
+		  ? viewportBottom - geometry.gap - galleryBackwardHeight / 2
+		  : 0;
 
-		applyHint(hintEl, placement) {
-		  if (!placement?.section) {
-			this.hideHint(hintEl);
-			return;
-		  }
-
-		  this.setHint(hintEl, {
-			text: this.makeText(placement.section, placement.variant),
-			top: placement.top,
-			opacity: placement.opacity ?? 1,
-			theme: this.getThemeAtViewportY(placement.top, placement.section),
-			target: placement.section.id ? `#${placement.section.id}` : "",
-		  });
-		},
-
-		hideHint(hintEl) {
-		  this.setHint(hintEl, {
-			text: "",
-			top: 0,
-			opacity: 0,
-			target: "",
-		  });
-		},
-
-		hideAll() {
-		  this.hintSlots.forEach((hintEl) => this.hideHint(hintEl));
-		},
-
-		getTransitionZone(changeY, bandTop, bandBottom) {
-		  if (!Number.isFinite(changeY) || changeY <= bandTop || changeY >= bandBottom) {
-			return "outside";
-		  }
-
-		  const rel = changeY - bandTop;
-		  const third = (bandBottom - bandTop) / 3;
-
-		  if (rel < third) return "entering";
-		  if (rel < third * 2) return "passing";
-		  return "leaving";
-		},
-
-		createPlacement(section, config = {}) {
-		  if (!section) return null;
-
-		  return {
-			section,
-			role: config.role || "transition",
-			variant: config.variant || "forward",
-			top: config.top || 0,
-			opacity: config.opacity ?? 1,
-			priority: config.priority || 0,
-		  };
-		},
-
-		buildGeometry(context) {
-		  const gap = this.getBoundaryGapPx();
-		  const navbarBottom = this.getNavbarBottom();
-		  const viewportBottom = this.getVisualViewportBottom();
-		  const lowerThirdY = viewportBottom * (2 / 3);
-
-		  const { current, next, overnext } = context;
-
-		  const text = {
-			currentForward: this.makeText(current, "forward"),
-			nextForward: next ? this.makeText(next, "forward") : "",
-			nextBackward: next ? this.makeText(next, "backward") : "",
-			overnextBackward: overnext ? this.makeText(overnext, "backward") : "",
-		  };
-
-		  const nextRect = next?.getBoundingClientRect() || null;
-		  const overnextRect = overnext?.getBoundingClientRect() || null;
-
-		  const changeY = nextRect ? nextRect.top : Number.POSITIVE_INFINITY;
-		  const overnextChangeY = overnextRect
-			? overnextRect.top
-			: Number.POSITIVE_INFINITY;
-
-		  const anchorHeights = {
-			currentForward: this.getAnchorHeightForText(text.currentForward),
-			nextForward: this.getAnchorHeightForText(text.nextForward),
-			nextBackward: this.getAnchorHeightForText(text.nextBackward),
-			overnextBackward: this.getAnchorHeightForText(text.overnextBackward),
-		  };
-
-		  return {
-			gap,
-			changeY,
-			overnextChangeY,
-
-			docks: {
-			  top: {
-				current: navbarBottom + gap + anchorHeights.currentForward / 2,
-			  },
-
-			  bottom: {
-				next: next
-				  ? viewportBottom - gap - anchorHeights.nextBackward / 2
-				  : 0,
-				overnext: overnext
-				  ? viewportBottom - gap - anchorHeights.overnextBackward / 2
-				  : 0,
-			  },
-
-			  lowerThird: {
-				next: next
-				  ? lowerThirdY - gap - anchorHeights.nextBackward / 2
-				  : 0,
-				overnext: overnext
-				  ? lowerThirdY - gap - anchorHeights.overnextBackward / 2
-				  : 0,
-			  },
-			},
-
-			band: {
-			  top: navbarBottom,
-			  bottom: viewportBottom,
-			},
-
-			transition: {
-			  nextForwardBelowBoundary: next
-				? changeY + gap + anchorHeights.nextForward / 2
-				: 0,
-
-			  nextBackwardAboveBoundary: next
-				? changeY - gap - anchorHeights.nextBackward / 2
-				: 0,
-
-			  overnextBackwardAboveBoundary: overnext
-				? overnextChangeY - gap - anchorHeights.overnextBackward / 2
-				: 0,
-			},
-		  };
-		},
-
-		buildHomeAboutSpecialPlacements(context, geometry) {
-		  const about = context.sections.find((section) => section?.id === "about");
-		  const gallery = context.sections.find((section) => section?.id === "gallery");
-
-		  if (!about) return null;
-
-		  const boundaryY = about.getBoundingClientRect().top;
-		  const viewportBottom = geometry.band.bottom;
-		  const navbarBottom = geometry.band.top;
-
-		  if (
-			!Number.isFinite(boundaryY) ||
-			boundaryY <= navbarBottom ||
-			boundaryY >= viewportBottom
-		  ) {
-			return null;
-		  }
-
-		  const topThirdEnd = viewportBottom / 3;
-		  const middleThirdEnd = viewportBottom * (2 / 3);
-		  const scrollingUp = state.scrollDirection === "up";
-
-		  const placements = [];
-		  const push = (placement) => placement?.section && placements.push(placement);
-
-		  const aboutForwardText = this.makeText(about, "forward");
-		  const aboutBackwardText = this.makeText(about, "backward");
-		  const galleryBackwardText = gallery ? this.makeText(gallery, "backward") : "";
-
-		  const aboutForwardHeight = this.getAnchorHeightForText(aboutForwardText);
-		  const aboutBackwardHeight = this.getAnchorHeightForText(aboutBackwardText);
-		  const galleryBackwardHeight = gallery
-			? this.getAnchorHeightForText(galleryBackwardText)
-			: 0;
-
-		  const aboutBelowBoundaryTop =
-			boundaryY + geometry.gap + aboutForwardHeight / 2;
-
-		  const aboutAboveBoundaryBackwardTop =
-			boundaryY - geometry.gap - aboutBackwardHeight / 2;
-
-		  const galleryBottomTop = gallery
-			? viewportBottom - geometry.gap - galleryBackwardHeight / 2
-			: 0;
-
-		  if (scrollingUp) {
-			if (boundaryY < topThirdEnd) {
-			  push(
-				this.createPlacement(about, {
-				  role: "transition",
-				  variant: "forward",
-				  top: aboutBelowBoundaryTop,
-				  priority: 100,
-				})
-			  );
-
-			  if (gallery) {
-				push(
-				  this.createPlacement(gallery, {
-					role: "bottomDock",
-					variant: "backward",
-					top: galleryBottomTop,
-					priority: 60,
-				  })
-				);
-			  }
-
-			  return placements;
-			}
-
-			if (boundaryY < middleThirdEnd) {
-			  push(
-				this.createPlacement(about, {
-				  role: "transition",
-				  variant: "forward",
-				  top: aboutBelowBoundaryTop,
-				  priority: 100,
-				})
-			  );
-
-			  return placements;
-			}
-
+		if (scrollingUp) {
+		  if (boundaryY < topThirdEnd) {
 			push(
 			  this.createPlacement(about, {
 				role: "transition",
-				variant: "backward",
-				top: aboutAboveBoundaryBackwardTop,
-				priority: 100,
-			  })
-			);
-
-			return placements;
-		  }
-
-		  if (boundaryY >= middleThirdEnd) {
-			return [];
-		  }
-
-		  push(
-			this.createPlacement(about, {
-			  role: "transition",
-			  variant: "forward",
-			  top: aboutBelowBoundaryTop,
-			  priority: 100,
-			})
-		  );
-
-		  if (gallery && boundaryY < topThirdEnd) {
-			push(
-			  this.createPlacement(gallery, {
-				role: "bottomDock",
-				variant: "backward",
-				top: galleryBottomTop,
-				priority: 60,
-			  })
-			);
-		  }
-
-		  return placements;
-		},
-
-		buildPlacements(context, geometry) {
-		  const specialHomeAbout = this.buildHomeAboutSpecialPlacements(
-			context,
-			geometry
-		  );
-		  if (specialHomeAbout) return specialHomeAbout;
-
-		  const { current, next, overnext } = context;
-		  const placements = [];
-		  const push = (placement) => placement?.section && placements.push(placement);
-
-		  const isHomeCurrent =
-			current?.classList?.contains("hero") || current?.id === "home";
-
-		  const nextZone = next
-			? this.getTransitionZone(geometry.changeY, geometry.band.top, geometry.band.bottom)
-			: "outside";
-
-		  const overnextZone = overnext
-			? this.getTransitionZone(
-				geometry.overnextChangeY,
-				geometry.band.top,
-				geometry.band.bottom
-			  )
-			: "outside";
-
-		  if (!isHomeCurrent && !next) {
-			push(
-			  this.createPlacement(current, {
-				role: "topDock",
 				variant: "forward",
-				top: geometry.docks.top.current,
+				top: aboutBelowBoundaryTop,
 				priority: 100,
 			  })
 			);
 
-			return placements;
-		  }
-
-		  if (isHomeCurrent) {
-			if (nextZone === "entering" || nextZone === "passing") {
+			if (gallery) {
 			  push(
-				this.createPlacement(next, {
-				  role: "transition",
-				  variant: "forward",
-				  top: geometry.transition.nextForwardBelowBoundary,
-				  priority: 100,
-				})
-			  );
-			}
-
-			if (overnext) {
-			  if (overnextZone !== "outside") {
-				push(
-				  this.createPlacement(overnext, {
-					role: "transition",
-					variant: "backward",
-					top: geometry.transition.overnextBackwardAboveBoundary,
-					priority: 60,
-				  })
-				);
-			  } else if (nextZone === "entering") {
-				push(
-				  this.createPlacement(overnext, {
-					role: "bottomDock",
-					variant: "backward",
-					top: geometry.docks.lowerThird.overnext,
-					priority: 60,
-				  })
-				);
-			  }
-			}
-
-			if (nextZone === "outside" || nextZone === "leaving") {
-			  if (geometry.changeY > geometry.docks.lowerThird.next + geometry.gap) {
-				push(
-				  this.createPlacement(next, {
-					role: "bottomDock",
-					variant: "backward",
-					top: geometry.docks.lowerThird.next,
-					priority: 70,
-				  })
-				);
-			  }
-			}
-
-			return placements;
-		  }
-
-		  if (nextZone === "outside") {
-			push(
-			  this.createPlacement(current, {
-				role: "topDock",
-				variant: "forward",
-				top: geometry.docks.top.current,
-				priority: 100,
-			  })
-			);
-
-			push(
-			  this.createPlacement(next, {
-				role: "bottomDock",
-				variant: "backward",
-				top: geometry.docks.bottom.next,
-				priority: 70,
-			  })
-			);
-
-			return placements;
-		  }
-
-		  if (nextZone === "entering") {
-			push(
-			  this.createPlacement(next, {
-				role: "transition",
-				variant: "forward",
-				top: geometry.transition.nextForwardBelowBoundary,
-				priority: 100,
-			  })
-			);
-
-			if (overnext) {
-			  push(
-				this.createPlacement(overnext, {
-				  role: overnextZone !== "outside" ? "transition" : "bottomDock",
+				this.createPlacement(gallery, {
+				  role: "bottomDock",
 				  variant: "backward",
-				  top:
-					overnextZone !== "outside"
-					  ? geometry.transition.overnextBackwardAboveBoundary
-					  : geometry.docks.bottom.overnext,
+				  top: galleryBottomTop,
 				  priority: 60,
 				})
 			  );
@@ -2161,16 +1969,99 @@ document.addEventListener("DOMContentLoaded", () => {
 			return placements;
 		  }
 
-		  if (nextZone === "passing") {
+		  if (boundaryY < middleThirdEnd) {
 			push(
-			  this.createPlacement(current, {
-				role: "topDock",
+			  this.createPlacement(about, {
+				role: "transition",
 				variant: "forward",
-				top: geometry.docks.top.current,
-				priority: 90,
+				top: aboutBelowBoundaryTop,
+				priority: 100,
 			  })
 			);
 
+			return placements;
+		  }
+
+		  push(
+			this.createPlacement(about, {
+			  role: "transition",
+			  variant: "backward",
+			  top: aboutAboveBoundaryBackwardTop,
+			  priority: 100,
+			})
+		  );
+
+		  return placements;
+		}
+
+		if (boundaryY >= middleThirdEnd) {
+		  return [];
+		}
+
+		push(
+		  this.createPlacement(about, {
+			role: "transition",
+			variant: "forward",
+			top: aboutBelowBoundaryTop,
+			priority: 100,
+		  })
+		);
+
+		if (gallery && boundaryY < topThirdEnd) {
+		  push(
+			this.createPlacement(gallery, {
+			  role: "bottomDock",
+			  variant: "backward",
+			  top: galleryBottomTop,
+			  priority: 60,
+			})
+		  );
+		}
+
+		return placements;
+	  },
+
+	  buildPlacements(context, geometry) {
+		const specialHomeAbout = this.buildHomeAboutSpecialPlacements(
+		  context,
+		  geometry
+		);
+		if (specialHomeAbout) return specialHomeAbout;
+
+		const { current, next, overnext } = context;
+		const placements = [];
+		const push = (placement) => placement?.section && placements.push(placement);
+
+		const isHomeCurrent =
+		  current?.classList?.contains("hero") || current?.id === "home";
+
+		const nextZone = next
+		  ? this.getTransitionZone(geometry.changeY, geometry.band.top, geometry.band.bottom)
+		  : "outside";
+
+		const overnextZone = overnext
+		  ? this.getTransitionZone(
+			  geometry.overnextChangeY,
+			  geometry.band.top,
+			  geometry.band.bottom
+			)
+		  : "outside";
+
+		if (!isHomeCurrent && !next) {
+		  push(
+			this.createPlacement(current, {
+			  role: "topDock",
+			  variant: "forward",
+			  top: geometry.docks.top.current,
+			  priority: 100,
+			})
+		  );
+
+		  return placements;
+		}
+
+		if (isHomeCurrent) {
+		  if (nextZone === "entering" || nextZone === "passing") {
 			push(
 			  this.createPlacement(next, {
 				role: "transition",
@@ -2179,394 +2070,485 @@ document.addEventListener("DOMContentLoaded", () => {
 				priority: 100,
 			  })
 			);
-
-			return placements;
 		  }
 
-		  if (nextZone === "leaving") {
-			push(
-			  this.createPlacement(current, {
-				role: "topDock",
-				variant: "forward",
-				top: geometry.docks.top.current,
-				priority: 90,
-			  })
-			);
+		  if (overnext) {
+			if (overnextZone !== "outside") {
+			  push(
+				this.createPlacement(overnext, {
+				  role: "transition",
+				  variant: "backward",
+				  top: geometry.transition.overnextBackwardAboveBoundary,
+				  priority: 60,
+				})
+			  );
+			} else if (nextZone === "entering") {
+			  push(
+				this.createPlacement(overnext, {
+				  role: "bottomDock",
+				  variant: "backward",
+				  top: geometry.docks.lowerThird.overnext,
+				  priority: 60,
+				})
+			  );
+			}
+		  }
 
+		  if (nextZone === "outside" || nextZone === "leaving") {
+			if (geometry.changeY > geometry.docks.lowerThird.next + geometry.gap) {
+			  push(
+				this.createPlacement(next, {
+				  role: "bottomDock",
+				  variant: "backward",
+				  top: geometry.docks.lowerThird.next,
+				  priority: 70,
+				})
+			  );
+			}
+		  }
+
+		  return placements;
+		}
+
+		if (nextZone === "outside") {
+		  push(
+			this.createPlacement(current, {
+			  role: "topDock",
+			  variant: "forward",
+			  top: geometry.docks.top.current,
+			  priority: 100,
+			})
+		  );
+
+		  push(
+			this.createPlacement(next, {
+			  role: "bottomDock",
+			  variant: "backward",
+			  top: geometry.docks.bottom.next,
+			  priority: 70,
+			})
+		  );
+
+		  return placements;
+		}
+
+		if (nextZone === "entering") {
+		  push(
+			this.createPlacement(next, {
+			  role: "transition",
+			  variant: "forward",
+			  top: geometry.transition.nextForwardBelowBoundary,
+			  priority: 100,
+			})
+		  );
+
+		  if (overnext) {
 			push(
-			  this.createPlacement(next, {
-				role: "transition",
+			  this.createPlacement(overnext, {
+				role: overnextZone !== "outside" ? "transition" : "bottomDock",
 				variant: "backward",
-				top: geometry.transition.nextBackwardAboveBoundary,
-				priority: 100,
+				top:
+				  overnextZone !== "outside"
+					? geometry.transition.overnextBackwardAboveBoundary
+					: geometry.docks.bottom.overnext,
+				priority: 60,
 			  })
 			);
 		  }
 
 		  return placements;
-		},
+		}
 
-		renderPlacements(placements) {
-		  const visiblePlacements = (placements || [])
-			.filter(Boolean)
-			.filter(
-			  (placement) => placement.section && (placement.opacity ?? 1) > 0.001
-			)
-			.sort((a, b) =>
-			  a.top !== b.top ? a.top - b.top : (b.priority ?? 0) - (a.priority ?? 0)
-			);
-
-		  if (!visiblePlacements.length) {
-			this.hideAll();
-			return;
-		  }
-
-		  this.hintSlots.forEach((hintEl, index) => {
-			const placement = visiblePlacements[index];
-			if (placement) {
-			  this.applyHint(hintEl, placement);
-			} else {
-			  this.hideHint(hintEl);
-			}
-		  });
-		},
-
-		updateGalleryBodyState(currentSection) {
-		  document.body.classList.toggle("in-gallery", currentSection?.id === "gallery");
-		},
-
-		update() {
-		  if (!this.root) return;
-
-		  const context = this.getSectionContext();
-		  this.updateGalleryBodyState(context?.current || null);
-
-		  if (!context?.current) {
-			this.hideAll();
-			return;
-		  }
-
-		  this.renderPlacements(
-			this.buildPlacements(context, this.buildGeometry(context))
+		if (nextZone === "passing") {
+		  push(
+			this.createPlacement(current, {
+			  role: "topDock",
+			  variant: "forward",
+			  top: geometry.docks.top.current,
+			  priority: 90,
+			})
 		  );
-		},
 
-		scheduleUpdate() {
-		  if (this.updateRaf) return;
-
-		  this.updateRaf = requestAnimationFrame(() => {
-			this.updateRaf = null;
-			this.update();
-		  });
-		},
-
-		refreshTimingVars() {
-		  this.hideDelayMs = cssVar.timeMs("--section-hint-hide-delay", 1000);
-		  this.fadeDurationMs = cssVar.timeMs("--section-hint-fade-duration", 500);
-		  this.showScrollDistancePx = cssVar.lengthPx(
-			"--section-hint-show-scroll-distance",
-			window.innerHeight
+		  push(
+			this.createPlacement(next, {
+			  role: "transition",
+			  variant: "forward",
+			  top: geometry.transition.nextForwardBelowBoundary,
+			  priority: 100,
+			})
 		  );
-		},
 
-		clearHideTimer() {
-		  this.hideTimer = utils.clearTimer(this.hideTimer);
-		},
+		  return placements;
+		}
 
-		clearHideCompleteTimer() {
-		  this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
-		},
+		if (nextZone === "leaving") {
+		  push(
+			this.createPlacement(current, {
+			  role: "topDock",
+			  variant: "forward",
+			  top: geometry.docks.top.current,
+			  priority: 90,
+			})
+		  );
 
-		clearStopWatch() {
-		  this.stopWatchRaf = utils.clearRaf(this.stopWatchRaf);
-		},
+		  push(
+			this.createPlacement(next, {
+			  role: "transition",
+			  variant: "backward",
+			  top: geometry.transition.nextBackwardAboveBoundary,
+			  priority: 100,
+			})
+		  );
+		}
 
-		resetSession() {
-		  this.gesture.type = null;
-		  this.gesture.active = false;
-		  this.gesture.distance = 0;
-		  this.gesture.sessionHadTouch = false;
-		  this.gesture.sessionUnlocked = false;
-		},
+		return placements;
+	  },
 
-		beginGesture(type) {
-		  this.clearHideTimer();
-		  this.clearHideCompleteTimer();
-		  this.clearStopWatch();
+	  renderPlacements(placements) {
+		const visiblePlacements = (placements || [])
+		  .filter(Boolean)
+		  .filter(
+			(placement) => placement.section && (placement.opacity ?? 1) > 0.001
+		  )
+		  .sort((a, b) =>
+			a.top !== b.top ? a.top - b.top : (b.priority ?? 0) - (a.priority ?? 0)
+		  );
 
-		  this.gesture.type = type;
-		  this.gesture.active = true;
-		  this.gesture.distance = 0;
-		  this.gesture.sessionUnlocked = false;
-		  this.gesture.sessionHadTouch = type === "touch";
-		  this.lastObservedScrollY = window.scrollY;
-		  this.lastStopWatchY = window.scrollY;
-		  this.stableFrames = 0;
+		if (!visiblePlacements.length) {
+		  this.hideAll();
+		  return;
+		}
 
-		  if (type === "touch") {
-			this.gesture.lastTouchStartTs = performance.now();
+		this.hintSlots.forEach((hintEl, index) => {
+		  const placement = visiblePlacements[index];
+		  if (placement) {
+			this.applyHint(hintEl, placement);
+		  } else {
+			this.hideHint(hintEl);
 		  }
-		},
+		});
+	  },
 
-		accumulateScrollDistance() {
-		  const currentY = window.scrollY;
-		  const delta = Math.abs(currentY - this.lastObservedScrollY);
+	  updateGalleryBodyState(currentSection) {
+		document.body.classList.toggle("in-gallery", currentSection?.id === "gallery");
+	  },
 
-		  if (delta > 0) this.gesture.distance += delta;
-		  this.lastObservedScrollY = currentY;
-		},
+	  update() {
+		if (!this.root) return;
 
-		hasReachedShowScrollDistance() {
-		  return this.gesture.distance >= this.showScrollDistancePx;
-		},
+		const context = this.getSectionContext();
+		this.updateGalleryBodyState(context?.current || null);
 
-		show() {
-		  if (!this.root) return;
+		if (!context?.current) {
+		  this.hideAll();
+		  return;
+		}
 
-		  this.clearHideCompleteTimer();
-		  this.isVisible = true;
+		this.renderPlacements(
+		  this.buildPlacements(context, this.buildGeometry(context))
+		);
+	  },
 
-		  this.root.classList.remove("is-instant-hidden");
-		  document.body.classList.remove("hints-instant-hide");
+	  scheduleUpdate() {
+		if (this.updateRaf) return;
 
-		  this.root.classList.add("is-visible");
-		  document.body.classList.add("hints-visible");
-		},
+		this.updateRaf = requestAnimationFrame(() => {
+		  this.updateRaf = null;
+		  this.update();
+		});
+	  },
 
-		hide() {
-		  if (!this.root) return;
+	  refreshTimingVars() {
+		this.hideDelayMs = cssVar.timeMs("--section-hint-hide-delay", 1000);
+		this.fadeDurationMs = cssVar.timeMs("--section-hint-fade-duration", 500);
+		this.showScrollDistancePx = cssVar.lengthPx(
+		  "--section-hint-show-scroll-distance",
+		  window.innerHeight
+		);
+	  },
 
-		  this.isVisible = false;
-		  this.root.classList.remove("is-visible");
-		  document.body.classList.remove("hints-visible");
+	  clearHideTimer() {
+		this.hideTimer = utils.clearTimer(this.hideTimer);
+	  },
 
-		  this.scheduleRelockAfterFullyHidden();
-		},
+	  clearHideCompleteTimer() {
+		this.hideCompleteTimer = utils.clearTimer(this.hideCompleteTimer);
+	  },
 
-		scheduleRelockAfterFullyHidden() {
-		  this.clearHideCompleteTimer();
+	  clearStopDetection() {
+		this.stopDetectTimer = utils.clearTimer(this.stopDetectTimer);
+	  },
 
-		  this.hideCompleteTimer = setTimeout(() => {
-			this.hideCompleteTimer = null;
-		  }, this.fadeDurationMs);
-		},
+	  resetSession() {
+		this.gesture.type = null;
+		this.gesture.active = false;
+		this.gesture.distance = 0;
+		this.gesture.sessionHadTouch = false;
+		this.gesture.sessionUnlocked = false;
+		this.clearStopDetection();
+	  },
 
-		startStopWatch() {
-		  this.clearStopWatch();
-		  this.clearHideTimer();
+	  beginGesture(type) {
+		this.clearHideTimer();
+		this.clearHideCompleteTimer();
+		this.clearStopDetection();
 
-		  this.stableFrames = 0;
-		  this.lastStopWatchY = window.scrollY;
+		this.gesture.type = type;
+		this.gesture.active = true;
+		this.gesture.distance = 0;
+		this.gesture.sessionUnlocked = false;
+		this.gesture.sessionHadTouch = type === "touch";
+		this.lastObservedScrollY = window.scrollY;
 
-		  const tick = () => {
-			if (state.scroll.programmatic) {
-			  this.clearStopWatch();
-			  return;
-			}
+		if (type === "touch") {
+		  this.gesture.lastTouchStartTs = performance.now();
+		}
+	  },
 
-			const y = window.scrollY;
-			const delta = Math.abs(y - this.lastStopWatchY);
+	  accumulateScrollDistance() {
+		const currentY = window.scrollY;
+		const delta = Math.abs(currentY - this.lastObservedScrollY);
 
-			// Solange sich der Screen noch bewegt, weiter beobachten
-			if (delta > 0.5) {
-			  this.lastStopWatchY = y;
-			  this.stableFrames = 0;
-			  this.stopWatchRaf = requestAnimationFrame(tick);
-			  return;
-			}
+		if (delta > 0) this.gesture.distance += delta;
+		this.lastObservedScrollY = currentY;
+	  },
 
-			// Mehrere wirklich stabile Frames abwarten
-			this.stableFrames += 1;
-			this.lastStopWatchY = y;
+	  hasReachedShowScrollDistance() {
+		return this.gesture.distance >= this.showScrollDistancePx;
+	  },
 
-			if (this.stableFrames < 6) {
-			  this.stopWatchRaf = requestAnimationFrame(tick);
-			  return;
-			}
+	  show() {
+		if (!this.root) return;
 
-			this.clearStopWatch();
+		this.clearHideCompleteTimer();
+		this.isVisible = true;
 
-			this.hideTimer = setTimeout(() => {
-			  this.hide();
-			  this.resetSession();
-			}, this.hideDelayMs);
-		  };
+		this.root.classList.remove("is-instant-hidden");
+		document.body.classList.remove("hints-instant-hide");
 
-		  this.stopWatchRaf = requestAnimationFrame(tick);
-		},
+		this.root.classList.add("is-visible");
+		document.body.classList.add("hints-visible");
+	  },
 
-		scheduleHide() {
-		  this.startStopWatch();
-		},
+	  hide() {
+		if (!this.root) return;
 
-		handleScrollActivity() {
-		  if (state.scroll.programmatic) {
-			this.hideImmediatelyForProgrammaticScroll();
+		this.isVisible = false;
+		this.root.classList.remove("is-visible");
+		document.body.classList.remove("hints-visible");
+
+		this.scheduleRelockAfterFullyHidden();
+	  },
+
+	  scheduleRelockAfterFullyHidden() {
+		this.clearHideCompleteTimer();
+
+		this.hideCompleteTimer = setTimeout(() => {
+		  this.hideCompleteTimer = null;
+		}, this.fadeDurationMs);
+	  },
+
+	  startHideCountdown() {
+		this.clearHideTimer();
+
+		this.hideTimer = setTimeout(() => {
+		  this.hide();
+		  this.resetSession();
+		}, this.hideDelayMs);
+	  },
+
+	  scheduleStopDetection() {
+		this.clearStopDetection();
+
+		this.stopDetectTimer = setTimeout(() => {
+		  this.stopDetectTimer = null;
+
+		  if (state.scroll.programmatic) return;
+		  if (!this.gesture.sessionUnlocked) return;
+		  if (!this.isVisible) return;
+
+		  // Nur als gestoppt werten, wenn wirklich kurz kein Scroll mehr kam
+		  if (performance.now() - this.lastScrollTs < 120) {
+			this.scheduleStopDetection();
 			return;
 		  }
 
-		  this.lastScrollTs = performance.now();
-		  this.accumulateScrollDistance();
+		  this.startHideCountdown();
+		}, 140);
+	  },
 
-		  // Nur Touch-gestartete Session darf freischalten
-		  if (!this.gesture.sessionHadTouch && !this.gesture.sessionUnlocked) {
+	  scheduleHide() {
+		this.scheduleStopDetection();
+	  },
+
+	  handleScrollActivity() {
+		if (state.scroll.programmatic) {
+		  this.hideImmediatelyForProgrammaticScroll();
+		  return;
+		}
+
+		this.lastScrollTs = performance.now();
+		this.accumulateScrollDistance();
+
+		// Nur Touch-gestartete Session darf freischalten
+		if (!this.gesture.sessionHadTouch && !this.gesture.sessionUnlocked) {
+		  this.hide();
+		  this.clearHideTimer();
+		  this.clearStopDetection();
+		  return;
+		}
+
+		// Mindestdistanz erst erreichen
+		if (!this.gesture.sessionUnlocked) {
+		  if (!this.hasReachedShowScrollDistance()) {
 			this.hide();
 			this.clearHideTimer();
-			this.clearStopWatch();
+			this.clearStopDetection();
 			return;
 		  }
 
-		  // Mindestdistanz erst erreichen
-		  if (!this.gesture.sessionUnlocked) {
-			if (!this.hasReachedShowScrollDistance()) {
-			  this.hide();
-			  this.clearHideTimer();
-			  this.clearStopWatch();
+		  this.gesture.sessionUnlocked = true;
+		}
+
+		// Während echter Scroll-Aktivität sichtbar halten
+		this.show();
+		this.clearHideTimer();
+		this.clearStopDetection();
+
+		// Fallback für Browser/Phasen ohne scrollend
+		this.scheduleStopDetection();
+	  },
+
+	  hideImmediatelyForProgrammaticScroll() {
+		if (!this.root) return;
+
+		this.clearHideTimer();
+		this.clearHideCompleteTimer();
+		this.clearStopDetection();
+		this.resetSession();
+
+		this.isVisible = false;
+
+		this.root.classList.add("is-instant-hidden");
+		document.body.classList.add("hints-instant-hide");
+
+		this.root.classList.remove("is-visible");
+		document.body.classList.remove("hints-visible");
+
+		requestAnimationFrame(() => {
+		  requestAnimationFrame(() => {
+			this.root?.classList.remove("is-instant-hidden");
+			document.body.classList.remove("hints-instant-hide");
+		  });
+		});
+	  },
+
+	  bindEvents() {
+		const onTouchStart = () => {
+		  this.beginGesture("touch");
+		};
+
+		const onTouchEndLike = () => {
+		  this.gesture.lastTouchEndTs = performance.now();
+
+		  // Touch endet, Momentum kann aber weiterlaufen.
+		  // Deshalb hier noch NICHT ausblenden.
+		  this.gesture.active = false;
+		  this.lastObservedScrollY = window.scrollY;
+		};
+
+		window.addEventListener(
+		  "scroll",
+		  () => {
+			this.scheduleUpdate();
+
+			if (state.scroll.programmatic) {
+			  this.hideImmediatelyForProgrammaticScroll();
 			  return;
 			}
 
-			this.gesture.sessionUnlocked = true;
-		  }
+			this.handleScrollActivity();
+		  },
+		  { passive: true }
+		);
 
-		  // Ab hier sichtbar halten, solange noch echte Scrollbewegung existiert
-		  this.show();
-		  this.clearHideTimer();
-		  this.startStopWatch();
-		},
+		window.addEventListener("touchstart", onTouchStart, { passive: true });
+		window.addEventListener("touchend", onTouchEndLike, { passive: true });
+		window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
 
-		hideImmediatelyForProgrammaticScroll() {
-		  if (!this.root) return;
-
-		  this.clearHideTimer();
-		  this.clearHideCompleteTimer();
-		  this.clearStopWatch();
-		  this.resetSession();
-
-		  this.isVisible = false;
-
-		  this.root.classList.add("is-instant-hidden");
-		  document.body.classList.add("hints-instant-hide");
-
-		  this.root.classList.remove("is-visible");
-		  document.body.classList.remove("hints-visible");
-
-		  requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-			  this.root?.classList.remove("is-instant-hidden");
-			  document.body.classList.remove("hints-instant-hide");
-			});
-		  });
-		},
-
-		bindEvents() {
-		  const onTouchStart = () => {
-			this.beginGesture("touch");
-		  };
-
-		  const onTouchEndLike = () => {
-			this.gesture.lastTouchEndTs = performance.now();
-
-			// Touch endet, aber Momentum-Scroll kann weiterlaufen
-			this.gesture.active = false;
-			this.lastObservedScrollY = window.scrollY;
-
-			this.startStopWatch();
-		  };
-
-		  window.addEventListener(
-			"scroll",
-			() => {
-			  this.scheduleUpdate();
-
-			  if (state.scroll.programmatic) {
-				this.hideImmediatelyForProgrammaticScroll();
-				return;
-			  }
-
-			  this.handleScrollActivity();
-			},
-			{ passive: true }
-		  );
-
-		  window.addEventListener("touchstart", onTouchStart, { passive: true });
-		  window.addEventListener("touchend", onTouchEndLike, { passive: true });
-		  window.addEventListener("touchcancel", onTouchEndLike, { passive: true });
-
-		  window.addEventListener(
-			"pointerdown",
-			(e) => {
-			  if (e.pointerType === "mouse") {
-				this.resetSession();
-				this.clearHideTimer();
-				this.clearStopWatch();
-				this.hide();
-			  }
-			},
-			{ passive: true }
-		  );
-
-		  window.addEventListener(
-			"wheel",
-			() => {
+		window.addEventListener(
+		  "pointerdown",
+		  (e) => {
+			if (e.pointerType === "mouse") {
 			  this.resetSession();
 			  this.clearHideTimer();
-			  this.clearStopWatch();
+			  this.clearStopDetection();
 			  this.hide();
-			},
-			{ passive: true }
-		  );
+			}
+		  },
+		  { passive: true }
+		);
 
-		  window.addEventListener("keydown", () => {
+		window.addEventListener(
+		  "wheel",
+		  () => {
 			this.resetSession();
 			this.clearHideTimer();
-			this.clearStopWatch();
+			this.clearStopDetection();
 			this.hide();
-		  });
+		  },
+		  { passive: true }
+		);
 
-		  if ("onscrollend" in document) {
-			document.addEventListener(
-			  "scrollend",
-			  () => {
-				if (!state.scroll.programmatic) {
-				  this.startStopWatch();
-				}
-			  },
-			  { passive: true }
-			);
-		  }
-
-		  const onResize = () => {
-			this.metricsCache.clear();
-			this.refreshTimingVars();
-			this.lastObservedScrollY = window.scrollY;
-			this.lastStopWatchY = window.scrollY;
-			this.scheduleUpdate();
-		  };
-
-		  window.addEventListener("resize", onResize);
-		  window.addEventListener("orientationchange", () => setTimeout(onResize, 120));
-
-		  if (window.visualViewport) {
-			window.visualViewport.addEventListener("resize", onResize);
-			window.visualViewport.addEventListener(
-			  "scroll",
-			  () => this.scheduleUpdate(),
-			  { passive: true }
-			);
-		  }
-		},
-
-		init() {
-		  this.build();
-		  this.refreshTimingVars();
-		  this.bindHintClicks();
+		window.addEventListener("keydown", () => {
+		  this.resetSession();
+		  this.clearHideTimer();
+		  this.clearStopDetection();
 		  this.hide();
+		});
+
+		if ("onscrollend" in document) {
+		  document.addEventListener(
+			"scrollend",
+			() => {
+			  if (!state.scroll.programmatic && this.gesture.sessionUnlocked) {
+				this.startHideCountdown();
+			  }
+			},
+			{ passive: true }
+		  );
+		}
+
+		const onResize = () => {
+		  this.metricsCache.clear();
+		  this.refreshTimingVars();
 		  this.lastObservedScrollY = window.scrollY;
-		  this.lastStopWatchY = window.scrollY;
-		  this.update();
-		  this.bindEvents();
-		},
-	  };
+		  this.scheduleUpdate();
+		};
+
+		window.addEventListener("resize", onResize);
+		window.addEventListener("orientationchange", () => setTimeout(onResize, 120));
+
+		if (window.visualViewport) {
+		  window.visualViewport.addEventListener("resize", onResize);
+		  window.visualViewport.addEventListener(
+			"scroll",
+			() => this.scheduleUpdate(),
+			{ passive: true }
+		  );
+		}
+	  },
+
+	  init() {
+		this.build();
+		this.refreshTimingVars();
+		this.bindHintClicks();
+		this.hide();
+		this.lastObservedScrollY = window.scrollY;
+		this.update();
+		this.bindEvents();
+	  },
+	};
 
   // ---------------------------------------------------------------------
   // 12) GALLERY-MODUL
