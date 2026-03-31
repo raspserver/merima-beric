@@ -2298,25 +2298,37 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.gesture.sessionUnlocked = false;
 		this.clearStopDetection();
 	  },
-
+  
 	  beginGesture(type) {
-		this.clearHideTimer();
-		this.clearHideCompleteTimer();
-		this.clearStopDetection();
+		  this.clearHideTimer();
+		  this.clearHideCompleteTimer();
+		  this.clearStopDetection();
 
-		this.gesture.type = type;
-		this.gesture.active = true;
-		this.gesture.distance = 0;
-		this.gesture.sessionUnlocked = false;
-		this.gesture.sessionHadTouch = type === "touch";
-		this.lastObservedScrollY = window.scrollY;
-		this.lastStopCheckY = window.scrollY;
-		this.stableSinceTs = 0;
+		  const startsNewTouchSession =
+			type === "touch" &&
+			!this.gesture.active &&
+			!this.gesture.sessionHadTouch &&
+			!this.isVisible;
 
-		if (type === "touch") {
-		  this.gesture.lastTouchStartTs = performance.now();
-		}
-	  },
+		  this.gesture.type = type;
+		  this.gesture.active = true;
+
+		  // Distanz NICHT bei jeder neuen Wischgeste zurücksetzen
+		  // sondern nur bei wirklich neuer Session
+		  if (startsNewTouchSession) {
+			this.gesture.distance = 0;
+			this.gesture.sessionUnlocked = false;
+		  }
+
+		  if (type === "touch") {
+			this.gesture.sessionHadTouch = true;
+			this.gesture.lastTouchStartTs = performance.now();
+		  }
+
+		  this.lastObservedScrollY = window.scrollY;
+		  this.lastStopCheckY = window.scrollY;
+		  this.stableSinceTs = 0;
+		},
 
 	  accumulateScrollDistance() {
 		const currentY = window.scrollY;
