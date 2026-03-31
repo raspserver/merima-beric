@@ -2289,16 +2289,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.stableSinceTs = 0;
 	  },
-
+	  
 	  resetSession() {
-		this.gesture.type = null;
-		this.gesture.active = false;
-		this.gesture.distance = 0;
-		this.gesture.sessionHadTouch = false;
-		this.gesture.sessionUnlocked = false;
-		this.clearStopDetection();
-	  },
-  
+		  this.gesture.type = null;
+		  this.gesture.active = false;
+		  this.gesture.distance = 0;
+		  this.gesture.sessionHadTouch = false;
+		  this.gesture.sessionUnlocked = false;
+		  this.clearStopDetection();
+		},
+
+		relockScrollDistanceAfterStop() {
+		  this.gesture.distance = 0;
+		  this.gesture.sessionUnlocked = false;
+		  this.gesture.active = false;
+		  this.lastObservedScrollY = window.scrollY;
+		  this.lastStopCheckY = window.scrollY;
+		},
+
 	  beginGesture(type) {
 		  this.clearHideTimer();
 		  this.clearHideCompleteTimer();
@@ -2405,9 +2413,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (now - this.stableSinceTs >= this.restStableMs) {
 			  this.stopCheckRaf = null;
+
+			  // Nach jedem echten Anhalten des Scrollens Zähler auf Null setzen
+			  this.relockScrollDistanceAfterStop();
+
 			  this.startHideCountdown();
 			  return;
 			}
+
 		  } else {
 			this.stableSinceTs = 0;
 			this.lastStopCheckY = currentY;
