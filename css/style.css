@@ -552,8 +552,8 @@ html.low-fps .hero-inner {
 	position: relative;
 	z-index: 5;
 
-	min-height: 100svh;
-	height: 100svh;
+	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
 
 	display: grid;
 	place-items: center;
@@ -575,9 +575,25 @@ html.low-fps .hero-inner {
 	--hero-scale: 1;
 	--hero-brightness: 1;
 	--hero-parallax: 0px;
+	--hero-calendar-extra-height: 0px;
 
-	will-change: transform, filter;
+	will-change: transform, filter, height;
 	transform: translateZ(0);
+
+	transition:
+		height 0.55s cubic-bezier(.16,.84,.44,1),
+		min-height 0.55s cubic-bezier(.16,.84,.44,1);
+}
+
+.hero.hero-calendar-open {
+	align-items: start;
+}
+
+.hero.hero-calendar-open .hero-inner {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	padding-top: var(--hero-open-top-offset, 0px);
 }
 
 .hero-inner {
@@ -1112,6 +1128,16 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	will-change: opacity, background;
 }
 
+
+
+
+
+
+
+
+
+
+
 .hero-calendar {
 	width: min(100%, 800px);
 	max-height: 0;
@@ -1119,10 +1145,13 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	overflow: hidden;
 	pointer-events: none;
 	transform: translateY(-12px);
+	visibility: hidden;
+
 	transition:
 		max-height 0.55s cubic-bezier(.16,.84,.44,1),
 		opacity 0.35s ease,
-		transform 0.45s cubic-bezier(.16,.84,.44,1);
+		transform 0.45s cubic-bezier(.16,.84,.44,1),
+		visibility 0s linear 0.55s;
 }
 
 .hero-calendar.is-open {
@@ -1130,6 +1159,12 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	opacity: 1;
 	pointer-events: auto;
 	transform: translateY(0);
+	visibility: visible;
+	transition:
+		max-height 0.55s cubic-bezier(.16,.84,.44,1),
+		opacity 0.35s ease,
+		transform 0.45s cubic-bezier(.16,.84,.44,1),
+		visibility 0s linear 0s;
 }
 
 .hero-calendar iframe {
