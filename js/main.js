@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	cta: document.querySelector(".cta-button"),
 	ctaLabel: document.querySelector(".cta-button .cta-label"),
 	heroInner: document.querySelector(".hero-inner"),
-	heroCalendarFrame: document.getElementById("hero-calendar-frame"),
 	heroCalendar: document.getElementById("hero-calendar"),
+	heroCalendarEl: document.getElementById("hero-fullcalendar"),
 	footer: document.querySelector("footer"),
 	track: document.querySelector(".gallery-track"),
 	pricingTabs: [...document.querySelectorAll(".pricing-tab")],
@@ -322,6 +322,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarCloseTimer: null,
 		heroCalendarExtraHeight: 0,
 		heroOpenTopOffset: 0,
+		fullCalendarInstance: null,
+		fullCalendarResizeTimer: null,
 	},
 
     orderedSections: [],
@@ -3328,32 +3330,6 @@ document.addEventListener("DOMContentLoaded", () => {
         DOM.year.textContent = String(new Date().getFullYear());
       }
     },
-    
-    getHeroCalendarSrc() {
-		if (!DOM.heroCalendarFrame) return "";
-		return (
-			DOM.heroCalendarFrame.dataset.src ||
-			DOM.heroCalendarFrame.getAttribute("data-src") ||
-			""
-		).trim();
-	},
-
-	reloadHeroCalendarFrame() {
-		if (!DOM.heroCalendarFrame) return;
-
-		const baseSrc = this.getHeroCalendarSrc();
-		if (!baseSrc) return;
-
-		const url = new URL(baseSrc, window.location.href);
-		url.searchParams.set("_reload", String(Date.now()));
-
-		// erst hart leeren, dann neu setzen
-		DOM.heroCalendarFrame.src = "about:blank";
-
-		requestAnimationFrame(() => {
-			DOM.heroCalendarFrame.src = url.toString();
-		});
-	},
 
 	measureHeroOpenOffset() {
 		if (!DOM.hero || !DOM.heroInner) return 0;
@@ -3367,13 +3343,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	measureCalendarHeight() {
 		if (!DOM.heroCalendar) return 0;
 
-		const iframe = DOM.heroCalendar.querySelector("iframe");
-		if (!iframe) return 0;
+		const rect = DOM.heroCalendar.getBoundingClientRect();
+		if (rect.height > 0) return rect.height;
 
-		const iframeRect = iframe.getBoundingClientRect();
-		if (iframeRect.height > 0) return iframeRect.height;
-
-		return iframe.offsetHeight || 0;
+		return DOM.heroCalendar.scrollHeight || 0;
 	},
 
 	applyHeroCalendarLayout(extraHeight, topOffset) {
@@ -3443,18 +3416,23 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.ctaLabel.textContent = "Kalender schließen";
 		}
 
-		this.reloadHeroCalendarFrame();
-
 		DOM.hero.classList.add("hero-calendar-open");
 		DOM.heroCalendar.setAttribute("aria-hidden", "false");
 		DOM.heroCalendar.classList.add("is-open");
-	
-		requestAnimationFrame(() => {
-			const extraHeight = this.measureCalendarHeight();
-			this.applyHeroCalendarLayout(extraHeight, topOffset);
 
-			this.waitForHeroHeightTransition(() => {
-				this.scrollViewportToHeroAboutBoundary();
+		requestAnimationFrame(() => {
+			this.ensureFullCalendar();
+
+			requestAnimationFrame(() => {
+				this.updateFullCalendarSize();
+
+				const extraHeight = this.measureCalendarHeight();
+				this.applyHeroCalendarLayout(extraHeight, topOffset);
+
+				this.waitForHeroHeightTransition(() => {
+					this.scrollViewportToHeroAboutBoundary();
+					this.updateFullCalendarSize();
+				});
 			});
 		});
 
@@ -3486,9 +3464,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				this.scrollViewportToHeroAboutBoundary();
 			});
 
-			if (DOM.heroCalendarFrame) {
-				DOM.heroCalendarFrame.src = "about:blank";
-			}
+			this.destroyFullCalendar();
 		});
 
 		navbarModule.suppressCtaHoverTemporarily(250);
@@ -3543,6 +3519,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Fallback, falls transitionend auf manchen Geräten/Browsern nicht sauber kommt
 		setTimeout(finish, 700);
+	},
+
+	getCalendarConfig() {
+		return {
+			googleCalendarApiKey: "AIzaSyDqAZYI2AbNdax1SmFtBZte87Gix3NOh30",
+			calendarId: "1f06dd46653f2c54d7dfde59ea175a8c346e7fcb2835f433d2238a2f3ae8c5a2@group.calendar.google.com",
+		};
+	},
+
+	ensureFullCalendar() {
+		if (state.ui.fullCalendarInstance || !DOM.heroCalendarEl) return;
+
+		const { googleCalendarApiKey, calendarId } = this.getCalendarConfig();
+
+		state.ui.fullCalendarInstance = new FullCalendar.Calendar(DOM.heroCalendarEl, {
+			locale: "de",
+			timeZone: "Europe/Berlin",
+			initialView: window.innerWidth <= 768 ? "listMonth" : "dayGridMonth",
+			height: "auto",
+			firstDay: 1,
+			weekends: true,
+			navLinks: false,
+			nowIndicator: true,
+			expandRows: true,
+			headerToolbar: {
+				left: "prev,next today",
+				center: "title",
+				right: window.innerWidth <= 768
+					? "listMonth,dayGridMonth"
+					: "dayGridMonth,timeGridWeek,listMonth"
+			},
+			buttonText: {
+				today: "Heute",
+				month: "Monat",
+				week: "Woche",
+				list: "Liste"
+			},
+			noEventsContent: "Keine Termine vorhanden",
+			eventTimeFormat: {
+				hour: "2-digit",
+				minute: "2-digit",
+				hour12: false
+			},
+			googleCalendarApiKey,
+			events: {
+				googleCalendarId: calendarId
+			},
+			eventClick(info) {
+				if (info.event.url) {
+					info.jsEvent.preventDefault();
+					window.open(info.event.url, "_blank", "noopener");
+				}
+			},
+			loading(isLoading) {
+				DOM.heroCalendarEl.classList.toggle("is-loading", isLoading);
+			}
+		});
+
+		state.ui.fullCalendarInstance.render();
+	},
+
+	destroyFullCalendar() {
+		if (!state.ui.fullCalendarInstance) return;
+		state.ui.fullCalendarInstance.destroy();
+		state.ui.fullCalendarInstance = null;
+	},
+
+	updateFullCalendarSize() {
+		if (!state.ui.fullCalendarInstance) return;
+		state.ui.fullCalendarInstance.updateSize();
+	},
+
+	refreshFullCalendarView() {
+		if (!state.ui.fullCalendarInstance) return;
+
+		const nextView = window.innerWidth <= 768 ? "listMonth" : "dayGridMonth";
+		const currentView = state.ui.fullCalendarInstance.view?.type;
+
+		if (currentView !== nextView) {
+			state.ui.fullCalendarInstance.changeView(nextView);
+		}
+
+		state.ui.fullCalendarInstance.updateSize();
 	}
 
   };
@@ -3767,17 +3826,23 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    window.addEventListener("resize", () => {
-	  physics.update();
-	  galleryModule.setPosition(galleryModule.currentIndex, false);
+	window.addEventListener("resize", () => {
+		physics.update();
+		galleryModule.setPosition(galleryModule.currentIndex, false);
 
-	  if (state.ui.heroCalendarOpen) {
-		requestAnimationFrame(() => {
-		  const extraHeight = uiModule.measureCalendarHeight();
-		  const topOffset = uiModule.measureHeroOpenOffset();
-		  uiModule.applyHeroCalendarLayout(extraHeight, topOffset);
-		});
-	  }
+		if (state.ui.heroCalendarOpen) {
+			clearTimeout(state.ui.fullCalendarResizeTimer);
+
+			state.ui.fullCalendarResizeTimer = setTimeout(() => {
+				uiModule.refreshFullCalendarView();
+
+				requestAnimationFrame(() => {
+					const extraHeight = uiModule.measureCalendarHeight();
+					const topOffset = uiModule.measureHeroOpenOffset();
+					uiModule.applyHeroCalendarLayout(extraHeight, topOffset);
+				});
+			}, 120);
+		}
 	});
 
     document.addEventListener("visibilitychange", () => {
