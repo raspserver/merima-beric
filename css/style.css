@@ -1128,16 +1128,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	will-change: opacity, background;
 }
 
-
-
-
-
-
-
-
-
-
-
 .hero-calendar {
 	width: min(100%, 800px);
 	max-height: 0;
