@@ -322,9 +322,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarCloseTimer: null,
 		heroCalendarExtraHeight: 0,
 		heroOpenTopOffset: 0,
+		navStateBeforeCalendarToggle: null,
 	},
 
-    orderedSections: [],
+    orderedSections: []
   };
 
   // ---------------------------------------------------------------------
