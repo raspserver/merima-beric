@@ -3332,12 +3332,16 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
 	measureHeroOpenOffset() {
-		if (!DOM.hero || !DOM.heroInner) return 0;
+		if (!DOM.hero || !DOM.navbar) return 0;
 
 		const heroRect = DOM.hero.getBoundingClientRect();
-		const innerRect = DOM.heroInner.getBoundingClientRect();
+		const navRect = DOM.navbar.getBoundingClientRect();
 
-		return Math.max(0, innerRect.top - heroRect.top);
+		/* gleicher Abstand oben wie unten zum CTA */
+		const gap = this.getHeroCalendarGap();
+
+		/* Abstand relativ zum Hero-Inhalt */
+		return Math.max(0, (navRect.bottom - heroRect.top) + gap);
 	},
 
 	measureCalendarHeight() {
