@@ -3109,11 +3109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (utils.isMobileViewport() && navbarModule.isOpen()) {
-			navbarModule.closeMenu();
-			return;
-		}
-
+		this.captureNavbarState();
 		this.toggleHeroCalendar();
 	});
 
@@ -3413,15 +3409,20 @@ document.addEventListener("DOMContentLoaded", () => {
 			utils.getMaxScrollY()
 		);
 	},
-
-	scrollViewportToHeroAboutBoundary() {
+	
+	scrollViewportToHeroAboutBoundary({ preserveNavbarState = false } = {}) {
 		const targetY = this.getHeroAboutBoundaryScrollY();
 
 		scrollEngine.animateWindowScrollTo(targetY, {
 			onComplete: () => {
 				state.lastScrollY = window.scrollY;
-				navbarModule.handleScroll();
-				navbarModule.startAnimation();
+
+				if (preserveNavbarState) {
+					this.restoreNavbarState();
+				} else {
+					navbarModule.handleScroll();
+					navbarModule.startAnimation();
+				}
 			},
 		});
 	},
@@ -3455,7 +3456,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.applyHeroCalendarLayout(extraHeight, topOffset);
 
 			this.waitForHeroHeightTransition(() => {
-				this.scrollViewportToHeroAboutBoundary();
+				this.scrollViewportToHeroAboutBoundary({ preserveNavbarState: true });
 			});
 		});
 
@@ -3484,7 +3485,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.resetHeroCalendarLayout();
 
 			this.waitForHeroHeightTransition(() => {
-				this.scrollViewportToHeroAboutBoundary();
+				this.scrollViewportToHeroAboutBoundary({ preserveNavbarState: true });
 			});
 
 			if (DOM.heroCalendarFrame) {
@@ -3544,6 +3545,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Fallback, falls transitionend auf manchen Geräten/Browsern nicht sauber kommt
 		setTimeout(finish, 700);
+	},
+	
+	captureNavbarState() {
+		state.ui.navStateBeforeCalendarToggle = {
+			menuOpen: navbarModule.isOpen(),
+			manualOpen: state.nav.manualOpen,
+			visibleTarget: state.nav.visible.target,
+			compactTarget: state.nav.compact.target,
+			surfaceTarget: state.nav.surface.target,
+			visibleCurrent: state.nav.visible.current,
+			compactCurrent: state.nav.compact.current,
+			surfaceCurrent: state.nav.surface.current,
+			scrollY: window.scrollY,
+		};
+	},
+
+	restoreNavbarState() {
+		const saved = state.ui.navStateBeforeCalendarToggle;
+		if (!saved || !DOM.navbar) return;
+
+		state.nav.manualOpen = !!saved.manualOpen;
+
+		state.nav.visible.target = saved.visibleTarget;
+		state.nav.compact.target = saved.compactTarget;
+		state.nav.surface.target = saved.surfaceTarget;
+
+		state.nav.visible.current = saved.visibleCurrent;
+		state.nav.compact.current = saved.compactCurrent;
+		state.nav.surface.current = saved.surfaceCurrent;
+
+		if (saved.menuOpen) {
+			DOM.navMenu?.classList.add("active");
+			DOM.navToggle?.classList.add("active");
+			document.body.classList.add("nav-menu-open");
+		} else {
+			DOM.navMenu?.classList.remove("active");
+			DOM.navToggle?.classList.remove("active");
+			document.body.classList.remove("nav-menu-open");
+		}
+
+		navbarModule.startAnimation();
 	}
 
   };
