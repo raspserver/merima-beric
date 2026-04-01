@@ -3332,18 +3332,12 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
 	measureHeroOpenOffset() {
-		if (!DOM.hero || !DOM.navbar) return 0;
-
-		const heroRect = DOM.hero.getBoundingClientRect();
-		const navRect = DOM.navbar.getBoundingClientRect();
-
-		/* gleicher Abstand oben wie unten zum CTA */
 		const gap = this.getHeroCalendarGap();
+		const navCompactHeight = cssVar.number("--nav-height-min", 58);
 
-		/* Abstand relativ zum Hero-Inhalt */
-		return Math.max(0, (navRect.bottom - heroRect.top) + gap);
+		return navCompactHeight + gap;
 	},
-
+	
 	measureCalendarHeight() {
 		if (!DOM.heroCalendar) return 0;
 
@@ -3401,6 +3395,30 @@ document.addEventListener("DOMContentLoaded", () => {
 			},
 		});
 	},
+	
+	scrollViewportToCalendarTop() {
+		if (!DOM.heroCalendar) return;
+
+		const gap = this.getHeroCalendarGap();
+		const navCompactHeight = cssVar.number("--nav-height-min", 58);
+
+		const calendarTopInDocument =
+			DOM.heroCalendar.getBoundingClientRect().top + window.scrollY;
+
+		const targetY = clamp(
+			calendarTopInDocument - navCompactHeight - gap,
+			0,
+			utils.getMaxScrollY()
+		);
+
+		scrollEngine.animateWindowScrollTo(targetY, {
+			onComplete: () => {
+				state.lastScrollY = window.scrollY;
+				navbarModule.handleScroll();
+				navbarModule.startAnimation();
+			},
+		});
+	},
 
 	openHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
@@ -3435,11 +3453,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				const extraHeight = this.measureCalendarHeight();
 				this.applyHeroCalendarLayout(extraHeight, topOffset);
-
+	
 				this.waitForHeroHeightTransition(() => {
-					this.scrollViewportToHeroAboutBoundary();
+					this.scrollViewportToCalendarTop();
 					this.updateFullCalendarSize();
 				});
+
 			});
 		});
 
@@ -3616,16 +3635,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 
 	measureFixedCalendarHeight() {
-		if (!DOM.navbar || !DOM.cta || !DOM.hero) return 620;
+		if (!DOM.cta) return 620;
 
-		const navRect = DOM.navbar.getBoundingClientRect();
 		const ctaRect = DOM.cta.getBoundingClientRect();
-
 		const gap = this.getHeroCalendarGap();
+		const navCompactHeight = cssVar.number("--nav-height-min", 58);
 
-		/* Kalender sitzt zwischen Navbar und CTA:
-		   gleicher Abstand oben und unten */
-		const available = ctaRect.top - navRect.bottom - (gap * 2);
+		/* Kalender sitzt unter der kompakten Navbar */
+		const available = ctaRect.top - navCompactHeight - (gap * 2);
 
 		return Math.max(320, Math.floor(available));
 	},
