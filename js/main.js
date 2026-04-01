@@ -3403,6 +3403,31 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.hero.classList.remove("hero-calendar-open");
 	},
 
+	getHeroAboutBoundaryScrollY() {
+		if (!DOM.hero) return 0;
+
+		const heroBottomAbs =
+			DOM.hero.getBoundingClientRect().bottom + window.pageYOffset;
+
+		return clamp(
+			heroBottomAbs - window.innerHeight,
+			0,
+			utils.getMaxScrollY()
+		);
+	},
+
+	scrollViewportToHeroAboutBoundary() {
+		const targetY = this.getHeroAboutBoundaryScrollY();
+
+		scrollEngine.animateWindowScrollTo(targetY, {
+			onComplete: () => {
+				state.lastScrollY = window.scrollY;
+				navbarModule.handleScroll();
+				navbarModule.startAnimation();
+			},
+		});
+	},
+
 	openHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
@@ -3426,10 +3451,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.hero.classList.add("hero-calendar-open");
 		DOM.heroCalendar.setAttribute("aria-hidden", "false");
 		DOM.heroCalendar.classList.add("is-open");
-
+	
 		requestAnimationFrame(() => {
 			const extraHeight = this.measureCalendarHeight();
 			this.applyHeroCalendarLayout(extraHeight, topOffset);
+
+			requestAnimationFrame(() => {
+				this.scrollViewportToHeroAboutBoundary();
+			});
 		});
 
 		state.ui.heroCalendarOpen = true;
@@ -3456,6 +3485,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarCloseTimer = setTimeout(() => {
 			this.resetHeroCalendarLayout();
+
+			requestAnimationFrame(() => {
+				this.scrollViewportToHeroAboutBoundary();
+			});
 
 			if (DOM.heroCalendarFrame) {
 				DOM.heroCalendarFrame.src = "about:blank";
