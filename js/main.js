@@ -3407,6 +3407,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbarModule.applyCtaNeutralState();
 
 		const topOffset = this.measureHeroOpenOffset();
+		const fixedCalendarHeight = this.measureFixedCalendarHeight();
+
+		this.applyHeroCalendarFixedHeight(fixedCalendarHeight);
 
 		DOM.cta.classList.add("calendar-open");
 		DOM.cta.classList.remove("is-hovered", "is-magnetic-near");
@@ -3537,7 +3540,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			locale: "de",
 			timeZone: "Europe/Berlin",
 			initialView: window.innerWidth <= 768 ? "listMonth" : "dayGridMonth",
-			height: "auto",
+			height: "100%",
 			firstDay: 1,
 			weekends: true,
 			navLinks: false,
@@ -3602,6 +3605,34 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		state.ui.fullCalendarInstance.updateSize();
+	},
+	
+	getHeroCalendarGap() {
+		return cssVar.lengthPx("--hero-calendar-gap", 24);
+	},
+
+	measureFixedCalendarHeight() {
+		if (!DOM.navbar || !DOM.cta || !DOM.hero) return 620;
+
+		const navRect = DOM.navbar.getBoundingClientRect();
+		const ctaRect = DOM.cta.getBoundingClientRect();
+
+		const gap = this.getHeroCalendarGap();
+
+		/* Kalender sitzt zwischen Navbar und CTA:
+		   gleicher Abstand oben und unten */
+		const available = ctaRect.top - navRect.bottom - (gap * 2);
+
+		return Math.max(320, Math.floor(available));
+	},
+
+	applyHeroCalendarFixedHeight(height) {
+		if (!DOM.hero) return;
+
+		DOM.hero.style.setProperty(
+			"--hero-calendar-fixed-height",
+			`${Math.max(0, height)}px`
+		);
 	}
 
   };
@@ -3834,6 +3865,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			clearTimeout(state.ui.fullCalendarResizeTimer);
 
 			state.ui.fullCalendarResizeTimer = setTimeout(() => {
+				const fixedCalendarHeight = uiModule.measureFixedCalendarHeight();
+				uiModule.applyHeroCalendarFixedHeight(fixedCalendarHeight);
+
 				uiModule.refreshFullCalendarView();
 
 				requestAnimationFrame(() => {
@@ -3843,6 +3877,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			}, 120);
 		}
+			
 	});
 
     document.addEventListener("visibilitychange", () => {
