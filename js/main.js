@@ -3402,15 +3402,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.hero.style.setProperty("--hero-open-top-offset", "0px");
 		DOM.hero.classList.remove("hero-calendar-open");
 	},
-
+	
 	getHeroAboutBoundaryScrollY() {
 		if (!DOM.hero) return 0;
 
-		const heroBottomAbs =
-			DOM.hero.getBoundingClientRect().bottom + window.pageYOffset;
-
 		return clamp(
-			heroBottomAbs - window.innerHeight,
+			DOM.hero.offsetHeight - window.innerHeight,
 			0,
 			utils.getMaxScrollY()
 		);
@@ -3456,7 +3453,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const extraHeight = this.measureCalendarHeight();
 			this.applyHeroCalendarLayout(extraHeight, topOffset);
 
-			requestAnimationFrame(() => {
+			this.waitForHeroHeightTransition(() => {
 				this.scrollViewportToHeroAboutBoundary();
 			});
 		});
@@ -3464,7 +3461,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.ui.heroCalendarOpen = true;
 	},
 
-	
 	closeHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar) return;
 
@@ -3483,17 +3479,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarOpen = false;
 
-		state.ui.heroCalendarCloseTimer = setTimeout(() => {
+		requestAnimationFrame(() => {
 			this.resetHeroCalendarLayout();
 
-			requestAnimationFrame(() => {
+			this.waitForHeroHeightTransition(() => {
 				this.scrollViewportToHeroAboutBoundary();
 			});
 
 			if (DOM.heroCalendarFrame) {
 				DOM.heroCalendarFrame.src = "about:blank";
 			}
-		}, 560);
+		});
 
 		navbarModule.suppressCtaHoverTemporarily(250);
 	},
@@ -3504,6 +3500,49 @@ document.addEventListener("DOMContentLoaded", () => {
 		} else {
 			this.openHeroCalendar();
 		}
+	},
+
+	waitForHeroHeightTransition(done) {
+		if (!DOM.hero) {
+			done?.();
+			return;
+		}
+
+		const style = getComputedStyle(DOM.hero);
+		const durations = style.transitionDuration.split(",").map((v) => v.trim());
+		const properties = style.transitionProperty.split(",").map((v) => v.trim());
+
+		const hasHeightTransition = properties.some((prop) =>
+			prop === "height" || prop === "min-height" || prop === "all"
+		);
+
+		if (!hasHeightTransition) {
+			requestAnimationFrame(() => done?.());
+			return;
+		}
+
+		let finished = false;
+
+		const finish = () => {
+			if (finished) return;
+			finished = true;
+			DOM.hero.removeEventListener("transitionend", onEnd);
+			done?.();
+		};
+
+		const onEnd = (e) => {
+			if (
+				e.target === DOM.hero &&
+				(e.propertyName === "height" || e.propertyName === "min-height")
+			) {
+				finish();
+			}
+		};
+
+		DOM.hero.addEventListener("transitionend", onEnd);
+
+		// Fallback, falls transitionend auf manchen Geräten/Browsern nicht sauber kommt
+		setTimeout(finish, 700);
 	}
 
   };
