@@ -1210,6 +1210,11 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	padding: 2px 4px;
 }
 
+.hero.hero-calendar-close-instant,
+.hero.hero-calendar-close-instant .hero-calendar {
+	transition: none !important;
+}
+
 @media (max-width: 768px) {
 	.hero-calendar {
 		width: 100%;

@@ -3390,7 +3390,19 @@ document.addEventListener("DOMContentLoaded", () => {
 			utils.getMaxScrollY()
 		);
 	},
-		
+
+	disableHeroCalendarCloseAnimationOnce() {
+		if (!DOM.hero) return;
+
+		DOM.hero.classList.add("hero-calendar-close-instant");
+
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				DOM.hero.classList.remove("hero-calendar-close-instant");
+			});
+		});
+	},
+
 	openHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
@@ -3449,7 +3461,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarOpen = true;
 	},
-	
+
 	closeHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
@@ -3470,14 +3482,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.ui.heroCalendarOpen = false;
 
 			requestAnimationFrame(() => {
+				this.disableHeroCalendarCloseAnimationOnce();
 				this.resetHeroCalendarLayout();
+				this.destroyFullCalendar();
 
-				this.waitForHeroHeightTransition(() => {
-					this.destroyFullCalendar();
-					state.lastScrollY = window.scrollY;
-					navbarModule.handleScroll();
-					navbarModule.startAnimation();
-				});
+				state.lastScrollY = window.scrollY;
+				navbarModule.handleScroll();
+				navbarModule.startAnimation();
 			});
 
 			navbarModule.suppressCtaHoverTemporarily(250);
@@ -3488,6 +3499,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		/* sofort zum Seitenanfang springen */
 		window.scrollTo(0, 0);
+
 		requestAnimationFrame(() => {
 			window.scrollTo(0, 0);
 			state.lastScrollY = window.scrollY;
