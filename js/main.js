@@ -322,7 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarCloseTimer: null,
 		heroCalendarExtraHeight: 0,
 		heroOpenTopOffset: 0,
-		heroClosedCtaTop: 0,
+		heroClosedContentTop: 0,
 		fullCalendarInstance: null,
 		fullCalendarResizeTimer: null,
 	},
@@ -3332,14 +3332,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     },
 
-	measureClosedCtaTopInHero() {
-		if (!DOM.hero || !DOM.cta) return 0;
+	measureClosedHeroContentTopInHero() {
+		if (!DOM.hero) return 0;
+
+		const heroContent = DOM.hero.querySelector(".hero-content");
+		if (!heroContent) return 0;
 
 		const heroRect = DOM.hero.getBoundingClientRect();
-		const ctaRect = DOM.cta.getBoundingClientRect();
+		const contentRect = heroContent.getBoundingClientRect();
 
-		/* aktuelle CTA-Position im geschlossenen Hero merken */
-		return Math.max(0, ctaRect.top - heroRect.top);
+		/* obere Position des gesamten Hero-Contents im geschlossenen Hero merken */
+		return Math.max(0, contentRect.top - heroRect.top);
 	},
 
 	measureCalendarHeight() {
@@ -3396,8 +3399,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.resetCtaMagnetic();
 		navbarModule.applyCtaNeutralState();
 
-		const topOffset = this.measureClosedCtaTopInHero();
-		state.ui.heroClosedCtaTop = topOffset;
+		const topOffset = this.measureClosedHeroContentTopInHero();
+		state.ui.heroClosedContentTop = topOffset;
+
 		const fixedCalendarHeight = this.measureFixedCalendarHeight();
 		const extraHeight = this.getTargetHeroCalendarExtraHeight();
 
@@ -3896,7 +3900,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				
 				requestAnimationFrame(() => {
 					const extraHeight = uiModule.getTargetHeroCalendarExtraHeight();			
-					const topOffset = state.ui.heroClosedCtaTop || 0;
+					const topOffset = state.ui.heroClosedContentTop || 0;
 					uiModule.applyHeroCalendarLayout(extraHeight, topOffset);	
 				});
 			}, 120);
