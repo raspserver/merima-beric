@@ -3461,7 +3461,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarOpen = true;
 	},
-	
+
 	closeHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
@@ -3480,27 +3480,69 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 
 			state.ui.heroCalendarOpen = false;
+			DOM.hero.classList.remove("scrolled");
 
 			this.runHeroCalendarCloseInstant(() => {
 				this.resetHeroCalendarLayout();
 				this.destroyFullCalendar();
 			});
 
-			state.lastScrollY = window.scrollY;
+			state.lastScrollY = 0;
 			navbarModule.handleScroll();
+			navbarModule.renderHero();
+			navbarModule.renderNavbar();
 			navbarModule.startAnimation();
 
 			navbarModule.suppressCtaHoverTemporarily(250);
+
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					document.documentElement.classList.remove("disable-overscroll");
+				});
+			});
 		};
 
 		scrollEngine.cancelActiveScroll({ keepPosition: false });
 
-		window.scrollTo(0, 0);
+		/* Overscroll nur für den Close-Moment deaktivieren */
+		document.documentElement.classList.add("disable-overscroll");
+
+		/* Scroll sofort hart auf Anfang */
+		scrollEngine.hardSnap(0);
+
+		/* alle federnden Werte sofort neutralisieren */
+		resetAnimatedValue(state.hero.parallax, 0);
+		resetAnimatedValue(state.nav.gestureStretch, 0);
+		resetAnimatedValue(state.nav.visible, 0);
+		resetAnimatedValue(state.nav.compact, 0);
+		resetAnimatedValue(state.nav.surface, 0);
+
+		state.scrollVelocity = 0;
+		state.scrollDirection = "down";
 		state.lastScrollY = 0;
+
+		/* Hero sofort visuell in Startzustand bringen */
+		utils.setVars(DOM.hero, {
+			"--hero-scale": 1,
+			"--hero-brightness": 1,
+			"--hero-parallax": "0px",
+		});
+
+		/* Navbar sofort in Home-Top-Zustand bringen */
+		utils.setVars(DOM.navbar, {
+			"--nav-visible": 0,
+			"--nav-compact": 0,
+			"--nav-settle": 0,
+			"--nav-surface": 0,
+			"--nav-height-progress": 0,
+			"--nav-gesture-stretch": "0px",
+			"--nav-velocity-blur": 0,
+			"--nav-refraction": 0,
+		});
 
 		finishClose();
 	},
-	
+
 	toggleHeroCalendar() {
 		if (state.ui.heroCalendarOpen) {
 			this.closeHeroCalendar();

@@ -515,6 +515,11 @@ html, body {
 	-webkit-touch-callout: none;
 }
 
+html.disable-overscroll,
+html.disable-overscroll body {
+	overscroll-behavior-y: none;
+}
+
 @media (max-height: 580px) {
     :root {
         --hero-stack-gap: clamp(1.0rem, 3.0vh, 2.0rem);
