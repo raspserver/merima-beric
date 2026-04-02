@@ -3412,6 +3412,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const topOffset = this.measureHeroOpenOffset();
 		const fixedCalendarHeight = this.measureFixedCalendarHeight();
+		const extraHeight = this.getTargetHeroCalendarExtraHeight();
 
 		this.applyHeroCalendarFixedHeight(fixedCalendarHeight);
 
@@ -3423,29 +3424,32 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.ctaLabel.textContent = "Kalender schließen";
 		}
 
+		/* WICHTIG:
+		   Hero zuerst in offenen Layout-Zustand bringen,
+		   aber Kalender noch NICHT sichtbar machen */
 		DOM.hero.classList.add("hero-calendar-open");
-		DOM.heroCalendar.setAttribute("aria-hidden", "false");
-		DOM.heroCalendar.classList.add("is-open");
+		DOM.heroCalendar.setAttribute("aria-hidden", "true");
+		DOM.heroCalendar.classList.remove("is-open");
 
-		requestAnimationFrame(() => {
+		/* Zuerst Hero-Höhe vergrößern */
+		this.applyHeroCalendarLayout(extraHeight, topOffset);
+
+		this.waitForHeroHeightTransition(() => {
+			/* Erst NACH abgeschlossener Hero-Erhöhung Kalender einblenden */
+			DOM.heroCalendar.classList.add("is-open");
+			DOM.heroCalendar.setAttribute("aria-hidden", "false");
+
 			this.ensureFullCalendar();
 
 			requestAnimationFrame(() => {
 				this.updateFullCalendarSize();
-
-				const extraHeight = this.measureCalendarHeight();
-				this.applyHeroCalendarLayout(extraHeight, topOffset);
-
-				this.waitForHeroHeightTransition(() => {
-					this.scrollViewportToHeroAboutBoundary();
-					this.updateFullCalendarSize();
-				});
+				this.scrollViewportToHeroAboutBoundary();
 			});
 		});
 
 		state.ui.heroCalendarOpen = true;
 	},
-
+	
 	closeHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar) return;
 
@@ -3628,6 +3632,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		const available = ctaRect.top - navRect.bottom - (gap * 2);
 
 		return Math.max(320, Math.floor(available));
+	},
+
+	getTargetHeroCalendarExtraHeight() {
+		const fixedCalendarHeight = this.measureFixedCalendarHeight();
+
+		/* passt zu CSS:
+		   .hero-calendar.is-open {
+			 max-height: calc(var(--hero-calendar-fixed-height, 620px) + 40px);
+		   }
+		*/
+		return fixedCalendarHeight + 40;
 	},
 
 	applyHeroCalendarFixedHeight(height) {
@@ -3873,9 +3888,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				uiModule.applyHeroCalendarFixedHeight(fixedCalendarHeight);
 
 				uiModule.refreshFullCalendarView();
-
+				
 				requestAnimationFrame(() => {
-					const extraHeight = uiModule.measureCalendarHeight();
+					const extraHeight = uiModule.getTargetHeroCalendarExtraHeight();
 					const topOffset = uiModule.measureHeroOpenOffset();
 					uiModule.applyHeroCalendarLayout(extraHeight, topOffset);
 				});
