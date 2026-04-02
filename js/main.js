@@ -3461,7 +3461,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarOpen = true;
 	},
-
+	
 	closeHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
@@ -3481,32 +3481,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			state.ui.heroCalendarOpen = false;
 
-			requestAnimationFrame(() => {
-				this.disableHeroCalendarCloseAnimationOnce();
+			this.runHeroCalendarCloseInstant(() => {
 				this.resetHeroCalendarLayout();
 				this.destroyFullCalendar();
-
-				state.lastScrollY = window.scrollY;
-				navbarModule.handleScroll();
-				navbarModule.startAnimation();
 			});
+
+			state.lastScrollY = window.scrollY;
+			navbarModule.handleScroll();
+			navbarModule.startAnimation();
 
 			navbarModule.suppressCtaHoverTemporarily(250);
 		};
 
-		/* laufende Scroll-Animationen abbrechen */
 		scrollEngine.cancelActiveScroll({ keepPosition: false });
 
-		/* sofort zum Seitenanfang springen */
 		window.scrollTo(0, 0);
+		state.lastScrollY = 0;
 
-		requestAnimationFrame(() => {
-			window.scrollTo(0, 0);
-			state.lastScrollY = window.scrollY;
-			finishClose();
-		});
+		finishClose();
 	},
-
+	
 	toggleHeroCalendar() {
 		if (state.ui.heroCalendarOpen) {
 			this.closeHeroCalendar();
@@ -3678,6 +3672,23 @@ document.addEventListener("DOMContentLoaded", () => {
 			"--hero-calendar-fixed-height",
 			`${Math.max(0, height)}px`
 		);
+	},
+	
+	runHeroCalendarCloseInstant(callback) {
+		if (!DOM.hero) {
+			callback?.();
+			return;
+		}
+
+		DOM.hero.classList.add("hero-calendar-close-instant");
+
+		try {
+			callback?.();
+		} finally {
+			setTimeout(() => {
+				DOM.hero.classList.remove("hero-calendar-close-instant");
+			}, 0);
+		}
 	}
 
   };
