@@ -3389,18 +3389,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			utils.getMaxScrollY()
 		);
 	},
-
-	scrollViewportToHeroAboutBoundary() {
-		const targetY = this.getHeroAboutBoundaryScrollY();
-
-		scrollEngine.animateWindowScrollTo(targetY, {
-			onComplete: () => {
-				state.lastScrollY = window.scrollY;
-				navbarModule.handleScroll();
-				navbarModule.startAnimation();
-			},
-		});
-	},
 		
 	openHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
