@@ -3401,7 +3401,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			},
 		});
 	},
-
+		
 	openHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
@@ -3424,32 +3424,41 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.ctaLabel.textContent = "Kalender schließen";
 		}
 
-		/* WICHTIG:
-		   Hero zuerst in offenen Layout-Zustand bringen,
-		   aber Kalender noch NICHT sichtbar machen */
+		/* Hero in offenen Layout-Zustand bringen,
+		   aber Kalender noch versteckt lassen */
 		DOM.hero.classList.add("hero-calendar-open");
 		DOM.heroCalendar.setAttribute("aria-hidden", "true");
 		DOM.heroCalendar.classList.remove("is-open");
 
-		/* Zuerst Hero-Höhe vergrößern */
+		/* Erst Hero-Höhe vergrößern */
 		this.applyHeroCalendarLayout(extraHeight, topOffset);
 
 		this.waitForHeroHeightTransition(() => {
-			/* Erst NACH abgeschlossener Hero-Erhöhung Kalender einblenden */
-			DOM.heroCalendar.classList.add("is-open");
-			DOM.heroCalendar.setAttribute("aria-hidden", "false");
+			/* ZUERST zur Sektionsgrenze navigieren */
+			const targetY = this.getHeroAboutBoundaryScrollY();
 
-			this.ensureFullCalendar();
+			scrollEngine.animateWindowScrollTo(targetY, {
+				onComplete: () => {
+					state.lastScrollY = window.scrollY;
+					navbarModule.handleScroll();
+					navbarModule.startAnimation();
 
-			requestAnimationFrame(() => {
-				this.updateFullCalendarSize();
-				this.scrollViewportToHeroAboutBoundary();
+					/* ERST DANACH Kalender einblenden */
+					DOM.heroCalendar.classList.add("is-open");
+					DOM.heroCalendar.setAttribute("aria-hidden", "false");
+
+					this.ensureFullCalendar();
+
+					requestAnimationFrame(() => {
+						this.updateFullCalendarSize();
+					});
+				},
 			});
 		});
 
 		state.ui.heroCalendarOpen = true;
 	},
-	
+
 	closeHeroCalendar() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
