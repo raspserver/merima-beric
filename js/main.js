@@ -325,6 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroClosedContentTop: 0,
 		fullCalendarInstance: null,
 		fullCalendarResizeTimer: null,
+		lockedScrollY: 0,
 	},
 
     orderedSections: [],
@@ -3494,21 +3495,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			navbarModule.startAnimation();
 
 			navbarModule.suppressCtaHoverTemporarily(250);
-
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					document.documentElement.classList.remove("disable-overscroll");
-				});
-			});
 		};
 
 		scrollEngine.cancelActiveScroll({ keepPosition: false });
 
-		/* Overscroll nur für den Close-Moment deaktivieren */
-		document.documentElement.classList.add("disable-overscroll");
-
-		/* Scroll sofort hart auf Anfang */
-		scrollEngine.hardSnap(0);
+		/* Overscroll / Rubber-Band hart sperren */
+		this.lockPageOverscroll();
 
 		/* alle federnden Werte sofort neutralisieren */
 		resetAnimatedValue(state.hero.parallax, 0);
@@ -3540,7 +3532,20 @@ document.addEventListener("DOMContentLoaded", () => {
 			"--nav-refraction": 0,
 		});
 
+		/* sofort an den Anfang */
+		scrollEngine.hardSnap(0);
+
+		/* UI direkt schließen */
 		finishClose();
+
+		/* solange oben festhalten, bis wirklich Ruhe ist */
+		scrollEngine.settleToTop({
+			onDone: () => {
+				setTimeout(() => {
+					this.unlockPageOverscroll({ restoreY: 0 });
+				}, 180);
+			}
+		});
 	},
 
 	toggleHeroCalendar() {
@@ -3731,6 +3736,20 @@ document.addEventListener("DOMContentLoaded", () => {
 				DOM.hero.classList.remove("hero-calendar-close-instant");
 			}, 0);
 		}
+	},
+	
+	lockPageOverscroll() {
+		const y = window.scrollY || window.pageYOffset || 0;
+		state.ui.lockedScrollY = y;
+
+		document.documentElement.classList.add("disable-overscroll");
+		document.body.style.top = `-${y}px`;
+	},
+
+	unlockPageOverscroll({ restoreY = 0 } = {}) {
+		document.documentElement.classList.remove("disable-overscroll");
+		document.body.style.top = "";
+		window.scrollTo(0, restoreY);
 	}
 
   };
