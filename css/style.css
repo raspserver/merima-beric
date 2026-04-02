@@ -504,7 +504,7 @@ html {
 body {
 	font-family: 'Montserrat', sans-serif;
 	color: var(--text-dark);
-	background-color: var(--bg-light);
+	background-color: #1a1a1a;
 	line-height: 1.6;
 	margin: 0;
 }
