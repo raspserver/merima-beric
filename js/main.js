@@ -3451,34 +3451,43 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	closeHeroCalendar() {
-		if (!DOM.cta || !DOM.heroCalendar) return;
+		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
 		clearTimeout(state.ui.heroCalendarCloseTimer);
 
-		DOM.heroCalendar.classList.remove("is-open");
-		DOM.heroCalendar.setAttribute("aria-hidden", "true");
+		const finishClose = () => {
+			DOM.heroCalendar.classList.remove("is-open");
+			DOM.heroCalendar.setAttribute("aria-hidden", "true");
 
-		DOM.cta.classList.remove("calendar-open");
-		DOM.cta.setAttribute("aria-expanded", "false");
+			DOM.cta.classList.remove("calendar-open");
+			DOM.cta.setAttribute("aria-expanded", "false");
 
-		if (DOM.ctaLabel) {
-			DOM.ctaLabel.textContent =
-				state.ui.ctaDefaultLabel || "Termin vereinbaren";
-		}
+			if (DOM.ctaLabel) {
+				DOM.ctaLabel.textContent =
+					state.ui.ctaDefaultLabel || "Termin vereinbaren";
+			}
 
-		state.ui.heroCalendarOpen = false;
+			state.ui.heroCalendarOpen = false;
 
-		requestAnimationFrame(() => {
-			this.resetHeroCalendarLayout();
+			requestAnimationFrame(() => {
+				this.resetHeroCalendarLayout();
 
-			this.waitForHeroHeightTransition(() => {
-				this.scrollViewportToHeroAboutBoundary();
+				this.waitForHeroHeightTransition(() => {
+					this.destroyFullCalendar();
+					state.lastScrollY = window.scrollY;
+					navbarModule.handleScroll();
+					navbarModule.startAnimation();
+				});
 			});
 
-			this.destroyFullCalendar();
-		});
+			navbarModule.suppressCtaHoverTemporarily(250);
+		};
 
-		navbarModule.suppressCtaHoverTemporarily(250);
+		scrollEngine.goTo(DOM.hero, "hero-top");
+
+		scrollEngine.settleToTop({
+			onDone: finishClose,
+		});
 	},
 
 	toggleHeroCalendar() {
