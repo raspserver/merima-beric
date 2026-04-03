@@ -38,9 +38,9 @@
 
 	--hero-calendar-gap: 20px;
 	
-	--hero-cta-bottom-offset: 100px;
+	--hero-cta-gap-to-boundary: 100px;
 	--hero-cta-height: 64px;
-	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-bottom-offset) + 50px);
+	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-gap-to-boundary) + 50px);
 	
 /*
 	--hero-cta-bottom-offset: clamp(40px, 8vh, 120px);
@@ -868,7 +868,7 @@ html.low-fps .hero-inner {
 .cta-button {
 	position: absolute;
 	left: 50%;
-	bottom: var(--hero-cta-bottom-offset);
+	bottom: var(--hero-cta-gap-to-boundary);
 
 	z-index: 6;
 	padding: 0;
