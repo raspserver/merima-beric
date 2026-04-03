@@ -429,9 +429,9 @@ html.disable-overscroll body {
 
 @media (max-width: 768px) {
 	:root {
-		--hero-cta-bottom-offset: -150px;
+		--hero-cta-bottom-offset: -100px;
 		--hero-cta-height: 60px;
-		--hero-safe-bottom-space: -150px;
+		--hero-safe-bottom-space: -100px;
 	}
 }
 
