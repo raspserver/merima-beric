@@ -40,7 +40,7 @@
 	
 	--hero-cta-bottom-offset: -80px;
 	--hero-cta-height: 64px;
-	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-bottom-offset));
+	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-bottom-offset) + 50px);
 	
 /*
 	--hero-cta-bottom-offset: clamp(40px, 8vh, 120px);
