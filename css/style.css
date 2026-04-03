@@ -35,8 +35,8 @@
 	/* viewport 375 x 552 (iPhone7):	x16px = px		x552x0.01 = px	x16px = px	*/
 	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
-	
-	--hero-calendar-gap: clamp(8px, 1.2vh, 12px);
+
+	--hero-calendar-gap: 20px;
 	
 	--hero-cta-bottom-offset: 24px;
 	--hero-cta-height: 64px;
@@ -626,6 +626,10 @@ html.low-fps .hero-inner {
 	display: block;
 }
 
+.hero.hero-calendar-open .hero-content {
+	padding-bottom: var(--hero-cta-reserved-space);
+}
+
 .hero-inner {
 	transform: translate3d(0,var(--hero-parallax,0),0) scale(var(--hero-scale,1));
 	transition: filter 0.8s ease;
@@ -1171,28 +1175,39 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	pointer-events: none;
 	transform: translateY(-12px);
 	visibility: hidden;
-	
+
 	order: 10;
+	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 0;
 
 	transition:
 		max-height 0.45s cubic-bezier(.16,.84,.44,1),
 		opacity 0.35s ease,
 		transform 0.45s cubic-bezier(.16,.84,.44,1),
+		padding 0.45s cubic-bezier(.16,.84,.44,1),
 		visibility 0s linear 0.55s;
 }
 
 .hero-calendar.is-open {
 	height: auto;
-	max-height: calc(var(--hero-calendar-fixed-height, 620px) + 40px);
+	max-height: calc(
+		var(--hero-calendar-fixed-height, 620px) +
+		(2 * var(--hero-calendar-gap))
+	);
 	opacity: 1;
 	pointer-events: auto;
 	transform: translateY(0);
 	visibility: visible;
 
+	padding-top: var(--hero-calendar-gap);
+	padding-bottom: var(--hero-calendar-gap);
+
 	transition:
 		max-height 0.45s cubic-bezier(.16,.84,.44,1),
 		opacity 0.35s ease,
 		transform 0.45s cubic-bezier(.16,.84,.44,1),
+		padding 0.45s cubic-bezier(.16,.84,.44,1),
 		visibility 0s linear 0s;
 }
 

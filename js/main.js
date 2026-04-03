@@ -3350,16 +3350,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		return Math.max(320, Math.floor(available));
 	},
-
+	
 	getTargetHeroCalendarExtraHeight() {
-		const gap = this.getHeroCalendarGap();
 		const calendarHeight =
 			this.measureCalendarHeight() ||
-			cssVar.number("--hero-calendar-fixed-height", 620);
+			(
+				cssVar.number("--hero-calendar-fixed-height", 620) +
+				(2 * this.getHeroCalendarGap())
+			);
 
-		/* Eingefügter Block:
-		   oberer Gap + Kalender + unterer Gap */
-		return Math.ceil(calendarHeight + (2 * gap));
+		return Math.ceil(calendarHeight);
 	},
 
 	getHeroAboutBoundaryScrollY() {
