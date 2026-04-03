@@ -886,7 +886,7 @@ html.low-fps .hero-inner {
 	bottom: var(--hero-cta-bottom-offset);
 */
 	
-	bottom: 100px !important;
+	bottom: 1px !important;
 	
 	transform: translateX(-50%);
 
