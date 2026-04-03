@@ -36,7 +36,7 @@
 	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 	
-	--hero-calendar-gap: clamp(12px, 2vh, 24px);
+	--hero-calendar-gap: clamp(8px, 1.2vh, 12px);
 	
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
@@ -570,6 +570,8 @@ html.low-fps .hero-inner {
 
 	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
 	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	
+	--hero-calendar-fixed-height: 620px;
 
 	display: grid;
 	place-items: center;
@@ -602,13 +604,12 @@ html.low-fps .hero-inner {
 }
 
 .hero.hero-calendar-open {
-	align-items: start;
+	align-items: center;
 }
 
 .hero.hero-calendar-open .hero-inner {
-	width: 100%;
-	display: flex;
-	justify-content: center;
+	width: auto;
+	display: block;
 }
 
 .hero-inner {

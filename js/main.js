@@ -3340,10 +3340,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const gap = this.getHeroCalendarGap();
 
-		/* Kalenderhöhe so, dass:
-		   Abstand Navbar-Unterkante -> Kalender
-		   = Abstand Kalender -> CTA
-		*/
+		/* CTA bleibt an seiner bisherigen Position relativ zur Hero-Unterkante.
+		   Zwischen Navbar-Unterkante und Kalender-Oberkante sowie
+		   zwischen Kalender-Unterkante und CTA-Oberkante liegt derselbe Gap. */
 		const available =
 			snapshot.ctaTopInHero -
 			snapshot.compactNavBottom -
@@ -3351,23 +3350,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		return Math.max(320, Math.floor(available));
 	},
-	
-	measureOpenedContentExtraHeight() {
-		if (!DOM.hero) return 0;
-
-		const heroContent = DOM.hero.querySelector(".hero-content");
-		if (!heroContent) return 0;
-
-		const openedHeight = heroContent.getBoundingClientRect().height;
-		const closedHeight = state.ui.heroClosedContentHeight || openedHeight;
-
-		return Math.max(0, Math.ceil(openedHeight - closedHeight));
-	},
 
 	getTargetHeroCalendarExtraHeight() {
-		return this.measureOpenedContentExtraHeight();
+		const gap = this.getHeroCalendarGap();
+		const calendarHeight =
+			this.measureCalendarHeight() ||
+			cssVar.number("--hero-calendar-fixed-height", 620);
+
+		/* Eingefügter Block:
+		   oberer Gap + Kalender + unterer Gap */
+		return Math.ceil(calendarHeight + (2 * gap));
 	},
-	
+
 	getHeroAboutBoundaryScrollY() {
 		const closedHeroHeight =
 			state.ui.heroClosedHeroHeight || window.innerHeight;
@@ -3732,31 +3726,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		const heroContent = DOM.hero.querySelector(".hero-content");
 		const contentRect = heroContent?.getBoundingClientRect();
 
-		/* kompakte sichtbare Navbar-Unterkante im Zielzustand */
 		const navMin = cssVar.number("--nav-height-min", 58);
-		const compactNavBottom = navMin;
-
-		return {
-			heroHeight: heroRect.height,
-			heroTop: heroRect.top,
-			heroBottom: heroRect.bottom,
-			ctaTopInHero: ctaRect.top - heroRect.top,
-			ctaBottomInHero: ctaRect.bottom - heroRect.top,
-			contentTopInHero: contentRect ? Math.max(0, contentRect.top - heroRect.top) : 0,
-			compactNavBottom,
-		};
-	},
-	
-	captureClosedHeroLayout() {
-		if (!DOM.hero) return null;
-
-		const heroRect = DOM.hero.getBoundingClientRect();
-		const heroContent = DOM.hero.querySelector(".hero-content");
-		const contentRect = heroContent?.getBoundingClientRect();
 
 		return {
 			heroHeight: heroRect.height,
 			contentHeight: contentRect ? contentRect.height : 0,
+			ctaTopInHero: ctaRect.top - heroRect.top,
+			ctaBottomInHero: ctaRect.bottom - heroRect.top,
+			compactNavBottom: navMin,
 		};
 	},
 
