@@ -38,7 +38,7 @@
 
 	--hero-calendar-gap: 20px;
 	
-	--hero-cta-bottom-offset: 6px;
+	--hero-cta-bottom-offset: 50px;
 	--hero-cta-height: 64px;
 	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-bottom-offset));
 	
@@ -424,7 +424,7 @@ html.disable-overscroll body {
 
 @media (max-width: 768px) {
 	:root {
-		--hero-cta-bottom-offset: 4px;
+		--hero-cta-bottom-offset: 40px;
 		--hero-cta-height: 60px;
 		--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-bottom-offset));
 	}
