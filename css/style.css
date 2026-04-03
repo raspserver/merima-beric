@@ -426,9 +426,6 @@ html.disable-overscroll body {
     }
 }
 
-
-
-
 @media (max-width: 768px) {
 	:root {
 		--hero-cta-bottom-offset: 100px;
@@ -467,6 +464,16 @@ html.low-fps .hero-inner {
 	will-change: auto;
 }
 
+
+
+.cta-button {
+	
+}
+
+
+
+
+
 .hero {
 	position: relative;
 
@@ -476,11 +483,7 @@ html.low-fps .hero-inner {
 	display: grid;
 	place-items: center;
 
-	padding:
-		2rem
-		2rem
-		calc(2rem + var(--hero-safe-bottom-space))
-		2rem;
+	padding: 2rem 2rem calc(2rem + var(--hero-safe-bottom-space)) 2rem;
 
 	overflow: hidden;
 
@@ -570,14 +573,6 @@ html.low-fps .hero-inner {
 	padding: 1rem;
 }
 
-
-
-
-
-
-
-
-
 .hero-inner {
 	transform: translate3d(0,var(--hero-parallax,0),0) scale(var(--hero-scale,1));
 	transition: filter 0.8s ease;
@@ -631,8 +626,8 @@ html.low-fps .hero-inner {
 	justify-content: center;
 
 	gap: var(--hero-stack-gap);
-
-	padding-bottom: var(--hero-safe-bottom-space);
+	
+	padding-bottom: 0;
 
 	z-index: 2;
 
@@ -882,13 +877,7 @@ html.low-fps .hero-inner {
 .cta-button {
 	position: absolute;
 	left: 50%;
-/*
 	bottom: var(--hero-cta-bottom-offset);
-*/
-	
-	bottom: 1000px !important;
-	
-	transform: translateX(-50%);
 
 	z-index: 6;
 	padding: 0;
