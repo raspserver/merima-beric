@@ -38,7 +38,7 @@
 
 	--hero-calendar-gap: 20px;
 	
-	--hero-cta-bottom-offset: 50px;   /* NUR Position des Buttons */
+	--hero-cta-bottom-offset: 250px;   /* NUR Position des Buttons */
 	--hero-cta-height: 64px;
 	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-bottom-offset));
 	
