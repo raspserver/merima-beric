@@ -475,17 +475,8 @@ html.low-fps .hero-inner {
 
 	padding: 2rem 2rem var(--hero-safe-bottom-space) 2rem;
 
-/*
 	overflow: hidden;
-*/
 	
-	
-	
-	overflow: visible;
-	
-	
-	
-
 	z-index: 5;
 
 	margin: 0;
@@ -876,12 +867,7 @@ html.low-fps .hero-inner {
 .cta-button {
 	position: absolute;
 	left: 50%;
-/*
 	bottom: var(--hero-cta-bottom-offset);
-*/
-	
-	bottom: -16px;
-	
 
 	z-index: 6;
 	padding: 0;
