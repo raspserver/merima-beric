@@ -921,6 +921,7 @@ html.low-fps .hero-inner {
 	border: none;
 	
 	order: 11;
+	align-self: center;
 
 	animation: fadeIn 1.5s ease-out 0.9s both;
 
