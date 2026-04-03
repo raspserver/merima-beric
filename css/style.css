@@ -539,6 +539,14 @@ html.disable-overscroll body {
     }
 }
 
+@media (max-width: 768px) {
+	:root {
+		--hero-cta-bottom-offset: 20px;
+		--hero-cta-height: 60px;
+		--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-bottom-offset));
+	}
+}
+
 html.low-end .hero::before,
 html.low-fps .hero::before {
 	animation: none !important;
