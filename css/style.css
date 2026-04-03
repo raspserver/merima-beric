@@ -465,7 +465,7 @@ html.low-fps .hero-inner {
 }
 
 .hero + section {
-  padding-top: 0.5rem;
+  padding-top: 0;
 }
 
 .hero {
