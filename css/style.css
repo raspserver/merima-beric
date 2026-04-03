@@ -919,6 +919,8 @@ html.low-fps .hero-inner {
 	color: var(--secondary-color);
 	text-decoration: none;
 	border: none;
+	
+	order: 11;
 
 	animation: fadeIn 1.5s ease-out 0.9s both;
 
@@ -1153,6 +1155,8 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	pointer-events: none;
 	transform: translateY(-12px);
 	visibility: hidden;
+	
+	order: 10;
 
 	transition:
 		max-height 0.45s cubic-bezier(.16,.84,.44,1),
