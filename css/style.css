@@ -496,15 +496,6 @@ html.low-fps .hero-inner {
 	transform: translateZ(0);
 }
 
-
-
-
-.hero .cta-button {
-  bottom: -150px;
-}
-
-
-
 .hero.hero-calendar-open {
 	align-items: center;
 }
