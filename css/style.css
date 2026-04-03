@@ -2119,9 +2119,6 @@ footer a:hover {
    SECTION SCROLL HEAD
 ========================= */
 .section-scroll-head {
-
-	display: none;
-
 	position: absolute;
 	top: calc(-1 * var(--section-scroll-hit-offset));
 	left: 50%;
