@@ -3334,263 +3334,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     },
 
-	measureFixedCalendarHeight(layout = null) {
-		const snapshot = layout || this.captureClosedHeroLayout();
-		if (!snapshot) return 620;
-
-		const gap = this.getHeroCalendarGap();
-
-		/* CTA bleibt an seiner bisherigen Position relativ zur Hero-Unterkante.
-		   Zwischen Navbar-Unterkante und Kalender-Oberkante sowie
-		   zwischen Kalender-Unterkante und CTA-Oberkante liegt derselbe Gap. */
-		const available =
-			snapshot.ctaTopInHero -
-			snapshot.compactNavBottom -
-			(2 * gap);
-
-		return Math.max(320, Math.floor(available));
-	},
-	
-	getTargetHeroCalendarExtraHeight() {
-		const calendarHeight =
-			this.measureCalendarHeight() ||
-			(
-				cssVar.number("--hero-calendar-fixed-height", 620) +
-				(2 * this.getHeroCalendarGap())
-			);
-
-		return Math.ceil(calendarHeight);
-	},
-
-	getHeroAboutBoundaryScrollY() {
-		const closedHeroHeight =
-			state.ui.heroClosedHeroHeight || window.innerHeight;
-
-		const extraHeight =
-			state.ui.heroCalendarExtraHeight || 0;
-
-		return clamp(
-			closedHeroHeight + extraHeight - window.innerHeight,
-			0,
-			utils.getMaxScrollY()
-		);
-	},
-
-	measureCalendarHeight() {
-		if (!DOM.heroCalendar) return 0;
-
-		const rect = DOM.heroCalendar.getBoundingClientRect();
-		if (rect.height > 0) return rect.height;
-
-		return DOM.heroCalendar.scrollHeight || 0;
-	},
-
-	disableHeroCalendarCloseAnimationOnce() {
-		if (!DOM.hero) return;
-
-		DOM.hero.classList.add("hero-calendar-close-instant");
-
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				DOM.hero.classList.remove("hero-calendar-close-instant");
-			});
-		});
-	},
-
-	openHeroCalendar() {
-		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
-
-		clearTimeout(state.ui.heroCalendarCloseTimer);
-
-		this.resetCtaMagnetic();
-		navbarModule.applyCtaNeutralState();
-
-		const closedLayout = this.captureClosedHeroLayout();
-		if (!closedLayout) return;
-
-		state.ui.heroClosedHeroHeight = closedLayout.heroHeight;
-		state.ui.heroClosedContentHeight = closedLayout.contentHeight;
-
-		const fixedCalendarHeight = this.measureFixedCalendarHeight();
-		this.applyHeroCalendarFixedHeight(fixedCalendarHeight);
-
-		DOM.cta.classList.add("calendar-open");
-		DOM.cta.classList.remove("is-hovered", "is-magnetic-near");
-		DOM.cta.setAttribute("aria-expanded", "true");
-
-		if (DOM.ctaLabel) {
-			DOM.ctaLabel.textContent = "Kalender schließen";
-		}
-
-		/* Hero in offenen Layoutzustand bringen */
-		DOM.hero.classList.add("hero-calendar-open");
-		DOM.heroCalendar.setAttribute("aria-hidden", "false");
-		DOM.heroCalendar.classList.add("is-open");
-
-		/* Nach Layout-Neuberechnung reale Zusatzhöhe messen */
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				const extraHeight = this.getTargetHeroCalendarExtraHeight();
-
-				this.applyHeroCalendarExtraHeight(extraHeight);
-
-				const targetY = this.getHeroAboutBoundaryScrollY();
-
-				scrollEngine.animateWindowScrollTo(targetY, {
-					onComplete: () => {
-						state.lastScrollY = window.scrollY;
-						navbarModule.handleScroll();
-						navbarModule.startAnimation();
-
-						this.ensureFullCalendar();
-
-						requestAnimationFrame(() => {
-							this.updateFullCalendarSize();
-						});
-					},
-				});
-			});
-		});
-
-		state.ui.heroCalendarOpen = true;
-	},
-
-	closeHeroCalendar() {
-		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
-
-		clearTimeout(state.ui.heroCalendarCloseTimer);
-
-		const finishClose = () => {
-			DOM.heroCalendar.classList.remove("is-open");
-			DOM.heroCalendar.setAttribute("aria-hidden", "true");
-
-			DOM.cta.classList.remove("calendar-open");
-			DOM.cta.setAttribute("aria-expanded", "false");
-
-			if (DOM.ctaLabel) {
-				DOM.ctaLabel.textContent =
-					state.ui.ctaDefaultLabel || "Termin vereinbaren";
-			}
-
-			state.ui.heroCalendarOpen = false;
-			DOM.hero.classList.remove("scrolled");
-
-			this.runHeroCalendarCloseInstant(() => {
-				this.resetHeroCalendarLayout();
-				this.destroyFullCalendar();
-			});
-
-			state.lastScrollY = 0;
-			navbarModule.handleScroll();
-			navbarModule.renderHero();
-			navbarModule.renderNavbar();
-			navbarModule.startAnimation();
-
-			navbarModule.suppressCtaHoverTemporarily(250);
-		};
-
-		scrollEngine.cancelActiveScroll({ keepPosition: false });
-
-		/* Overscroll / Rubber-Band hart sperren */
-		this.lockPageOverscroll();
-
-		/* alle federnden Werte sofort neutralisieren */
-		resetAnimatedValue(state.hero.parallax, 0);
-		resetAnimatedValue(state.nav.gestureStretch, 0);
-		resetAnimatedValue(state.nav.visible, 0);
-		resetAnimatedValue(state.nav.compact, 0);
-		resetAnimatedValue(state.nav.surface, 0);
-
-		state.scrollVelocity = 0;
-		state.scrollDirection = "down";
-		state.lastScrollY = 0;
-
-		/* Hero sofort visuell in Startzustand bringen */
-		utils.setVars(DOM.hero, {
-			"--hero-scale": 1,
-			"--hero-brightness": 1,
-			"--hero-parallax": "0px",
-		});
-
-		/* Navbar sofort in Home-Top-Zustand bringen */
-		utils.setVars(DOM.navbar, {
-			"--nav-visible": 0,
-			"--nav-compact": 0,
-			"--nav-settle": 0,
-			"--nav-surface": 0,
-			"--nav-height-progress": 0,
-			"--nav-gesture-stretch": "0px",
-			"--nav-velocity-blur": 0,
-			"--nav-refraction": 0,
-		});
-
-		/* sofort an den Anfang */
-		scrollEngine.hardSnap(0);
-
-		/* UI direkt schließen */
-		finishClose();
-
-		/* solange oben festhalten, bis wirklich Ruhe ist */
-		scrollEngine.settleToTop({
-			onDone: () => {
-				setTimeout(() => {
-					this.unlockPageOverscroll({ restoreY: 0 });
-				}, 180);
-			}
-		});
-	},
-
-	toggleHeroCalendar() {
-		if (state.ui.heroCalendarOpen) {
-			this.closeHeroCalendar();
-		} else {
-			this.openHeroCalendar();
-		}
-	},
-
-	waitForHeroHeightTransition(done) {
-		if (!DOM.hero) {
-			done?.();
-			return;
-		}
-
-		const style = getComputedStyle(DOM.hero);
-		const durations = style.transitionDuration.split(",").map((v) => v.trim());
-		const properties = style.transitionProperty.split(",").map((v) => v.trim());
-
-		const hasHeightTransition = properties.some((prop) =>
-			prop === "height" || prop === "min-height" || prop === "all"
-		);
-
-		if (!hasHeightTransition) {
-			requestAnimationFrame(() => done?.());
-			return;
-		}
-
-		let finished = false;
-
-		const finish = () => {
-			if (finished) return;
-			finished = true;
-			DOM.hero.removeEventListener("transitionend", onEnd);
-			done?.();
-		};
-
-		const onEnd = (e) => {
-			if (
-				e.target === DOM.hero &&
-				(e.propertyName === "height" || e.propertyName === "min-height")
-			) {
-				finish();
-			}
-		};
-
-		DOM.hero.addEventListener("transitionend", onEnd);
-
-		// Fallback, falls transitionend auf manchen Geräten/Browsern nicht sauber kommt
-		setTimeout(finish, 700);
-	},
-
 	getCalendarConfig() {
 		return {
 			googleCalendarApiKey: "AIzaSyDqAZYI2AbNdax1SmFtBZte87Gix3NOh30",
@@ -3675,85 +3418,93 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	getHeroCalendarGap() {
-		return cssVar.lengthPx("--hero-calendar-gap", 24);
+		return cssVar.lengthPx("--hero-calendar-gap", 20);
 	},
 
-	applyHeroCalendarFixedHeight(height) {
-		if (!DOM.hero) return;
-
-		DOM.hero.style.setProperty(
-			"--hero-calendar-fixed-height",
-			`${Math.max(0, height)}px`
-		);
-	},
-	
-	runHeroCalendarCloseInstant(callback) {
-		if (!DOM.hero) {
-			callback?.();
-			return;
-		}
-
-		DOM.hero.classList.add("hero-calendar-close-instant");
-
-		try {
-			callback?.();
-		} finally {
-			setTimeout(() => {
-				DOM.hero.classList.remove("hero-calendar-close-instant");
-			}, 0);
-		}
-	},
-	
-	lockPageOverscroll() {
-		const y = window.scrollY || window.pageYOffset || 0;
-		state.ui.lockedScrollY = y;
-
-		document.documentElement.classList.add("disable-overscroll");
-		document.body.style.top = `-${y}px`;
-	},
-
-	unlockPageOverscroll({ restoreY = 0 } = {}) {
-		document.documentElement.classList.remove("disable-overscroll");
-		document.body.style.top = "";
-		window.scrollTo(0, restoreY);
-	},
-	
-	captureClosedHeroLayout() {
-		if (!DOM.hero || !DOM.cta) return null;
+	positionHeroCalendar() {
+		if (!DOM.hero || !DOM.heroCalendar || !DOM.cta) return;
 
 		const heroRect = DOM.hero.getBoundingClientRect();
 		const ctaRect = DOM.cta.getBoundingClientRect();
-		const heroContent = DOM.hero.querySelector(".hero-content");
-		const contentRect = heroContent?.getBoundingClientRect();
-
+		const gap = this.getHeroCalendarGap();
 		const navMin = cssVar.number("--nav-height-min", 58);
 
-		return {
-			heroHeight: heroRect.height,
-			contentHeight: contentRect ? contentRect.height : 0,
-			ctaTopInHero: ctaRect.top - heroRect.top,
-			ctaBottomInHero: ctaRect.bottom - heroRect.top,
-			compactNavBottom: navMin,
-		};
+		/* oben: 20px unter kompakter Navbar */
+		const top = navMin + gap;
+
+		/* unten: 20px über CTA */
+		const bottom = (ctaRect.top - heroRect.top) - gap;
+
+		const height = Math.max(320, Math.floor(bottom - top));
+
+		DOM.heroCalendar.style.top = `${top}px`;
+		DOM.heroCalendar.style.height = `${height}px`;
 	},
 
-	applyHeroCalendarExtraHeight(extraHeight) {
-		if (!DOM.hero) return;
+	openHeroCalendar() {
+		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
-		state.ui.heroCalendarExtraHeight = Math.max(0, extraHeight);
+		clearTimeout(state.ui.heroCalendarCloseTimer);
 
-		DOM.hero.style.setProperty(
-			"--hero-calendar-extra-height",
-			`${Math.max(0, extraHeight)}px`
-		);
+		this.resetCtaMagnetic();
+		navbarModule.applyCtaNeutralState();
+
+		DOM.cta.classList.add("calendar-open");
+		DOM.cta.classList.remove("is-hovered", "is-magnetic-near");
+		DOM.cta.setAttribute("aria-expanded", "true");
+
+		if (DOM.ctaLabel) {
+			DOM.ctaLabel.textContent = "Kalender schließen";
+		}
+
+		DOM.hero.classList.add("hero-calendar-open");
+		DOM.heroCalendar.setAttribute("aria-hidden", "false");
+
+		this.positionHeroCalendar();
+		DOM.heroCalendar.classList.add("is-open");
+
+		state.ui.heroCalendarOpen = true;
+
+		this.ensureFullCalendar();
+
+		requestAnimationFrame(() => {
+			this.positionHeroCalendar();
+			this.updateFullCalendarSize();
+		});
 	},
 
-	resetHeroCalendarLayout() {
-		if (!DOM.hero) return;
+	closeHeroCalendar() {
+		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
-		state.ui.heroCalendarExtraHeight = 0;
-		DOM.hero.style.setProperty("--hero-calendar-extra-height", "0px");
+		clearTimeout(state.ui.heroCalendarCloseTimer);
+
+		DOM.heroCalendar.classList.remove("is-open");
+		DOM.heroCalendar.setAttribute("aria-hidden", "true");
+
+		DOM.cta.classList.remove("calendar-open");
+		DOM.cta.setAttribute("aria-expanded", "false");
+
+		if (DOM.ctaLabel) {
+			DOM.ctaLabel.textContent =
+				state.ui.ctaDefaultLabel || "Termin vereinbaren";
+		}
+
+		state.ui.heroCalendarOpen = false;
 		DOM.hero.classList.remove("hero-calendar-open");
+
+		DOM.heroCalendar.style.top = "";
+		DOM.heroCalendar.style.height = "";
+
+		this.destroyFullCalendar();
+		navbarModule.suppressCtaHoverTemporarily(250);
+	},
+
+	toggleHeroCalendar() {
+		if (state.ui.heroCalendarOpen) {
+			this.closeHeroCalendar();
+		} else {
+			this.openHeroCalendar();
+		}
 	}
 
   };
@@ -3985,24 +3736,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (state.ui.heroCalendarOpen) {
 			clearTimeout(state.ui.fullCalendarResizeTimer);
 
-			state.ui.fullCalendarResizeTimer = setTimeout(() => {	
-				const closedLayout = uiModule.captureClosedHeroLayout();
-				const fixedCalendarHeight = uiModule.measureFixedCalendarHeight();
-				uiModule.applyHeroCalendarFixedHeight(fixedCalendarHeight);
-
+			state.ui.fullCalendarResizeTimer = setTimeout(() => {
+				uiModule.positionHeroCalendar();
 				uiModule.refreshFullCalendarView();
 
 				requestAnimationFrame(() => {
-					requestAnimationFrame(() => {
-						const extraHeight = uiModule.getTargetHeroCalendarExtraHeight();
-						uiModule.applyHeroCalendarExtraHeight(extraHeight);
-					});
+					uiModule.positionHeroCalendar();
+					uiModule.updateFullCalendarSize();
 				});
 			}, 120);
 		}
-			
 	});
-
+	
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         state.animation.running = false;

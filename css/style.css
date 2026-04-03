@@ -140,35 +140,6 @@
 	--hero-parallax-damping: 0.85;
 	--hero-scale-scroll-factor: 0.01;
 	--hero-brightness-scroll-factor: 0.06;
-	
-	/* =========================
-	   MASTER PRESET: defaults
-	========================= */
-	/*
-	--nav-spring-stiffness-desktop: 0.08;
-	--nav-spring-damping-desktop: 0.82;
-	--nav-compact-stiffness-desktop: 0.045;
-	--nav-compact-damping-desktop: 0.88;
-
-	--nav-spring-stiffness-mobile: 0.06;
-	--nav-spring-damping-mobile: 0.85;
-	--nav-compact-stiffness-mobile: 0.035;
-	--nav-compact-damping-mobile: 0.90;
-
-	--scroll-elastic-decay: 10;
-	--scroll-elastic-frequency: 10;
-	--scroll-elastic-phase-shift: 0.75;
-	--scroll-duration-factor: 0.6;
-	--scroll-duration-min: 700;
-	--scroll-duration-max: 1600;
-
-	--hero-parallax-factor: -0.06;
-	--hero-parallax-stiffness: 0.04;
-	--hero-parallax-damping: 0.85;
-	--hero-scale-scroll-factor: 0.01;
-	--hero-brightness-scroll-factor: 0.06;
-	*/
-
 
 	/* =========================
 	   MASTER PRESET: luxury
@@ -198,36 +169,6 @@
 	--hero-brightness-scroll-factor: 0.05;
 	*/
 
-
-	/* =========================
-	   MASTER PRESET: balanced
-	========================= */
-	/*
-	--nav-spring-stiffness-desktop: 0.08;
-	--nav-spring-damping-desktop: 0.82;
-	--nav-compact-stiffness-desktop: 0.045;
-	--nav-compact-damping-desktop: 0.88;
-
-	--nav-spring-stiffness-mobile: 0.06;
-	--nav-spring-damping-mobile: 0.85;
-	--nav-compact-stiffness-mobile: 0.035;
-	--nav-compact-damping-mobile: 0.90;
-
-	--scroll-elastic-decay: 10;
-	--scroll-elastic-frequency: 10;
-	--scroll-elastic-phase-shift: 0.75;
-	--scroll-duration-factor: 0.6;
-	--scroll-duration-min: 700;
-	--scroll-duration-max: 1600;
-
-	--hero-parallax-factor: -0.06;
-	--hero-parallax-stiffness: 0.04;
-	--hero-parallax-damping: 0.85;
-	--hero-scale-scroll-factor: 0.01;
-	--hero-brightness-scroll-factor: 0.06;
-	*/
-
-
 	/* =========================
 	   MASTER PRESET: cinematic
 	========================= */
@@ -255,64 +196,6 @@
 	--hero-scale-scroll-factor: 0.014;
 	--hero-brightness-scroll-factor: 0.075;
 	*/
-
-
-	/* =========================
-	   MASTER PRESET: crisp
-	========================= */
-	/*
-	--nav-spring-stiffness-desktop: 0.088;
-	--nav-spring-damping-desktop: 0.80;
-	--nav-compact-stiffness-desktop: 0.05;
-	--nav-compact-damping-desktop: 0.86;
-
-	--nav-spring-stiffness-mobile: 0.067;
-	--nav-spring-damping-mobile: 0.83;
-	--nav-compact-stiffness-mobile: 0.039;
-	--nav-compact-damping-mobile: 0.88;
-
-	--scroll-elastic-decay: 13.5;
-	--scroll-elastic-frequency: 9;
-	--scroll-elastic-phase-shift: 0.72;
-	--scroll-duration-factor: 0.48;
-	--scroll-duration-min: 560;
-	--scroll-duration-max: 1250;
-
-	--hero-parallax-factor: -0.04;
-	--hero-parallax-stiffness: 0.06;
-	--hero-parallax-damping: 0.80;
-	--hero-scale-scroll-factor: 0.006;
-	--hero-brightness-scroll-factor: 0.04;
-	*/
-
-
-	/* =========================
-	   MASTER PRESET: soft
-	========================= */
-/*
-	--nav-spring-stiffness-desktop: 0.068;
-	--nav-spring-damping-desktop: 0.86;
-	--nav-compact-stiffness-desktop: 0.038;
-	--nav-compact-damping-desktop: 0.91;
-
-	--nav-spring-stiffness-mobile: 0.052;
-	--nav-spring-damping-mobile: 0.89;
-	--nav-compact-stiffness-mobile: 0.03;
-	--nav-compact-damping-mobile: 0.93;
-
-	--scroll-elastic-decay: 14;
-	--scroll-elastic-frequency: 7.5;
-	--scroll-elastic-phase-shift: 0.70;
-	--scroll-duration-factor: 0.78;
-	--scroll-duration-min: 900;
-	--scroll-duration-max: 2100;
-
-	--hero-parallax-factor: -0.035;
-	--hero-parallax-stiffness: 0.026;
-	--hero-parallax-damping: 0.90;
-	--hero-scale-scroll-factor: 0.005;
-	--hero-brightness-scroll-factor: 0.035;
-*/
 
 	/* =========================
 	   MASTER PRESET: custom
@@ -580,8 +463,8 @@ html.low-fps .hero-inner {
 	position: relative;
 	z-index: 5;
 
-	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
-	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	min-height: 100svh;
+	height: 100svh;
 
 	display: grid;
 	place-items: center;
@@ -594,8 +477,7 @@ html.low-fps .hero-inner {
 
 	margin: 0;
 
-	overflow-x: hidden;
-	overflow-y: visible;
+	overflow: hidden;
 
 	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 	isolation: isolate;
@@ -607,15 +489,17 @@ html.low-fps .hero-inner {
 	--hero-scale: 1;
 	--hero-brightness: 1;
 	--hero-parallax: 0px;
-	--hero-calendar-extra-height: 0px;
 
-	will-change: transform, filter, height;
+	will-change: transform, filter;
 	transform: translateZ(0);
+}
 
+/*
+.hero {
 	transition:
 		height 0.55s cubic-bezier(.16,.84,.44,1),
 		min-height 0.55s cubic-bezier(.16,.84,.44,1);
-}
+*/
 
 .hero.hero-calendar-open {
 	align-items: center;
@@ -629,6 +513,68 @@ html.low-fps .hero-inner {
 .hero.hero-calendar-open .hero-content {
 	padding-bottom: var(--hero-cta-reserved-space);
 }
+
+.hero-calendar {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%) translateY(-12px);
+
+	width: min(100%, 950px);
+	height: 0;
+
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	overflow: hidden;
+
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+	border: 0;
+
+	transition:
+		opacity 0.35s ease,
+		transform 0.45s cubic-bezier(.16,.84,.44,1),
+		visibility 0s linear 0.45s;
+}
+
+@media (max-width: 768px) {
+	.hero-calendar {
+		width: calc(100% - 2rem);
+		max-width: none;
+	}
+}
+
+.hero-calendar.is-open {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+	transform: translateX(-50%) translateY(0);
+
+	transition:
+		opacity 0.35s ease,
+		transform 0.45s cubic-bezier(.16,.84,.44,1),
+		visibility 0s linear 0s;
+}
+
+#hero-fullcalendar {
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	background: #fff;
+	border: 1px solid rgba(212, 175, 55, 0.18);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+	padding: 1rem;
+}
+
+
+
+
+
+
+
+
 
 .hero-inner {
 	transform: translate3d(0,var(--hero-parallax,0),0) scale(var(--hero-scale,1));
@@ -1164,61 +1110,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	opacity: var(--gloss-opacity);
 	transition: opacity 0.25s ease;
 	will-change: opacity, background;
-}
-
-.hero-calendar {
-	width: min(100%, 950px);
-	height: 0;
-	max-height: 0;
-	opacity: 0;
-	overflow: hidden;
-	pointer-events: none;
-	transform: translateY(-12px);
-	visibility: hidden;
-
-	order: 10;
-	box-sizing: border-box;
-	padding-top: 0;
-	padding-bottom: 0;
-
-	transition:
-		max-height 0.45s cubic-bezier(.16,.84,.44,1),
-		opacity 0.35s ease,
-		transform 0.45s cubic-bezier(.16,.84,.44,1),
-		padding 0.45s cubic-bezier(.16,.84,.44,1),
-		visibility 0s linear 0.55s;
-}
-
-.hero-calendar.is-open {
-	height: auto;
-	max-height: calc(
-		var(--hero-calendar-fixed-height, 620px) +
-		(2 * var(--hero-calendar-gap))
-	);
-	opacity: 1;
-	pointer-events: auto;
-	transform: translateY(0);
-	visibility: visible;
-
-	padding-top: var(--hero-calendar-gap);
-	padding-bottom: var(--hero-calendar-gap);
-
-	transition:
-		max-height 0.45s cubic-bezier(.16,.84,.44,1),
-		opacity 0.35s ease,
-		transform 0.45s cubic-bezier(.16,.84,.44,1),
-		padding 0.45s cubic-bezier(.16,.84,.44,1),
-		visibility 0s linear 0s;
-}
-
-#hero-fullcalendar {
-	width: 100%;
-	height: var(--hero-calendar-fixed-height, 620px);
-	min-height: 0;
-	background: #fff;
-	border: 1px solid rgba(212, 175, 55, 0.18);
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-	padding: 1rem;
 }
 
 /* FullCalendar an dein Design anpassen */
