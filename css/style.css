@@ -38,9 +38,9 @@
 
 	--hero-calendar-gap: 20px;
 	
-	--hero-cta-gap-to-boundary: 10px;
+	--hero-cta-gap-to-boundary: 50px;
 	--hero-cta-height: 64px;
-	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-gap-to-boundary) + 200px);
+	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-gap-to-boundary) + 500px);
 	
 /*
 	--hero-cta-bottom-offset: clamp(40px, 8vh, 120px);
