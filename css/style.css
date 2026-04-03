@@ -464,10 +464,6 @@ html.low-fps .hero-inner {
 	will-change: auto;
 }
 
-.hero + section {
-  padding-top: 0;
-}
-
 .hero {
 	position: relative;
 
@@ -1221,13 +1217,9 @@ section {
 	margin: 0;
 }
 
-/*
 .hero + section {
-	margin-top: 0;
-	position: relative;
-	z-index: 1;
+  padding-top: 0;
 }
-*/
 
 .container {
 	max-width: 1200px;
@@ -2130,12 +2122,6 @@ footer a:hover {
 /* =========================
    SECTION SCROLL HEAD
 ========================= */
-
-/* Jede Section als Bezugspunkt */
-section {
-	position: relative;
-}
-
 .section-scroll-head {
 	position: absolute;
 	top: calc(-1 * var(--section-scroll-hit-offset));
