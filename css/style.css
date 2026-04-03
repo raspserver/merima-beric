@@ -500,6 +500,19 @@ html.low-fps .hero-inner {
 	transform: translateZ(0);
 }
 
+
+
+
+.hero .cta-shell {
+  transform: translateY(60px) !important;
+  outline: 3px solid lime !important;
+}
+
+
+
+
+
+
 .hero.hero-calendar-open {
 	align-items: center;
 }
@@ -920,17 +933,6 @@ html.low-fps .hero-inner {
 		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)
 		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
 }
-
-
-
-.hero .cta-button {
-  outline: 3px solid blue !important;
-  bottom: -40px !important;
-}
-
-
-
-
 
 .cta-button.is-hovered {
 	--hover-lift: -2px;
