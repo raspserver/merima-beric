@@ -41,6 +41,10 @@
 	--hero-cta-bottom-offset: 100px;   /* NUR Position des Buttons */
 	--hero-cta-height: 64px;
 	--hero-safe-bottom-space: 120px;  /* NUR Platz im Layout */
+	
+/*
+	--hero-cta-bottom-offset: clamp(40px, 8vh, 120px);
+*/
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
@@ -878,7 +882,12 @@ html.low-fps .hero-inner {
 .cta-button {
 	position: absolute;
 	left: 50%;
+/*
 	bottom: var(--hero-cta-bottom-offset);
+*/
+	
+	bottom: 10px !important;
+	
 	transform: translateX(-50%);
 
 	z-index: 6;
