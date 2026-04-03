@@ -465,10 +465,6 @@ html.low-fps .hero-inner {
 }
 
 .hero {
-	outline: 2px solid red;
-
-
-
 	position: relative;
 
 	min-height: 100svh;
@@ -1055,10 +1051,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-shell {
-	outline: 2px solid lime;
-
-
-
 	position: relative;
 	display: inline-flex;
 	align-items: center;
