@@ -427,6 +427,7 @@ html.disable-overscroll body {
     }
 }
 
+/*
 @media (max-width: 768px) {
 	:root {
 		--hero-cta-bottom-offset: -100px;
@@ -434,6 +435,7 @@ html.disable-overscroll body {
 		--hero-safe-bottom-space: -100px;
 	}
 }
+*/
 
 html.low-end .hero::before,
 html.low-fps .hero::before {
