@@ -869,13 +869,6 @@ html.low-fps .hero-inner {
 }
 
 .cta-button {
-	outline: 2px solid blue;
-	background: rgba(0, 0, 255, 0.08);
-
-
-
-
-
 	position: absolute;
 	left: 50%;
 	bottom: var(--hero-cta-bottom-offset);
@@ -927,6 +920,17 @@ html.low-fps .hero-inner {
 		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)
 		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
 }
+
+
+
+.hero .cta-button {
+  outline: 3px solid blue !important;
+  bottom: -40px !important;
+}
+
+
+
+
 
 .cta-button.is-hovered {
 	--hover-lift: -2px;
