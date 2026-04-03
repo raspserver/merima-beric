@@ -483,7 +483,7 @@ html.low-fps .hero-inner {
 	display: grid;
 	place-items: center;
 
-	padding: 2rem 2rem calc(2rem + var(--hero-safe-bottom-space)) 2rem;
+	padding: 2rem 2rem calc(var(--hero-safe-bottom-space)) 2rem;
 
 	overflow: hidden;
 
