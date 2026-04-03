@@ -609,7 +609,6 @@ html.low-fps .hero-inner {
 	width: 100%;
 	display: flex;
 	justify-content: center;
-	padding-top: var(--hero-open-top-offset, 0px);
 }
 
 .hero-inner {
