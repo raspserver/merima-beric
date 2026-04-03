@@ -38,6 +38,10 @@
 	
 	--hero-calendar-gap: clamp(8px, 1.2vh, 12px);
 	
+	--hero-cta-bottom-offset: 24px;
+	--hero-cta-height: 64px;
+	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-bottom-offset));
+	
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
 	--section-indicator-bounce-max-y: 14px;
@@ -570,20 +574,22 @@ html.low-fps .hero-inner {
 
 	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
 	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
-	
-	--hero-calendar-fixed-height: 620px;
 
 	display: grid;
 	place-items: center;
 
-	padding: 2rem;
+	padding:
+		2rem
+		2rem
+		calc(2rem + var(--hero-cta-reserved-space))
+		2rem;
+
 	margin: 0;
 
 	overflow-x: hidden;
 	overflow-y: visible;
 
 	background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-
 	isolation: isolate;
 
 	filter: none;
@@ -674,6 +680,7 @@ html.low-fps .hero-inner {
 	margin: 0 auto;
 
 	gap: var(--hero-stack-gap);
+	padding-bottom: var(--hero-cta-reserved-space);
 
 	animation: fadeInUp 1.2s ease-out;
 }
@@ -910,7 +917,11 @@ html.low-fps .hero-inner {
 }
 
 .cta-button {
-	position: relative;
+	position: absolute;
+	left: 50%;
+	bottom: var(--hero-cta-bottom-offset);
+	transform: translateX(-50%);
+
 	z-index: 6;
 	padding: 0;
 	margin: 0;
@@ -919,13 +930,9 @@ html.low-fps .hero-inner {
 	color: var(--secondary-color);
 	text-decoration: none;
 	border: none;
-	
-	order: 11;
-	align-self: center;
 
 	animation: fadeIn 1.5s ease-out 0.9s both;
 
-	position: relative;
 	will-change: transform, box-shadow;
 
 	/* OUTER SHELL motion */
@@ -948,12 +955,12 @@ html.low-fps .hero-inner {
 	--gloss-opacity: 0;
 
 	transform:
-		translate3d(
-			var(--magnetic-x),
-			calc(var(--magnetic-y) + var(--hover-lift)),
-			0
-		)
-		scale(var(--magnetic-scale));
+	translate3d(
+		calc(-50% + var(--magnetic-x)),
+		calc(var(--magnetic-y) + var(--hover-lift)),
+		0
+	)
+	scale(var(--magnetic-scale));
 
 	transition:
 		color 0.3s ease;
