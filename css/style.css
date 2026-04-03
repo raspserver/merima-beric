@@ -502,9 +502,8 @@ html.low-fps .hero-inner {
 
 
 
-.hero .cta-shell {
-  background: red !important;
-  transform: translateY(80px) scale(1.05) !important;
+.hero .cta-button {
+  bottom: -20px;
 }
 
 
