@@ -40,7 +40,6 @@
 	
 	--hero-cta-gap-to-boundary: 50px;
 	--hero-cta-height: 64px;
-	--hero-cta-reserved-space: calc(var(--hero-cta-height) + var(--hero-cta-gap-to-boundary) + 500px);
 	
 /*
 	--hero-cta-bottom-offset: clamp(40px, 8vh, 120px);
@@ -506,10 +505,6 @@ html.low-fps .hero-inner {
 	display: block;
 }
 
-.hero.hero-calendar-open .hero-content {
-	padding-bottom: var(--hero-cta-reserved-space);
-}
-
 .hero-calendar {
 	position: absolute;
 	left: 50%;
@@ -865,6 +860,14 @@ html.low-fps .hero-inner {
 	}
 }
 
+
+.cta-button {
+	
+}
+
+
+
+
 .cta-button {
 	position: absolute;
 	left: 50%;
@@ -901,15 +904,15 @@ html.low-fps .hero-inner {
 	--gloss-x: 50%;
 	--gloss-y: 50%;
 	--gloss-opacity: 0;
-
+	
 	transform:
 	translate3d(
 		calc(-50% + var(--magnetic-x)),
-		calc(var(--magnetic-y) + var(--hover-lift)),
+		calc(var(--hero-parallax, 0px) + var(--magnetic-y) + var(--hover-lift)),
 		0
 	)
-	scale(var(--magnetic-scale));
-
+	scale(calc(var(--magnetic-scale) * var(--hero-scale, 1)));
+	
 	transition:
 		color 0.3s ease;
 
