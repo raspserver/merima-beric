@@ -1058,6 +1058,14 @@ document.addEventListener("DOMContentLoaded", () => {
         "--hero-parallax": `${state.hero.parallax.current}px`,
       });
     },
+    
+    renderCTA() {
+	  if (!DOM.cta) return;
+
+	  utils.setVars(DOM.cta, {
+		"--cta-parallax": `${state.cta.parallax.current}px`,
+	  });
+	},
 
     animate(now) {
       if (!DOM.navbar || document.hidden) {
@@ -1087,8 +1095,9 @@ document.addEventListener("DOMContentLoaded", () => {
         physics.values.navGestureExpandMax
       );
 
-      this.renderNavbar();
-      this.renderHero();
+	this.renderNavbar();
+	this.renderHero();
+	this.renderCTA();
 
       const stillMoving =
         isAnimatedValueMoving(state.nav.visible, springs.navVisible) ||
