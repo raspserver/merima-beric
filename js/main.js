@@ -301,6 +301,10 @@ document.addEventListener("DOMContentLoaded", () => {
       parallax: createAnimatedValue(0),
     },
 
+	cta: {
+	  parallax: createAnimatedValue(0),
+	},
+
     scroll: {
       programmatic: false,
       mode: null,
@@ -364,6 +368,9 @@ document.addEventListener("DOMContentLoaded", () => {
       navGestureCompressVelocityFactor: 0.12,
       navGestureStiffness: 0.18,
       navGestureDamping: 0.74,
+      
+	ctaParallaxStiffness: 0.032,
+	ctaParallaxDamping: 0.87,
     },
 
     update() {
@@ -424,6 +431,12 @@ document.addEventListener("DOMContentLoaded", () => {
         0.18
       );
       this.values.navGestureDamping = cssVar.number("--nav-gesture-damping", 0.74);
+      
+	this.values.ctaParallaxStiffness = cssVar.number("--cta-parallax-stiffness", 0.032);
+	this.values.ctaParallaxDamping = cssVar.number("--cta-parallax-damping", 0.87);
+
+	springs.ctaParallax.stiffness = this.values.ctaParallaxStiffness;
+	springs.ctaParallax.damping = this.values.ctaParallaxDamping;
 
       if (isMobile) {
         this.values.navVisibleStiffness = cssVar.number(
@@ -485,6 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
     navSurface: createSpring({ stiffness: 0.045, damping: 0.88 }),
     navGesture: createSpring({ stiffness: 0.18, damping: 0.74, precision: 0.01 }),
     heroParallax: createSpring({ stiffness: 0.04, damping: 0.85 }),
+    ctaParallax: createSpring({ stiffness: 0.032, damping: 0.87 }),
   };
 
   // ---------------------------------------------------------------------
@@ -1034,6 +1048,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       state.hero.parallax.target =
         scrollY * physics.values.heroParallaxFactor;
+        
+	state.cta.parallax.target = state.hero.parallax.current;
 
       utils.setVars(DOM.hero, {
         "--hero-scale": 1 - progress * physics.values.heroScaleScrollFactor,
@@ -1060,6 +1076,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stepAnimatedValue(state.nav.surface, springs.navSurface, delta);
       stepAnimatedValue(state.nav.gestureStretch, springs.navGesture, delta);
       stepAnimatedValue(state.hero.parallax, springs.heroParallax, delta);
+      stepAnimatedValue(state.cta.parallax, springs.ctaParallax, delta);
 
       state.nav.visible.current = clamp(state.nav.visible.current, 0, 1);
       state.nav.compact.current = clamp(state.nav.compact.current, 0, 1);
@@ -1078,7 +1095,8 @@ document.addEventListener("DOMContentLoaded", () => {
         isAnimatedValueMoving(state.nav.compact, springs.navCompact) ||
         isAnimatedValueMoving(state.nav.surface, springs.navSurface) ||
         isAnimatedValueMoving(state.nav.gestureStretch, springs.navGesture) ||
-        isAnimatedValueMoving(state.hero.parallax, springs.heroParallax);
+        isAnimatedValueMoving(state.hero.parallax, springs.heroParallax) ||
+        isAnimatedValueMoving(state.cta.parallax, springs.ctaParallax)
 
       if (!stillMoving) {
         state.animation.running = false;

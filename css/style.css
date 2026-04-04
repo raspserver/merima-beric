@@ -143,6 +143,9 @@
 	--hero-parallax-damping: 0.85;
 	--hero-scale-scroll-factor: 0.01;
 	--hero-brightness-scroll-factor: 0.06;
+	
+	--cta-parallax-stiffness: 0.032;
+	--cta-parallax-damping: 0.87;
 
 	/* =========================
 	   MASTER PRESET: luxury
@@ -861,6 +864,7 @@ html.low-fps .hero-inner {
 }
 
 
+
 .cta-button {
 	
 }
@@ -904,14 +908,14 @@ html.low-fps .hero-inner {
 	--gloss-x: 50%;
 	--gloss-y: 50%;
 	--gloss-opacity: 0;
-	
+
 	transform:
 	translate3d(
 		calc(-50% + var(--magnetic-x)),
-		calc(var(--hero-parallax, 0px) + var(--magnetic-y) + var(--hover-lift)),
+		calc(var(--cta-parallax, 0px) + var(--magnetic-y) + var(--hover-lift)),
 		0
 	)
-	scale(calc(var(--magnetic-scale) * var(--hero-scale, 1)));
+	scale(var(--magnetic-scale));
 	
 	transition:
 		color 0.3s ease;
