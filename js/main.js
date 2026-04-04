@@ -1046,13 +1046,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const scrollY = window.scrollY;
       const progress = Math.min(scrollY / SETTINGS.thresholds.inertia, 1);
 
-      state.hero.parallax.target =
-        scrollY * physics.values.heroParallaxFactor;
-        
-	// gewollte Spezialkopplung:
-	// CTA folgt dem bereits gefederten Hero-Wert
-	state.cta.parallax.target = state.hero.parallax.current;
-
       utils.setVars(DOM.hero, {
         "--hero-scale": 1 - progress * physics.values.heroScaleScrollFactor,
         "--hero-brightness":
@@ -1096,6 +1089,16 @@ document.addEventListener("DOMContentLoaded", () => {
         -physics.values.navGestureCompressMax,
         physics.values.navGestureExpandMax
       );
+
+	const scrollY = window.scrollY;
+	const heroProgress = Math.min(scrollY / SETTINGS.thresholds.inertia, 1);
+
+	state.hero.parallax.target =
+	  scrollY * physics.values.heroParallaxFactor;
+
+	// gewollte Spezialkopplung:
+	// CTA folgt dem bereits gefederten Hero-Wert
+	state.cta.parallax.target = state.hero.parallax.current;
 
 	this.renderNavbar();
 	this.renderHero();
