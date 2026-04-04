@@ -1049,6 +1049,8 @@ document.addEventListener("DOMContentLoaded", () => {
       state.hero.parallax.target =
         scrollY * physics.values.heroParallaxFactor;
         
+	// gewollte Spezialkopplung:
+	// CTA folgt dem bereits gefederten Hero-Wert
 	state.cta.parallax.target = state.hero.parallax.current;
 
       utils.setVars(DOM.hero, {
