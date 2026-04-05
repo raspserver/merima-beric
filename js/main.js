@@ -752,13 +752,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     },
     
-    goTo(targetOrSelector, forcedMode = null) {
+	goTo(targetOrSelector, forcedMode = null) {
 		const target = utils.resolveTarget(targetOrSelector);
 		if (!target) return;
 
 		const isHeroTarget = target === DOM.hero || target.id === "home";
 
-		if (state.ui.heroCalendarOpen && !isHeroTarget) {
+		// Kalender bei jeder Navigation schließen – auch bei HOME / Logo
+		if (state.ui.heroCalendarOpen) {
 			uiModule.closeHeroCalendar();
 		}
 
