@@ -28,7 +28,7 @@
 	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 
-	--hero-calendar-gap: 20px;
+	--hero-calendar-gap: 10px;
 	
 	--hero-cta-gap-to-boundary: 60px;
 	--hero-cta-height: 64px;
