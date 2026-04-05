@@ -752,6 +752,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     },
 
+
+
+/*
     goTo(targetOrSelector, forcedMode = null) {
 
 		const target = utils.resolveTarget(targetOrSelector);
@@ -780,6 +783,34 @@ document.addEventListener("DOMContentLoaded", () => {
       this.scrollToSection(target, mode);
       navbarModule.startAnimation();
     },
+    
+    */
+    
+    
+    
+    
+    goTo(targetOrSelector, forcedMode = null) {
+		const target = utils.resolveTarget(targetOrSelector);
+		if (!target) return;
+
+		const isHeroTarget = target === DOM.hero || target.id === "home";
+
+		if (state.ui.heroCalendarOpen && !isHeroTarget) {
+			uiModule.closeHeroCalendar();
+		}
+
+		const mode = forcedMode || this.getModeForTarget(target);
+		state.nav.manualOpen = false;
+
+		if (isHeroTarget && window.scrollY <= 5) {
+			navbarModule.setTargets(0, 0, 0);
+		} else {
+			navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
+		}
+
+		this.scrollToSection(target, mode);
+		navbarModule.startAnimation();
+	},
 
     scrollToPageBottom() {
       scrollSectionHintModule.hideImmediatelyForProgrammaticScroll?.();
