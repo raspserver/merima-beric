@@ -31,6 +31,7 @@
 	--hero-calendar-gap: 20px;
 	
 	--hero-cta-gap-to-boundary: 60px;
+	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
 	--hero-cta-height: 64px;
 	
 /*
@@ -594,21 +595,15 @@ html.low-fps .hero-inner {
 	
 	grid-template-rows:
 		auto
-		minmax(12px, 1fr)
+		var(--hero-stack-gap)
 		auto
-		minmax(12px, 1fr)
-		auto
-		minmax(12px, 1fr);
+		var(--hero-stack-gap)
+		auto;
 		
-	align-content: stretch;
+	align-content: start;
 	justify-items: center;
 
-	text-align: center;
-
-	max-width: 800px;
-	width: 100%;
-	margin: 0 auto;
-
+	/* unverändert lassen */
 	padding-top: var(--hero-cta-gap-to-boundary);
 	padding-bottom: calc(
 		var(--hero-cta-gap-to-boundary) + var(--hero-cta-height)
