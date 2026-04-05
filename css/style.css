@@ -693,7 +693,9 @@ html.low-fps .hero-inner {
 	line-height: 1;
 	--hero-main-size: clamp(3.2rem, 6.5vw, 5.8rem);
 
+/*
 	margin: 0 0 var(--hero-stack-gap) 0; /* neu */
+*/
 
 	transition: transform 0.6s cubic-bezier(.16,.84,.44,1),
 				filter 0.6s ease,
@@ -797,6 +799,7 @@ html.low-fps .hero-inner {
 .hero-logo-sub {
 	display: block;
 	margin-top: 0.35rem;
+	margin-bottom: var(--hero-stack-gap);
 	font-size: calc(var(--hero-main-size) * var(--brand-sub-ratio));
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);
