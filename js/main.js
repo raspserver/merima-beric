@@ -754,15 +754,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     goTo(targetOrSelector, forcedMode = null) {
 		
-		const target = utils.resolveTarget(targetOrSelector);
-		if (!target) return;
-
-		const isHeroTarget = target === DOM.hero || target.id === "home";
-
-		if (state.ui.heroCalendarOpen && !isHeroTarget) {
+		
+		
+		
+		
+		
+		if (state.ui.heroCalendarOpen) {
+		  uiModule.closeHeroCalendar();
+		}
+		
+		if (state.ui.heroCalendarOpen && targetOrSelector !== "#home" && targetOrSelector !== DOM.hero) {
 			uiModule.closeHeroCalendar();
 		}
-
+		
+		
+		
+		
+		
+		
+		
+		
       const target = utils.resolveTarget(targetOrSelector);
       if (!target) return;
 
