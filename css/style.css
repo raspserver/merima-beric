@@ -19,7 +19,6 @@
 	   LAYOUT / SPACING
 	========================= */
 	--brand-sub-ratio: 0.25;
-	--hero-equal-gap: 2rem; /* Fallback bis JS gemessen hat */
 
 	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
 	/* ------------------------------------------------------------------------------------------------ */
@@ -591,10 +590,18 @@ html.low-fps .hero-inner {
 }
 
 .hero-content {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start; /* statt center */
+	display: grid;
+	
+	grid-template-rows:
+		auto
+		minmax(12px, 1fr)
+		auto
+		minmax(12px, 1fr)
+		auto
+		minmax(12px, 1fr);
+		
+	align-content: stretch;
+	justify-items: center;
 
 	text-align: center;
 
@@ -609,8 +616,6 @@ html.low-fps .hero-inner {
 
 	min-height: 100svh;
 	box-sizing: border-box;
-
-	gap: 0; /* wichtig: wir steuern Abstände manuell */
 
 	z-index: 2;
 
@@ -639,13 +644,17 @@ html.low-fps .hero-inner {
 }
 
 .hero-subtitle {
+	grid-row: 1;
+	justify-self: center;
+	align-self: start;
+
 	font-size: clamp(1rem, 2vw, 1.5rem);
 	color: var(--primary-color);
 	font-weight: 300;
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 
-	margin: 0 0 var(--hero-equal-gap) 0;
+	margin: 0;
 
 	animation: fadeIn 1.5s ease-out 0.3s both;
 }
@@ -656,15 +665,22 @@ html.low-fps .hero-inner {
 }
 
 .hero-description {
+	grid-row: 5;
+	justify-self: center;
+	align-self: start;
+
 	font-size: 1.1rem;
 	color: rgba(255, 255, 255, 0.8);
 	max-width: 600px;
 	margin: 0;
-	margin-bottom: var(--hero-equal-gap);
 	animation: fadeIn 1.5s ease-out 0.6s both;
 }
 
 .hero-brand {
+	grid-row: 3;
+	justify-self: center;
+	align-self: start;
+
 	display: inline-flex;
 	flex-direction: column;
 	align-items: flex-end;
@@ -770,12 +786,10 @@ html.low-fps .hero-inner {
 	letter-spacing: 0;
 }
 
-
-
 .hero-logo-sub {
 	display: block;
 	margin-top: 0.35rem;
-	margin-bottom: var(--hero-equal-gap);
+	margin-bottom: 0;
 	font-size: calc(var(--hero-main-size) * var(--brand-sub-ratio));
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);

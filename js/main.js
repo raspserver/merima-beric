@@ -3537,38 +3537,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		} else {
 			this.openHeroCalendar();
 		}
-	},
-	
-	computeHeroEqualGap() {
-		const hero = DOM.hero;
-		const heroContent = document.querySelector(".hero-content");
-		const subtitle = document.querySelector(".hero-subtitle");
-		const brand = document.querySelector(".hero-brand");
-		const description = document.querySelector(".hero-description");
-		const cta = DOM.cta;
-
-		if (!hero || !heroContent || !subtitle || !brand || !description || !cta) return;
-
-		const viewportHeight = window.innerHeight; // entspricht hier praktisch 100svh
-		const boundaryGap = cssVar.lengthPx("--hero-cta-gap-to-boundary", 50);
-
-		const subtitleHeight = subtitle.getBoundingClientRect().height;
-		const brandHeight = brand.getBoundingClientRect().height;
-		const descriptionHeight = description.getBoundingClientRect().height;
-		const ctaHeight = cta.getBoundingClientRect().height;
-
-		const usedHeight =
-			subtitleHeight +
-			brandHeight +
-			descriptionHeight +
-			ctaHeight;
-
-		const rawGap = (viewportHeight - 2 * boundaryGap - usedHeight) / 3;
-
-		/* Schutz gegen negative/zu kleine/zu große Werte */
-		const gap = clamp(rawGap, 8, 96);
-
-		document.documentElement.style.setProperty("--hero-equal-gap", `${gap}px`);
 	}
 
   };
@@ -3782,16 +3750,6 @@ document.addEventListener("DOMContentLoaded", () => {
     uiModule.bindHeroClickBehavior();
     uiModule.bindPricingTabs();
     uiModule.setInitialVisualState();
-    
-    uiModule.computeHeroEqualGap();
-    
-    document.fonts?.ready?.then(() => {
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				uiModule.computeHeroEqualGap();
-			});
-		});
-	});
 
     bindUserScrollInterrupts();
 
@@ -3806,8 +3764,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	window.addEventListener("resize", () => {
 		physics.update();
 		galleryModule.setPosition(galleryModule.currentIndex, false);
-
-		uiModule.computeHeroEqualGap();
 
 		if (state.ui.heroCalendarOpen) {
 			clearTimeout(state.ui.fullCalendarResizeTimer);
