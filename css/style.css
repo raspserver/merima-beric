@@ -693,10 +693,6 @@ html.low-fps .hero-inner {
 	line-height: 1;
 	--hero-main-size: clamp(3.2rem, 6.5vw, 5.8rem);
 
-/*
-	margin: 0 0 var(--hero-stack-gap) 0; /* neu */
-*/
-
 	transition: transform 0.6s cubic-bezier(.16,.84,.44,1),
 				filter 0.6s ease,
 				opacity 0.6s ease;
