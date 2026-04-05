@@ -2825,6 +2825,8 @@ html.low-fps .navbar::before {
 }
 
 @media (max-height: 600px) {
-	--hero-cta-gap-to-boundary: 70px;
-	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
+	:root {
+		--hero-cta-gap-to-boundary: 70px;
+		--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
+	}
 }
