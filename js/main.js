@@ -754,9 +754,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     goTo(targetOrSelector, forcedMode = null) {
 		
-		const target = utils.resolveTarget(targetOrSelector);
-
-		if (target === DOM.hero && state.ui.heroCalendarOpen) {
+		if (state.ui.heroCalendarOpen) {
 		  uiModule.closeHeroCalendar();
 		}
 
