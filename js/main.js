@@ -754,14 +754,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     goTo(targetOrSelector, forcedMode = null) {
 		
-		if (state.ui.heroCalendarOpen) {
-		  uiModule.closeHeroCalendar();
-		}
-		
-		if (state.ui.heroCalendarOpen && targetOrSelector !== "#home" && targetOrSelector !== DOM.hero) {
+		const target = utils.resolveTarget(targetOrSelector);
+		if (!target) return;
+
+		const isHeroTarget = target === DOM.hero || target.id === "home";
+
+		if (state.ui.heroCalendarOpen && !isHeroTarget) {
 			uiModule.closeHeroCalendar();
 		}
-		
+
       const target = utils.resolveTarget(targetOrSelector);
       if (!target) return;
 
@@ -3547,6 +3548,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		} else {
 			this.openHeroCalendar();
 		}
+	},
+	
+	isHeroFullyOutOfView() {
+		if (!DOM.hero) return false;
+		return DOM.hero.getBoundingClientRect().bottom <= 0;
+	},
+
+	closeHeroCalendarIfHeroLeftViewport() {
+		if (!state.ui.heroCalendarOpen) return;
+		if (!this.isHeroFullyOutOfView()) return;
+
+		this.closeHeroCalendar();
 	}
 
   };
@@ -3772,13 +3785,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
     if (DOM.navbar) {
-      window.addEventListener(
-        "scroll",
-        () => navbarModule.handleScroll(),
-        { passive: true }
-      );
-    }
-
+		window.addEventListener(
+			"scroll",
+			() => {
+				navbarModule.handleScroll();
+				uiModule.closeHeroCalendarIfHeroLeftViewport();
+			},
+			{ passive: true }
+		);
+	}
+    
 	window.addEventListener("resize", () => {
 		physics.update();
 		galleryModule.setPosition(galleryModule.currentIndex, false);
