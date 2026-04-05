@@ -754,6 +754,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     goTo(targetOrSelector, forcedMode = null) {
 		
+		const target = utils.resolveTarget(targetOrSelector);
+
+		if (target === DOM.hero && state.ui.heroCalendarOpen) {
+		  uiModule.closeHeroCalendar();
+		}
+
+		if (!target) return;
+		
 		if (state.ui.heroCalendarOpen && targetOrSelector !== "#home" && targetOrSelector !== DOM.hero) {
 			uiModule.closeHeroCalendar();
 		}
