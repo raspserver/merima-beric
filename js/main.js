@@ -3452,22 +3452,22 @@ document.addEventListener("DOMContentLoaded", () => {
 	getHeroCalendarGap() {
 		return cssVar.lengthPx("--hero-calendar-gap", 20);
 	},
-
+	
 	positionHeroCalendar() {
 		if (!DOM.hero || !DOM.heroCalendar || !DOM.cta) return;
 
 		const heroRect = DOM.hero.getBoundingClientRect();
 		const ctaRect = DOM.cta.getBoundingClientRect();
 		const gap = this.getHeroCalendarGap();
-		const navMin = cssVar.number("--nav-height-min", 58);
+		const navHeightMin = cssVar.number("--nav-height-min", 58);
 
-		/* oben: 20px unter kompakter Navbar */
-		const top = navMin + gap;
+		/* immer mit kompakter Navbar-Höhe rechnen */
+		const top = Math.round(navHeightMin + gap);
 
-		/* unten: 20px über CTA */
-		const bottom = (ctaRect.top - heroRect.top) - gap;
+		/* immer 20px über dem CTA */
+		const bottomLimit = Math.round((ctaRect.top - heroRect.top) - gap);
 
-		const height = Math.max(320, Math.floor(bottom - top));
+		const height = Math.max(320, bottomLimit - top);
 
 		DOM.heroCalendar.style.top = `${top}px`;
 		DOM.heroCalendar.style.height = `${height}px`;
