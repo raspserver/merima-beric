@@ -3302,31 +3302,37 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
     },
-
+    
     bindHeroClickBehavior() {
-      DOM.hero?.addEventListener("click", (e) => {
-        if (!DOM.navbar || (utils.isMobileViewport() && navbarModule.isOpen())) {
-          return;
-        }
+	  DOM.hero?.addEventListener("click", (e) => {
+		if (!DOM.navbar || (utils.isMobileViewport() && navbarModule.isOpen())) {
+		  return;
+		}
 
-        if (e.target.closest(".cta-button")) return;
+		if (
+		  e.target.closest(".cta-button") ||
+		  e.target.closest("#hero-calendar") ||
+		  e.target.closest("#hero-fullcalendar")
+		) {
+		  return;
+		}
 
-        const visible = parseFloat(
-          getComputedStyle(DOM.navbar).getPropertyValue("--nav-visible")
-        );
+		const visible = parseFloat(
+		  getComputedStyle(DOM.navbar).getPropertyValue("--nav-visible")
+		);
 
-        const openManually = visible < 0.5;
+		const openManually = visible < 0.5;
 
-        state.nav.manualOpen = openManually;
-        state.nav.visible.target = openManually ? 1 : 0;
-        state.nav.compact.target = openManually ? 1 : 0;
-        state.nav.surface.target = openManually ? 1 : 0;
-        state.nav.gestureStretch.target = 0;
+		state.nav.manualOpen = openManually;
+		state.nav.visible.target = openManually ? 1 : 0;
+		state.nav.compact.target = openManually ? 1 : 0;
+		state.nav.surface.target = openManually ? 1 : 0;
+		state.nav.gestureStretch.target = 0;
 
-        navbarModule.startAnimation();
-      });
-    },
-
+		navbarModule.startAnimation();
+	  });
+	},
+ 
     bindPricingTabs() {
       DOM.pricingTabs.forEach((tab) => {
         tab.addEventListener("click", () => {
@@ -3752,6 +3758,14 @@ document.addEventListener("DOMContentLoaded", () => {
     uiModule.setInitialVisualState();
 
     bindUserScrollInterrupts();
+    
+    DOM.heroCalendar?.addEventListener("click", (e) => {
+	  e.stopPropagation();
+	});
+
+	DOM.heroCalendarEl?.addEventListener("click", (e) => {
+	  e.stopPropagation();
+	});
 
     if (DOM.navbar) {
       window.addEventListener(
