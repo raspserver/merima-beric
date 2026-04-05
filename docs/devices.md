@@ -143,3 +143,15 @@ Die meisten Projekte brauchen nur 3–4 davon.
 | Desktop       | 1280px |
 | Large desktop | 1536px |
 | ------------- | ------ |
+
+
+| ---------------------	| ---------------------	| ---------------------------------------------	|
+| Breakpoint		| Height Range		| Typical Devices
+| ---------------------	| ---------------------	| ---------------------------------------------	|
+| Very Short		| ≤ 480px		| Small phones (portrait, folded devices)	|
+| Short Mobile		| 481px – 667px		| Most smartphones (iPhone, Android)		|
+| Standard Mobile	| 668px – 800px		| Larger phones, small tablets (portrait)	|
+| Tablet / Tall Mobile	| 801px – 1024px	| Tablets portrait, phones landscape		|
+| Desktop / Large	| ≥ 1025px		| Laptops, desktops, large tablets		|
+| ---------------------	| ---------------------	| ---------------------------------------------	|
+

@@ -2823,3 +2823,8 @@ html.low-fps .navbar::before {
 	-webkit-backdrop-filter: none !important;
 	background: rgba(26,26,26,0.92) !important;
 }
+
+@media (max-height: 600px) {
+	--hero-cta-gap-to-boundary: 50px;
+	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
+}
