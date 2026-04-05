@@ -707,7 +707,7 @@ html.low-fps .hero-inner {
 	filter: drop-shadow(0 0 18px rgba(212,175,55,0.08));
 }
 
-.hero.scrolled .hero-main::after {
+.hero.scrolled .hero-logo-main::after {
 	opacity: 0.45;
 }
 
@@ -2177,27 +2177,29 @@ footer a:hover {
         display: none;
     }
 
-    .nav-logo .hero-main,
-    .footer-brand .hero-main {
-        opacity: 1;
-        transform: none;
-        animation: none;
-    }
 
-    .nav-logo .hero-main::after,
-    .footer-brand .hero-main::after {
-        animation: none;
-        opacity: 0.6;
-        transform: scaleX(1);
-    }
 
-    .nav-logo .hero-subbrand,
-    .footer-brand .hero-subbrand,
-    .nav-logo .nav-subbrand {
-        opacity: 1;
-        transform: none;
-        animation: none;
-    }
+	
+	.nav-logo .nav-logo-main,
+	.footer-brand .footer-logo-main {
+		opacity: 1;
+		transform: none;
+		animation: none;
+	}
+
+	.nav-logo .nav-logo-main::after,
+	.footer-brand .footer-logo-main::after {
+		animation: none;
+		opacity: 0.6;
+		transform: scaleX(1);
+	}
+
+	.nav-logo .nav-logo-sub,
+	.footer-brand .footer-logo-sub {
+		opacity: 1;
+		transform: none;
+		animation: none;
+	}
 }
 
 /* =========================
