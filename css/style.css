@@ -19,15 +19,8 @@
 	   LAYOUT / SPACING
 	========================= */
 	--brand-sub-ratio: 0.25;
-	--hero-stack-gap: clamp(3.0rem, 7.0vh, 3.5rem);
+	--hero-equal-gap: 2rem; /* Fallback bis JS gemessen hat */
 
-	/* ---------------------------------------------------------------------------------------------------- */
-	/* clamp(MIN, BEVORZUGT, MAX);	min					bevorzugt				max					Result.	*/
-	/* vp 952 × 442 (Desktop):		1.0x16px = 16.0px	3.0x442x0.01 = 13.26px	2.0x16px = 32px		16.00px	*/
-	/* vp 375 x 552 (iPhone7):		1.0x16px = 16.0px	3.0x552x0.01 = 16.56px	2.0x16px = 32px		16.56px	*/
-	/* vp 384 × 701 (Galaxy A34):	3.0x16px = 48.0px	7.0x701x0.01 = 49.07px	3.5x16px = 56px		49.07px	*/
-	/* ---------------------------------------------------------------------------------------------------- */
-	
 	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
 	/* ------------------------------------------------------------------------------------------------ */
 	/* clamp(MIN, BEVORZUGT, MAX);		min						bevorzugt				max				*/
@@ -422,22 +415,6 @@ html.disable-overscroll body {
 	touch-action: none;
 }
 
-@media (max-height: 580px) {
-    :root {
-        --hero-stack-gap: clamp(1.0rem, 3.0vh, 2.0rem);
-    }
-}
-
-/*
-@media (max-width: 768px) {
-	:root {
-		--hero-cta-bottom-offset: -100px;
-		--hero-cta-height: 60px;
-		--hero-safe-bottom-space: -100px;
-	}
-}
-*/
-
 html.low-end .hero::before,
 html.low-fps .hero::before {
 	animation: none !important;
@@ -668,7 +645,7 @@ html.low-fps .hero-inner {
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 
-	margin: 0 0 var(--hero-stack-gap) 0; /* neu */
+	margin: 0 0 var(--hero-equal-gap) 0;
 
 	animation: fadeIn 1.5s ease-out 0.3s both;
 }
@@ -683,6 +660,7 @@ html.low-fps .hero-inner {
 	color: rgba(255, 255, 255, 0.8);
 	max-width: 600px;
 	margin: 0;
+	margin-bottom: var(--hero-equal-gap);
 	animation: fadeIn 1.5s ease-out 0.6s both;
 }
 
@@ -792,10 +770,12 @@ html.low-fps .hero-inner {
 	letter-spacing: 0;
 }
 
+
+
 .hero-logo-sub {
 	display: block;
 	margin-top: 0.35rem;
-	margin-bottom: var(--hero-stack-gap);
+	margin-bottom: var(--hero-equal-gap);
 	font-size: calc(var(--hero-main-size) * var(--brand-sub-ratio));
 	letter-spacing: 0;
 	color: rgba(255,255,255,0.85);
@@ -2746,10 +2726,6 @@ section > .section-scroll-head + * {
 @media (max-height: 700px) {
 	.hero h1 {
 		font-size: clamp(2rem,5vw,3.5rem);
-	}
-
-	.hero-description {
-		margin-bottom: 2rem;
 	}
 }
 
