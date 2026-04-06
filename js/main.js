@@ -3512,7 +3512,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			onComplete: () => {
 
 				state.ui.heroCalendarOpen = true;
-				this.updateHeroCalendarBoundaryState();
 
 				state.ui.heroCalendarRevealTimer = setTimeout(() => {
 					DOM.heroCalendar.classList.add("is-open");
@@ -3527,6 +3526,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false } = {}) {
+		if (state.ui.heroCalendarAnimating) return;
+		state.ui.heroCalendarAnimating = true;
+		
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 		if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
@@ -3565,6 +3567,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					},
 				}
 			);
+			state.ui.heroCalendarAnimating = false;
 		}, this.getHeroCalendarRevealDelay());
 	},
 	
@@ -3586,47 +3589,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		return document.querySelector("#about");
 	},
 
-	updateHeroCalendarBoundaryState() {
-		const about = this.getHomeAboutBoundaryEl();
-		state.ui.heroCalendarLastAboutTop = about
-			? about.getBoundingClientRect().top
-			: null;
-	},
-
-	hasHomeAboutBoundaryJustPassedTop() {
-		const about = this.getHomeAboutBoundaryEl();
-		if (!about) return false;
-
-		const currentTop = about.getBoundingClientRect().top;
-		const previousTop = state.ui.heroCalendarLastAboutTop;
-
-		/* immer sofort den letzten Wert aktualisieren */
-		state.ui.heroCalendarLastAboutTop = currentTop;
-
-		/* erster Messwert -> noch nichts entscheiden */
-		if (!Number.isFinite(previousTop)) return false;
-
-		/* kleiner Toleranzpuffer gegen Mobile-/Safari-Jitter */
-		const tolerance = 2;
-
-		/* nur echtes Überschreiten von oben nach <= 0 zählt */
-		return previousTop > tolerance && currentTop <= tolerance;
-	},
-
 	closeHeroCalendarIfBoundaryPassedTop() {
 		if (!state.ui.heroCalendarOpen) return;
 		if (state.ui.heroCalendarAnimating) return;
 		if (state.scroll.programmatic) return;
+		if (state.scrollDirection !== "down") return;
 
-		/* nur beim echten Herunterscrollen */
-		if (state.scrollDirection !== "down") {
-			this.updateHeroCalendarBoundaryState();
-			return;
+		const heroBottom = DOM.hero?.getBoundingClientRect().bottom ?? 0;
+		const tolerance = 2;
+
+		if (heroBottom <= tolerance) {
+			this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
 		}
-
-		if (!this.hasHomeAboutBoundaryJustPassedTop()) return;
-
-		this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
 	},
 	
 	getHeroCalendarLayoutDuration() {
