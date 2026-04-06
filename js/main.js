@@ -3546,7 +3546,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				{
 					mode: preserveAboutBoundaryAtTop
 						? "close-keep-about-position"
-						: "close",
+						: "close",			
+					
 					onComplete: () => {
 						state.ui.heroCalendarOpen = false;
 
@@ -3564,6 +3565,10 @@ document.addEventListener("DOMContentLoaded", () => {
 						DOM.heroCalendar.style.height = "";
 
 						this.destroyFullCalendar();
+
+						resetAnimatedValue(state.cta.parallax, state.hero.parallax.current);
+						navbarModule.renderCTA();
+
 						navbarModule.suppressCtaHoverTemporarily(250);
 					},
 				}
