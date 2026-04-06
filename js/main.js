@@ -332,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredTop: 0,
 		heroCalendarMeasuredHeight: 0,
 		heroCalendarMeasuredExtra: 0,
+		heroCalendarCloseThresholdY: null,
 		heroClosedHeroHeight: 0,
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
@@ -3505,12 +3506,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.heroCalendar.classList.remove("is-open");
 
 		this.applyMeasuredHeroCalendarBox();
-		
+
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
 			onComplete: () => {
 
 				state.ui.heroCalendarOpen = true;
+				this.updateHeroCalendarCloseThreshold();
 
 				state.ui.heroCalendarRevealTimer = setTimeout(() => {
 					DOM.heroCalendar.classList.add("is-open");
@@ -3542,6 +3544,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					mode: preserveAboutBoundaryAtTop ? "close-keep-about-top" : "close",
 					onComplete: () => {
 						state.ui.heroCalendarOpen = false;
+						state.ui.heroCalendarCloseThresholdY = null;
 
 						DOM.cta.classList.remove("calendar-open");
 						DOM.cta.setAttribute("aria-expanded", "false");
@@ -3584,14 +3587,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 
 	hasHomeAboutBoundaryPassedTop() {
-		const about = this.getHomeAboutBoundaryEl();
-		if (!about) return false;
+		const threshold = state.ui.heroCalendarCloseThresholdY;
 
-		const rect = about.getBoundingClientRect();
+		if (!Number.isFinite(threshold)) {
+			const about = this.getHomeAboutBoundaryEl();
+			if (!about) return false;
+			return about.getBoundingClientRect().top <= 0;
+		}
 
-		/* erst wenn die echte Sektionsgrenze den oberen Viewportrand erreicht
-		   oder überschritten hat */
-		return rect.top <= 0;
+		/* kleiner Toleranzpuffer gegen iOS/Safari-Jitter */
+		return window.scrollY >= (threshold - 2);
 	},
 
 	closeHeroCalendarIfBoundaryPassedTop() {
@@ -3777,6 +3782,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	unlockHeroCalendarScrollBehavior() {
 		document.documentElement.classList.remove("disable-overscroll");
+	},
+	
+	updateHeroCalendarCloseThreshold() {
+		const about = this.getHomeAboutBoundaryEl();
+		if (!about) {
+			state.ui.heroCalendarCloseThresholdY = null;
+			return;
+		}
+
+		/* absolute Dokumentposition der Home/About-Grenze */
+		state.ui.heroCalendarCloseThresholdY = Math.max(0, Math.round(about.offsetTop));
 	}
 
   };
@@ -4022,6 +4038,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				uiModule.refreshFullCalendarView();
 				uiModule.applyMeasuredHeroCalendarBox();
 				uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+				uiModule.updateHeroCalendarCloseThreshold();
 
 				requestAnimationFrame(() => {
 					uiModule.applyMeasuredHeroCalendarBox();
