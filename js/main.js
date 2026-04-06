@@ -332,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredTop: 0,
 		heroCalendarMeasuredHeight: 0,
 		heroCalendarMeasuredExtra: 0,
+		heroCalendarCloseScrollY: null,
 		heroClosedHeroHeight: 0,
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
@@ -3506,9 +3507,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.applyMeasuredHeroCalendarBox();
 	
-		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
+		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {		
 			onComplete: () => {
 				state.ui.heroCalendarOpen = true;
+				this.updateHeroCalendarCloseThreshold();
 
 				state.ui.heroCalendarRevealTimer = setTimeout(() => {
 					DOM.heroCalendar.classList.add("is-open");
@@ -3538,6 +3540,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 				onComplete: () => {
 					state.ui.heroCalendarOpen = false;
+					state.ui.heroCalendarCloseScrollY = null;
 
 					DOM.cta.classList.remove("calendar-open");
 					DOM.cta.setAttribute("aria-expanded", "false");
@@ -3569,18 +3572,33 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.openHeroCalendar();
 		}
 	},
-	
+
 	getHomeAboutBoundaryEl() {
 		return document.querySelector("#about");
 	},
 
-	hasHomeAboutBoundaryPassedTop() {
+	updateHeroCalendarCloseThreshold() {
 		const about = this.getHomeAboutBoundaryEl();
-		if (!about) return false;
+		if (!about) {
+			state.ui.heroCalendarCloseScrollY = null;
+			return;
+		}
 
-		// exakt die Bedingung, die du beschrieben hast:
-		// Grenze home/about hat den oberen Bildschirmrand erreicht
-		return about.getBoundingClientRect().top <= 0;
+		/* Absoluter Dokument-Scrollwert, bei dem die Grenze home/about
+		   den oberen Viewportrand erreicht */
+		state.ui.heroCalendarCloseScrollY = Math.max(
+			0,
+			about.offsetTop
+		);
+	},
+
+	hasHomeAboutBoundaryPassedTop() {
+		const threshold = state.ui.heroCalendarCloseScrollY;
+
+		if (!Number.isFinite(threshold)) return false;
+
+		/* kleines epsilon gegen Rundungsfehler */
+		return window.scrollY >= (threshold - 1);
 	},
 
 	closeHeroCalendarIfBoundaryPassedTop() {
@@ -3588,7 +3606,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (state.ui.heroCalendarAnimating) return;
 		if (state.scroll.programmatic) return;
 
-		// nur beim echten Herunterscrollen
+		/* nur beim echten Herunterscrollen */
 		if (state.scrollDirection !== "down") return;
 
 		if (!this.hasHomeAboutBoundaryPassedTop()) return;
