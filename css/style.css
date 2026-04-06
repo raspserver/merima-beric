@@ -540,7 +540,6 @@ html.hero-calendar-animating body,
 	padding: 1rem;
 }
 
-
 .hero-inner {
 	width: 100%;
 	height: 100%;
@@ -553,6 +552,10 @@ html.hero-calendar-animating body,
 	transform-origin: center center;
 	will-change: transform;
 	backface-visibility: hidden;
+}
+
+.hero.hero-calendar-lock-motion .hero-inner {
+	transform: translate3d(0, 0, 0) scale(1) !important;
 }
 
 .hero::before {

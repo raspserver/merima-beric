@@ -3506,6 +3506,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbarModule.applyCtaNeutralState();
 
 		DOM.hero.classList.add("hero-calendar-active");
+		DOM.hero.classList.add("hero-calendar-lock-motion");
 
 		this.positionHeroCalendar();
 		this.ensureFullCalendar();
@@ -3583,6 +3584,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 						DOM.hero.classList.remove("hero-calendar-open");
 						DOM.hero.classList.remove("hero-calendar-active");
+						DOM.hero.classList.remove("hero-calendar-lock-motion");
 						DOM.heroCalendar.style.top = "";
 						DOM.heroCalendar.style.height = "";
 
