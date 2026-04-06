@@ -335,7 +335,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarLastAboutTop: null,
 		heroCalendarKeepCtaFlat: false,
 		heroCalendarNavbarFreeze: false,
-		heroCalendarNavbarSnapshot: null,
 		heroClosedHeroHeight: 0,
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
@@ -3814,33 +3813,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	freezeNavbarForHeroCalendar() {
-		if (state.ui.heroCalendarNavbarFreeze) return;
-
-		state.ui.heroCalendarNavbarSnapshot = {
-			visibleCurrent: state.nav.visible.current,
-			visibleTarget: state.nav.visible.target,
-			compactCurrent: state.nav.compact.current,
-			compactTarget: state.nav.compact.target,
-			surfaceCurrent: state.nav.surface.current,
-			surfaceTarget: state.nav.surface.target,
-			gestureCurrent: state.nav.gestureStretch.current,
-			gestureTarget: state.nav.gestureStretch.target,
-			manualOpen: state.nav.manualOpen,
-			scrollDirection: state.scrollDirection,
-		};
-
 		state.ui.heroCalendarNavbarFreeze = true;
 	},
 	
 	restoreNavbarAfterHeroCalendar() {
 		state.ui.heroCalendarNavbarFreeze = false;
-		state.ui.heroCalendarNavbarSnapshot = null;
 
-		/* Gesture-Stretch zurücksetzen */
 		state.nav.gestureStretch.current = 0;
 		state.nav.gestureStretch.target = 0;
 
-		/* Navbar anhand des aktuellen Zustands neu entscheiden lassen */
 		navbarModule.handleScroll();
 		navbarModule.startAnimation();
 	}
