@@ -3624,16 +3624,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (!state.ui.heroCalendarOpen) return;
 		if (state.ui.heroCalendarAnimating) return;
 		if (state.scroll.programmatic) return;
-
-		/* nur beim echten Herunterscrollen */
 		if (state.scrollDirection !== "down") return;
 
-		/* Kalender erst schließen, wenn die Hero-Sektion komplett
-		   aus dem Viewport nach oben herausgewandert ist */
-		const heroBottom = DOM.hero?.getBoundingClientRect().bottom ?? 0;
+		const about = this.getHomeAboutBoundaryEl();
+		if (!about) return;
+
+		/* Schließen erst dann, wenn die home/about-Grenze
+		   wirklich den oberen Viewport-/Navbar-Bereich erreicht hat */
+		const aboutTop = about.getBoundingClientRect().top;
+		const navbarBottom = DOM.navbar
+			? DOM.navbar.getBoundingClientRect().bottom
+			: 0;
+
 		const tolerance = 2;
 
-		if (heroBottom > tolerance) return;
+		if (aboutTop > navbarBottom + tolerance) return;
 
 		this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
 	},
