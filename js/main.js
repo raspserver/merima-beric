@@ -3509,6 +3509,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
+					
 			onComplete: () => {
 
 				state.ui.heroCalendarOpen = true;
@@ -3525,8 +3526,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	},
 	
+	
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false } = {}) {
-		if (state.ui.heroCalendarAnimating) return;
+		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
+		if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
+
 		state.ui.heroCalendarAnimating = true;
 		
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
@@ -3543,10 +3547,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.ui.heroCalendarExtraHeight,
 				0,
 				{
-					mode: preserveAboutBoundaryAtTop ? "close-keep-about-top" : "close",
+					mode: preserveAboutBoundaryAtTop ? "close-keep-about-top" : "close",	
 					onComplete: () => {
 						state.ui.heroCalendarOpen = false;
-						state.ui.heroCalendarLastAboutTop = null;
 
 						DOM.cta.classList.remove("calendar-open");
 						DOM.cta.setAttribute("aria-expanded", "false");
@@ -3588,19 +3591,23 @@ document.addEventListener("DOMContentLoaded", () => {
 	getHomeAboutBoundaryEl() {
 		return document.querySelector("#about");
 	},
-
+	
 	closeHeroCalendarIfBoundaryPassedTop() {
 		if (!state.ui.heroCalendarOpen) return;
 		if (state.ui.heroCalendarAnimating) return;
 		if (state.scroll.programmatic) return;
+
+		/* nur beim echten Herunterscrollen */
 		if (state.scrollDirection !== "down") return;
 
+		/* Kalender erst schließen, wenn die Hero-Sektion komplett
+		   aus dem Viewport nach oben herausgewandert ist */
 		const heroBottom = DOM.hero?.getBoundingClientRect().bottom ?? 0;
 		const tolerance = 2;
 
-		if (heroBottom <= tolerance) {
-			this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
-		}
+		if (heroBottom > tolerance) return;
+
+		this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
 	},
 	
 	getHeroCalendarLayoutDuration() {
@@ -3702,7 +3709,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		const startScrollY = window.scrollY;
 		const startAboutOffsetTop = about ? about.offsetTop : 0;
 
-		state.ui.heroCalendarAnimating = true;
 		state.scroll.programmatic = true;
 		this.lockHeroCalendarScrollBehavior();
 
@@ -4009,7 +4015,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	window.addEventListener("resize", () => {
 		physics.update();
 		galleryModule.setPosition(galleryModule.currentIndex, false);
-	
+		
 		if (state.ui.heroCalendarOpen) {
 			clearTimeout(state.ui.fullCalendarResizeTimer);
 
@@ -4018,7 +4024,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				uiModule.refreshFullCalendarView();
 				uiModule.applyMeasuredHeroCalendarBox();
 				uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
-				uiModule.updateHeroCalendarBoundaryState();
 
 				requestAnimationFrame(() => {
 					uiModule.applyMeasuredHeroCalendarBox();
