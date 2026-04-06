@@ -510,21 +510,6 @@ html.low-fps .hero-inner {
 	}
 }
 
-.hero.hero-calendar-active .cta-button {
-	position: fixed;
-	left: 50%;
-	bottom: var(--hero-cta-gap-to-boundary);
-	z-index: 1600;
-
-	transform:
-		translate3d(
-			calc(-50% + var(--magnetic-x)),
-			calc(var(--magnetic-y) + var(--hover-lift)),
-			0
-		)
-		scale(var(--magnetic-scale));
-}
-
 .hero-calendar.is-open {
 	opacity: 1;
 	visibility: visible;
