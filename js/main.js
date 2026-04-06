@@ -3532,6 +3532,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.freezeNavbarForHeroCalendar();
 
+		const about = this.getHomeAboutBoundaryEl();
+		state.ui.heroCalendarLastAboutTop =
+			about ? about.getBoundingClientRect().top : null;
+
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
 			onComplete: () => {
@@ -3629,18 +3633,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		const about = this.getHomeAboutBoundaryEl();
 		if (!about) return;
 
-		/* Schließen erst dann, wenn die home/about-Grenze
-		   wirklich den oberen Viewport-/Navbar-Bereich erreicht hat */
 		const aboutTop = about.getBoundingClientRect().top;
 		const navbarBottom = DOM.navbar
 			? DOM.navbar.getBoundingClientRect().bottom
 			: 0;
 
-		const tolerance = 2;
+		const lastTop = state.ui.heroCalendarLastAboutTop;
+		state.ui.heroCalendarLastAboutTop = aboutTop;
 
-		if (aboutTop > navbarBottom + tolerance) return;
+		if (lastTop == null) return;
 
-		this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
+		const crossedDownward =
+			lastTop > navbarBottom && aboutTop <= navbarBottom;
+
+		if (crossedDownward) {
+			this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
+		}
 	},
 	
 	getHeroCalendarLayoutDuration() {
@@ -3731,7 +3739,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.heroCalendar.style.top = `${state.ui.heroCalendarMeasuredTop}px`;
 		DOM.heroCalendar.style.height = `${state.ui.heroCalendarMeasuredHeight}px`;
 	},
-	
+
 	animateHeroCalendarLayout(from, to, { mode = "open", onComplete } = {}) {
 		DOM.hero?.classList.add("hero-calendar-active");
 
@@ -3740,7 +3748,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const about = this.getHomeAboutBoundaryEl();
 		const startScrollY = window.scrollY;
-		const startAboutOffsetTop = about ? about.offsetTop : 0;
 		const startAboutViewportTop = about ? about.getBoundingClientRect().top : 0;
 
 		state.scroll.programmatic = true;
@@ -3756,20 +3763,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			let nextScrollY = startScrollY;
 
 			if (mode === "open") {
-				/* Beim Öffnen bleibt die home/about-Grenze optisch stehen */
-				const scrollDeltaTotal = to - from;
-				nextScrollY = startScrollY + (scrollDeltaTotal * eased);
-			} else if (mode === "close-keep-about-position" && about) {
-				/* Boundary exakt auf aktueller Screen-Position halten */
-				const removedExtra = from - currentExtra;
-				const currentAboutOffsetTop = startAboutOffsetTop - removedExtra;
-				nextScrollY = currentAboutOffsetTop - startAboutViewportTop;
+				/* Öffnen: Grenze exakt an ihrer Startposition halten */
+				if (about) {
+					const currentAboutTop = about.getBoundingClientRect().top;
+					const deltaToTarget = currentAboutTop - startAboutViewportTop;
+					nextScrollY = window.scrollY + deltaToTarget;
+				}
+			} else if (mode === "close-keep-about-position") {
+				/* Schließen beim Herunterscrollen:
+				   Grenze exakt dort halten, wo sie beim Start des Schließens war */
+				if (about) {
+					const currentAboutTop = about.getBoundingClientRect().top;
+					const deltaToTarget = currentAboutTop - startAboutViewportTop;
+					nextScrollY = window.scrollY + deltaToTarget;
+				}
 			} else if (mode === "close") {
-				/* Manuelles Schließen: symmetrisch zum Öffnen */
+				/* normales manuelles Schließen */
 				const scrollDeltaTotal = from - to;
 				nextScrollY = startScrollY - (scrollDeltaTotal * eased);
-			} else {
-				nextScrollY = startScrollY;
 			}
 
 			window.scrollTo(0, Math.max(0, nextScrollY));
@@ -3789,18 +3800,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.scroll.programmatic = false;
 
 			this.setHeroCalendarExtraHeight(to);
-	
-			if (mode === "close-keep-about-position" && about) {
-				window.scrollTo(
-					0,
-					Math.max(0, about.offsetTop - startAboutViewportTop)
-				);
-			} else if (mode === "open") {
-				window.scrollTo(0, Math.max(0, startScrollY + (to - from)));
+
+			if (about && (mode === "open" || mode === "close-keep-about-position")) {
+				const finalAboutTop = about.getBoundingClientRect().top;
+				window.scrollTo(0, Math.max(0, window.scrollY + (finalAboutTop - startAboutViewportTop)));
 			} else if (mode === "close") {
 				window.scrollTo(0, Math.max(0, startScrollY - (from - to)));
-			} else {
-				window.scrollTo(0, Math.max(0, startScrollY));
 			}
 
 			state.lastScrollY = window.scrollY;
