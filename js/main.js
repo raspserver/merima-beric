@@ -336,9 +336,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
 		fullCalendarResizeTimer: null,
-		lockedScrollY: 0,
-		
-		
 	},
 
     orderedSections: [],
@@ -3490,8 +3487,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.resetCtaMagnetic();
 		navbarModule.applyCtaNeutralState();
 
-		state.ui.lockedScrollY = window.scrollY;
-		
 		DOM.hero.classList.add("hero-calendar-active");
 
 		this.positionHeroCalendar();
@@ -3539,11 +3534,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		/* umgekehrte Reihenfolge:
 		   erst Kalender ausblenden, dann Layout zurückfahren */
 		state.ui.heroCalendarRevealTimer = setTimeout(() => {
-			state.ui.lockedScrollY = Math.max(
-				0,
-				window.scrollY - state.ui.heroCalendarExtraHeight
-			);
-
 			this.animateHeroCalendarLayout(state.ui.heroCalendarExtraHeight, 0, {
 				onComplete: () => {
 					state.ui.heroCalendarOpen = false;
@@ -3685,7 +3675,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 		const duration = this.getHeroCalendarLayoutDuration();
 		const start = performance.now();
-		const baseScrollY = state.ui.lockedScrollY;
 
 		state.ui.heroCalendarAnimating = true;
 		this.lockHeroCalendarScrollBehavior();
@@ -3693,17 +3682,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		const step = (now) => {
 			const t = Math.min(1, (now - start) / duration);
 
-			/* Layout darf weich bleiben */
+			/* nur Layout animieren */
 			const easedLayout = this.easeHeroCalendar(t);
 			const currentExtra = from + ((to - from) * easedLayout);
 
-			/* Scroll bewusst NICHT elastisch: linear */
-			const currentScroll = from + ((to - from) * t);
-
 			this.setHeroCalendarExtraHeight(currentExtra);
-
-			/* Scroll neutral mitziehen */
-			window.scrollTo(0, baseScrollY + currentScroll);
 
 			if (state.ui.fullCalendarInstance) {
 				state.ui.fullCalendarInstance.updateSize();
@@ -3718,7 +3701,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.ui.heroCalendarAnimating = false;
 
 			this.setHeroCalendarExtraHeight(to);
-			window.scrollTo(0, baseScrollY + to);
 
 			this.unlockHeroCalendarScrollBehavior();
 			onComplete?.();
