@@ -3567,7 +3567,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			);
 		}, this.getHeroCalendarRevealDelay());
-	}
+	},
 	
 	toggleHeroCalendar() {
 		if (state.ui.heroCalendarAnimating) return;
