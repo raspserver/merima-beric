@@ -3325,38 +3325,48 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     },
     
-    bindHeroClickBehavior() {
+	bindHeroClickBehavior() {
 		DOM.hero?.addEventListener("click", (e) => {
 			if (!DOM.navbar || (utils.isMobileViewport() && navbarModule.isOpen())) {
 				return;
 			}
 
-			if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
+			if (state.ui.heroCalendarAnimating) {
 				return;
 			}
 
-		if (
-		  e.target.closest(".cta-button") ||
-		  e.target.closest("#hero-calendar") ||
-		  e.target.closest("#hero-fullcalendar")
-		) {
-		  return;
-		}
+			if (
+				state.ui.heroCalendarOpen &&
+				(
+					e.target.closest("#hero-calendar") ||
+					e.target.closest("#hero-fullcalendar")
+				)
+			) {
+				return;
+			}
 
-		const visible = parseFloat(
-		  getComputedStyle(DOM.navbar).getPropertyValue("--nav-visible")
-		);
+			if (
+				e.target.closest(".cta-button") ||
+				e.target.closest("#hero-calendar") ||
+				e.target.closest("#hero-fullcalendar")
+			) {
+				return;
+			}
 
-		const openManually = visible < 0.5;
+			const visible = parseFloat(
+				getComputedStyle(DOM.navbar).getPropertyValue("--nav-visible")
+			);
 
-		state.nav.manualOpen = openManually;
-		state.nav.visible.target = openManually ? 1 : 0;
-		state.nav.compact.target = openManually ? 1 : 0;
-		state.nav.surface.target = openManually ? 1 : 0;
-		state.nav.gestureStretch.target = 0;
+			const openManually = visible < 0.5;
 
-		navbarModule.startAnimation();
-	  });
+			state.nav.manualOpen = openManually;
+			state.nav.visible.target = openManually ? 1 : 0;
+			state.nav.compact.target = openManually ? 1 : 0;
+			state.nav.surface.target = openManually ? 1 : 0;
+			state.nav.gestureStretch.target = 0;
+
+			navbarModule.startAnimation();
+		});
 	},
  
     bindPricingTabs() {
