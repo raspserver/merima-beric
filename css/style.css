@@ -447,6 +447,14 @@ html.low-fps .hero-inner {
 	will-change: auto;
 }
 
+html.hero-calendar-animating,
+html.hero-calendar-animating body,
+.hero,
+#about,
+#hero-calendar {
+	overflow-anchor: none;
+}
+
 .hero {
 	position: relative;
 
