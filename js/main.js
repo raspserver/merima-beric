@@ -1107,21 +1107,19 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
 	const scrollY = window.scrollY;
-	const heroProgress = Math.min(scrollY / SETTINGS.thresholds.inertia, 1);
 
-	state.hero.parallax.target =
-	  scrollY * physics.values.heroParallaxFactor;
-
-	// gewollte Spezialkopplung:
-	// CTA folgt dem bereits gefederten Hero-Wert
 	if (
-		state.ui.heroCalendarOpen ||
-		state.ui.heroCalendarAnimating ||
-		state.ui.heroCalendarKeepCtaFlat
+	  state.ui.heroCalendarOpen ||
+	  state.ui.heroCalendarAnimating ||
+	  state.ui.heroCalendarKeepCtaFlat
 	) {
-		resetAnimatedValue(state.cta.parallax, 0);
+	  resetAnimatedValue(state.hero.parallax, 0);
+	  resetAnimatedValue(state.cta.parallax, 0);
 	} else {
-		state.cta.parallax.target = state.hero.parallax.current;
+	  state.hero.parallax.target =
+		scrollY * physics.values.heroParallaxFactor;
+
+	  state.cta.parallax.target = state.hero.parallax.current;
 	}
 
 	this.renderNavbar();
