@@ -29,6 +29,8 @@
 	/* ------------------------------------------------------------------------------------------------ */
 
 	--hero-calendar-gap: 20px;
+	
+	--hero-calendar-extra-height-global: 0px;
 
 	--hero-calendar-layout-duration: 0.75s;
 	--hero-calendar-reveal-delay: 0.18s;
@@ -506,6 +508,21 @@ html.low-fps .hero-inner {
 		width: calc(100% - 2rem);
 		max-width: none;
 	}
+}
+
+.hero.hero-calendar-active .cta-button {
+	position: fixed;
+	left: 50%;
+	bottom: var(--hero-cta-gap-to-boundary);
+	z-index: 1600;
+
+	transform:
+		translate3d(
+			calc(-50% + var(--magnetic-x)),
+			calc(var(--magnetic-y) + var(--hover-lift)),
+			0
+		)
+		scale(var(--magnetic-scale));
 }
 
 .hero-calendar.is-open {
@@ -1255,6 +1272,7 @@ section .section-title:first-child {
 
 /* About Section */
 .about {
+	margin-top: calc(-1 * var(--hero-calendar-extra-height-global));
 	background: var(--section-bg-about);
 }
 

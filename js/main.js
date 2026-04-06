@@ -1105,7 +1105,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// gewollte Spezialkopplung:
 	// CTA folgt dem bereits gefederten Hero-Wert
-	state.cta.parallax.target = state.hero.parallax.current;
+	if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
+		state.cta.parallax.target = 0;
+	} else {
+		state.cta.parallax.target = state.hero.parallax.current;
+	}
 
 	this.renderNavbar();
 	this.renderHero();
@@ -3487,6 +3491,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbarModule.applyCtaNeutralState();
 
 		state.ui.lockedScrollY = window.scrollY;
+		
+		DOM.hero.classList.add("hero-calendar-active");
 
 		this.positionHeroCalendar();
 		this.ensureFullCalendar();
@@ -3556,6 +3562,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 					this.destroyFullCalendar();
 					navbarModule.suppressCtaHoverTemporarily(250);
+					
+					DOM.hero.classList.remove("hero-calendar-active");
 				},
 			});
 		}, this.getHeroCalendarRevealDelay());
@@ -3597,11 +3605,16 @@ document.addEventListener("DOMContentLoaded", () => {
 			window.innerWidth <= 768 ? 520 : 560
 		);
 	},
-
+	
 	setHeroCalendarExtraHeight(px) {
 		const value = Math.max(0, px);
 		state.ui.heroCalendarExtraHeight = value;
+
 		DOM.hero?.style.setProperty("--hero-calendar-extra-height", `${value}px`);
+		document.documentElement.style.setProperty(
+			"--hero-calendar-extra-height-global",
+			`${value}px`
+		);
 	},
 	
 	clearHeroCalendarTimers() {
@@ -3668,6 +3681,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	animateHeroCalendarLayout(from, to, { onComplete } = {}) {
+		DOM.hero?.classList.add("hero-calendar-active");
+		
 		const duration = this.getHeroCalendarLayoutDuration();
 		const start = performance.now();
 		const baseScrollY = state.ui.lockedScrollY;
@@ -3710,6 +3725,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		};
 
 		state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
+		
+		if (!state.ui.heroCalendarOpen && to === 0) {
+			DOM.hero?.classList.remove("hero-calendar-active");
+		}
 	},
 	
 	lockHeroCalendarScrollBehavior() {
