@@ -333,6 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredHeight: 0,
 		heroCalendarMeasuredExtra: 0,
 		heroCalendarLastAboutTop: null,
+		heroCalendarKeepCtaFlat: false,
 		heroClosedHeroHeight: 0,
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
@@ -1103,7 +1104,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// gewollte Spezialkopplung:
 	// CTA folgt dem bereits gefederten Hero-Wert
-	if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
+	if (
+		state.ui.heroCalendarOpen ||
+		state.ui.heroCalendarAnimating ||
+		state.ui.heroCalendarKeepCtaFlat
+	) {
 		resetAnimatedValue(state.cta.parallax, 0);
 	} else {
 		state.cta.parallax.target = state.hero.parallax.current;
@@ -3507,6 +3512,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.applyMeasuredHeroCalendarBox();
 
+		state.ui.heroCalendarKeepCtaFlat = true;
 		state.ui.heroCalendarAnimating = true;
 		resetAnimatedValue(state.cta.parallax, 0);
 		navbarModule.renderCTA();
@@ -3566,7 +3572,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 						this.destroyFullCalendar();
 
-						resetAnimatedValue(state.cta.parallax, state.hero.parallax.current);
+						resetAnimatedValue(state.cta.parallax, 0);
 						navbarModule.renderCTA();
 
 						navbarModule.suppressCtaHoverTemporarily(250);
@@ -4015,6 +4021,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	window.addEventListener(
 		"scroll",
 		() => {
+			if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
+				state.ui.heroCalendarKeepCtaFlat = false;
+			}
+
 			uiModule.closeHeroCalendarIfBoundaryPassedTop();
 			navbarModule.handleScroll();
 		},
