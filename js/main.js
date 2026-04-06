@@ -3568,15 +3568,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.openHeroCalendar();
 		}
 	},
-	
-	isHeroFullyOutOfView() {
-		if (!DOM.hero) return false;
-		return DOM.hero.getBoundingClientRect().bottom <= 0;
+
+	getHomeAboutBoundaryEl() {
+		return document.querySelector("#about");
 	},
 
-	closeHeroCalendarIfHeroLeftViewport() {
+	hasHomeAboutBoundaryPassedTop() {
+		const about = this.getHomeAboutBoundaryEl();
+		if (!about) return false;
+
+		return about.getBoundingClientRect().top <= 0;
+	},
+
+	closeHeroCalendarIfBoundaryPassedTop() {
 		if (!state.ui.heroCalendarOpen) return;
-		if (!this.isHeroFullyOutOfView()) return;
+		if (state.ui.heroCalendarAnimating) return;
+
+		/* Nur beim Herunterscrollen schließen */
+		if (state.scrollDirection !== "down") return;
+
+		if (!this.hasHomeAboutBoundaryPassedTop()) return;
 
 		this.closeHeroCalendar();
 	},
@@ -3949,17 +3960,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	DOM.heroCalendarEl?.addEventListener("click", (e) => {
 	  e.stopPropagation();
 	});
-
-    if (DOM.navbar) {
-		window.addEventListener(
-			"scroll",
-			() => {
-				navbarModule.handleScroll();
-				uiModule.closeHeroCalendarIfHeroLeftViewport();
-			},
-			{ passive: true }
-		);
-	}
+	
+	window.addEventListener(
+		"scroll",
+		() => {
+			navbarModule.handleScroll();
+			uiModule.closeHeroCalendarIfBoundaryPassedTop();
+		},
+		{ passive: true }
+	);
     
 	window.addEventListener("resize", () => {
 		physics.update();
