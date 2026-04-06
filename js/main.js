@@ -3544,7 +3544,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.ui.heroCalendarExtraHeight,
 				0,
 				{
-					mode: preserveAboutBoundaryAtTop ? "close-keep-about-top" : "close",
+					mode: preserveAboutBoundaryAtTop
+						? "close-keep-about-position"
+						: "close",
 					onComplete: () => {
 						state.ui.heroCalendarOpen = false;
 
@@ -3703,6 +3705,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const about = this.getHomeAboutBoundaryEl();
 		const startScrollY = window.scrollY;
 		const startAboutOffsetTop = about ? about.offsetTop : 0;
+		const startAboutViewportTop = about ? about.getBoundingClientRect().top : 0;
 
 		state.scroll.programmatic = true;
 		this.lockHeroCalendarScrollBehavior();
@@ -3720,15 +3723,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				/* Beim Öffnen soll die home/about-Grenze optisch unten stehen bleiben */
 				const scrollDeltaTotal = to - from;
 				nextScrollY = startScrollY + (scrollDeltaTotal * eased);
-			} else if (mode === "close-keep-about-top" && about) {
+			} else if (mode === "close-keep-about-position" && about) {
 				/* Beim automatischen Schließen soll die home/about-Grenze
-				   am oberen Viewportrand stehen bleiben */
+				   ihre aktuelle Bildschirmposition behalten */
 				const removedExtra = from - currentExtra;
 				const currentAboutOffsetTop = startAboutOffsetTop - removedExtra;
-				nextScrollY = currentAboutOffsetTop;
+				nextScrollY = currentAboutOffsetTop - startAboutViewportTop;
 			} else {
-				/* normales manuelles Schließen per CTA:
-				   keine spezielle Gegenkopplung */
+				/* normales manuelles Schließen per CTA */
 				nextScrollY = startScrollY;
 			}
 
@@ -3750,8 +3752,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.setHeroCalendarExtraHeight(to);
 
-			if (mode === "close-keep-about-top" && about) {
-				window.scrollTo(0, Math.max(0, about.offsetTop));
+			if (mode === "close-keep-about-position" && about) {
+				window.scrollTo(
+					0,
+					Math.max(0, about.offsetTop - startAboutViewportTop)
+				);
 			} else if (mode === "open") {
 				window.scrollTo(0, Math.max(0, startScrollY + (to - from)));
 			} else {
