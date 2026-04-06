@@ -3679,7 +3679,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.heroCalendar.style.top = `${state.ui.heroCalendarMeasuredTop}px`;
 		DOM.heroCalendar.style.height = `${state.ui.heroCalendarMeasuredHeight}px`;
 	},
-	
+
 	animateHeroCalendarLayout(from, to, { onComplete } = {}) {
 		DOM.hero?.classList.add("hero-calendar-active");
 		
