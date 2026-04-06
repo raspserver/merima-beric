@@ -1104,7 +1104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// gewollte Spezialkopplung:
 	// CTA folgt dem bereits gefederten Hero-Wert
 	if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
-		state.cta.parallax.target = 0;
+		resetAnimatedValue(state.cta.parallax, 0);
 	} else {
 		state.cta.parallax.target = state.hero.parallax.current;
 	}
@@ -3766,7 +3766,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		};
 
 		state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
-		state.ui.heroCalendarAnimating = false;
 	},
 	
 	lockHeroCalendarScrollBehavior() {
