@@ -609,7 +609,7 @@ html.low-fps .hero-inner {
 		var(--hero-cta-gap-to-boundary) + var(--hero-cta-height)
 	);
 
-	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	min-height: 100svh;
 	box-sizing: border-box;
 
 	z-index: 2;
