@@ -153,34 +153,6 @@
 	--hero-brightness-scroll-factor: 0.06;
 
 	/* =========================
-	   MASTER PRESET: luxury
-	========================= */
-	/*
-	--nav-spring-stiffness-desktop: 0.072;
-	--nav-spring-damping-desktop: 0.84;
-	--nav-compact-stiffness-desktop: 0.040;
-	--nav-compact-damping-desktop: 0.90;
-
-	--nav-spring-stiffness-mobile: 0.055;
-	--nav-spring-damping-mobile: 0.87;
-	--nav-compact-stiffness-mobile: 0.032;
-	--nav-compact-damping-mobile: 0.92;
-
-	--scroll-elastic-decay: 12;
-	--scroll-elastic-frequency: 8.5;
-	--scroll-elastic-phase-shift: 0.72;
-	--scroll-duration-factor: 0.68;
-	--scroll-duration-min: 760;
-	--scroll-duration-max: 1750;
-
-	--hero-parallax-factor: -0.05;
-	--hero-parallax-stiffness: 0.032;
-	--hero-parallax-damping: 0.88;
-	--hero-scale-scroll-factor: 0.008;
-	--hero-brightness-scroll-factor: 0.05;
-	*/
-
-	/* =========================
 	   MASTER PRESET: cinematic
 	========================= */
 	/*
