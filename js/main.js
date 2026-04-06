@@ -3753,7 +3753,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.scroll.programmatic = false;
 
 			this.setHeroCalendarExtraHeight(to);
-
+	
 			if (mode === "close-keep-about-position" && about) {
 				window.scrollTo(
 					0,
@@ -3761,6 +3761,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				);
 			} else if (mode === "open") {
 				window.scrollTo(0, Math.max(0, startScrollY + (to - from)));
+			} else if (mode === "close") {
+				window.scrollTo(0, Math.max(0, startScrollY - (from - to)));
 			} else {
 				window.scrollTo(0, Math.max(0, startScrollY));
 			}
