@@ -3810,12 +3810,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	lockHeroCalendarScrollBehavior() {
 		document.documentElement.classList.add("disable-overscroll");
+		document.documentElement.classList.add("hero-calendar-animating");
 	},
 
 	unlockHeroCalendarScrollBehavior() {
 		document.documentElement.classList.remove("disable-overscroll");
+		document.documentElement.classList.remove("hero-calendar-animating");
 	},
-	
+		
 	freezeNavbarForHeroCalendar() {
 		state.ui.heroCalendarNavbarFreeze = true;
 	},
