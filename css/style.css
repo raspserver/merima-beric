@@ -409,15 +409,11 @@ html, body {
 html.disable-overscroll,
 html.disable-overscroll body {
 	overscroll-behavior-y: none;
-	overflow: hidden;
 	height: 100%;
 }
 
 html.disable-overscroll body {
-	position: fixed;
-	inset: 0;
-	width: 100%;
-	touch-action: none;
+	touch-action: manipulation;
 }
 
 html.low-end .hero::before,
