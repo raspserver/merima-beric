@@ -3831,33 +3831,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarNavbarFreeze = true;
 	},
-
+	
 	restoreNavbarAfterHeroCalendar() {
-		const snap = state.ui.heroCalendarNavbarSnapshot;
-		if (!snap) {
-			state.ui.heroCalendarNavbarFreeze = false;
-			return;
-		}
-
-		state.nav.visible.current = snap.visibleCurrent;
-		state.nav.visible.target = snap.visibleTarget;
-
-		state.nav.compact.current = snap.compactCurrent;
-		state.nav.compact.target = snap.compactTarget;
-
-		state.nav.surface.current = snap.surfaceCurrent;
-		state.nav.surface.target = snap.surfaceTarget;
-
-		state.nav.gestureStretch.current = snap.gestureCurrent;
-		state.nav.gestureStretch.target = snap.gestureTarget;
-
-		state.nav.manualOpen = snap.manualOpen;
-		state.scrollDirection = snap.scrollDirection;
-
 		state.ui.heroCalendarNavbarFreeze = false;
 		state.ui.heroCalendarNavbarSnapshot = null;
 
-		navbarModule.renderNavbar();
+		/* Gesture-Stretch zurücksetzen */
+		state.nav.gestureStretch.current = 0;
+		state.nav.gestureStretch.target = 0;
+
+		/* Navbar anhand des aktuellen Zustands neu entscheiden lassen */
+		navbarModule.handleScroll();
+		navbarModule.startAnimation();
 	}
 
   };
