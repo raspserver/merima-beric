@@ -3526,7 +3526,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}, this.getHeroCalendarRevealDelay());
 			},
 		});
-	}
+	},
 	
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false } = {}) {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
