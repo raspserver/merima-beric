@@ -3743,10 +3743,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const t = Math.min(1, (now - start) / duration);
 			const eased = this.easeHeroCalendar(t);
 
-			const currentExtra = Math.round(from + ((to - from) * eased));
+			const currentExtra = from + ((to - from) * eased);
 			this.setHeroCalendarExtraHeight(currentExtra);
-
-			window.scrollTo(0, Math.max(0, Math.round(nextScrollY)));
 
 			let nextScrollY = startScrollY;
 
