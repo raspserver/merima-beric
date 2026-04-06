@@ -1297,16 +1297,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (insideMenu || onToggle || onLogo) return;
 
-        e.preventDefault();
-        e.stopPropagation();
-        state.ui.suppressNextClick = true;
+		/* CTA soll NICHT als Outside-Click gelten */
+		if (onCta) {
+		  this.suppressCtaHoverTemporarily();
+		  uiModule.resetCtaMagnetic();
+		  return;
+		}
 
-        if (onCta || onSectionScrollHead) {
-          this.suppressCtaHoverTemporarily();
-          uiModule.resetCtaMagnetic();
-        }
+		e.preventDefault();
+		e.stopPropagation();
+		state.ui.suppressNextClick = true;
 
-        this.closeMenu();
+		if (onSectionScrollHead) {
+		  this.suppressCtaHoverTemporarily();
+		  uiModule.resetCtaMagnetic();
+		}
+
+		this.closeMenu();
+
       });
 
       document.addEventListener(
@@ -3186,11 +3194,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	DOM.cta?.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		if (utils.isMobileViewport() && navbarModule.isOpen()) {
-			navbarModule.closeMenu();
-			return;
-		}
 
 		this.toggleHeroCalendar();
 	});
