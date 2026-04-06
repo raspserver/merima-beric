@@ -3585,10 +3585,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	getHomeAboutBoundaryEl() {
 		return document.querySelector("#about");
 	},
-	
-	getHomeAboutBoundaryEl() {
-		return document.querySelector("#about");
-	},
 
 	updateHeroCalendarBoundaryState() {
 		const about = this.getHomeAboutBoundaryEl();
@@ -4026,12 +4022,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	DOM.heroCalendarEl?.addEventListener("click", (e) => {
 	  e.stopPropagation();
 	});
-	
+
 	window.addEventListener(
 		"scroll",
 		() => {
-			navbarModule.handleScroll();
 			uiModule.closeHeroCalendarIfBoundaryPassedTop();
+			navbarModule.handleScroll();
 		},
 		{ passive: true }
 	);
