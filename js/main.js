@@ -334,6 +334,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredExtra: 0,
 		heroCalendarLastAboutTop: null,
 		heroCalendarKeepCtaFlat: false,
+		heroCalendarNavbarFreeze: false,
+		heroCalendarNavbarSnapshot: null,
 		heroClosedHeroHeight: 0,
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
@@ -965,7 +967,16 @@ document.addEventListener("DOMContentLoaded", () => {
       state.nav.gestureStretch.target = 0;
     },
 
-    handleScroll() {
+
+
+	handleScroll() {
+		if (!DOM.navbar) return;
+
+		if (state.ui.heroCalendarNavbarFreeze) {
+			state.lastScrollY = window.scrollY;
+			return;
+		}
+
       if (!DOM.navbar) return;
 
       const currentY = window.scrollY;
@@ -3517,6 +3528,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		resetAnimatedValue(state.cta.parallax, 0);
 		navbarModule.renderCTA();
 
+		this.freezeNavbarForHeroCalendar();
+
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
 			onComplete: () => {
@@ -3546,6 +3559,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		/* erst Kalender ausblenden, dann Layout zurückfahren */
 		state.ui.heroCalendarRevealTimer = setTimeout(() => {
+			this.freezeNavbarForHeroCalendar();
+					
 			this.animateHeroCalendarLayout(
 				state.ui.heroCalendarExtraHeight,
 				0,
@@ -3576,6 +3591,8 @@ document.addEventListener("DOMContentLoaded", () => {
 						navbarModule.renderCTA();
 
 						navbarModule.suppressCtaHoverTemporarily(250);
+
+						this.restoreNavbarAfterHeroCalendar();
 					},
 				}
 			);
@@ -3794,6 +3811,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	unlockHeroCalendarScrollBehavior() {
 		document.documentElement.classList.remove("disable-overscroll");
+	},
+	
+	freezeNavbarForHeroCalendar() {
+		if (state.ui.heroCalendarNavbarFreeze) return;
+
+		state.ui.heroCalendarNavbarSnapshot = {
+			visibleCurrent: state.nav.visible.current,
+			visibleTarget: state.nav.visible.target,
+			compactCurrent: state.nav.compact.current,
+			compactTarget: state.nav.compact.target,
+			surfaceCurrent: state.nav.surface.current,
+			surfaceTarget: state.nav.surface.target,
+			gestureCurrent: state.nav.gestureStretch.current,
+			gestureTarget: state.nav.gestureStretch.target,
+			manualOpen: state.nav.manualOpen,
+			scrollDirection: state.scrollDirection,
+		};
+
+		state.ui.heroCalendarNavbarFreeze = true;
+	},
+
+	restoreNavbarAfterHeroCalendar() {
+		const snap = state.ui.heroCalendarNavbarSnapshot;
+		if (!snap) {
+			state.ui.heroCalendarNavbarFreeze = false;
+			return;
+		}
+
+		state.nav.visible.current = snap.visibleCurrent;
+		state.nav.visible.target = snap.visibleTarget;
+
+		state.nav.compact.current = snap.compactCurrent;
+		state.nav.compact.target = snap.compactTarget;
+
+		state.nav.surface.current = snap.surfaceCurrent;
+		state.nav.surface.target = snap.surfaceTarget;
+
+		state.nav.gestureStretch.current = snap.gestureCurrent;
+		state.nav.gestureStretch.target = snap.gestureTarget;
+
+		state.nav.manualOpen = snap.manualOpen;
+		state.scrollDirection = snap.scrollDirection;
+
+		state.ui.heroCalendarNavbarFreeze = false;
+		state.ui.heroCalendarNavbarSnapshot = null;
+
+		navbarModule.renderNavbar();
 	}
 
   };
