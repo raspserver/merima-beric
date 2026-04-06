@@ -913,16 +913,6 @@ html.low-fps .hero-inner {
 		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
 }
 
-.cta-button.calendar-open {
-	transform:
-	translate3d(
-		calc(-50% + var(--magnetic-x)),
-		calc(var(--magnetic-y) + var(--hover-lift)),
-		0
-	)
-	scale(var(--magnetic-scale));
-}
-
 .cta-button.is-hovered {
 	--hover-lift: -2px;
 }
