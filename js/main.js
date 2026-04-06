@@ -3603,7 +3603,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.ui.heroCalendarExtraHeight = value;
 		DOM.hero?.style.setProperty("--hero-calendar-extra-height", `${value}px`);
 	},
-
+	
 	clearHeroCalendarTimers() {
 		if (state.ui.heroCalendarLayoutRaf) {
 			cancelAnimationFrame(state.ui.heroCalendarLayoutRaf);
@@ -3615,6 +3615,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		clearTimeout(state.ui.heroCalendarCloseTimer);
 		state.ui.heroCalendarCloseTimer = null;
+
+		this.unlockHeroCalendarScrollBehavior();
 	},
 
 	easeHeroCalendar(t) {
@@ -3664,25 +3666,29 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.heroCalendar.style.top = `${state.ui.heroCalendarMeasuredTop}px`;
 		DOM.heroCalendar.style.height = `${state.ui.heroCalendarMeasuredHeight}px`;
 	},
-
+	
 	animateHeroCalendarLayout(from, to, { onComplete } = {}) {
 		const duration = this.getHeroCalendarLayoutDuration();
 		const start = performance.now();
 		const baseScrollY = state.ui.lockedScrollY;
 
 		state.ui.heroCalendarAnimating = true;
+		this.lockHeroCalendarScrollBehavior();
 
 		const step = (now) => {
 			const t = Math.min(1, (now - start) / duration);
-			const eased = this.easeHeroCalendar(t);
-			const current = from + ((to - from) * eased);
 
-			this.setHeroCalendarExtraHeight(current);
+			/* Layout darf weich bleiben */
+			const easedLayout = this.easeHeroCalendar(t);
+			const currentExtra = from + ((to - from) * easedLayout);
 
-			/* entscheidend:
-			   Scroll synchron mitziehen, damit die Grenze home/about
-			   unten im Viewport stehen bleibt */
-			window.scrollTo(0, baseScrollY + current);
+			/* Scroll bewusst NICHT elastisch: linear */
+			const currentScroll = from + ((to - from) * t);
+
+			this.setHeroCalendarExtraHeight(currentExtra);
+
+			/* Scroll neutral mitziehen */
+			window.scrollTo(0, baseScrollY + currentScroll);
 
 			if (state.ui.fullCalendarInstance) {
 				state.ui.fullCalendarInstance.updateSize();
@@ -3695,13 +3701,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			state.ui.heroCalendarLayoutRaf = null;
 			state.ui.heroCalendarAnimating = false;
+
 			this.setHeroCalendarExtraHeight(to);
 			window.scrollTo(0, baseScrollY + to);
 
+			this.unlockHeroCalendarScrollBehavior();
 			onComplete?.();
 		};
 
 		state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
+	},
+	
+	lockHeroCalendarScrollBehavior() {
+		document.documentElement.classList.add("disable-overscroll");
+	},
+
+	unlockHeroCalendarScrollBehavior() {
+		document.documentElement.classList.remove("disable-overscroll");
 	}
 
   };
