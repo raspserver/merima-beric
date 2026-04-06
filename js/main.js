@@ -332,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredTop: 0,
 		heroCalendarMeasuredHeight: 0,
 		heroCalendarMeasuredExtra: 0,
+		heroCalendarCloseScrollY: null,
 		heroClosedHeroHeight: 0,
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
@@ -3505,10 +3506,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.heroCalendar.classList.remove("is-open");
 
 		this.applyMeasuredHeroCalendarBox();
-
+	
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			onComplete: () => {
 				state.ui.heroCalendarOpen = true;
+
+				this.updateHeroCalendarCloseThreshold();
 
 				state.ui.heroCalendarRevealTimer = setTimeout(() => {
 					DOM.heroCalendar.classList.add("is-open");
@@ -3535,8 +3538,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		   erst Kalender ausblenden, dann Layout zurückfahren */
 		state.ui.heroCalendarRevealTimer = setTimeout(() => {
 			this.animateHeroCalendarLayout(state.ui.heroCalendarExtraHeight, 0, {
+				
+				
+				
+				
 				onComplete: () => {
 					state.ui.heroCalendarOpen = false;
+					state.ui.heroCalendarCloseScrollY = null; // NEU
 
 					DOM.cta.classList.remove("calendar-open");
 					DOM.cta.setAttribute("aria-expanded", "false");
@@ -3574,10 +3582,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 
 	hasHomeAboutBoundaryPassedTop() {
-		const about = this.getHomeAboutBoundaryEl();
-		if (!about) return false;
+		const threshold = state.ui.heroCalendarCloseScrollY;
+		if (!Number.isFinite(threshold)) return false;
 
-		return about.getBoundingClientRect().top <= 0;
+		return window.scrollY >= threshold;
 	},
 
 	closeHeroCalendarIfBoundaryPassedTop() {
@@ -3737,6 +3745,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	unlockHeroCalendarScrollBehavior() {
 		document.documentElement.classList.remove("disable-overscroll");
+	},
+	
+	updateHeroCalendarCloseThreshold() {
+		const about = this.getHomeAboutBoundaryEl();
+		if (!about) {
+			state.ui.heroCalendarCloseScrollY = null;
+			return;
+		}
+
+		/* Dokumentposition der Grenze home/about */
+		state.ui.heroCalendarCloseScrollY = Math.max(0, Math.round(about.offsetTop));
 	}
 
   };
@@ -3982,6 +4001,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				uiModule.refreshFullCalendarView();
 				uiModule.applyMeasuredHeroCalendarBox();
 				uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+				uiModule.updateHeroCalendarCloseThreshold();
 
 				requestAnimationFrame(() => {
 					uiModule.applyMeasuredHeroCalendarBox();
