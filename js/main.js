@@ -3328,10 +3328,14 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     
     bindHeroClickBehavior() {
-	  DOM.hero?.addEventListener("click", (e) => {
-		if (!DOM.navbar || (utils.isMobileViewport() && navbarModule.isOpen())) {
-		  return;
-		}
+		DOM.hero?.addEventListener("click", (e) => {
+			if (!DOM.navbar || (utils.isMobileViewport() && navbarModule.isOpen())) {
+				return;
+			}
+
+			if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
+				return;
+			}
 
 		if (
 		  e.target.closest(".cta-button") ||
