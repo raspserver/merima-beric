@@ -3720,17 +3720,19 @@ document.addEventListener("DOMContentLoaded", () => {
 			let nextScrollY = startScrollY;
 
 			if (mode === "open") {
-				/* Beim Öffnen soll die home/about-Grenze optisch unten stehen bleiben */
+				/* Beim Öffnen bleibt die home/about-Grenze optisch stehen */
 				const scrollDeltaTotal = to - from;
 				nextScrollY = startScrollY + (scrollDeltaTotal * eased);
 			} else if (mode === "close-keep-about-position" && about) {
-				/* Beim automatischen Schließen soll die home/about-Grenze
-				   ihre aktuelle Bildschirmposition behalten */
+				/* Boundary exakt auf aktueller Screen-Position halten */
 				const removedExtra = from - currentExtra;
 				const currentAboutOffsetTop = startAboutOffsetTop - removedExtra;
 				nextScrollY = currentAboutOffsetTop - startAboutViewportTop;
+			} else if (mode === "close") {
+				/* Manuelles Schließen: symmetrisch zum Öffnen */
+				const scrollDeltaTotal = from - to;
+				nextScrollY = startScrollY - (scrollDeltaTotal * eased);
 			} else {
-				/* normales manuelles Schließen per CTA */
 				nextScrollY = startScrollY;
 			}
 
