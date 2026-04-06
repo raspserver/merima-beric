@@ -29,6 +29,11 @@
 	/* ------------------------------------------------------------------------------------------------ */
 
 	--hero-calendar-gap: 20px;
+
+	--hero-calendar-layout-duration: 0.75s;
+	--hero-calendar-reveal-delay: 0.18s;
+	--hero-calendar-preferred-height: clamp(420px, 56vh, 620px);
+	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
@@ -447,13 +452,13 @@ html.low-fps .hero-inner {
 .hero {
 	position: relative;
 
-	min-height: 100svh;
-	height: 100svh;
+	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
 
 	display: grid;
-	place-items: start center; /* geändert */
+	place-items: start center;
 
-	padding: 0 2rem; /* oben kein fixer Abstand mehr */
+	padding: 0 2rem;
 
 	overflow: hidden;
 	z-index: 5;
@@ -469,18 +474,10 @@ html.low-fps .hero-inner {
 	--hero-scale: 1;
 	--hero-brightness: 1;
 	--hero-parallax: 0px;
+	--hero-calendar-extra-height: 0px;
 
-	will-change: transform, filter;
+	will-change: transform, filter, height;
 	transform: translateZ(0);
-}
-
-.hero.hero-calendar-open {
-	align-items: center;
-}
-
-.hero.hero-calendar-open .hero-inner {
-	width: auto;
-	display: block;
 }
 
 .hero-calendar {
@@ -504,8 +501,8 @@ html.low-fps .hero-inner {
 
 	transition:
 		opacity 0.35s ease,
-		transform 0.45s cubic-bezier(.16,.84,.44,1),
-		visibility 0s linear 0.45s;
+		transform 0.35s var(--hero-calendar-layout-ease),
+		visibility 0s linear 0.35s;
 }
 
 @media (max-width: 768px) {
@@ -523,7 +520,7 @@ html.low-fps .hero-inner {
 
 	transition:
 		opacity 0.35s ease,
-		transform 0.45s cubic-bezier(.16,.84,.44,1),
+		transform 0.35s var(--hero-calendar-layout-ease),
 		visibility 0s linear 0s;
 }
 
