@@ -860,15 +860,6 @@ html.low-fps .hero-inner {
 	}
 }
 
-
-
-.cta-button {
-	
-}
-
-
-
-
 .cta-button {
 	position: absolute;
 	left: 50%;
@@ -920,6 +911,16 @@ html.low-fps .hero-inner {
 	box-shadow:
 		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)
 		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
+}
+
+.cta-button.calendar-open {
+	transform:
+	translate3d(
+		calc(-50% + var(--magnetic-x)),
+		calc(var(--magnetic-y) + var(--hover-lift)),
+		0
+	)
+	scale(var(--magnetic-scale));
 }
 
 .cta-button.is-hovered {
