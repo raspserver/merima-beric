@@ -332,7 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredTop: 0,
 		heroCalendarMeasuredHeight: 0,
 		heroCalendarMeasuredExtra: 0,
-		heroCalendarCloseScrollY: null,
 		heroClosedHeroHeight: 0,
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
@@ -3511,8 +3510,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			onComplete: () => {
 				state.ui.heroCalendarOpen = true;
 
-				this.updateHeroCalendarCloseThreshold();
-
 				state.ui.heroCalendarRevealTimer = setTimeout(() => {
 					DOM.heroCalendar.classList.add("is-open");
 					DOM.heroCalendar.setAttribute("aria-hidden", "false");
@@ -3538,13 +3535,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		   erst Kalender ausblenden, dann Layout zurückfahren */
 		state.ui.heroCalendarRevealTimer = setTimeout(() => {
 			this.animateHeroCalendarLayout(state.ui.heroCalendarExtraHeight, 0, {
-				
-				
-				
-				
+	
 				onComplete: () => {
 					state.ui.heroCalendarOpen = false;
-					state.ui.heroCalendarCloseScrollY = null; // NEU
 
 					DOM.cta.classList.remove("calendar-open");
 					DOM.cta.setAttribute("aria-expanded", "false");
@@ -3576,23 +3569,26 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.openHeroCalendar();
 		}
 	},
-
+	
 	getHomeAboutBoundaryEl() {
 		return document.querySelector("#about");
 	},
 
 	hasHomeAboutBoundaryPassedTop() {
-		const threshold = state.ui.heroCalendarCloseScrollY;
-		if (!Number.isFinite(threshold)) return false;
+		const about = this.getHomeAboutBoundaryEl();
+		if (!about) return false;
 
-		return window.scrollY >= threshold;
+		// exakt die Bedingung, die du beschrieben hast:
+		// Grenze home/about hat den oberen Bildschirmrand erreicht
+		return about.getBoundingClientRect().top <= 0;
 	},
 
 	closeHeroCalendarIfBoundaryPassedTop() {
 		if (!state.ui.heroCalendarOpen) return;
 		if (state.ui.heroCalendarAnimating) return;
+		if (state.scroll.programmatic) return;
 
-		/* Nur beim Herunterscrollen schließen */
+		// nur beim echten Herunterscrollen
 		if (state.scrollDirection !== "down") return;
 
 		if (!this.hasHomeAboutBoundaryPassedTop()) return;
@@ -3745,17 +3741,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	unlockHeroCalendarScrollBehavior() {
 		document.documentElement.classList.remove("disable-overscroll");
-	},
-	
-	updateHeroCalendarCloseThreshold() {
-		const about = this.getHomeAboutBoundaryEl();
-		if (!about) {
-			state.ui.heroCalendarCloseScrollY = null;
-			return;
-		}
-
-		/* Dokumentposition der Grenze home/about */
-		state.ui.heroCalendarCloseScrollY = Math.max(0, Math.round(about.offsetTop));
 	}
 
   };
