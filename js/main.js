@@ -3507,11 +3507,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.applyMeasuredHeroCalendarBox();
 
+		state.ui.heroCalendarAnimating = true;
+		resetAnimatedValue(state.cta.parallax, 0);
+		navbarModule.renderCTA();
+
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
-					
 			onComplete: () => {
-
 				state.ui.heroCalendarOpen = true;
 
 				state.ui.heroCalendarRevealTimer = setTimeout(() => {
@@ -3524,18 +3526,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				}, this.getHeroCalendarRevealDelay());
 			},
 		});
-	},
-	
+	}
 	
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false } = {}) {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 		if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
 		state.ui.heroCalendarAnimating = true;
-		
-		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
-		if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
-
 		this.clearHeroCalendarTimers();
 
 		DOM.heroCalendar.classList.remove("is-open");
@@ -3547,7 +3544,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.ui.heroCalendarExtraHeight,
 				0,
 				{
-					mode: preserveAboutBoundaryAtTop ? "close-keep-about-top" : "close",	
+					mode: preserveAboutBoundaryAtTop ? "close-keep-about-top" : "close",
 					onComplete: () => {
 						state.ui.heroCalendarOpen = false;
 
@@ -3560,19 +3557,17 @@ document.addEventListener("DOMContentLoaded", () => {
 						}
 
 						DOM.hero.classList.remove("hero-calendar-open");
+						DOM.hero.classList.remove("hero-calendar-active");
 						DOM.heroCalendar.style.top = "";
 						DOM.heroCalendar.style.height = "";
 
 						this.destroyFullCalendar();
 						navbarModule.suppressCtaHoverTemporarily(250);
-
-						DOM.hero.classList.remove("hero-calendar-active");
 					},
 				}
 			);
-			state.ui.heroCalendarAnimating = false;
 		}, this.getHeroCalendarRevealDelay());
-	},
+	}
 	
 	toggleHeroCalendar() {
 		if (state.ui.heroCalendarAnimating) return;
@@ -3771,6 +3766,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		};
 
 		state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
+		state.ui.heroCalendarAnimating = false;
 	},
 	
 	lockHeroCalendarScrollBehavior() {
