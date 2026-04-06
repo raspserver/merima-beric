@@ -116,6 +116,14 @@
 	--section-bg-contact: var(--secondary-color);
 
 	/* =========================
+		cta Button Elastizität
+	========================= */
+	--cta-elastic-stiffness: 0.032;
+	--cta-elastic-damping: 0.87;
+	--cta-elastic-velocity-factor: 0.10;
+	--cta-elastic-max: 18;
+
+	/* =========================
 	   MASTER MOTION PRESETS
 	   Navbar + Screen Bounce + Hero
 	========================= */
@@ -143,9 +151,6 @@
 	--hero-parallax-damping: 0.85;
 	--hero-scale-scroll-factor: 0.01;
 	--hero-brightness-scroll-factor: 0.06;
-	
-	--cta-parallax-stiffness: 0.032;
-	--cta-parallax-damping: 0.87;
 
 	/* =========================
 	   MASTER PRESET: luxury
@@ -909,11 +914,11 @@ html.hero-calendar-animating body,
 	--gloss-x: 50%;
 	--gloss-y: 50%;
 	--gloss-opacity: 0;
-
+	
 	transform:
 	translate3d(
 		calc(-50% + var(--magnetic-x)),
-		calc(var(--cta-parallax, 0px) + var(--magnetic-y) + var(--hover-lift)),
+		calc(var(--cta-elastic-y, 0px) + var(--magnetic-y) + var(--hover-lift)),
 		0
 	)
 	scale(var(--magnetic-scale));

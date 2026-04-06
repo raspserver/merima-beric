@@ -300,9 +300,9 @@ document.addEventListener("DOMContentLoaded", () => {
     hero: {
       parallax: createAnimatedValue(0),
     },
-
+	
 	cta: {
-	  parallax: createAnimatedValue(0),
+	  elasticY: createAnimatedValue(0),
 	},
 
     scroll: {
@@ -377,8 +377,10 @@ document.addEventListener("DOMContentLoaded", () => {
       navGestureStiffness: 0.18,
       navGestureDamping: 0.74,
       
-	ctaParallaxStiffness: 0.032,
-	ctaParallaxDamping: 0.87,
+		ctaElasticStiffness: 0.032,
+		ctaElasticDamping: 0.87,
+		ctaElasticVelocityFactor: 0.10,
+		ctaElasticMax: 18,
     },
 
     update() {
@@ -439,12 +441,14 @@ document.addEventListener("DOMContentLoaded", () => {
         0.18
       );
       this.values.navGestureDamping = cssVar.number("--nav-gesture-damping", 0.74);
-      
-	this.values.ctaParallaxStiffness = cssVar.number("--cta-parallax-stiffness", 0.032);
-	this.values.ctaParallaxDamping = cssVar.number("--cta-parallax-damping", 0.87);
+	
+	this.values.ctaElasticStiffness = cssVar.number("--cta-elastic-stiffness", 0.032);
+	this.values.ctaElasticDamping = cssVar.number("--cta-elastic-damping", 0.87);
+	this.values.ctaElasticVelocityFactor = cssVar.number("--cta-elastic-velocity-factor", 0.10);
+	this.values.ctaElasticMax = cssVar.number("--cta-elastic-max", 18);
 
-	springs.ctaParallax.stiffness = this.values.ctaParallaxStiffness;
-	springs.ctaParallax.damping = this.values.ctaParallaxDamping;
+	springs.ctaElastic.stiffness = this.values.ctaElasticStiffness;
+	springs.ctaElastic.damping = this.values.ctaElasticDamping;
 
       if (isMobile) {
         this.values.navVisibleStiffness = cssVar.number(
@@ -506,7 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
     navSurface: createSpring({ stiffness: 0.045, damping: 0.88 }),
     navGesture: createSpring({ stiffness: 0.18, damping: 0.74, precision: 0.01 }),
     heroParallax: createSpring({ stiffness: 0.04, damping: 0.85 }),
-    ctaParallax: createSpring({ stiffness: 0.032, damping: 0.87 }),
+    ctaElastic: createSpring({ stiffness: 0.032, damping: 0.87 }),
   };
 
   // ---------------------------------------------------------------------
@@ -982,6 +986,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const deltaY = currentY - state.lastScrollY;
 
       state.scrollVelocity = deltaY * 0.8;
+      
+      if (
+		  !state.ui.heroCalendarOpen &&
+		  !state.ui.heroCalendarAnimating &&
+		  !state.ui.heroCalendarKeepCtaFlat
+		) {
+		  const impulse = clamp(
+			-deltaY * physics.values.ctaElasticVelocityFactor,
+			-physics.values.ctaElasticMax,
+			physics.values.ctaElasticMax
+		  );
+
+		  state.cta.elasticY.current += impulse;
+		  state.cta.elasticY.velocity += impulse * 0.18;
+		}
+      
       this.updateGestureStretch(deltaY, currentY);
 
       if (
@@ -1070,11 +1090,11 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     },
     
-    renderCTA() {
+	renderCTA() {
 	  if (!DOM.cta) return;
 
 	  utils.setVars(DOM.cta, {
-		"--cta-parallax": `${state.cta.parallax.current}px`,
+		"--cta-elastic-y": `${state.cta.elasticY.current}px`,
 	  });
 	},
 
@@ -1095,7 +1115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stepAnimatedValue(state.nav.surface, springs.navSurface, delta);
       stepAnimatedValue(state.nav.gestureStretch, springs.navGesture, delta);
       stepAnimatedValue(state.hero.parallax, springs.heroParallax, delta);
-      stepAnimatedValue(state.cta.parallax, springs.ctaParallax, delta);
+      stepAnimatedValue(state.cta.elasticY, springs.ctaElastic, delta);
 
       state.nav.visible.current = clamp(state.nav.visible.current, 0, 1);
       state.nav.compact.current = clamp(state.nav.compact.current, 0, 1);
@@ -1114,12 +1134,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	  state.ui.heroCalendarKeepCtaFlat
 	) {
 	  resetAnimatedValue(state.hero.parallax, 0);
-	  resetAnimatedValue(state.cta.parallax, 0);
+	  resetAnimatedValue(state.cta.elasticY, 0);
 	} else {
 	  state.hero.parallax.target =
 		scrollY * physics.values.heroParallaxFactor;
 
-	  state.cta.parallax.target = state.hero.parallax.current;
+	  state.cta.elasticY.target = 0;
 	}
 
 	this.renderNavbar();
@@ -1132,7 +1152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         isAnimatedValueMoving(state.nav.surface, springs.navSurface) ||
         isAnimatedValueMoving(state.nav.gestureStretch, springs.navGesture) ||
         isAnimatedValueMoving(state.hero.parallax, springs.heroParallax) ||
-        isAnimatedValueMoving(state.cta.parallax, springs.ctaParallax)
+        isAnimatedValueMoving(state.cta.elasticY, springs.ctaElastic)
 
       if (!stillMoving) {
         state.animation.running = false;
@@ -3537,7 +3557,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarKeepCtaFlat = true;
 		state.ui.heroCalendarAnimating = true;
-		resetAnimatedValue(state.cta.parallax, 0);
+		resetAnimatedValue(state.cta.elasticY, 0);
 		navbarModule.renderCTA();
 
 		this.freezeNavbarForHeroCalendar();
@@ -3604,7 +3624,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 						this.destroyFullCalendar();
 
-						resetAnimatedValue(state.cta.parallax, 0);
+						resetAnimatedValue(state.cta.elasticY, 0);
 						navbarModule.renderCTA();
 
 						navbarModule.suppressCtaHoverTemporarily(250);
