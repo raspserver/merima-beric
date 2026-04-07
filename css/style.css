@@ -2804,8 +2804,11 @@ html.low-fps .navbar::before {
 	background: rgba(26,26,26,0.92) !important;
 }
 
+/*
 @media (max-height: 600px) {
 	:root {
 		--hero-cta-gap-to-boundary: 60px;
 	}
+*/
+
 }
