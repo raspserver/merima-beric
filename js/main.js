@@ -4233,9 +4233,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   init();
 
-});
+
 
 DOM.hero?.classList.add("debug-hero");
 	DOM.cta?.classList.add("debug-cta");
 	document.querySelector("#about")?.classList.add("debug-about");
 	DOM.heroCalendar?.classList.add("debug-calendar");
+
+
+
+});
