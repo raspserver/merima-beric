@@ -598,7 +598,7 @@ html.hero-calendar-animating body,
 	margin: 0 auto;
 
 	padding-top: var(--hero-cta-gap-to-boundary);
-	padding-bottom: var(--hero-cta-gap-to-boundary);
+	padding-bottom: 0;
 
 	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
 	box-sizing: border-box;
