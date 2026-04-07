@@ -4231,9 +4231,6 @@ document.addEventListener("DOMContentLoaded", () => {
     navbarModule.handleScroll();
   }
 
-  init();
-
-
 
 DOM.hero?.classList.add("debug-hero");
 	DOM.cta?.classList.add("debug-cta");
@@ -4241,5 +4238,7 @@ DOM.hero?.classList.add("debug-hero");
 	DOM.heroCalendar?.classList.add("debug-calendar");
 
 
+
+  init();
 
 });
