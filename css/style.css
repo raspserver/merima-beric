@@ -2812,7 +2812,8 @@ html.low-fps .navbar::before {
 
 
 .hero.debug-hero {
-	outline: 3px solid red;
+	outline: 3px solid red !important;
+	background: rgba(255,0,0,0.08) !important;
 }
 
 .hero.debug-hero::after {
