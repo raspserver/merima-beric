@@ -585,8 +585,8 @@ html.hero-calendar-animating body,
 		auto
 		var(--hero-stack-gap)
 		auto
-		minmax(var(--hero-cta-gap-to-boundary), 1fr)
-		auto;
+		auto
+		minmax(var(--hero-cta-gap-to-boundary), 1fr);
 
 	align-content: start;
 	justify-items: center;
@@ -859,7 +859,7 @@ html.hero-calendar-animating body,
 	left: auto;
 	bottom: auto;
 
-	grid-row: 7;
+	grid-row: 6;
 	justify-self: center;
 	align-self: end;
 
