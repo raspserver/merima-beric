@@ -3829,6 +3829,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			Math.ceil(requiredHeroHeight - DOM.hero.offsetHeight + 120)
 		);
 
+
+		const extraHeight = Math.max(700, berechneterWert);
+
 		return {
 			extraHeight,
 			calendarTop,
