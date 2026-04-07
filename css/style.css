@@ -600,7 +600,8 @@ html.hero-calendar-animating body,
 	padding-top: var(--hero-cta-gap-to-boundary);
 	padding-bottom: 0;
 
-	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	min-height: 0;
 	box-sizing: border-box;
 
 	z-index: 2;
