@@ -3595,6 +3595,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.hero.classList.add("hero-calendar-active");
 		DOM.hero.classList.add("hero-calendar-lock-motion");
 
+		state.ui.heroCalendarKeepCtaFlat = true;
+		state.ui.heroCalendarAnimating = true;
+		resetAnimatedValue(state.cta.elasticY, 0);
+		navbarModule.renderCTA();
+
 		this.positionHeroCalendar();
 		this.ensureFullCalendar();
 
@@ -3611,11 +3616,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.heroCalendar.classList.remove("is-open");
 
 		this.applyMeasuredHeroCalendarBox();
-
-		state.ui.heroCalendarKeepCtaFlat = true;
-		state.ui.heroCalendarAnimating = true;
-		resetAnimatedValue(state.cta.elasticY, 0);
-		navbarModule.renderCTA();
 
 		this.freezeNavbarForHeroCalendar();
 
@@ -3784,23 +3784,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const heroRect = DOM.hero.getBoundingClientRect();
 		const descRect = heroDescription.getBoundingClientRect();
-		const ctaRect = DOM.cta.getBoundingClientRect();
 
 		const gap = this.getHeroCalendarGap();
-		const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
+		const calendarHeight = this.getHeroCalendarPreferredHeight();
 
-		/* aktueller freier Raum zwischen Description und CTA */
-		const availableHeightNow = Math.max(
-			0,
-			(ctaRect.top - gap) - (descRect.bottom + gap)
-		);
+		/* CTA logisch messen – nicht über getBoundingClientRect()-Top */
+		const ctaBottomOffset = cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
+		const ctaHeight =
+			DOM.cta.offsetHeight || cssVar.lengthPx("--hero-cta-height", 64);
 
-		/* so viel muss Hero wachsen, damit dort die gewünschte Kalenderhöhe hineinpasst */
-		const extraHeight = Math.max(0, preferredCalendarHeight - availableHeightNow);
-
-		/* Kalender soll final direkt unter der Description starten */
+		/* Kalender startet direkt unter der Description */
 		const calendarTop = Math.round((descRect.bottom - heroRect.top) + gap);
-		const calendarHeight = Math.round(preferredCalendarHeight);
+
+		/* So hoch muss der Hero insgesamt mindestens sein:
+		   Kalender oben + Kalenderhöhe + Abstand zum CTA + CTA-Höhe + CTA-Bottom-Abstand */
+		const requiredHeroHeight =
+			calendarTop +
+			calendarHeight +
+			gap +
+			ctaHeight +
+			ctaBottomOffset;
+
+		const currentHeroHeight = DOM.hero.offsetHeight;
+
+		/* kleine Sicherheitsreserve gegen Rundungsfehler / Rendering */
+		const extraHeight = Math.max(
+			0,
+			Math.ceil(requiredHeroHeight - currentHeroHeight + 8)
+		);
 
 		return {
 			extraHeight,
