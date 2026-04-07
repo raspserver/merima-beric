@@ -2804,4 +2804,28 @@ html.low-fps .navbar::before {
 		--hero-cta-gap-to-boundary: 60px;
 	}
 
+
+
+
+.hero.debug-hero {
+	outline: 3px solid red;
+}
+
+.hero.debug-hero::after {
+	box-shadow: inset 0 0 0 3px lime;
+}
+
+.cta-button.debug-cta {
+	outline: 3px solid blue;
+}
+
+#about.debug-about {
+	outline: 3px solid orange;
+}
+
+#hero-calendar.debug-calendar {
+	outline: 3px solid purple;
+}
+
+
 }
