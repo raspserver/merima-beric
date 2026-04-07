@@ -2832,3 +2832,8 @@ html.low-fps .navbar::before {
 #hero-calendar.debug-calendar {
 	outline: 3px solid purple;
 }
+
+.cta-button.calendar-open {
+	transform: translate3d(-50%, 0, 0) !important;
+	transition: none !important;
+}
