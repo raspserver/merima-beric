@@ -3600,8 +3600,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		resetAnimatedValue(state.cta.elasticY, 0);
 		navbarModule.renderCTA();
 
-		this.positionHeroCalendar();
 		this.ensureFullCalendar();
+		this.positionHeroCalendar();
 
 		DOM.cta.classList.add("calendar-open");
 		DOM.cta.classList.remove("is-hovered", "is-magnetic-near");
