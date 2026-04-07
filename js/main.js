@@ -3771,7 +3771,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	easeHeroCalendar(t) {
 		return 1 - Math.pow(1 - t, 3);
 	},
-
+		
 	measureHeroCalendarLayout() {
 		if (!DOM.hero || !DOM.heroCalendar || !DOM.cta) {
 			return { extraHeight: 0, calendarTop: 0, calendarHeight: 0 };
@@ -3786,18 +3786,36 @@ document.addEventListener("DOMContentLoaded", () => {
 		const descRect = heroDescription.getBoundingClientRect();
 
 		const gap = this.getHeroCalendarGap();
-		const calendarHeight = this.getHeroCalendarPreferredHeight();
-
-		/* CTA logisch messen – nicht über getBoundingClientRect()-Top */
-		const ctaBottomOffset = cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
-		const ctaHeight =
-			DOM.cta.offsetHeight || cssVar.lengthPx("--hero-cta-height", 64);
 
 		/* Kalender startet direkt unter der Description */
 		const calendarTop = Math.round((descRect.bottom - heroRect.top) + gap);
 
-		/* So hoch muss der Hero insgesamt mindestens sein:
-		   Kalender oben + Kalenderhöhe + Abstand zum CTA + CTA-Höhe + CTA-Bottom-Abstand */
+		/* Zunächst Wunschhöhe */
+		const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
+
+		/* CTA-Geometrie aus den logischen CSS-Werten */
+		const ctaBottomOffset = cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
+		const ctaHeight =
+			DOM.cta.offsetHeight || cssVar.lengthPx("--hero-cta-height", 64);
+
+		/* Unterkante des CTA innerhalb des Hero */
+		const ctaBottomInsideHero =
+			DOM.hero.offsetHeight - ctaBottomOffset;
+
+		/* Kalender darf nur bis knapp über den CTA reichen */
+		const maxCalendarHeightFromLayout = Math.max(
+			0,
+			ctaBottomInsideHero - gap - calendarTop
+		);
+
+		/* Was der Kalender mindestens braucht:
+		   Wunschhöhe ODER genug Reserve, damit nichts kollidiert */
+		const calendarHeight = Math.max(
+			preferredCalendarHeight,
+			Math.round(maxCalendarHeightFromLayout)
+		);
+
+		/* Benötigte Gesamthöhe des Hero */
 		const requiredHeroHeight =
 			calendarTop +
 			calendarHeight +
@@ -3805,12 +3823,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			ctaHeight +
 			ctaBottomOffset;
 
-		const currentHeroHeight = DOM.hero.offsetHeight;
-
-		/* kleine Sicherheitsreserve gegen Rundungsfehler / Rendering */
+		/* Sicherheitsreserve deutlich größer */
 		const extraHeight = Math.max(
 			0,
-			Math.ceil(requiredHeroHeight - currentHeroHeight + 8)
+			Math.ceil(requiredHeroHeight - DOM.hero.offsetHeight + 120)
 		);
 
 		return {
