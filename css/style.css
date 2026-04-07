@@ -580,13 +580,11 @@ html.hero-calendar-animating body,
 
 	display: grid;
 	grid-template-rows:
-		auto
+		auto					/* hero-subtitle	grid-row: 1;	*/
 		var(--hero-stack-gap)
-		auto
+		auto					/* hero-brand		grid-row: 3;	*/
 		var(--hero-stack-gap)
-		auto
-		auto
-		minmax(clamp(20px, 3svh, 40px), 1fr);
+		auto;					/* hero-description	grid-row: 5;	*/
 
 	align-content: start;
 	justify-items: center;
