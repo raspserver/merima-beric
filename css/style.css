@@ -585,7 +585,7 @@ html.hero-calendar-animating body,
 		auto
 		var(--hero-stack-gap)
 		auto
-		1fr
+		minmax(var(--hero-cta-gap-to-boundary), 1fr)
 		auto;
 
 	align-content: start;
