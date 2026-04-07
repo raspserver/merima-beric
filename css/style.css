@@ -437,10 +437,6 @@ html.hero-calendar-animating body,
 	position: relative;
 
 	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
-	
-/*
-	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
-*/
 
 	display: grid;
 	place-items: start center;
@@ -462,8 +458,6 @@ html.hero-calendar-animating body,
 	--hero-brightness: 1;
 	--hero-parallax: 0px;
 	--hero-calendar-extra-height: 0px;
-
-
 
 	will-change: transform, filter, height;
 	transform: translateZ(0);
