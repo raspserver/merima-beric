@@ -2802,31 +2802,3 @@ html.low-fps .navbar::before {
 	}
 }
 
-
-
-
-
-
-
-.hero.debug-hero {
-	outline: 3px solid red !important;
-	background: rgba(255,0,0,0.08) !important;
-}
-
-.hero.debug-hero::after {
-	box-shadow: inset 0 0 0 3px lime;
-}
-
-.cta-button.debug-cta {
-	outline: 3px solid blue;
-}
-
-#about.debug-about {
-	outline: 3px solid orange !important;
-	background: rgba(255,165,0,0.12) !important;
-}
-
-#hero-calendar.debug-calendar {
-	outline: 3px solid purple;
-}
-
