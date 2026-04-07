@@ -1173,16 +1173,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	--gloss-opacity: 0;
 
 	box-shadow: none;
-	
-	
-	
-	
-	
-	
-	left: 50% !important;
-	bottom: var(--hero-cta-gap-to-boundary) !important;
-	transform: translateX(-50%) !important;
-	transition: none !important;
 }
 
 .cta-button.calendar-open .cta-shell,
