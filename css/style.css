@@ -519,13 +519,7 @@ html.hero-calendar-animating body,
 
 .hero-inner {
 	width: 100%;
-	
-/*
 	height: 100%;
-*/
-	
-	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
-	
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
@@ -603,7 +597,12 @@ html.hero-calendar-animating body,
 		var(--hero-cta-gap-to-boundary) + var(--hero-cta-height)
 	);
 
+/*
 	min-height: 100svh;
+*/
+	
+	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	
 	box-sizing: border-box;
 
 	z-index: 2;
