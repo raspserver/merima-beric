@@ -3658,31 +3658,26 @@ document.addEventListener("DOMContentLoaded", () => {
 		return document.querySelector("#about");
 	},
 	
-	closeHeroCalendarIfBoundaryPassedTop() {
+	closeHeroCalendarIfHeroFullyOut() {
 		if (!state.ui.heroCalendarOpen) return;
 		if (state.ui.heroCalendarAnimating) return;
 		if (state.scroll.programmatic) return;
 		if (state.scrollDirection !== "down") return;
 
-		const about = this.getHomeAboutBoundaryEl();
-		if (!about) return;
+		if (!DOM.hero) return;
 
-		const aboutTop = about.getBoundingClientRect().top;
+		const heroBottom = DOM.hero.getBoundingClientRect().bottom;
 		const navbarBottom = DOM.navbar
 			? DOM.navbar.getBoundingClientRect().bottom
 			: 0;
 
-		const lastTop = state.ui.heroCalendarLastAboutTop;
-		state.ui.heroCalendarLastAboutTop = aboutTop;
+		/* Hero gilt erst als "aus dem sichtbaren Bereich gewischt",
+		   wenn ihre Unterkante die Unterkante der Navbar erreicht oder überschritten hat. */
+		const heroFullyOut = heroBottom <= navbarBottom;
 
-		if (lastTop == null) return;
+		if (!heroFullyOut) return;
 
-		const crossedDownward =
-			lastTop > navbarBottom && aboutTop <= navbarBottom;
-
-		if (crossedDownward) {
-			this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
-		}
+		this.closeHeroCalendar({ preserveAboutBoundaryAtTop: false });
 	},
 	
 	getHeroCalendarLayoutDuration() {
@@ -4110,7 +4105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.ui.heroCalendarKeepCtaFlat = false;
 			}
 
-			uiModule.closeHeroCalendarIfBoundaryPassedTop();
+			uiModule.closeHeroCalendarIfHeroFullyOut();
 			navbarModule.handleScroll();
 		},
 		{ passive: true }
