@@ -4095,7 +4095,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				state.ui.heroCalendarKeepCtaFlat = false;
 			}
 
-			uiModule.closeHeroCalendarIfHeroFullyOut();
+			//~ uiModule.closeHeroCalendarIfHeroFullyOut();
 			navbarModule.handleScroll();
 		},
 		{ passive: true }
