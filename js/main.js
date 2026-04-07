@@ -116,6 +116,56 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     };
   }
+  
+  function debugHeroLayout(label = "") {
+	  const heroRect = DOM.hero?.getBoundingClientRect();
+	  const ctaRect = DOM.cta?.getBoundingClientRect();
+	  const about = document.querySelector("#about");
+	  const aboutRect = about?.getBoundingClientRect();
+	  const calendarRect = DOM.heroCalendar?.getBoundingClientRect();
+	  const heroStyles = DOM.hero ? getComputedStyle(DOM.hero) : null;
+	  const ctaStyles = DOM.cta ? getComputedStyle(DOM.cta) : null;
+
+	  const vv = window.visualViewport;
+
+	  console.group(`DEBUG HERO ${label}`);
+	  console.log("scrollY:", window.scrollY);
+	  console.log("innerHeight:", window.innerHeight);
+	  console.log("visualViewport.height:", vv ? vv.height : null);
+	  console.log("hero extra height state:", state.ui.heroCalendarExtraHeight);
+	  console.log("hero CSS var:", heroStyles?.getPropertyValue("--hero-calendar-extra-height"));
+	  console.log("hero rect:", heroRect ? {
+		top: heroRect.top,
+		bottom: heroRect.bottom,
+		height: heroRect.height
+	  } : null);
+	  console.log("hero offsetHeight:", DOM.hero?.offsetHeight);
+	  console.log("cta rect:", ctaRect ? {
+		top: ctaRect.top,
+		bottom: ctaRect.bottom,
+		height: ctaRect.height
+	  } : null);
+	  console.log("cta bottom css:", ctaStyles?.bottom);
+	  console.log("cta transform:", ctaStyles?.transform);
+	  console.log("about rect:", aboutRect ? {
+		top: aboutRect.top,
+		bottom: aboutRect.bottom,
+		height: aboutRect.height
+	  } : null);
+	  console.log("calendar rect:", calendarRect ? {
+		top: calendarRect.top,
+		bottom: calendarRect.bottom,
+		height: calendarRect.height
+	  } : null);
+	  console.log("calendar open:", state.ui.heroCalendarOpen);
+	  console.log("calendar animating:", state.ui.heroCalendarAnimating);
+	  console.log("measuredTop/Height/Extra:", {
+		top: state.ui.heroCalendarMeasuredTop,
+		height: state.ui.heroCalendarMeasuredHeight,
+		extra: state.ui.heroCalendarMeasuredExtra
+	  });
+	  console.groupEnd();
+	}
 
   // ---------------------------------------------------------------------
   // 4) CSS-VARIABLEN UND ALLGEMEINE UTILS
@@ -2707,7 +2757,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			() => this.scheduleUpdate(),
 			{ passive: true }
 		  );
-		}
+		}	
 	  },
 
 	  init() {
@@ -3569,9 +3619,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.freezeNavbarForHeroCalendar();
 
+		debugHeroLayout("before open");
+
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
 			onComplete: () => {
+				
+				debugHeroLayout("after open animation");
+				
 				state.ui.heroCalendarOpen = true;
 
 				state.ui.heroCalendarRevealTimer = setTimeout(() => {
@@ -4088,6 +4143,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	  e.stopPropagation();
 	});
 
+
+
+
+/*
 	window.addEventListener(
 		"scroll",
 		() => {
@@ -4100,6 +4159,45 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 		{ passive: true }
 	);
+*/
+	
+	
+	
+	
+	let heroDebugTicking = false;
+
+	window.addEventListener(
+	  "scroll",
+	  () => {
+		if (!heroDebugTicking && state.ui.heroCalendarOpen) {
+		  heroDebugTicking = true;
+		  requestAnimationFrame(() => {
+			debugHeroLayout("scroll while calendar open");
+			heroDebugTicking = false;
+		  });
+		}
+
+		if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
+		  state.ui.heroCalendarKeepCtaFlat = false;
+		}
+
+		navbarModule.handleScroll();
+	  },
+	  { passive: true }
+	);
+	
+
+	if (window.visualViewport) {
+	  window.visualViewport.addEventListener("resize", () => {
+		debugHeroLayout("visualViewport resize");
+	  });
+
+	  window.visualViewport.addEventListener("scroll", () => {
+		debugHeroLayout("visualViewport scroll");
+	  });
+	}
+	
+	
     
 	window.addEventListener("resize", () => {
 		physics.update();
