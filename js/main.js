@@ -1117,12 +1117,6 @@ document.addEventListener("DOMContentLoaded", () => {
       stepAnimatedValue(state.nav.gestureStretch, springs.navGesture, delta);
       stepAnimatedValue(state.hero.parallax, springs.heroParallax, delta);
       stepAnimatedValue(state.cta.elasticY, springs.ctaElastic, delta);
-      
-      state.cta.elasticY.current = clamp(
-		  state.cta.elasticY.current,
-		  -physics.values.ctaElasticMax,
-		  physics.values.ctaElasticMax
-		);
 
       state.nav.visible.current = clamp(state.nav.visible.current, 0, 1);
       state.nav.compact.current = clamp(state.nav.compact.current, 0, 1);
