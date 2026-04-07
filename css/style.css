@@ -37,7 +37,7 @@
 	--hero-calendar-preferred-height: clamp(420px, 56vh, 620px);
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
-	--hero-cta-gap-to-boundary: 90px;
+	--hero-cta-gap-to-boundary: 20px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
 	--hero-cta-height: 64px;
 	
