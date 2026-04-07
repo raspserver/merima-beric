@@ -3609,7 +3609,6 @@ document.addEventListener("DOMContentLoaded", () => {
 						: "close",			
 					
 					onComplete: () => {
-						state.ui.heroCalendarOpen = false;
 
 						DOM.cta.classList.remove("calendar-open");
 						DOM.cta.setAttribute("aria-expanded", "false");
