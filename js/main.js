@@ -3649,26 +3649,24 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	closeHeroCalendarIfHeroFullyOut() {
-		if (!state.ui.heroCalendarOpen) return;
-		if (state.ui.heroCalendarAnimating) return;
-		if (state.scroll.programmatic) return;
-		if (state.scrollDirection !== "down") return;
+	  if (!state.ui.heroCalendarOpen) return;
+	  if (state.ui.heroCalendarAnimating) return;
+	  if (state.scroll.programmatic) return;
+	  if (state.scrollDirection !== "down") return;
 
-		if (!DOM.hero) return;
+	  const about = this.getHomeAboutBoundaryEl();
+	  if (!about) return;
 
-		const heroBottom = DOM.hero.getBoundingClientRect().bottom;
-		const navbarBottom = DOM.navbar
-			? DOM.navbar.getBoundingClientRect().bottom
-			: 0;
+	  const navbarBottom = DOM.navbar
+		? DOM.navbar.getBoundingClientRect().bottom
+		: 0;
 
-		const heroFullyOut = heroBottom <= navbarBottom;
+	  const aboutTop = about.getBoundingClientRect().top;
 
-		if (!heroFullyOut) return;
+	  /* Erst schließen, wenn die echte Home/About-Grenze oben angekommen ist */
+	  if (aboutTop > navbarBottom + 1) return;
 
-		/* verhindert mehrfaches Triggern im gleichen Bereich */
-		state.ui.heroCalendarOpen = false;
-
-		this.closeHeroCalendar({ preserveAboutBoundaryAtTop: false });
+	  this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
 	},
 	
 	getHeroCalendarLayoutDuration() {
