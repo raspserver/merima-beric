@@ -4165,6 +4165,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		physics.update();
 		galleryModule.setPosition(galleryModule.currentIndex, false);
 		
+		
+		/*
 		if (state.ui.heroCalendarOpen) {
 			clearTimeout(state.ui.fullCalendarResizeTimer);
 
@@ -4180,6 +4182,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			}, 120);
 		}
+		*/
+		
+		if (state.ui.heroCalendarOpen) {
+			return;
+		}
+		
+		
 	});
 
     document.addEventListener("visibilitychange", () => {
