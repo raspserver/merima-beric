@@ -586,7 +586,7 @@ html.hero-calendar-animating body,
 		var(--hero-stack-gap)
 		auto
 		auto
-		minmax(var(--hero-cta-gap-to-boundary), 1fr);
+		minmax(clamp(20px, 3svh, 40px), 1fr);
 
 	align-content: start;
 	justify-items: center;
@@ -597,7 +597,7 @@ html.hero-calendar-animating body,
 	width: 100%;
 	margin: 0 auto;
 
-	padding-top: clamp(88px, 12svh, 120px);
+	padding-top: clamp(64px, 9svh, 96px);
 	padding-bottom: 0;
 
 	height: 100%;
