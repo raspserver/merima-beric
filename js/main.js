@@ -3824,11 +3824,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			ctaBottomOffset;
 
 		/* Sicherheitsreserve deutlich größer */
+		/*
 		const extraHeight = Math.max(
 			0,
 			Math.ceil(requiredHeroHeight - DOM.hero.offsetHeight + 120)
 		);
-
+		*/
 
 		const extraHeight = Math.max(700, berechneterWert);
 
