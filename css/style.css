@@ -1173,6 +1173,16 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	--gloss-opacity: 0;
 
 	box-shadow: none;
+	
+	
+	
+	
+	
+	
+	left: 50% !important;
+	bottom: var(--hero-cta-gap-to-boundary) !important;
+	transform: translateX(-50%) !important;
+	transition: none !important;
 }
 
 .cta-button.calendar-open .cta-shell,
@@ -2833,7 +2843,3 @@ html.low-fps .navbar::before {
 	outline: 3px solid purple;
 }
 
-.cta-button.calendar-open {
-	transform: translate3d(-50%, 0, 0) !important;
-	transition: none !important;
-}
