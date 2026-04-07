@@ -461,10 +461,8 @@ html.hero-calendar-animating body,
 	--hero-scale: 1;
 	--hero-brightness: 1;
 	--hero-parallax: 0px;
-/*
 	--hero-calendar-extra-height: 0px;
-*/
-	--hero-calendar-extra-height: 700px !important;
+
 
 
 	will-change: transform, filter, height;
