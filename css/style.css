@@ -37,8 +37,9 @@
 	--hero-calendar-preferred-height: clamp(420px, 56vh, 620px);
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
-	--hero-cta-gap-to-boundary: clamp(24px, 5svh, 72px);
-	--hero-stack-gap: clamp(0.6rem, 1.8svh, 1.2rem);
+	--hero-cta-gap-to-boundary: 90px;
+	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
+	
 	--hero-cta-height: 64px;
 	
 /*
@@ -435,8 +436,8 @@ html.hero-calendar-animating body,
 .hero {
 	position: relative;
 
+	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
 	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
-	min-height: 100svh;
 
 	display: grid;
 	place-items: start center;
@@ -519,9 +520,7 @@ html.hero-calendar-animating body,
 
 .hero-inner {
 	width: 100%;
-	
 	height: 100%;
-
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
@@ -595,11 +594,11 @@ html.hero-calendar-animating body,
 	width: 100%;
 	margin: 0 auto;
 
-	padding-top: clamp(64px, 9svh, 96px);
-	padding-bottom: 0;
+	padding-top: var(--hero-cta-gap-to-boundary);
+	padding-bottom: calc( var(--hero-cta-gap-to-boundary) + var(--hero-cta-height) );
 
 	height: 100%;
-	min-height: 100%;
+	min-height: 100svh;
 	box-sizing: border-box;
 
 	z-index: 2;
@@ -854,12 +853,8 @@ html.hero-calendar-animating body,
 
 .cta-button {
 	position: absolute;
-	left: auto;
-	bottom: auto;
-
-	grid-row: 6;
-	justify-self: center;
-	align-self: end;
+	left: 50%;
+	bottom: var(--hero-cta-gap-to-boundary);
 
 	z-index: 6;
 	padding: 0;
@@ -895,7 +890,7 @@ html.hero-calendar-animating body,
 	
 	transform:
 	translate3d(
-		var(--magnetic-x),
+		calc(-50% + var(--magnetic-x)),
 		calc(var(--cta-elastic-y, 0px) + var(--magnetic-y) + var(--hover-lift)),
 		0
 	)
