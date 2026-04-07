@@ -3790,51 +3790,38 @@ document.addEventListener("DOMContentLoaded", () => {
 		/* Kalender startet direkt unter der Description */
 		const calendarTop = Math.round((descRect.bottom - heroRect.top) + gap);
 
-		/* Zunächst Wunschhöhe */
+		/* Zielhöhe des Kalenderkastens */
 		const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
 
-		/* CTA-Geometrie aus den logischen CSS-Werten */
+		/* CTA-Geometrie */
 		const ctaBottomOffset = cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
 		const ctaHeight =
 			DOM.cta.offsetHeight || cssVar.lengthPx("--hero-cta-height", 64);
 
-		/* Unterkante des CTA innerhalb des Hero */
-		const ctaBottomInsideHero =
-			DOM.hero.offsetHeight - ctaBottomOffset;
-
-		/* Kalender darf nur bis knapp über den CTA reichen */
-		const maxCalendarHeightFromLayout = Math.max(
-			0,
-			ctaBottomInsideHero - gap - calendarTop
-		);
-
-		/* Was der Kalender mindestens braucht:
-		   Wunschhöhe ODER genug Reserve, damit nichts kollidiert */
-		const calendarHeight = Math.max(
-			preferredCalendarHeight,
-			Math.round(maxCalendarHeightFromLayout)
-		);
-
-		/* Benötigte Gesamthöhe des Hero */
+		/* Benötigte Hero-Gesamthöhe */
 		const requiredHeroHeight =
 			calendarTop +
-			calendarHeight +
+			preferredCalendarHeight +
 			gap +
 			ctaHeight +
 			ctaBottomOffset;
 
-		/* Sicherheitsreserve deutlich größer */		
+		/* Harte Untergrenze, weil dein Layout real mehr Platz braucht
+		   als die Berechnung zuverlässig liefert */
+		const absoluteMinExtra =
+			window.innerWidth <= 768 ? 760 : 700;
+
 		const extraHeight = Math.max(
-			0,
+			absoluteMinExtra,
 			Math.ceil(requiredHeroHeight - DOM.hero.offsetHeight + 120)
 		);
 
 		return {
 			extraHeight,
 			calendarTop,
-			calendarHeight,
+			calendarHeight: preferredCalendarHeight,
 		};
-	},
+	}
 
 	applyMeasuredHeroCalendarBox() {
 		if (!DOM.heroCalendar) return;
