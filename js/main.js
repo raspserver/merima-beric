@@ -3755,7 +3755,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		/* Harte Untergrenze, weil dein Layout real mehr Platz braucht
 		   als die Berechnung zuverlässig liefert */
 		const absoluteMinExtra =
-			window.innerWidth <= 768 ? 360 : 600;
+			window.innerWidth <= 768 ? 460 : 600;
 
 		const extraHeight = Math.max(
 			absoluteMinExtra,
