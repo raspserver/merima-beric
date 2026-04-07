@@ -3671,7 +3671,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						DOM.heroCalendar.style.top = "";
 						DOM.heroCalendar.style.height = "";
 
-						//~ this.destroyFullCalendar();
+						this.destroyFullCalendar();
 
 						resetAnimatedValue(state.cta.elasticY, 0);
 						navbarModule.renderCTA();
