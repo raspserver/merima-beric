@@ -3821,7 +3821,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			calendarTop,
 			calendarHeight: preferredCalendarHeight,
 		};
-	}
+	},
 
 	applyMeasuredHeroCalendarBox() {
 		if (!DOM.heroCalendar) return;
