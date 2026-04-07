@@ -2825,7 +2825,8 @@ html.low-fps .navbar::before {
 }
 
 #about.debug-about {
-	outline: 3px solid orange;
+	outline: 3px solid orange !important;
+	background: rgba(255,165,0,0.12) !important;
 }
 
 #hero-calendar.debug-calendar {
