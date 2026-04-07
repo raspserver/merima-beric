@@ -335,10 +335,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarLastAboutTop: null,
 		heroCalendarKeepCtaFlat: false,
 		heroCalendarNavbarFreeze: false,
-		heroCalendarRestoreNavbarVisible: false,
-		heroCalendarRestoreNavbarCompact: false,
-		heroCalendarRestoreNavbarSurface: false,
-		heroCalendarRestoreNavManualOpen: false,
 		heroClosedHeroHeight: 0,
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
@@ -3567,11 +3563,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		resetAnimatedValue(state.cta.elasticY, 0);
 		navbarModule.renderCTA();
 
-		state.ui.heroCalendarRestoreNavbarVisible = state.nav.visible.target > 0.5 || state.nav.visible.current > 0.5;
-		state.ui.heroCalendarRestoreNavbarCompact = state.nav.compact.target > 0.5 || state.nav.compact.current > 0.5;
-		state.ui.heroCalendarRestoreNavbarSurface = state.nav.surface.target > 0.5 || state.nav.surface.current > 0.5;
-		state.ui.heroCalendarRestoreNavManualOpen = state.nav.manualOpen;
-
 		this.freezeNavbarForHeroCalendar();
 
 		const about = this.getHomeAboutBoundaryEl();
@@ -3880,19 +3871,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.nav.gestureStretch.current = 0;
 		state.nav.gestureStretch.target = 0;
 
-		state.nav.manualOpen = state.ui.heroCalendarRestoreNavManualOpen;
-
-		if (state.ui.heroCalendarRestoreNavbarVisible) {
-			navbarModule.setTargets(
-				state.ui.heroCalendarRestoreNavbarVisible ? 1 : 0,
-				state.ui.heroCalendarRestoreNavbarCompact ? 1 : 0,
-				state.ui.heroCalendarRestoreNavbarSurface ? 1 : 0
-			);
-			navbarModule.startAnimation();
-			return;
-		}
-
-		navbarModule.handleScroll();
+		/* Wichtig:
+		   KEIN altes Navbar-State zurückschreiben.
+		   Die Navbar bleibt einfach in dem Zustand,
+		   den sie beim Schließen gerade hat. */
 		navbarModule.startAnimation();
 	}
 
