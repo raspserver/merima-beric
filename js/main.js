@@ -3514,6 +3514,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.ui.fullCalendarInstance.updateSize();
 	},
 	
+	getHomeAboutBoundaryEl() {
+	  return document.querySelector("#about");
+	},
+	
 	getHeroCalendarGap() {
 		return cssVar.lengthPx("--hero-calendar-gap", 20);
 	},
