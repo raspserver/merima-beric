@@ -987,21 +987,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const deltaY = currentY - state.lastScrollY;
 
       state.scrollVelocity = deltaY * 0.8;
-      
-      if (
-		  !state.ui.heroCalendarOpen &&
-		  !state.ui.heroCalendarAnimating &&
-		  !state.ui.heroCalendarKeepCtaFlat
-		) {
-		  const impulse = clamp(
-			-deltaY * physics.values.ctaElasticVelocityFactor,
-			-physics.values.ctaElasticMax,
-			physics.values.ctaElasticMax
-		  );
 
-		  state.cta.elasticY.current += impulse;
-		  state.cta.elasticY.velocity += impulse * 0.18;
-		}
+		if (
+			  !state.ui.heroCalendarOpen &&
+			  !state.ui.heroCalendarAnimating &&
+			  !state.ui.heroCalendarKeepCtaFlat
+			) {
+			  const impulse = clamp(
+				-deltaY * physics.values.ctaElasticVelocityFactor,
+				-physics.values.ctaElasticMax,
+				physics.values.ctaElasticMax
+			  );
+
+			  /* Nur Impuls auf die Feder geben, Nullpunkt bleibt bottom */
+			  state.cta.elasticY.velocity += impulse;
+			}
       
       this.updateGestureStretch(deltaY, currentY);
 
@@ -1117,6 +1117,12 @@ document.addEventListener("DOMContentLoaded", () => {
       stepAnimatedValue(state.nav.gestureStretch, springs.navGesture, delta);
       stepAnimatedValue(state.hero.parallax, springs.heroParallax, delta);
       stepAnimatedValue(state.cta.elasticY, springs.ctaElastic, delta);
+      
+      state.cta.elasticY.current = clamp(
+		  state.cta.elasticY.current,
+		  -physics.values.ctaElasticMax,
+		  physics.values.ctaElasticMax
+		);
 
       state.nav.visible.current = clamp(state.nav.visible.current, 0, 1);
       state.nav.compact.current = clamp(state.nav.compact.current, 0, 1);
