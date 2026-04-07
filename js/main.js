@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const DOM = {
 	navbar: document.querySelector(".navbar"),
 	hero: document.querySelector(".hero"),
+	heroContent: document.querySelector(".hero-content"),
 	navToggle: document.querySelector(".nav-toggle"),
 	navMenu: document.querySelector(".nav-menu"),
 	navLinks: [...document.querySelectorAll(".nav-menu a")],
@@ -3704,6 +3705,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.ui.heroCalendarExtraHeight = value;
 
 		DOM.hero?.style.setProperty("--hero-calendar-extra-height", `${value}px`);
+		DOM.heroContent?.style.setProperty("--hero-calendar-extra-height", `${value}px`);
+
 		document.documentElement.style.setProperty(
 			"--hero-calendar-extra-height-global",
 			`${value}px`

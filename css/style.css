@@ -436,7 +436,7 @@ html.hero-calendar-animating body,
 	position: relative;
 
 	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
-	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	height: auto;
 
 	display: grid;
 	place-items: start center;
@@ -576,15 +576,18 @@ html.hero-calendar-animating body,
 }
 
 .hero-content {
+	position: relative;
+
 	display: grid;
-	
 	grid-template-rows:
 		auto
 		var(--hero-stack-gap)
 		auto
 		var(--hero-stack-gap)
+		auto
+		1fr
 		auto;
-		
+
 	align-content: start;
 	justify-items: center;
 
@@ -595,12 +598,9 @@ html.hero-calendar-animating body,
 	margin: 0 auto;
 
 	padding-top: var(--hero-cta-gap-to-boundary);
-	padding-bottom: calc(
-		var(--hero-cta-gap-to-boundary) + var(--hero-cta-height)
-	);
+	padding-bottom: var(--hero-cta-gap-to-boundary);
 
-	min-height: 100svh;
-		
+	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
 	box-sizing: border-box;
 
 	z-index: 2;
@@ -854,9 +854,13 @@ html.hero-calendar-animating body,
 }
 
 .cta-button {
-	position: absolute;
-	left: 50%;
-	bottom: var(--hero-cta-gap-to-boundary);
+	position: relative;
+	left: auto;
+	bottom: auto;
+
+	grid-row: 7;
+	justify-self: center;
+	align-self: end;
 
 	z-index: 6;
 	padding: 0;
@@ -892,14 +896,13 @@ html.hero-calendar-animating body,
 	
 	transform:
 	translate3d(
-		calc(-50% + var(--magnetic-x)),
+		var(--magnetic-x),
 		calc(var(--cta-elastic-y, 0px) + var(--magnetic-y) + var(--hover-lift)),
 		0
 	)
 	scale(var(--magnetic-scale));
 	
-	transition:
-		color 0.3s ease;
+	transition: color 0.3s ease;
 
 	box-shadow:
 		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)
