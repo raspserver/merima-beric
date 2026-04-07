@@ -4092,6 +4092,8 @@ document.addEventListener("DOMContentLoaded", () => {
     uiModule.bindHeroClickBehavior();
     uiModule.bindPricingTabs();
     uiModule.setInitialVisualState();
+    
+    uiModule.ensureFullCalendar();
 
     bindUserScrollInterrupts();
     
