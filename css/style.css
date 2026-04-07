@@ -437,6 +437,9 @@ html.hero-calendar-animating body,
 	position: relative;
 
 	min-height: calc(100svh + var(--hero-calendar-extra-height, 0px));
+	
+	padding-bottom: 800px !important;
+	
 /*
 	height: calc(100svh + var(--hero-calendar-extra-height, 0px));
 */
