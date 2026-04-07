@@ -339,6 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
 		fullCalendarResizeTimer: null,
+		fullCalendarPrimed: false,
 	},
 
     orderedSections: [],
@@ -3489,6 +3490,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.fullCalendarInstance.render();
 	},
+	
+	primeFullCalendar() {
+		if (
+			state.ui.fullCalendarPrimed ||
+			!DOM.heroCalendar ||
+			!DOM.heroCalendarEl
+		) {
+			return;
+		}
+
+		const prev = {
+			top: DOM.heroCalendar.style.top,
+			height: DOM.heroCalendar.style.height,
+			opacity: DOM.heroCalendar.style.opacity,
+			visibility: DOM.heroCalendar.style.visibility,
+			pointerEvents: DOM.heroCalendar.style.pointerEvents,
+			transform: DOM.heroCalendar.style.transform,
+		};
+
+		/* Container messbar machen, aber unsichtbar lassen */
+		DOM.heroCalendar.style.top = "0px";
+		DOM.heroCalendar.style.height = `${this.getHeroCalendarPreferredHeight()}px`;
+		DOM.heroCalendar.style.opacity = "0";
+		DOM.heroCalendar.style.visibility = "hidden";
+		DOM.heroCalendar.style.pointerEvents = "none";
+		DOM.heroCalendar.style.transform = "translateX(-50%) translateY(0)";
+
+		this.ensureFullCalendar();
+
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				this.updateFullCalendarSize();
+
+				state.ui.fullCalendarPrimed = true;
+
+				DOM.heroCalendar.style.top = prev.top;
+				DOM.heroCalendar.style.height = prev.height;
+				DOM.heroCalendar.style.opacity = prev.opacity;
+				DOM.heroCalendar.style.visibility = prev.visibility;
+				DOM.heroCalendar.style.pointerEvents = prev.pointerEvents;
+				DOM.heroCalendar.style.transform = prev.transform;
+			});
+		});
+	},
 
 	destroyFullCalendar() {
 		if (!state.ui.fullCalendarInstance) return;
@@ -4092,8 +4137,6 @@ document.addEventListener("DOMContentLoaded", () => {
     uiModule.bindHeroClickBehavior();
     uiModule.bindPricingTabs();
     uiModule.setInitialVisualState();
-    
-    uiModule.ensureFullCalendar();
 
     bindUserScrollInterrupts();
     
@@ -4146,6 +4189,12 @@ document.addEventListener("DOMContentLoaded", () => {
         navbarModule.handleScroll();
       }
     });
+
+	window.addEventListener("load", () => {
+		requestAnimationFrame(() => {
+			uiModule.primeFullCalendar();
+		});
+	});
 
     navbarModule.handleScroll();
   }
