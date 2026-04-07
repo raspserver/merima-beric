@@ -333,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredTop: 0,
 		heroCalendarMeasuredHeight: 0,
 		heroCalendarMeasuredExtra: 0,
-		heroCalendarLastAboutTop: null,
 		heroCalendarKeepCtaFlat: false,
 		heroCalendarNavbarFreeze: false,
 		heroClosedHeroHeight: 0,
@@ -3566,10 +3565,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.freezeNavbarForHeroCalendar();
 
-		const about = this.getHomeAboutBoundaryEl();
-		state.ui.heroCalendarLastAboutTop =
-			about ? about.getBoundingClientRect().top : null;
-
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
 			onComplete: () => {
@@ -3649,14 +3644,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.openHeroCalendar();
 		}
 	},
-
-	getHomeAboutBoundaryEl() {
-		return document.querySelector("#about");
-	},
-	
-	getHomeAboutBoundaryEl() {
-		return document.querySelector("#about");
-	},
 	
 	closeHeroCalendarIfHeroFullyOut() {
 		if (!state.ui.heroCalendarOpen) return;
@@ -3671,11 +3658,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			? DOM.navbar.getBoundingClientRect().bottom
 			: 0;
 
-		/* Hero gilt erst als "aus dem sichtbaren Bereich gewischt",
-		   wenn ihre Unterkante die Unterkante der Navbar erreicht oder überschritten hat. */
 		const heroFullyOut = heroBottom <= navbarBottom;
 
 		if (!heroFullyOut) return;
+
+		/* verhindert mehrfaches Triggern im gleichen Bereich */
+		state.ui.heroCalendarOpen = false;
 
 		this.closeHeroCalendar({ preserveAboutBoundaryAtTop: false });
 	},
