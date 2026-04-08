@@ -3525,7 +3525,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	getHeroCalendarAutoCloseOffset() {
-		return window.innerWidth <= 768 ? 160 : 24;
+		return window.innerWidth <= 768 ? 32 : 24;
 	},
 
 	positionHeroCalendar() {
