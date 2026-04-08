@@ -3523,6 +3523,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	getHeroCalendarGap() {
 		return cssVar.lengthPx("--hero-calendar-gap", 20);
 	},
+	
+	getHeroCalendarAutoCloseOffset() {
+		return window.innerWidth <= 768 ? 60 : 24;
+	},
 
 	positionHeroCalendar() {
 		if (!DOM.heroCalendar) return;
@@ -3672,7 +3676,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		/* Hysterese:
 		   erst "armen", wenn about wirklich an der Navbar ist */
-		if (aboutTop <= navbarBottom + 1) {
+		const autoCloseOffset = this.getHeroCalendarAutoCloseOffset();
+		if (aboutTop <= navbarBottom - autoCloseOffset) {	
 			if (state.ui.heroCalendarAutoCloseArmed) return;
 
 			state.ui.heroCalendarAutoCloseArmed = true;
@@ -3699,7 +3704,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				} else {
 					state.ui.heroCalendarAutoCloseArmed = false;
 				}
-			}, 2000);
+			}, 180);
 
 			return;
 		}
