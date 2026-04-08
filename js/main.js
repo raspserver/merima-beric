@@ -3706,8 +3706,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		requestAnimationFrame(() => {
 			DOM.hero.classList.remove("hero-calendar-close-instant");
 		});
-
-		console.warn("closeHeroCalendarInstant", { source });
 	},
 	
 	toggleHeroCalendar() {
@@ -3721,65 +3719,92 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	closeHeroCalendarIfHeroFullyOut() {
-		if (!state.ui.heroCalendarOpen) return;
-		if (state.ui.heroCalendarAnimating) return;
-		if (state.scroll.programmatic) return;
+	  if (!state.ui.heroCalendarOpen) return;
+	  if (state.scroll.programmatic) return;
 
-		const currentY = window.scrollY;
-		const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
-		state.ui.heroCalendarLastScrollY = currentY;
+	  const currentY = window.scrollY;
+	  const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
+	  state.ui.heroCalendarLastScrollY = currentY;
 
-		if (!scrollingDown) return;
+	  if (!scrollingDown) return;
 
-		const about = this.getHomeAboutBoundaryEl();
-		if (!about) return;
+	  const about = this.getHomeAboutBoundaryEl();
+	  if (!about) return;
 
-		const navbarBottom = DOM.navbar
-			? DOM.navbar.getBoundingClientRect().bottom
-			: 0;
+	  const navbarBottom = DOM.navbar
+		? DOM.navbar.getBoundingClientRect().bottom
+		: 0;
 
-		const aboutTop = about.getBoundingClientRect().top;
-		const autoCloseOffset = this.getHeroCalendarAutoCloseOffset();
+	  const aboutTop = about.getBoundingClientRect().top;
+	  const autoCloseOffset = this.getHeroCalendarAutoCloseOffset();
 
-		if (aboutTop <= navbarBottom - autoCloseOffset) {
-			if (state.ui.heroCalendarAutoCloseArmed) return;
+	  const triggerY = navbarBottom - autoCloseOffset;
+	  const passed = triggerY - aboutTop;
 
-			state.ui.heroCalendarAutoCloseArmed = true;
+	  // Desktop bleibt wie bisher
+	  if (window.innerWidth > 768) {
+		if (aboutTop <= triggerY) {
+		  if (state.ui.heroCalendarAutoCloseArmed) return;
 
-			clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-			state.ui.heroCalendarAutoCloseTimer = setTimeout(() => {
-				state.ui.heroCalendarAutoCloseTimer = null;
+		  state.ui.heroCalendarAutoCloseArmed = true;
 
-				if (!state.ui.heroCalendarOpen) return;
-				if (state.ui.heroCalendarAnimating) return;
+		  clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+		  state.ui.heroCalendarAutoCloseTimer = setTimeout(() => {
+			state.ui.heroCalendarAutoCloseTimer = null;
 
-				const currentAboutTop = about.getBoundingClientRect().top;
-				const currentNavbarBottom = DOM.navbar
-					? DOM.navbar.getBoundingClientRect().bottom
-					: 0;
+			if (!state.ui.heroCalendarOpen) return;
+			if (state.ui.heroCalendarAnimating) return;
 
-				if (currentAboutTop <= currentNavbarBottom - autoCloseOffset) {
-					if (window.innerWidth <= 768) {
-						this.closeHeroCalendarInstant({
-							source: "closeHeroCalendarIfHeroFullyOut"
-						});
-					} else {
-						this.closeHeroCalendar({
-							preserveAboutBoundaryAtTop: true,
-							source: "closeHeroCalendarIfHeroFullyOut"
-						});
-					}
-				} else {
-					state.ui.heroCalendarAutoCloseArmed = false;
-				}
-			}, 180);
+			const currentAboutTop = about.getBoundingClientRect().top;
+			const currentNavbarBottom = DOM.navbar
+			  ? DOM.navbar.getBoundingClientRect().bottom
+			  : 0;
 
-			return;
+			if (currentAboutTop <= currentNavbarBottom - autoCloseOffset) {
+			  this.closeHeroCalendar({
+				preserveAboutBoundaryAtTop: true,
+				source: "closeHeroCalendarIfHeroFullyOut"
+			  });
+			} else {
+			  state.ui.heroCalendarAutoCloseArmed = false;
+			}
+		  }, 180);
+
+		  return;
 		}
 
 		state.ui.heroCalendarAutoCloseArmed = false;
 		clearTimeout(state.ui.heroCalendarAutoCloseTimer);
 		state.ui.heroCalendarAutoCloseTimer = null;
+		return;
+	  }
+
+	  // MOBILE: progressives Schließen über Scroll-Strecke
+	  if (passed <= 0) {
+		state.ui.heroCalendarAutoCloseArmed = false;
+		return;
+	  }
+
+	  const range = this.getHeroCalendarMobileCloseRange();
+
+	  if (!state.ui.heroCalendarAnimating) {
+		this.beginHeroCalendarMobileScrubClose();
+	  }
+
+	  const progress = clamp(passed / range, 0, 1);
+	  const nextExtra = state.ui.heroCalendarMeasuredExtra * (1 - progress);
+
+	  this.setHeroCalendarExtraHeight(nextExtra);
+	  this.applyMeasuredHeroCalendarBox();
+
+	  if (state.ui.fullCalendarInstance) {
+		state.ui.fullCalendarInstance.updateSize();
+	  }
+
+	  if (progress >= 1) {
+		this.setHeroCalendarExtraHeight(0);
+		this.finishHeroCalendarMobileScrubClose();
+	  }
 	},
 	
 	getHeroCalendarLayoutDuration() {
@@ -4016,6 +4041,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		navbarModule.handleScroll();
 		navbarModule.startAnimation();
+	},
+	
+	getHeroCalendarMobileCloseRange() {
+	  return window.innerWidth <= 768 ? 140 : 0;
+	},
+
+	beginHeroCalendarMobileScrubClose() {
+	  if (!state.ui.heroCalendarOpen) return;
+	  if (state.ui.heroCalendarAnimating) return;
+
+	  state.ui.heroCalendarAnimating = true;
+	  state.ui.heroCalendarKeepCtaFlat = true;
+
+	  this.clearHeroCalendarTimers();
+	  this.freezeNavbarForHeroCalendar();
+
+	  DOM.heroCalendar.classList.remove("is-open");
+	  DOM.heroCalendar.setAttribute("aria-hidden", "true");
+	},
+
+	finishHeroCalendarMobileScrubClose() {
+	  if (!state.ui.heroCalendarOpen) return;
+
+	  state.ui.heroCalendarOpen = false;
+	  state.ui.heroCalendarAnimating = false;
+	  state.ui.heroCalendarKeepCtaFlat = false;
+	  state.ui.heroCalendarAutoCloseArmed = false;
+
+	  clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+	  state.ui.heroCalendarAutoCloseTimer = null;
+
+	  DOM.cta.classList.remove("calendar-open");
+	  DOM.cta.setAttribute("aria-expanded", "false");
+
+	  if (DOM.ctaLabel) {
+		DOM.ctaLabel.textContent =
+		  state.ui.ctaDefaultLabel || "Termin vereinbaren";
+	  }
+
+	  DOM.hero.classList.remove("hero-calendar-open");
+	  DOM.hero.classList.remove("hero-calendar-active");
+	  DOM.hero.classList.remove("hero-calendar-lock-motion");
+
+	  DOM.heroCalendar.style.top = "";
+	  DOM.heroCalendar.style.height = "";
+
+	  this.destroyFullCalendar();
+
+	  resetAnimatedValue(state.cta.elasticY, 0);
+	  navbarModule.renderCTA();
+	  navbarModule.suppressCtaHoverTemporarily(250);
+
+	  this.restoreNavbarAfterHeroCalendar();
 	}
 
   };
