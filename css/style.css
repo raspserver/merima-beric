@@ -469,7 +469,7 @@ html.hero-calendar-animating body,
 	top: 0;
 	transform: translateX(-50%) translateY(-12px);
 
-	width: min(100%, 950px);
+	width: min(calc(100% - 4rem), 950px);
 	height: 0;
 
 	opacity: 0;
@@ -479,7 +479,7 @@ html.hero-calendar-animating body,
 
 	box-sizing: border-box;
 	padding: 0;
-	margin: 0;
+	margin: 2rem 2rem;
 	border: 0;
 
 	transition:
@@ -1130,9 +1130,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 @media (max-width: 768px) {
-	.hero-calendar {
-		width: 100%;
-	}
 
 	#hero-fullcalendar {
 		min-height: clamp(420px, 62vh, 620px);
@@ -1183,12 +1180,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
 .cta-button.calendar-open:hover .cta-label,
 .cta-button.calendar-open.is-hovered .cta-label {
 	color: var(--secondary-color);
-}
-
-@media (max-width: 768px) {
-	.hero-calendar {
-		width: 100%;
-	}
 }
 
 /* =========================
