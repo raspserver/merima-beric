@@ -3699,7 +3699,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				} else {
 					state.ui.heroCalendarAutoCloseArmed = false;
 				}
-			}, 240);
+			}, 2000);
 
 			return;
 		}
