@@ -3903,15 +3903,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		let heroRect = DOM.hero.getBoundingClientRect();
 		let descRect = heroDescription.getBoundingClientRect();
 
-		/* 1) unterhalb der Description */
+		/* Kalender soll unter Description und unter virtueller kompakter Navbar liegen */
 		const descriptionBasedTop =
 			Math.round((descRect.bottom - heroRect.top) + gap);
 
-		/* 2) mindestens gap unter der gedachten kompakten Navbar */
 		const navbarBasedTop =
 			Math.round(Math.max(0, compactNavHeight - heroRect.top) + gap);
 
-		/* Kalender darf weder in die Description noch in den Navbar-Raum */
 		const calendarTop = Math.max(descriptionBasedTop, navbarBasedTop);
 
 		/* benötigter Platz unterhalb der Kalenderoberkante */
@@ -3925,6 +3923,23 @@ document.addEventListener("DOMContentLoaded", () => {
 		let extraHeight = Math.max(
 			0,
 			Math.ceil(requiredSpaceBelowCalendarTop - availableSpaceBelowCalendarTop)
+		);
+
+		/*
+		  Zusatzanforderung:
+		  Description soll nach dem Öffnen gerade oben aus dem Viewport raus sein,
+		  OHNE Navbar-Berücksichtigung.
+
+		  Da beim Öffnen die About-Grenze festgehalten wird, entspricht die nötige
+		  Verschiebung nach oben näherungsweise der aufgebauten Zusatzhöhe.
+		  Also muss extraHeight mindestens die aktuelle Description-Unterkante abdecken.
+		*/
+		const requiredExtraForDescriptionToLeaveViewport =
+			Math.max(0, Math.ceil(descRect.bottom));
+
+		extraHeight = Math.max(
+			extraHeight,
+			requiredExtraForDescriptionToLeaveViewport
 		);
 
 		/* probeweise anwenden und real nachmessen */
@@ -3971,8 +3986,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		const start = performance.now();
 
 		const about = this.getHomeAboutBoundaryEl();
-		const heroDescription = document.querySelector(".hero-description");
-
 		const startScrollY = window.scrollY;
 		const startAboutViewportTop = about ? about.getBoundingClientRect().top : 0;
 
@@ -3988,18 +4001,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			let nextScrollY = startScrollY;
 
-			if (mode === "open") {
-				/* Description soll gerade oben aus dem Viewport raus sein,
-				   ohne Navbar-Berücksichtigung */
-				if (heroDescription) {
-					const currentDescriptionBottom =
-						heroDescription.getBoundingClientRect().bottom;
-
-					const deltaToTarget = currentDescriptionBottom;
-					nextScrollY = window.scrollY + deltaToTarget;
-				}
-			} else if (mode === "close-keep-about-position") {
-				/* About-Grenze exakt dort halten, wo sie beim Start des Schließens war */
+			if (mode === "open" || mode === "close-keep-about-position") {
+				/* About-Grenze exakt an ihrer Startposition halten */
 				if (about) {
 					const currentAboutTop = about.getBoundingClientRect().top;
 					const deltaToTarget = currentAboutTop - startAboutViewportTop;
@@ -4029,15 +4032,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.setHeroCalendarExtraHeight(to);
 
-			if (mode === "open" && heroDescription) {
-				const finalDescriptionBottom =
-					heroDescription.getBoundingClientRect().bottom;
-
-				window.scrollTo(
-					0,
-					Math.max(0, window.scrollY + finalDescriptionBottom)
-				);
-			} else if (about && mode === "close-keep-about-position") {
+			if ((mode === "open" || mode === "close-keep-about-position") && about) {
 				const finalAboutTop = about.getBoundingClientRect().top;
 				window.scrollTo(
 					0,
