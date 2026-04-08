@@ -3894,7 +3894,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.cta.offsetHeight || cssVar.lengthPx("--hero-cta-height", 64);
 
 		/* gedachte kompakte Navbar-Unterkante */
-		const compactNavHeight = cssVar.number("--nav-height-min", 58);
+		const compactNavHeight = cssVar.lengthPx("--nav-height-min", 58);
 
 		/* Ausgangszustand sichern */
 		const previousExtra = state.ui.heroCalendarExtraHeight || 0;
