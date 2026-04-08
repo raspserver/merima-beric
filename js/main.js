@@ -339,6 +339,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
 		fullCalendarResizeTimer: null,
+		heroCalendarAutoCloseTimer: null,
+		heroCalendarAutoCloseArmed: false,
 	},
 
     orderedSections: [],
@@ -3654,31 +3656,58 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	closeHeroCalendarIfHeroFullyOut() {
-		
-		//~ if (window.innerWidth <= 768) return;
-		
-		
-	  if (!state.ui.heroCalendarOpen) return;
-	  if (state.ui.heroCalendarAnimating) return;
-	  if (state.scroll.programmatic) return;
-	  if (state.scrollDirection !== "down") return;
+		if (!state.ui.heroCalendarOpen) return;
+		if (state.ui.heroCalendarAnimating) return;
+		if (state.scroll.programmatic) return;
+		if (state.scrollDirection !== "down") return;
 
-	  const about = this.getHomeAboutBoundaryEl();
-	  if (!about) return;
+		const about = this.getHomeAboutBoundaryEl();
+		if (!about) return;
 
-	  const navbarBottom = DOM.navbar
-		? DOM.navbar.getBoundingClientRect().bottom
-		: 0;
+		const navbarBottom = DOM.navbar
+			? DOM.navbar.getBoundingClientRect().bottom
+			: 0;
 
-	  const aboutTop = about.getBoundingClientRect().top;
+		const aboutTop = about.getBoundingClientRect().top;
 
-	  /* Erst schließen, wenn die echte Home/About-Grenze oben angekommen ist */
-	  //~ if (aboutTop > navbarBottom + 1) return;
-	  
-	  /* deutliche Hysterese */
-		if (heroBottom > navbarBottom - 30) return;
+		/* Hysterese:
+		   erst "armen", wenn about wirklich an der Navbar ist */
+		if (aboutTop <= navbarBottom + 1) {
+			if (state.ui.heroCalendarAutoCloseArmed) return;
 
-	  this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
+			state.ui.heroCalendarAutoCloseArmed = true;
+
+			clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+			state.ui.heroCalendarAutoCloseTimer = setTimeout(() => {
+				state.ui.heroCalendarAutoCloseTimer = null;
+
+				/* vor dem echten Close nochmal prüfen */
+				if (!state.ui.heroCalendarOpen) return;
+				if (state.ui.heroCalendarAnimating) return;
+
+				const currentAboutTop = about.getBoundingClientRect().top;
+				const currentNavbarBottom = DOM.navbar
+					? DOM.navbar.getBoundingClientRect().bottom
+					: 0;
+
+				/* Nur schließen, wenn die Bedingung immer noch stabil gilt */
+				if (currentAboutTop <= currentNavbarBottom + 1) {
+					this.closeHeroCalendar({
+						preserveAboutBoundaryAtTop: true,
+						source: "closeHeroCalendarIfHeroFullyOut"
+					});
+				} else {
+					state.ui.heroCalendarAutoCloseArmed = false;
+				}
+			}, 180);
+
+			return;
+		}
+
+		/* Wenn wieder oberhalb der Grenze, Trigger zurücksetzen */
+		state.ui.heroCalendarAutoCloseArmed = false;
+		clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+		state.ui.heroCalendarAutoCloseTimer = null;
 	},
 	
 	getHeroCalendarLayoutDuration() {
@@ -3720,6 +3749,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		clearTimeout(state.ui.heroCalendarCloseTimer);
 		state.ui.heroCalendarCloseTimer = null;
+
+		clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+		state.ui.heroCalendarAutoCloseTimer = null;
+		state.ui.heroCalendarAutoCloseArmed = false;
 
 		this.unlockHeroCalendarScrollBehavior();
 	},
