@@ -3676,7 +3676,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  //~ if (aboutTop > navbarBottom + 1) return;
 	  
 	  /* deutliche Hysterese */
-		if (heroBottom > navbarBottom - 120) return;
+		if (heroBottom > navbarBottom - 30) return;
 
 	  this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
 	},
