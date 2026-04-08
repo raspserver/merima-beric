@@ -3617,6 +3617,12 @@ document.addEventListener("DOMContentLoaded", () => {
 					
 					onComplete: () => {
 						state.ui.heroCalendarOpen = false;
+						
+						state.ui.heroCalendarKeepCtaFlat = false;
+						state.ui.heroCalendarAutoCloseArmed = false;
+
+						clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+						state.ui.heroCalendarAutoCloseTimer = null;
 
 						DOM.cta.classList.remove("calendar-open");
 						DOM.cta.setAttribute("aria-expanded", "false");
