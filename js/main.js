@@ -3588,6 +3588,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false } = {}) {
+		console.warn("closeHeroCalendar BLOCKED");
+		return;
+		
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 		if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
