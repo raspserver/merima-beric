@@ -3991,10 +3991,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.nav.gestureStretch.current = 0;
 		state.nav.gestureStretch.target = 0;
 
-		/* Wichtig:
-		   KEIN altes Navbar-State zurückschreiben.
-		   Die Navbar bleibt einfach in dem Zustand,
-		   den sie beim Schließen gerade hat. */
+		state.lastScrollY = window.scrollY;
+
+		navbarModule.handleScroll();
 		navbarModule.startAnimation();
 	}
 
