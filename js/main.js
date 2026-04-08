@@ -3903,14 +3903,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		let heroRect = DOM.hero.getBoundingClientRect();
 		let descRect = heroDescription.getBoundingClientRect();
 
-		/* Kalender soll unter Description und unter virtueller kompakter Navbar liegen */
+		/* Description-basierte Position */
 		const descriptionBasedTop =
 			Math.round((descRect.bottom - heroRect.top) + gap);
 
-		const navbarBasedTop =
-			Math.round(Math.max(0, compactNavHeight - heroRect.top) + gap);
-
-		const calendarTop = Math.max(descriptionBasedTop, navbarBasedTop);
+		/* kompakte Navbar als zusätzlicher oberer Viewport-Offset */
+		const calendarTop =
+			Math.round(descriptionBasedTop + compactNavHeight);
 
 		/* benötigter Platz unterhalb der Kalenderoberkante */
 		const requiredSpaceBelowCalendarTop =
