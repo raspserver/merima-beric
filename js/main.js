@@ -4048,7 +4048,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.ui.heroCalendarNavbarFreeze = true;
 	},
 	
-	restoreNavbarAfterHeroCalendar() {
+	restoreNavbarAfterHeroCalendar({ preserveState = true } = {}) {
 		state.ui.heroCalendarNavbarFreeze = false;
 
 		state.nav.gestureStretch.current = 0;
@@ -4056,8 +4056,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.lastScrollY = window.scrollY;
 
-		navbarModule.handleScroll();
-		navbarModule.startAnimation();
+		/* Wichtig:
+		   Beim Schließen des Kalenders Navbar-Zustand NICHT neu berechnen */
+		if (!preserveState) {
+			navbarModule.handleScroll();
+			navbarModule.startAnimation();
+		}
 	},
 	
 	getHeroCalendarMobileCloseRange() {
