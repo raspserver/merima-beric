@@ -3832,7 +3832,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	easeHeroCalendar(t) {
 		return 1 - Math.pow(1 - t, 3);
 	},
-		
+	
+	getElementTopWithinHero(element, heroRect) {
+		if (!element || !heroRect) return 0;
+		return element.getBoundingClientRect().top - heroRect.top;
+	},
+
 	measureHeroCalendarLayout() {
 		if (!DOM.hero || !DOM.heroCalendar || !DOM.cta) {
 			return { extraHeight: 0, calendarTop: 0, calendarHeight: 0 };
@@ -3843,39 +3848,57 @@ document.addEventListener("DOMContentLoaded", () => {
 			return { extraHeight: 0, calendarTop: 0, calendarHeight: 0 };
 		}
 
-		const heroRect = DOM.hero.getBoundingClientRect();
-		const descRect = heroDescription.getBoundingClientRect();
-
 		const gap = this.getHeroCalendarGap();
-
-		/* Kalender startet direkt unter der Description */
-		const calendarTop = Math.round((descRect.bottom - heroRect.top) + gap);
-
-		/* Zielhöhe des Kalenderkastens */
 		const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
-
-		/* CTA-Geometrie */
-		const ctaBottomOffset = cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
+		const desiredBottomOffset = cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
 		const ctaHeight =
 			DOM.cta.offsetHeight || cssVar.lengthPx("--hero-cta-height", 64);
 
-		/* Benötigte Hero-Gesamthöhe */
-		const requiredHeroHeight =
-			calendarTop +
-			preferredCalendarHeight +
-			gap +
-			ctaHeight +
-			ctaBottomOffset;
+		/* Ausgangszustand sichern */
+		const previousExtra = state.ui.heroCalendarExtraHeight || 0;
 
-		/* Harte Untergrenze, weil dein Layout real mehr Platz braucht
-		   als die Berechnung zuverlässig liefert */
-		const absoluteMinExtra =
-			window.innerWidth <= 768 ? 520 : 600;
+		/* 1) Grundmessung im aktuellen Layout */
+		let heroRect = DOM.hero.getBoundingClientRect();
+		let descRect = heroDescription.getBoundingClientRect();
 
-		const extraHeight = Math.max(
-			absoluteMinExtra,
-			Math.ceil(requiredHeroHeight - DOM.hero.offsetHeight + 120)
+		const calendarTop = Math.round((descRect.bottom - heroRect.top) + gap);
+
+		/* Platzbedarf ab Kalenderoberkante bis Hero-Ende */
+		const requiredSpaceBelowCalendarTop =
+			preferredCalendarHeight + gap + ctaHeight + desiredBottomOffset;
+
+		/* Aktuell verfügbarer Platz ab Kalenderoberkante */
+		const availableSpaceBelowCalendarTop =
+			heroRect.height - calendarTop;
+
+		/* Erste saubere Näherung ohne Magic Numbers */
+		let extraHeight = Math.max(
+			0,
+			Math.ceil(requiredSpaceBelowCalendarTop - availableSpaceBelowCalendarTop)
 		);
+
+		/* 2) Probeweise anwenden und reales Ergebnis nachmessen */
+		this.setHeroCalendarExtraHeight(extraHeight);
+
+		heroRect = DOM.hero.getBoundingClientRect();
+
+		const ctaTopWithinHero = this.getElementTopWithinHero(DOM.cta, heroRect);
+		const calendarBottomWithinHero = calendarTop + preferredCalendarHeight;
+		const ctaBottomWithinHero = ctaTopWithinHero + ctaHeight;
+
+		const actualGapBetweenCalendarAndCta =
+			ctaTopWithinHero - calendarBottomWithinHero;
+
+		const actualBottomOffset =
+			heroRect.height - ctaBottomWithinHero;
+
+		const missingGap = Math.max(0, gap - actualGapBetweenCalendarAndCta);
+		const missingBottomOffset = Math.max(0, desiredBottomOffset - actualBottomOffset);
+
+		extraHeight += Math.ceil(missingGap + missingBottomOffset);
+
+		/* Ursprungszustand wiederherstellen */
+		this.setHeroCalendarExtraHeight(previousExtra);
 
 		return {
 			extraHeight,
