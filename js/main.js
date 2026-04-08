@@ -772,9 +772,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Kalender bei jeder Navigation schließen – auch bei HOME / Logo
 		if (state.ui.heroCalendarOpen) {
-			//~ uiModule.closeHeroCalendar();
-			
-			uiModule.closeHeroCalendar({ source: "scrollEngine.goTo" });
+			uiModule.closeHeroCalendar();
 		}
 
 		const mode = forcedMode || this.getModeForTarget(target);
@@ -3593,18 +3591,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 	
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, source = "unknown" } = {}) {
-		
-		alert("closeHeroCalendar: " + source);
-		
-		console.warn("closeHeroCalendar CALLED", {
-			source,
-			preserveAboutBoundaryAtTop,
-			scrollY: window.scrollY,
-			open: state.ui.heroCalendarOpen,
-			animating: state.ui.heroCalendarAnimating,
-		});
-				
-		
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 		if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
@@ -3661,16 +3647,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (state.ui.heroCalendarAnimating) return;
 
 		if (state.ui.heroCalendarOpen) {
-			//~ this.closeHeroCalendar();
-			
-			this.closeHeroCalendar({ source: "toggleHeroCalendar" });
-			
+			this.closeHeroCalendar();
 		} else {
 			this.openHeroCalendar();
 		}
 	},
 	
 	closeHeroCalendarIfHeroFullyOut() {
+		
+		if (window.innerWidth <= 768) return;
+		
+		
 	  if (!state.ui.heroCalendarOpen) return;
 	  if (state.ui.heroCalendarAnimating) return;
 	  if (state.scroll.programmatic) return;
@@ -3688,13 +3675,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  /* Erst schließen, wenn die echte Home/About-Grenze oben angekommen ist */
 	  if (aboutTop > navbarBottom + 1) return;
 
-	  //~ this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
-	  
-	  this.closeHeroCalendar({
-			preserveAboutBoundaryAtTop: true,
-			source: "closeHeroCalendarIfHeroFullyOut"
-		});
-	  
+	  this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
 	},
 	
 	getHeroCalendarLayoutDuration() {
