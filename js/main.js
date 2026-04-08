@@ -971,88 +971,84 @@ document.addEventListener("DOMContentLoaded", () => {
 
       state.nav.gestureStretch.target = 0;
     },
-
-
-
-	handleScroll() {
+ 
+    handleScroll() {
 		if (!DOM.navbar) return;
 
+		const currentY = window.scrollY;
+		const deltaY = currentY - state.lastScrollY;
+
+		state.scrollVelocity = deltaY * 0.8;
+
+		if (
+			!state.scroll.programmatic &&
+			Math.abs(deltaY) > SETTINGS.thresholds.directionLock
+		) {
+			state.scrollDirection = deltaY > 0 ? "down" : "up";
+		}
+
+		/* Auch während Navbar-Freeze den Scroll-State aktuell halten */
 		if (state.ui.heroCalendarNavbarFreeze) {
-			state.lastScrollY = window.scrollY;
+			state.lastScrollY = currentY;
 			return;
 		}
 
-      if (!DOM.navbar) return;
-
-      const currentY = window.scrollY;
-      const deltaY = currentY - state.lastScrollY;
-
-      state.scrollVelocity = deltaY * 0.8;
-
 		if (
-			  !state.ui.heroCalendarOpen &&
-			  !state.ui.heroCalendarAnimating &&
-			  !state.ui.heroCalendarKeepCtaFlat
-			) {
-			  const impulse = clamp(
+			!state.ui.heroCalendarOpen &&
+			!state.ui.heroCalendarAnimating &&
+			!state.ui.heroCalendarKeepCtaFlat
+		) {
+			const impulse = clamp(
 				-deltaY * physics.values.ctaElasticVelocityFactor,
 				-physics.values.ctaElasticMax,
 				physics.values.ctaElasticMax
-			  );
+			);
 
-			  /* Nur Impuls auf die Feder geben, Nullpunkt bleibt bottom */
-			  state.cta.elasticY.velocity += impulse;
+			state.cta.elasticY.velocity += impulse;
+		}
+
+		this.updateGestureStretch(deltaY, currentY);
+
+		if (state.nav.manualOpen && currentY > 5) {
+			state.nav.manualOpen = false;
+		}
+
+		state.lastScrollY = currentY;
+		DOM.hero?.classList.toggle("scrolled", currentY > 10);
+
+		if (state.scroll.mode === "down") {
+			this.setTargets(1, 1, 1);
+			return;
+		}
+
+		if (state.scroll.mode === "up-section") {
+			this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+			return;
+		}
+
+		if (state.scroll.mode === "hero-top") {
+			this.setTargets(0, 0, 0);
+			return;
+		}
+
+		if (state.nav.manualOpen) {
+			if (currentY <= 5) {
+				this.setTargets(0, 0, 0);
+			} else {
+				this.setTargets(1, 1, 1);
 			}
-      
-      this.updateGestureStretch(deltaY, currentY);
+			return;
+		}
 
-      if (
-        !state.scroll.programmatic &&
-        Math.abs(deltaY) > SETTINGS.thresholds.directionLock
-      ) {
-        state.scrollDirection = deltaY > 0 ? "down" : "up";
-      }
-
-      if (state.nav.manualOpen && currentY > 5) {
-        state.nav.manualOpen = false;
-      }
-
-      state.lastScrollY = currentY;
-      DOM.hero?.classList.toggle("scrolled", currentY > 10);
-
-      if (state.scroll.mode === "down") {
-        this.setTargets(1, 1, 1);
-        return;
-      }
-
-      if (state.scroll.mode === "up-section") {
-        this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-        return;
-      }
-
-      if (state.scroll.mode === "hero-top") {
-        this.setTargets(0, 0, 0);
-        return;
-      }
-
-      if (state.nav.manualOpen) {
-        if (currentY <= 5) {
-          this.setTargets(0, 0, 0);
-        } else {
-          this.setTargets(1, 1, 1);
-        }
-        return;
-      }
-
-      if (currentY <= 5) {
-        state.nav.gestureStretch.target = 0;
-        this.setTargets(0, 0, 0);
-      } else if (state.scrollDirection === "down") {
-        this.setTargets(1, 1, 1);
-      } else {
-        this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-      }
-    },
+		if (currentY <= 5) {
+			state.nav.gestureStretch.target = 0;
+			this.setTargets(0, 0, 0);
+		} else if (state.scrollDirection === "down") {
+			this.setTargets(1, 1, 1);
+		} else {
+			this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+		}
+	},
 
     renderNavbar() {
       const easedCompact = easeOutCubic(state.nav.compact.current);
