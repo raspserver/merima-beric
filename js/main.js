@@ -3593,10 +3593,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	},
 	
-	//~ closeHeroCalendar({ preserveAboutBoundaryAtTop = false } = {}) {
-		
-	
-	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, source = "unknown" } = {}) {
+	closeHeroCalendar({ preserveAboutBoundaryAtTop = false } = {}) {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 		if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
@@ -3649,6 +3646,51 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, this.getHeroCalendarRevealDelay());
 	},
 	
+	closeHeroCalendarInstant({ source = "unknown" } = {}) {
+		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
+		if (!state.ui.heroCalendarOpen) return;
+
+		this.clearHeroCalendarTimers();
+
+		state.ui.heroCalendarAnimating = false;
+		state.ui.heroCalendarOpen = false;
+		state.scroll.programmatic = false;
+
+		DOM.heroCalendar.classList.remove("is-open");
+		DOM.heroCalendar.setAttribute("aria-hidden", "true");
+
+		DOM.cta.classList.remove("calendar-open");
+		DOM.cta.setAttribute("aria-expanded", "false");
+
+		if (DOM.ctaLabel) {
+			DOM.ctaLabel.textContent =
+				state.ui.ctaDefaultLabel || "Termin vereinbaren";
+		}
+
+		DOM.hero.classList.add("hero-calendar-close-instant");
+
+		this.setHeroCalendarExtraHeight(0);
+
+		DOM.hero.classList.remove("hero-calendar-open");
+		DOM.hero.classList.remove("hero-calendar-active");
+		DOM.hero.classList.remove("hero-calendar-lock-motion");
+
+		DOM.heroCalendar.style.top = "";
+		DOM.heroCalendar.style.height = "";
+
+		resetAnimatedValue(state.cta.elasticY, 0);
+		navbarModule.renderCTA();
+		navbarModule.suppressCtaHoverTemporarily(250);
+
+		this.restoreNavbarAfterHeroCalendar();
+
+		requestAnimationFrame(() => {
+			DOM.hero.classList.remove("hero-calendar-close-instant");
+		});
+
+		console.warn("closeHeroCalendarInstant", { source });
+	},
+	
 	toggleHeroCalendar() {
 		if (state.ui.heroCalendarAnimating) return;
 
@@ -3697,10 +3739,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				/* Nur schließen, wenn die Bedingung immer noch stabil gilt */
 				if (currentAboutTop <= currentNavbarBottom - autoCloseOffset) {
-					this.closeHeroCalendar({
-						preserveAboutBoundaryAtTop: window.innerWidth > 768,
-						source: "closeHeroCalendarIfHeroFullyOut"
-					});
+					if (window.innerWidth <= 768) {
+						this.closeHeroCalendarInstant({
+							source: "closeHeroCalendarIfHeroFullyOut"
+						});
+					} else {
+						this.closeHeroCalendar({
+							preserveAboutBoundaryAtTop: true,
+							source: "closeHeroCalendarIfHeroFullyOut"
+						});
+					}
 				} else {
 					state.ui.heroCalendarAutoCloseArmed = false;
 				}
