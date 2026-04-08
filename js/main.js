@@ -3893,30 +3893,41 @@ document.addEventListener("DOMContentLoaded", () => {
 		const ctaHeight =
 			DOM.cta.offsetHeight || cssVar.lengthPx("--hero-cta-height", 64);
 
+		/* gedachte kompakte Navbar-Unterkante */
+		const compactNavHeight = cssVar.number("--nav-height-min", 58);
+
 		/* Ausgangszustand sichern */
 		const previousExtra = state.ui.heroCalendarExtraHeight || 0;
 
-		/* 1) Grundmessung im aktuellen Layout */
+		/* Grundmessung */
 		let heroRect = DOM.hero.getBoundingClientRect();
 		let descRect = heroDescription.getBoundingClientRect();
 
-		const calendarTop = Math.round((descRect.bottom - heroRect.top) + gap);
+		/* 1) unterhalb der Description */
+		const descriptionBasedTop =
+			Math.round((descRect.bottom - heroRect.top) + gap);
 
-		/* Platzbedarf ab Kalenderoberkante bis Hero-Ende */
+		/* 2) mindestens gap unter der gedachten kompakten Navbar */
+		const navbarBasedTop =
+			Math.round(Math.max(0, compactNavHeight - heroRect.top) + gap);
+
+		/* Kalender darf weder in die Description noch in den Navbar-Raum */
+		const calendarTop = Math.max(descriptionBasedTop, navbarBasedTop);
+
+		/* benötigter Platz unterhalb der Kalenderoberkante */
 		const requiredSpaceBelowCalendarTop =
 			preferredCalendarHeight + gap + ctaHeight + desiredBottomOffset;
 
-		/* Aktuell verfügbarer Platz ab Kalenderoberkante */
+		/* aktuell vorhandener Platz */
 		const availableSpaceBelowCalendarTop =
 			heroRect.height - calendarTop;
 
-		/* Erste saubere Näherung ohne Magic Numbers */
 		let extraHeight = Math.max(
 			0,
 			Math.ceil(requiredSpaceBelowCalendarTop - availableSpaceBelowCalendarTop)
 		);
 
-		/* 2) Probeweise anwenden und reales Ergebnis nachmessen */
+		/* probeweise anwenden und real nachmessen */
 		this.setHeroCalendarExtraHeight(extraHeight);
 
 		heroRect = DOM.hero.getBoundingClientRect();
