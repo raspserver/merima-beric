@@ -3646,7 +3646,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 						navbarModule.suppressCtaHoverTemporarily(250);
 
-						this.restoreNavbarAfterHeroCalendar();
+						this.restoreNavbarAfterHeroCalendar({ preserveState: true });
 					},
 				}
 			);
@@ -3697,7 +3697,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbarModule.renderCTA();
 		navbarModule.suppressCtaHoverTemporarily(250);
 
-		this.restoreNavbarAfterHeroCalendar();
+		this.restoreNavbarAfterHeroCalendar({ preserveState: true });
 
 		/* Ganz wichtig: Scroll-/Navbar-Zustand neu synchronisieren */
 		state.lastScrollY = window.scrollY;
@@ -4124,7 +4124,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  navbarModule.renderCTA();
 	  navbarModule.suppressCtaHoverTemporarily(250);
 
-	  this.restoreNavbarAfterHeroCalendar();
+	  this.restoreNavbarAfterHeroCalendar({ preserveState: true });
 	}
 
   };
