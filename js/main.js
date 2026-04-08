@@ -3594,6 +3594,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, source = "unknown" } = {}) {
 		
+		alert("closeHeroCalendar: " + source);
+		
 		console.warn("closeHeroCalendar CALLED", {
 			source,
 			preserveAboutBoundaryAtTop,
