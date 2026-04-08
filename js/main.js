@@ -4084,8 +4084,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     navbarModule.bindEvents();
     sectionNavigationModule.bindEvents();
-    //~ scrollSectionHintModule.init();
-    //~ scrollSectionHintPositionModule.init();
+    scrollSectionHintModule.init();
+    scrollSectionHintPositionModule.init();
     galleryModule.init();
 
     uiModule.bindCTA();
