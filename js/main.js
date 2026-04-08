@@ -341,6 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		fullCalendarResizeTimer: null,
 		heroCalendarAutoCloseTimer: null,
 		heroCalendarAutoCloseArmed: false,
+		heroCalendarLastScrollY: window.scrollY,
 	},
 
     orderedSections: [],
@@ -3549,6 +3550,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarKeepCtaFlat = true;
 		state.ui.heroCalendarAnimating = true;
+		state.ui.heroCalendarLastScrollY = window.scrollY;
 		resetAnimatedValue(state.cta.elasticY, 0);
 		navbarModule.renderCTA();
 
@@ -3722,7 +3724,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (!state.ui.heroCalendarOpen) return;
 		if (state.ui.heroCalendarAnimating) return;
 		if (state.scroll.programmatic) return;
-		if (state.scrollDirection !== "down") return;
+
+		const currentY = window.scrollY;
+		const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
+		state.ui.heroCalendarLastScrollY = currentY;
+
+		if (!scrollingDown) return;
 
 		const about = this.getHomeAboutBoundaryEl();
 		if (!about) return;
@@ -3732,11 +3739,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			: 0;
 
 		const aboutTop = about.getBoundingClientRect().top;
-
-		/* Hysterese:
-		   erst "armen", wenn about wirklich an der Navbar ist */
 		const autoCloseOffset = this.getHeroCalendarAutoCloseOffset();
-		if (aboutTop <= navbarBottom - autoCloseOffset) {	
+
+		if (aboutTop <= navbarBottom - autoCloseOffset) {
 			if (state.ui.heroCalendarAutoCloseArmed) return;
 
 			state.ui.heroCalendarAutoCloseArmed = true;
@@ -3745,7 +3750,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.ui.heroCalendarAutoCloseTimer = setTimeout(() => {
 				state.ui.heroCalendarAutoCloseTimer = null;
 
-				/* vor dem echten Close nochmal prüfen */
 				if (!state.ui.heroCalendarOpen) return;
 				if (state.ui.heroCalendarAnimating) return;
 
@@ -3754,7 +3758,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					? DOM.navbar.getBoundingClientRect().bottom
 					: 0;
 
-				/* Nur schließen, wenn die Bedingung immer noch stabil gilt */
 				if (currentAboutTop <= currentNavbarBottom - autoCloseOffset) {
 					if (window.innerWidth <= 768) {
 						this.closeHeroCalendarInstant({
@@ -3774,7 +3777,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		/* Wenn wieder oberhalb der Grenze, Trigger zurücksetzen */
 		state.ui.heroCalendarAutoCloseArmed = false;
 		clearTimeout(state.ui.heroCalendarAutoCloseTimer);
 		state.ui.heroCalendarAutoCloseTimer = null;
