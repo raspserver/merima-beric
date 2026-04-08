@@ -469,13 +469,9 @@ html.hero-calendar-animating body,
 	left: 2rem;
 	right: 2rem;
 
-	width: auto;
-	max-width: 950px;
-	margin: 0 auto;
-
 	height: 0;
 
-	transform: translateX(-50%) translateY(-12px);
+	transform: translateY(-12px);
 
 	opacity: 0;
 	visibility: hidden;
@@ -496,7 +492,7 @@ html.hero-calendar-animating body,
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
-	transform: translateX(-50%) translateY(0);
+	transform: translateY(0);
 
 	transition:
 		opacity 0.35s ease,
