@@ -3652,9 +3652,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.clearHeroCalendarTimers();
 
+		/* Harte State-Resets */
 		state.ui.heroCalendarAnimating = false;
 		state.ui.heroCalendarOpen = false;
+		state.ui.heroCalendarKeepCtaFlat = false;
+		state.ui.heroCalendarAutoCloseArmed = false;
 		state.scroll.programmatic = false;
+
+		clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+		state.ui.heroCalendarAutoCloseTimer = null;
 
 		DOM.heroCalendar.classList.remove("is-open");
 		DOM.heroCalendar.setAttribute("aria-hidden", "true");
@@ -3679,10 +3685,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.heroCalendar.style.height = "";
 
 		resetAnimatedValue(state.cta.elasticY, 0);
+		resetAnimatedValue(state.hero.parallax, 0);
+
 		navbarModule.renderCTA();
 		navbarModule.suppressCtaHoverTemporarily(250);
 
 		this.restoreNavbarAfterHeroCalendar();
+
+		/* Ganz wichtig: Scroll-/Navbar-Zustand neu synchronisieren */
+		state.lastScrollY = window.scrollY;
+		state.nav.manualOpen = false;
+
+		navbarModule.handleScroll();
+		navbarModule.startAnimation();
 
 		requestAnimationFrame(() => {
 			DOM.hero.classList.remove("hero-calendar-close-instant");
