@@ -343,6 +343,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarAutoCloseArmed: false,
 		heroCalendarLastScrollY: window.scrollY,
 		heroCalendarMobileScrubbing: false,
+		heroCalendarMobileScrubStartScrollY: 0,
+		heroCalendarMobileScrubStartExtra: 0,
 	},
 
     orderedSections: [],
@@ -3735,7 +3737,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  const autoCloseOffset = this.getHeroCalendarAutoCloseOffset();
 
 	  const triggerY = navbarBottom - autoCloseOffset;
-	  const passed = triggerY - aboutTop;
 
 	  // -----------------------------
 	  // DESKTOP bleibt wie bisher
@@ -3783,30 +3784,35 @@ document.addEventListener("DOMContentLoaded", () => {
 	  }
 
 	  // -----------------------------
-	  // MOBILE: scrub close
+	  // MOBILE: Start über Grenze,
+	  // Progress aber über Scrollweg
 	  // -----------------------------
 	  state.ui.heroCalendarLastScrollY = currentY;
 
-	  const range = this.getHeroCalendarMobileCloseRange();
-
-	  // Noch nicht im Triggerbereich und Scrub läuft nicht
-	  if (passed <= 0 && !state.ui.heroCalendarMobileScrubbing) {
-		return;
-	  }
-
-	  // Scrub starten, sobald Grenze erreicht ist
-	  if (!state.ui.heroCalendarMobileScrubbing && passed > 0) {
+	  if (!state.ui.heroCalendarMobileScrubbing) {
+		if (aboutTop > triggerY) return;
 		this.beginHeroCalendarMobileScrubClose();
 	  }
 
-	  // Wenn Scrub aktiv ist, immer weiterrechnen
 	  if (!state.ui.heroCalendarMobileScrubbing) return;
 
-	  const progress = clamp(passed / range, 0, 1);
-	  const nextExtra = state.ui.heroCalendarMeasuredExtra * (1 - progress);
+	  const range = this.getHeroCalendarMobileCloseRange();
+	  const traveled = Math.max(
+		0,
+		currentY - state.ui.heroCalendarMobileScrubStartScrollY
+	  );
+
+	  const progress = clamp(traveled / range, 0, 1);
+	  const startExtra = state.ui.heroCalendarMobileScrubStartExtra;
+	  const nextExtra = startExtra * (1 - progress);
 
 	  this.setHeroCalendarExtraHeight(nextExtra);
 	  this.applyMeasuredHeroCalendarBox();
+
+	  if (progress > 0.15) {
+		DOM.heroCalendar.classList.remove("is-open");
+		DOM.heroCalendar.setAttribute("aria-hidden", "true");
+	  }
 
 	  if (state.ui.fullCalendarInstance) {
 		state.ui.fullCalendarInstance.updateSize();
@@ -4057,20 +4063,24 @@ document.addEventListener("DOMContentLoaded", () => {
 	getHeroCalendarMobileCloseRange() {
 	  return window.innerWidth <= 768 ? 140 : 0;
 	},
-	
+
 	beginHeroCalendarMobileScrubClose() {
-	  if (!state.ui.heroCalendarOpen) return;
-	  if (state.ui.heroCalendarMobileScrubbing) return;
+		  if (!state.ui.heroCalendarOpen) return;
+		  if (state.ui.heroCalendarMobileScrubbing) return;
 
-	  state.ui.heroCalendarMobileScrubbing = true;
-	  state.ui.heroCalendarKeepCtaFlat = true;
+		  state.ui.heroCalendarMobileScrubbing = true;
+		  state.ui.heroCalendarKeepCtaFlat = true;
 
-	  this.clearHeroCalendarTimers();
-	  this.freezeNavbarForHeroCalendar();
+		  state.ui.heroCalendarMobileScrubStartScrollY = window.scrollY;
+		  state.ui.heroCalendarMobileScrubStartExtra = state.ui.heroCalendarExtraHeight;
 
-	  DOM.heroCalendar.classList.remove("is-open");
-	  DOM.heroCalendar.setAttribute("aria-hidden", "true");
-	},
+		  this.clearHeroCalendarTimers();
+		  this.freezeNavbarForHeroCalendar();
+
+		  /* Kalender nicht sofort komplett "wegnehmen" */
+		  // DOM.heroCalendar.classList.remove("is-open");
+		  // DOM.heroCalendar.setAttribute("aria-hidden", "true");
+		},
 
 	finishHeroCalendarMobileScrubClose() {
 	  if (!state.ui.heroCalendarOpen) return;
@@ -4078,11 +4088,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	  state.ui.heroCalendarOpen = false;
 	  state.ui.heroCalendarAnimating = false;
 	  state.ui.heroCalendarMobileScrubbing = false;
+	  state.ui.heroCalendarMobileScrubStartScrollY = 0;
+	  state.ui.heroCalendarMobileScrubStartExtra = 0;
 	  state.ui.heroCalendarKeepCtaFlat = false;
 	  state.ui.heroCalendarAutoCloseArmed = false;
 
 	  clearTimeout(state.ui.heroCalendarAutoCloseTimer);
 	  state.ui.heroCalendarAutoCloseTimer = null;
+
+	  DOM.heroCalendar.classList.remove("is-open");
+	  DOM.heroCalendar.setAttribute("aria-hidden", "true");
 
 	  DOM.cta.classList.remove("calendar-open");
 	  DOM.cta.setAttribute("aria-expanded", "false");
