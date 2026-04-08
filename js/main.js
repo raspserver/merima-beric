@@ -3673,7 +3673,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	  const aboutTop = about.getBoundingClientRect().top;
 
 	  /* Erst schließen, wenn die echte Home/About-Grenze oben angekommen ist */
-	  if (aboutTop > navbarBottom + 1) return;
+	  //~ if (aboutTop > navbarBottom + 1) return;
+	  
+	  /* deutliche Hysterese */
+		if (heroBottom > navbarBottom - 120) return;
 
 	  this.closeHeroCalendar({ preserveAboutBoundaryAtTop: true });
 	},
