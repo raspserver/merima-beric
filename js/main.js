@@ -3698,7 +3698,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				/* Nur schließen, wenn die Bedingung immer noch stabil gilt */
 				if (currentAboutTop <= currentNavbarBottom - autoCloseOffset) {
 					this.closeHeroCalendar({
-						preserveAboutBoundaryAtTop: true,
+						preserveAboutBoundaryAtTop: window.innerWidth > 768,
 						source: "closeHeroCalendarIfHeroFullyOut"
 					});
 				} else {
