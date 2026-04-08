@@ -346,6 +346,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMobileScrubStartScrollY: 0,
 		heroCalendarMobileScrubStartExtra: 0,
 		heroCalendarMobileLockedAboutTop: 0,
+		heroCalendarMobileConsumedScroll: 0,
+		heroCalendarMobileLastTouchY: 0,
+		heroCalendarMobileTouchActive: false,
 	},
 
     orderedSections: [],
@@ -3736,7 +3739,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const aboutTop = about.getBoundingClientRect().top;
 		const autoCloseOffset = this.getHeroCalendarAutoCloseOffset();
-
 		const triggerY = navbarBottom - autoCloseOffset;
 
 		// -----------------------------
@@ -3786,9 +3788,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// -----------------------------
 		// MOBILE:
-		// Sobald #about die Trigger-Grenze erreicht,
-		// wird nur noch die HERO zusammengeschoben,
-		// während #about optisch an derselben Stelle bleibt.
+		// Weiteres Scrollen wird in einen
+		// kontrollierten Hero-Collapse übersetzt.
 		// -----------------------------
 		state.ui.heroCalendarLastScrollY = currentY;
 
@@ -3799,57 +3800,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (!state.ui.heroCalendarMobileScrubbing) return;
 
-		const range = this.getHeroCalendarMobileCloseRange();
-		const traveled = Math.max(
+		const deltaSinceStart = Math.max(
 			0,
-			currentY - state.ui.heroCalendarMobileScrubStartScrollY
+			window.scrollY - state.ui.heroCalendarMobileScrubStartScrollY
 		);
 
-		const progress = clamp(traveled / range, 0, 1);
-		const startExtra = state.ui.heroCalendarMobileScrubStartExtra;
-		const nextExtra = startExtra * (1 - progress);
-
-		this.setHeroCalendarExtraHeight(nextExtra);
-		this.applyMeasuredHeroCalendarBox();
-
-		/* About-Grenze im Viewport festhalten */
-		const lockedAboutTop = state.ui.heroCalendarMobileLockedAboutTop;
-
-		if (about) {
-			const currentAboutTop = about.getBoundingClientRect().top;
-			const deltaToLocked = currentAboutTop - lockedAboutTop;
-
-			if (Math.abs(deltaToLocked) > 0.5) {
-				window.scrollTo(0, Math.max(0, window.scrollY + deltaToLocked));
-				state.lastScrollY = window.scrollY;
-			}
+		/* Tatsächliches Seitenscrollen sofort wieder neutralisieren */
+		if (deltaSinceStart > 0.5) {
+			window.scrollTo(0, state.ui.heroCalendarMobileScrubStartScrollY);
+			state.lastScrollY = window.scrollY;
 		}
 
-		if (progress > 0.15) {
-			DOM.heroCalendar.classList.remove("is-open");
-			DOM.heroCalendar.setAttribute("aria-hidden", "true");
-		}
+		/* Den weggefangenen Scrollweg stattdessen intern verbrauchen */
+		const consumed = state.ui.heroCalendarMobileConsumedScroll + deltaSinceStart;
+		state.ui.heroCalendarMobileConsumedScroll = consumed;
 
-		if (state.ui.fullCalendarInstance) {
-			state.ui.fullCalendarInstance.updateSize();
-		}
+		const range = this.getHeroCalendarMobileCloseRange();
+		const progress = clamp(consumed / range, 0, 1);
 
-		if (progress >= 1) {
-			this.setHeroCalendarExtraHeight(0);
-			this.applyMeasuredHeroCalendarBox();
-
-			if (about) {
-				const finalAboutTop = about.getBoundingClientRect().top;
-				const deltaToLocked = finalAboutTop - lockedAboutTop;
-
-				if (Math.abs(deltaToLocked) > 0.5) {
-					window.scrollTo(0, Math.max(0, window.scrollY + deltaToLocked));
-					state.lastScrollY = window.scrollY;
-				}
-			}
-
-			this.finishHeroCalendarMobileScrubClose();
-		}
+		this.updateHeroCalendarMobileScrub(progress);
 	},
 	
 	getHeroCalendarLayoutDuration() {
@@ -4096,6 +4065,46 @@ document.addEventListener("DOMContentLoaded", () => {
 	  return window.innerWidth <= 768 ? 140 : 0;
 	},
 	
+	lockAboutBoundaryDuringMobileScrub() {
+		const about = this.getHomeAboutBoundaryEl();
+		if (!about) return;
+
+		const lockedTop = state.ui.heroCalendarMobileLockedAboutTop || 0;
+		const currentTop = about.getBoundingClientRect().top;
+		const delta = currentTop - lockedTop;
+
+		if (Math.abs(delta) > 0.5) {
+			window.scrollTo(0, Math.max(0, window.scrollY + delta));
+			state.lastScrollY = window.scrollY;
+		}
+	},
+	
+	updateHeroCalendarMobileScrub(progress) {
+		const clamped = clamp(progress, 0, 1);
+		const startExtra = state.ui.heroCalendarMobileScrubStartExtra;
+		const nextExtra = startExtra * (1 - clamped);
+
+		this.setHeroCalendarExtraHeight(nextExtra);
+		this.applyMeasuredHeroCalendarBox();
+		this.lockAboutBoundaryDuringMobileScrub();
+
+		if (clamped > 0.15) {
+			DOM.heroCalendar.classList.remove("is-open");
+			DOM.heroCalendar.setAttribute("aria-hidden", "true");
+		}
+
+		if (state.ui.fullCalendarInstance) {
+			state.ui.fullCalendarInstance.updateSize();
+		}
+
+		if (clamped >= 1) {
+			this.setHeroCalendarExtraHeight(0);
+			this.applyMeasuredHeroCalendarBox();
+			this.lockAboutBoundaryDuringMobileScrub();
+			this.finishHeroCalendarMobileScrubClose();
+		}
+	},
+	
 	beginHeroCalendarMobileScrubClose() {
 		if (!state.ui.heroCalendarOpen) return;
 		if (state.ui.heroCalendarMobileScrubbing) return;
@@ -4105,6 +4114,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		state.ui.heroCalendarMobileScrubStartScrollY = window.scrollY;
 		state.ui.heroCalendarMobileScrubStartExtra = state.ui.heroCalendarExtraHeight;
+		state.ui.heroCalendarMobileConsumedScroll = 0;
 
 		const about = this.getHomeAboutBoundaryEl();
 		state.ui.heroCalendarMobileLockedAboutTop = about
@@ -4124,6 +4134,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.ui.heroCalendarMobileScrubStartScrollY = 0;
 		state.ui.heroCalendarMobileScrubStartExtra = 0;
 		state.ui.heroCalendarMobileLockedAboutTop = 0;
+		state.ui.heroCalendarMobileConsumedScroll = 0;
+		state.ui.heroCalendarMobileLastTouchY = 0;
+		state.ui.heroCalendarMobileTouchActive = false;
 		state.ui.heroCalendarKeepCtaFlat = false;
 		state.ui.heroCalendarAutoCloseArmed = false;
 
