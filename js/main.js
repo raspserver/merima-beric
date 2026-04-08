@@ -342,6 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarAutoCloseTimer: null,
 		heroCalendarAutoCloseArmed: false,
 		heroCalendarLastScrollY: window.scrollY,
+		heroCalendarMobileScrubbing: false,
 	},
 
     orderedSections: [],
@@ -3717,17 +3718,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.openHeroCalendar();
 		}
 	},
-	
+
 	closeHeroCalendarIfHeroFullyOut() {
 	  if (!state.ui.heroCalendarOpen) return;
 	  if (state.scroll.programmatic) return;
 
 	  const currentY = window.scrollY;
-	  const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
-	  state.ui.heroCalendarLastScrollY = currentY;
-
-	  if (!scrollingDown) return;
-
 	  const about = this.getHomeAboutBoundaryEl();
 	  if (!about) return;
 
@@ -3741,8 +3737,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	  const triggerY = navbarBottom - autoCloseOffset;
 	  const passed = triggerY - aboutTop;
 
-	  // Desktop bleibt wie bisher
+	  // -----------------------------
+	  // DESKTOP bleibt wie bisher
+	  // -----------------------------
 	  if (window.innerWidth > 768) {
+		const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
+		state.ui.heroCalendarLastScrollY = currentY;
+
+		if (!scrollingDown) return;
+
 		if (aboutTop <= triggerY) {
 		  if (state.ui.heroCalendarAutoCloseArmed) return;
 
@@ -3779,17 +3782,25 @@ document.addEventListener("DOMContentLoaded", () => {
 		return;
 	  }
 
-	  // MOBILE: progressives Schließen über Scroll-Strecke
-	  if (passed <= 0) {
-		state.ui.heroCalendarAutoCloseArmed = false;
-		return;
-	  }
+	  // -----------------------------
+	  // MOBILE: scrub close
+	  // -----------------------------
+	  state.ui.heroCalendarLastScrollY = currentY;
 
 	  const range = this.getHeroCalendarMobileCloseRange();
 
-	  if (!state.ui.heroCalendarAnimating) {
+	  // Noch nicht im Triggerbereich und Scrub läuft nicht
+	  if (passed <= 0 && !state.ui.heroCalendarMobileScrubbing) {
+		return;
+	  }
+
+	  // Scrub starten, sobald Grenze erreicht ist
+	  if (!state.ui.heroCalendarMobileScrubbing && passed > 0) {
 		this.beginHeroCalendarMobileScrubClose();
 	  }
+
+	  // Wenn Scrub aktiv ist, immer weiterrechnen
+	  if (!state.ui.heroCalendarMobileScrubbing) return;
 
 	  const progress = clamp(passed / range, 0, 1);
 	  const nextExtra = state.ui.heroCalendarMeasuredExtra * (1 - progress);
@@ -4046,12 +4057,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	getHeroCalendarMobileCloseRange() {
 	  return window.innerWidth <= 768 ? 140 : 0;
 	},
-
+	
 	beginHeroCalendarMobileScrubClose() {
 	  if (!state.ui.heroCalendarOpen) return;
-	  if (state.ui.heroCalendarAnimating) return;
+	  if (state.ui.heroCalendarMobileScrubbing) return;
 
-	  state.ui.heroCalendarAnimating = true;
+	  state.ui.heroCalendarMobileScrubbing = true;
 	  state.ui.heroCalendarKeepCtaFlat = true;
 
 	  this.clearHeroCalendarTimers();
@@ -4066,6 +4077,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  state.ui.heroCalendarOpen = false;
 	  state.ui.heroCalendarAnimating = false;
+	  state.ui.heroCalendarMobileScrubbing = false;
 	  state.ui.heroCalendarKeepCtaFlat = false;
 	  state.ui.heroCalendarAutoCloseArmed = false;
 
