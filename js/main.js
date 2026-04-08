@@ -3744,7 +3744,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		// -----------------------------
 		// DESKTOP bleibt wie bisher
 		// -----------------------------
-		if (window.innerWidth > 768) {
+		if (window.innerWidth > 68) {		//  768) //
 			const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
 			state.ui.heroCalendarLastScrollY = currentY;
 
