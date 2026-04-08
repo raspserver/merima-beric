@@ -465,12 +465,17 @@ html.hero-calendar-animating body,
 
 .hero-calendar {
 	position: absolute;
-	left: 50%;
 	top: 0;
-	transform: translateX(-50%) translateY(-12px);
+	left: 2rem;
+	right: 2rem;
 
-	width: min(calc(100% - 4rem), 950px);
+	width: auto;
+	max-width: 950px;
+	margin: 0 auto;
+
 	height: 0;
+
+	transform: translateX(-50%) translateY(-12px);
 
 	opacity: 0;
 	visibility: hidden;
