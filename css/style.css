@@ -488,13 +488,6 @@ html.hero-calendar-animating body,
 		visibility 0s linear 0.35s;
 }
 
-@media (max-width: 768px) {
-	.hero-calendar {
-		width: calc(100% - 2rem);
-		max-width: none;
-	}
-}
-
 .hero-calendar.is-open {
 	opacity: 1;
 	visibility: visible;
