@@ -3655,7 +3655,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	
 	closeHeroCalendarIfHeroFullyOut() {
 		
-		if (window.innerWidth <= 768) return;
+		//~ if (window.innerWidth <= 768) return;
 		
 		
 	  if (!state.ui.heroCalendarOpen) return;
