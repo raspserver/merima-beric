@@ -3802,11 +3802,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		DOM.hero?.style.setProperty("--hero-calendar-extra-height", `${value}px`);
 		DOM.heroContent?.style.setProperty("--hero-calendar-extra-height", `${value}px`);
-
-		document.documentElement.style.setProperty(
-			"--hero-calendar-extra-height-global",
-			`${value}px`
-		);
 	},
 	
 	clearHeroCalendarTimers() {
