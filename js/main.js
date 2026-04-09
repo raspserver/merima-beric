@@ -3987,20 +3987,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const about = this.getHomeAboutBoundaryEl();
 		const startScrollY = window.scrollY;
 		const startAboutViewportTop = about ? about.getBoundingClientRect().top : 0;
-
-		const getParallaxCompensatedScrollY = (baseScrollY) => {
-			const factor = physics.values.heroParallaxFactor;
-
-			/* visual stabil halten trotz später wieder aktivem Hero-Parallax:
-			   y * (1 - factor) = baseScrollY  =>  y = baseScrollY / (1 - factor)
-			*/
-			const compensated =
-				Math.abs(1 - factor) > 0.0001
-					? baseScrollY / (1 - factor)
-					: baseScrollY;
-
-			return clamp(compensated, 0, utils.getMaxScrollY());
-		};
+		const startCtaViewportTop = DOM.cta ? DOM.cta.getBoundingClientRect().top : 0;
 
 		state.scroll.programmatic = true;
 		this.lockHeroCalendarScrollBehavior();
@@ -4022,10 +4009,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					nextScrollY = window.scrollY + deltaToTarget;
 				}
 			} else if (mode === "close") {
-				/* normales manuelles Schließen, aber parallax-kompensiert */
-				const scrollDeltaTotal = from - to;
-				const baseScrollY = startScrollY - (scrollDeltaTotal * eased);
-				nextScrollY = getParallaxCompensatedScrollY(baseScrollY);
+				/* normales manuelles Schließen:
+				   CTA visuell exakt festhalten */
+				if (DOM.cta) {
+					const currentCtaTop = DOM.cta.getBoundingClientRect().top;
+					const deltaToTarget = currentCtaTop - startCtaViewportTop;
+					nextScrollY = window.scrollY + deltaToTarget;
+				}
 			}
 
 			window.scrollTo(0, Math.max(0, nextScrollY));
@@ -4046,25 +4036,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.setHeroCalendarExtraHeight(to);
 
+			/* Vor dem Entsperren nochmal exakt ausrichten */
 			if ((mode === "open" || mode === "close-keep-about-position") && about) {
 				const finalAboutTop = about.getBoundingClientRect().top;
 				window.scrollTo(
 					0,
 					Math.max(0, window.scrollY + (finalAboutTop - startAboutViewportTop))
 				);
-			} else if (mode === "close") {
-				const baseFinalScrollY = Math.max(0, startScrollY - (from - to));
-				const compensatedFinalScrollY =
-					getParallaxCompensatedScrollY(baseFinalScrollY);
-
-				window.scrollTo(0, compensatedFinalScrollY);
+			} else if (mode === "close" && DOM.cta) {
+				const finalCtaTop = DOM.cta.getBoundingClientRect().top;
+				window.scrollTo(
+					0,
+					Math.max(0, window.scrollY + (finalCtaTop - startCtaViewportTop))
+				);
 			}
 
 			state.lastScrollY = window.scrollY;
 
+			/*
+			  Wichtig:
+			  Parallax nicht sofort "hart" zurückgeben und dann fertig sein,
+			  sondern nach dem Unlock noch 2 Frames später die CTA-Position
+			  erneut visuell korrigieren. Das verhindert den kleinen Rest-Hop
+			  und vor allem den Drift über mehrere Open/Close-Zyklen.
+			*/
 			this.unlockHeroCalendarScrollBehavior();
 			navbarModule.handleScroll();
 			navbarModule.startAnimation();
+
+			if (mode === "close" && DOM.cta) {
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						const correctedCtaTop = DOM.cta.getBoundingClientRect().top;
+						const deltaAfterParallax = correctedCtaTop - startCtaViewportTop;
+
+						if (Math.abs(deltaAfterParallax) > 0.5) {
+							window.scrollTo(
+								0,
+								Math.max(0, window.scrollY + deltaAfterParallax)
+							);
+							state.lastScrollY = window.scrollY;
+							navbarModule.handleScroll();
+							navbarModule.startAnimation();
+						}
+
+						onComplete?.();
+					});
+				});
+				return;
+			}
+
 			onComplete?.();
 		};
 
