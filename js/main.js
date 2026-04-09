@@ -3623,7 +3623,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					onComplete: () => {
 						state.ui.heroCalendarOpen = false;
 						
-						state.ui.heroCalendarKeepCtaFlat = false;
 						state.ui.heroCalendarAutoCloseArmed = false;
 
 						clearTimeout(state.ui.heroCalendarAutoCloseTimer);
