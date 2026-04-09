@@ -4323,7 +4323,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			zoom: 16.9,
 			pitch: 52,
 			bearing: -14,
-			
+
 			attributionControl: false,
 			canvasContextAttributes: { antialias: true }
 		  });
@@ -4331,16 +4331,25 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.marker = new maplibregl.Marker({ color: "#d4af37" })
 			.setLngLat(salonCoords)
 			.addTo(this.map);
-
+	  
 		  this.map.once("load", () => {
-			if (!this.map) {
-			  this.isInitializing = false;
-			  return;
-			}
+			  if (!this.map) {
+				this.isInitializing = false;
+				return;
+			  }
 
-			this.isInitializing = false;
-			this.resize();
-		  });
+			  this.map.easeTo({
+				center: salonCoords,
+				zoom: 17.15,
+				pitch: 56,
+				bearing: -18,
+				duration: 2200,
+				essential: true
+			  });
+
+			  this.isInitializing = false;
+			  this.resize();
+			});
 
 		  this.map.on("error", (error) => {
 			console.error("MapLibre Fehler:", error);
