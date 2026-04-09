@@ -4320,7 +4320,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  container: this.container,
 		  style: this.getMapStyle(),
 		  center: salonCoords,
-		  zoom: 14.0,
+		  zoom: this.getStartZoom(),
 		  pitch: 52,
 		  bearing: -14,
 		  attributionControl: false,
@@ -4501,6 +4501,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	  getAnimationDelayMs() {
 		return cssVar.timeMs("--contact-map-animation-delay", 1000);
 	  },
+	  
+	  getStartZoom() {
+		  return cssVar.number("--contact-map-zoom-start", 14);
+		},
+
+		getEndZoom() {
+		  return cssVar.number("--contact-map-zoom-end", 15);
+		},
 
 	  runEntranceAnimationWhenVisible() {
 		if (!this.map || state.ui.contactMapAnimated) return;
@@ -4522,7 +4530,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			  this.map.easeTo({
 				center: this.getSalonCoords(),
-				zoom: 15.0,
+				zoom: this.getEndZoom(),
 				pitch: 56,
 				bearing: -18,
 				duration: 2200,
