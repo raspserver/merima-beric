@@ -2957,8 +2957,48 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
+	// ---------------------------------------------------------------------
+	// 13) PREWARM UTILITY (für HeroCalendar + ContactMap)
+	// ---------------------------------------------------------------------
+	const prewarmUtils = {
+	  bind({
+		element,
+		stateKeyObserver,
+		stateKeyPrewarmed,
+		getDistancePx,
+		onPrewarm,
+	  }) {
+		if (!element) return;
+		if (state.ui[stateKeyObserver] || state.ui[stateKeyPrewarmed]) return;
+
+		const distance = typeof getDistancePx === "function"
+		  ? getDistancePx()
+		  : 0;
+
+		const observer = new IntersectionObserver(
+		  (entries) => {
+			const entry = entries[0];
+			if (!entry?.isIntersecting) return;
+
+			onPrewarm?.();
+
+			observer.disconnect();
+			state.ui[stateKeyObserver] = null;
+		  },
+		  {
+			root: null,
+			threshold: 0,
+			rootMargin: `${distance}px 0px ${distance}px 0px`,
+		  }
+		);
+
+		observer.observe(element);
+		state.ui[stateKeyObserver] = observer;
+	  },
+	};
+
   // ---------------------------------------------------------------------
-  // 13) UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
+  // 14) UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
   // ---------------------------------------------------------------------
   const uiModule = {
     ctaMagneticButtons: [],
@@ -4127,37 +4167,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			DOM.heroCalendar.setAttribute("aria-hidden", "true");
 		}
 	},
-	
+
 	bindHeroCalendarPrewarm() {
-	  if (!DOM.hero || state.ui.heroCalendarPrewarmObserver) return;
-
-	  const prewarmDistance = this.getHeroCalendarPrewarmDistancePx();
-
-	  const observer = new IntersectionObserver(
-		(entries) => {
-		  const entry = entries[0];
-		  if (!entry?.isIntersecting) return;
-
-		  this.prewarmHeroCalendar();
-
-		  observer.disconnect();
-		  state.ui.heroCalendarPrewarmObserver = null;
-		},
-		{
-		  root: null,
-		  threshold: 0,
-		  rootMargin: `${prewarmDistance}px 0px ${prewarmDistance}px 0px`,
-		}
-	  );
-
-	  observer.observe(DOM.hero);
-	  state.ui.heroCalendarPrewarmObserver = observer;
+	  prewarmUtils.bind({
+		element: DOM.hero,
+		stateKeyObserver: "heroCalendarPrewarmObserver",
+		stateKeyPrewarmed: "heroCalendarPrewarmed",
+		getDistancePx: () => this.getHeroCalendarPrewarmDistancePx(),
+		onPrewarm: () => this.prewarmHeroCalendar(),
+	  });
 	}
 
   };
   
   // ---------------------------------------------------------------------
-  // 14) CONTACT MAP (MAPLIBRE 3D)
+  // 15) CONTACT MAP (MAPLIBRE 3D)
   // ---------------------------------------------------------------------
   const contactMapModule = {
     map: null,
@@ -4330,34 +4354,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       state.ui.contactMapLastOutsideZone = zone;
-    },
-
+    }, 
+    
     bindPrewarm() {
-      const contact = this.getContactSection();
-      if (!contact || state.ui.contactMapPrewarmObserver) return;
+	  const contact = this.getContactSection();
 
-      const prewarmDistance = this.getPrewarmDistancePx();
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          if (!entry?.isIntersecting) return;
-
-          this.prewarm();
-
-          observer.disconnect();
-          state.ui.contactMapPrewarmObserver = null;
-        },
-        {
-          root: null,
-          threshold: 0,
-          rootMargin: `${prewarmDistance}px 0px ${prewarmDistance}px 0px`
-        }
-      );
-
-      observer.observe(contact);
-      state.ui.contactMapPrewarmObserver = observer;
-    },
+	  prewarmUtils.bind({
+		element: contact,
+		stateKeyObserver: "contactMapPrewarmObserver",
+		stateKeyPrewarmed: "contactMapPrewarmed",
+		getDistancePx: () => this.getPrewarmDistancePx(),
+		onPrewarm: () => this.prewarm(),
+	  });
+	},
 
     bindLifecycle() {
       window.addEventListener(
@@ -4384,7 +4393,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 15) USER-SCROLL-INTERRUPTS
+  // 16) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
 	function bindUserScrollInterrupts() {
 	  let touchReleaseTimer = null;
@@ -4467,7 +4476,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
   // ---------------------------------------------------------------------
-  // 16) POSITIONIERUNG DER SCROLL-HINT-SPALTE
+  // 17) POSITIONIERUNG DER SCROLL-HINT-SPALTE
   // ---------------------------------------------------------------------
   const scrollSectionHintPositionModule = {
     update() {
@@ -4531,7 +4540,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 17) PERFORMANCE-MODUL
+  // 18) PERFORMANCE-MODUL
   // ---------------------------------------------------------------------
   const performanceModule = {
     fpsSampleFrames: 45,
@@ -4575,7 +4584,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 18) INITIALISIERUNG
+  // 19) INITIALISIERUNG
   // ---------------------------------------------------------------------
   function init() {
     // performanceModule.init(); // optional wieder aktivieren
