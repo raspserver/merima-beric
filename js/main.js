@@ -4214,7 +4214,6 @@ const contactMapModule = {
   entranceObserver: null,
   navIntentHandlersBound: false,
   navAnimationTimer: null,
-  controlsAdded: false,
 
   getContainer() {
     return document.getElementById("contact-map");
@@ -4237,10 +4236,8 @@ const contactMapModule = {
     return [9.2045023, 48.7765731];
   },
 
-  // Schlossplatz Stuttgart, bewusst als filmischer Startpunkt.
-  // Koordinaten hier als praktikabler Näherungswert.
   getCinematicStartCoords() {
-    return [9.1799, 48.7786];
+    return [9.1799, 48.7786]; // Schlossplatz Stuttgart
   },
 
   getMapStyle() {
@@ -4252,37 +4249,42 @@ const contactMapModule = {
   },
 
   // --------------------------------------------------
-  // Idle / Default view
+  // Standard / kleine Animation
   // --------------------------------------------------
-  getIdleZoom() {
+  getStartZoom() {
     return cssVar.number("--contact-map-zoom-start", 14);
   },
 
-  getIdlePitch() {
-    return cssVar.number("--contact-map-pitch-start", 52);
-  },
-
-  getIdleBearing() {
-    return cssVar.number("--contact-map-bearing-start", -14);
-  },
-
-  // --------------------------------------------------
-  // Final salon focus
-  // --------------------------------------------------
   getEndZoom() {
     return cssVar.number("--contact-map-zoom-end", 15);
+  },
+
+  getStartPitch() {
+    return cssVar.number("--contact-map-pitch-start", 52);
   },
 
   getEndPitch() {
     return cssVar.number("--contact-map-pitch-end", 56);
   },
 
+  getStartBearing() {
+    return cssVar.number("--contact-map-bearing-start", -14);
+  },
+
   getEndBearing() {
     return cssVar.number("--contact-map-bearing-end", -18);
   },
 
+  getAnimationDurationMs() {
+    return cssVar.timeMs("--contact-map-animation-duration", 2200);
+  },
+
+  getAnimationDelayMs() {
+    return cssVar.timeMs("--contact-map-animation-delay", 1000);
+  },
+
   // --------------------------------------------------
-  // Cinematic start view (Schlossplatz)
+  // Große Navbar-Cinematic
   // --------------------------------------------------
   getCinematicStartZoom() {
     return cssVar.number("--contact-map-cinematic-start-zoom", 17.4);
@@ -4296,9 +4298,6 @@ const contactMapModule = {
     return cssVar.number("--contact-map-cinematic-start-bearing", -32);
   },
 
-  // --------------------------------------------------
-  // Cinematic fly options
-  // --------------------------------------------------
   getCinematicDelayMs() {
     return cssVar.timeMs("--contact-map-cinematic-delay", 120);
   },
@@ -4325,33 +4324,6 @@ const contactMapModule = {
 
   getReducedMotionEnabled() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  },
-
-  // --------------------------------------------------
-  // Controls
-  // --------------------------------------------------
-  getEnableNavigationControl() {
-    return this.getCssVarString("--contact-map-controls-nav-enabled", "true") !== "false";
-  },
-
-  getEnableAttributionControl() {
-    return this.getCssVarString("--contact-map-controls-attribution-enabled", "true") !== "false";
-  },
-
-  getNavigationControlPosition() {
-    const value = this.getCssVarString("--contact-map-controls-nav-position", "top-right");
-    const allowed = new Set(["top-left", "top-right", "bottom-left", "bottom-right"]);
-    return allowed.has(value) ? value : "top-right";
-  },
-
-  getAttributionControlPosition() {
-    const value = this.getCssVarString("--contact-map-controls-attribution-position", "bottom-right");
-    const allowed = new Set(["top-left", "top-right", "bottom-left", "bottom-right"]);
-    return allowed.has(value) ? value : "bottom-right";
-  },
-
-  getAttributionCompact() {
-    return this.getCssVarString("--contact-map-controls-attribution-compact", "true") !== "false";
   },
 
   getNavbarIntentSelector() {
@@ -4437,33 +4409,6 @@ const contactMapModule = {
     );
   },
 
-  addControls() {
-    if (!this.map || this.controlsAdded) return;
-
-    if (this.getEnableNavigationControl()) {
-      this.map.addControl(
-        new maplibregl.NavigationControl({
-          visualizePitch: true,
-          visualizeRoll: false,
-          showZoom: true,
-          showCompass: true
-        }),
-        this.getNavigationControlPosition()
-      );
-    }
-
-    if (this.getEnableAttributionControl()) {
-      this.map.addControl(
-        new maplibregl.AttributionControl({
-          compact: this.getAttributionCompact()
-        }),
-        this.getAttributionControlPosition()
-      );
-    }
-
-    this.controlsAdded = true;
-  },
-
   init() {
     this.container = this.getContainer();
 
@@ -4478,9 +4423,9 @@ const contactMapModule = {
       container: this.container,
       style: this.getMapStyle(),
       center: salonCoords,
-      zoom: this.getIdleZoom(),
-      pitch: this.getIdlePitch(),
-      bearing: this.getIdleBearing(),
+      zoom: this.getStartZoom(),
+      pitch: this.getStartPitch(),
+      bearing: this.getStartBearing(),
       attributionControl: false,
       canvasContextAttributes: { antialias: true }
     });
@@ -4498,8 +4443,7 @@ const contactMapModule = {
       this.isInitializing = false;
       this.resize();
       this.add3DBuildings();
-      this.addControls();
-      this.runNavigationAnimationWhenVisible();
+      this.runEntranceAnimationWhenVisible();
     });
 
     this.map.on("error", (error) => {
@@ -4513,7 +4457,6 @@ const contactMapModule = {
       this.map = null;
       this.marker = null;
       this.isInitializing = false;
-      this.controlsAdded = false;
       state.ui.contactMapAnimated = false;
     });
   },
@@ -4528,7 +4471,6 @@ const contactMapModule = {
     this.map = null;
     this.marker = null;
     this.isInitializing = false;
-    this.controlsAdded = false;
     state.ui.contactMapAnimated = false;
   },
 
@@ -4580,12 +4522,7 @@ const contactMapModule = {
       const trigger = event.target?.closest?.(selector);
       if (!trigger) return;
 
-      // Nur echte Navbar-Interaktion markieren.
-      // Programmatic scrolls, section-head clicks oder swipe gestures
-      // setzen diese Flag nicht.
-      this.markNavbarContactIntent();
-
-      // früh vorwärmen / initialisieren
+      state.ui.contactMapNavCinematicRequested = true;
       this.prewarm();
     };
 
@@ -4611,13 +4548,30 @@ const contactMapModule = {
 
     this.map.jumpTo({
       center: this.getSalonCoords(),
-      zoom: this.getIdleZoom(),
-      pitch: this.getIdlePitch(),
-      bearing: this.getIdleBearing()
+      zoom: this.getStartZoom(),
+      pitch: this.getStartPitch(),
+      bearing: this.getStartBearing()
     });
 
     state.ui.contactMapAnimated = false;
     this.disconnectEntranceObserver();
+  },
+
+  playEntranceAnimation() {
+    if (!this.map || state.ui.contactMapAnimated) return;
+
+    this.map.stop();
+
+    this.map.easeTo({
+      center: this.getSalonCoords(),
+      zoom: this.getEndZoom(),
+      pitch: this.getEndPitch(),
+      bearing: this.getEndBearing(),
+      duration: this.getAnimationDurationMs(),
+      essential: true
+    });
+
+    state.ui.contactMapAnimated = true;
   },
 
   prepareCinematicStartView() {
@@ -4636,8 +4590,6 @@ const contactMapModule = {
   playNavbarCinematic() {
     if (!this.map || state.ui.contactMapAnimated) return;
 
-    this.map.stop();
-
     if (this.getReducedMotionEnabled()) {
       this.map.jumpTo({
         center: this.getSalonCoords(),
@@ -4651,7 +4603,6 @@ const contactMapModule = {
     }
 
     this.prepareCinematicStartView();
-
     this.clearNavAnimationTimer();
 
     this.navAnimationTimer = setTimeout(() => {
@@ -4721,7 +4672,7 @@ const contactMapModule = {
       this.clearReinitTimer();
 
       if (previousZone !== "inside") {
-        this.runNavigationAnimationWhenVisible();
+        this.runEntranceAnimationWhenVisible();
       }
 
       state.ui.contactMapLastOutsideZone = zone;
@@ -4767,10 +4718,6 @@ const contactMapModule = {
       { passive: true }
     );
 
-    window.addEventListener("resize", () => {
-      this.resize();
-    });
-
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) {
         this.resize();
@@ -4779,8 +4726,8 @@ const contactMapModule = {
   },
 
   initModule() {
-    // WICHTIG:
-    // state.ui.contactMapNavCinematicRequested sollte initial false sein.
+    state.ui.contactMapNavCinematicRequested ??= false;
+
     this.init();
     this.bindPrewarm();
     this.bindLifecycle();
@@ -4788,11 +4735,8 @@ const contactMapModule = {
     this.maybeResetOnSectionExit();
   },
 
-  runNavigationAnimationWhenVisible() {
+  runEntranceAnimationWhenVisible() {
     if (!this.map || state.ui.contactMapAnimated) return;
-
-    const shouldAnimate = this.consumeNavbarContactIntent();
-    if (!shouldAnimate) return;
 
     const target = this.getContainer();
     if (!target) return;
@@ -4805,7 +4749,20 @@ const contactMapModule = {
         if (!entry || entry.intersectionRatio < 0.6) return;
 
         this.disconnectEntranceObserver();
-        this.playNavbarCinematic();
+
+        const shouldPlayCinematic = this.consumeNavbarContactIntent();
+
+        if (shouldPlayCinematic) {
+          this.playNavbarCinematic();
+          return;
+        }
+
+        const delay = this.getAnimationDelayMs();
+
+        setTimeout(() => {
+          if (!this.map || state.ui.contactMapAnimated) return;
+          this.playEntranceAnimation();
+        }, delay);
       },
       {
         threshold: 0.6
@@ -4815,8 +4772,7 @@ const contactMapModule = {
     this.entranceObserver.observe(target);
   }
 };
-	
-	
+
   // ---------------------------------------------------------------------
   // 16) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
