@@ -1627,6 +1627,13 @@ section .section-title:first-child {
 	color: var(--secondary-color);
 }
 
+.maplibregl-ctrl-attrib {
+  font-size: 10px;
+  opacity: 0.6;
+  background: transparent !important;
+  padding: 2px 6px;
+}
+
 @media (max-width: 768px) {
 	.contact-map-embed {
 		height: 260px;
