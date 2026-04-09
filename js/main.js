@@ -4200,217 +4200,301 @@ document.addEventListener("DOMContentLoaded", () => {
 
   };
   
-  // ---------------------------------------------------------------------
-  // 15) CONTACT MAP (MAPLIBRE 3D)
-  // ---------------------------------------------------------------------
-  const contactMapModule = {
-    map: null,
-    container: null,
-    marker: null,
-    isInitializing: false,
+	// ---------------------------------------------------------------------
+	// 15) CONTACT MAP (MAPLIBRE 3D)
+	// ---------------------------------------------------------------------
+	const contactMapModule = {
+	  map: null,
+	  container: null,
+	  marker: null,
+	  isInitializing: false,
 
-    getContainer() {
-      return document.getElementById("contact-map");
-    },
+	  getContainer() {
+		return document.getElementById("contact-map");
+	  },
 
-    getContactSection() {
-      return document.getElementById("contact");
-    },
+	  getContactSection() {
+		return document.getElementById("contact");
+	  },
 
-    getSalonCoords() {
-      return [9.2045023, 48.7765731];
-    },
+	  getSalonCoords() {
+		return [9.2045023, 48.7765731];
+	  },
 
-    init() {
-      this.container = this.getContainer();
+	  getMapStyle() {
+		return "https://tiles.openfreemap.org/styles/bright";
+	  },
 
-      if (!this.container || typeof maplibregl === "undefined") return;
-      if (this.map || this.isInitializing) return;
+	  getVectorSourceUrl() {
+		return "https://tiles.openfreemap.org/planet";
+	  },
 
-      this.isInitializing = true;
+	  findFirstLabelLayerId() {
+		if (!this.map) return undefined;
 
-      const salonCoords = this.getSalonCoords();
+		const layers = this.map.getStyle()?.layers || [];
 
-      this.map = new maplibregl.Map({
-        container: this.container,
-        style: "https://tiles.openfreemap.org/styles/bright",
-        center: salonCoords,
-        zoom: 17,
-        pitch: 60,
-        bearing: -20,
-        attributionControl: false,
-        canvasContextAttributes: { antialias: true }
-      });
+		for (let i = 0; i < layers.length; i += 1) {
+		  const layer = layers[i];
 
-      this.marker = new maplibregl.Marker({ color: "#d4af37" })
-        .setLngLat(salonCoords)
-        .addTo(this.map);
+		  if (
+			layer.type === "symbol" &&
+			layer.layout &&
+			layer.layout["text-field"]
+		  ) {
+			return layer.id;
+		  }
+		}
 
-      this.map.once("load", () => {
-        this.isInitializing = false;
-        this.resize();
-      });
+		return undefined;
+	  },
 
-      this.map.on("remove", () => {
-        this.map = null;
-        this.marker = null;
-        this.isInitializing = false;
-      });
-    },
+	  add3DBuildings() {
+		if (!this.map) return;
 
-    destroy() {
-      if (!this.map) return;
+		const map = this.map;
+		const sourceId = "openfreemap";
+		const layerId = "3d-buildings";
 
-      this.map.remove();
-      this.map = null;
-      this.marker = null;
-      this.isInitializing = false;
-    },
+		if (!map.getSource(sourceId)) {
+		  map.addSource(sourceId, {
+			type: "vector",
+			url: this.getVectorSourceUrl(),
+		  });
+		}
 
-    reinit() {
-	  const now = performance.now();
-	  if (now - state.ui.contactMapLastReinitAt < 1200) return;
+		if (map.getLayer(layerId)) return;
 
-	  state.ui.contactMapLastReinitAt = now;
+		const labelLayerId = this.findFirstLabelLayerId();
 
-	  this.destroy();
+		map.addLayer(
+		  {
+			id: layerId,
+			type: "fill-extrusion",
+			source: sourceId,
+			"source-layer": "building",
+			minzoom: 15,
+			filter: ["!=", ["get", "hide_3d"], true],
+			paint: {
+			  "fill-extrusion-color": [
+				"interpolate",
+				["linear"],
+				["coalesce", ["get", "render_height"], 0],
+				0, "#d9d3c7",
+				60, "#d6c7aa",
+				120, "#cfb98b",
+				220, "#c4a96d"
+			  ],
+			  "fill-extrusion-height": [
+				"interpolate",
+				["linear"],
+				["zoom"],
+				15, 0,
+				16, ["coalesce", ["get", "render_height"], 0]
+			  ],
+			  "fill-extrusion-base": [
+				"case",
+				[">=", ["zoom"], 16],
+				["coalesce", ["get", "render_min_height"], 0],
+				0
+			  ],
+			  "fill-extrusion-opacity": 0.92
+			}
+		  },
+		  labelLayerId
+		);
+	  },
 
-	  requestAnimationFrame(() => {
+	  init() {
+		this.container = this.getContainer();
+
+		if (!this.container || typeof maplibregl === "undefined") return;
+		if (this.map || this.isInitializing) return;
+
+		this.isInitializing = true;
+
+		const salonCoords = this.getSalonCoords();
+
+		this.map = new maplibregl.Map({
+		  container: this.container,
+		  style: this.getMapStyle(),
+		  center: salonCoords,
+		  zoom: 17.2,
+		  pitch: 45,
+		  bearing: -17.6,
+		  attributionControl: false,
+		  canvasContextAttributes: { antialias: true }
+		});
+
+		this.marker = new maplibregl.Marker({ color: "#d4af37" })
+		  .setLngLat(salonCoords)
+		  .addTo(this.map);
+
+		this.map.once("load", () => {
+		  if (!this.map) {
+			this.isInitializing = false;
+			return;
+		  }
+
+		  try {
+			this.add3DBuildings();
+		  } catch (error) {
+			console.error("3D-Gebäude konnten nicht hinzugefügt werden:", error);
+		  }
+
+		  this.isInitializing = false;
+		  this.resize();
+		});
+
+		this.map.on("error", (error) => {
+		  console.error("MapLibre Fehler:", error);
+		  this.isInitializing = false;
+		});
+
+		this.map.on("remove", () => {
+		  this.map = null;
+		  this.marker = null;
+		  this.isInitializing = false;
+		});
+	  },
+
+	  destroy() {
+		if (!this.map) return;
+
+		this.map.remove();
+		this.map = null;
+		this.marker = null;
+		this.isInitializing = false;
+	  },
+
+	  reinit() {
+		const now = performance.now();
+		if (now - state.ui.contactMapLastReinitAt < 1200) return;
+
+		state.ui.contactMapLastReinitAt = now;
+
+		this.destroy();
+
+		requestAnimationFrame(() => {
+		  this.init();
+		});
+	  },
+
+	  resize() {
+		if (!this.map) return;
+		this.map.resize();
+	  },
+
+	  prewarm() {
+		if (state.ui.contactMapPrewarmed || this.map) return;
+
+		state.ui.contactMapPrewarmed = true;
 		this.init();
-	  });
-	},
+	  },
 
-    resize() {
-      if (!this.map) return;
-      this.map.resize();
-    },
+	  clearReinitTimer() {
+		clearTimeout(state.ui.contactMapReinitTimer);
+		state.ui.contactMapReinitTimer = null;
+	  },
 
-    prewarm() {
-      if (state.ui.contactMapPrewarmed || this.map) return;
+	  getReinitOffsetPx() {
+		return cssVar.lengthPx("--contact-map-reinit-offset", 120);
+	  },
 
-      state.ui.contactMapPrewarmed = true;
-      this.init();
-    },
+	  getPrewarmDistancePx() {
+		const about = document.getElementById("about");
+		if (!about) return window.innerHeight * 0.2;
 
-    clearReinitTimer() {
-      clearTimeout(state.ui.contactMapReinitTimer);
-      state.ui.contactMapReinitTimer = null;
-    },
+		const ratio = cssVar.number("--contact-map-prewarm-about-ratio", 0.2);
+		return Math.max(0, about.offsetHeight * ratio);
+	  },
 
-    getReinitOffsetPx() {
-      return cssVar.lengthPx("--contact-map-reinit-offset", 120);
-    },
+	  getContactViewportZone() {
+		const contact = this.getContactSection();
+		if (!contact) return "inside";
 
-    getPrewarmDistancePx() {
-      const about = document.getElementById("about");
-      if (!about) return window.innerHeight * 0.2;
+		const rect = contact.getBoundingClientRect();
+		const offset = this.getReinitOffsetPx();
+		const viewportHeight = window.innerHeight;
 
-      const ratio = cssVar.number("--contact-map-prewarm-about-ratio", 0.2);
-      return Math.max(0, about.offsetHeight * ratio);
-    },
+		if (rect.bottom <= -offset) return "outsideTop";
+		if (rect.top >= viewportHeight + offset) return "outsideBottom";
 
-    /**
-     * outsideTop:
-     *   #contact ist komplett oberhalb des Viewports verschwunden
-     *   + zusätzlicher Offset
-     *
-     * outsideBottom:
-     *   #contact ist komplett unterhalb des Viewports verschwunden
-     *   + zusätzlicher Offset
-     *
-     * inside:
-     *   #contact ist noch im / nahe am Viewport
-     */
-    getContactViewportZone() {
-      const contact = this.getContactSection();
-      if (!contact) return "inside";
+		return "inside";
+	  },
 
-      const rect = contact.getBoundingClientRect();
-      const offset = this.getReinitOffsetPx();
-      const viewportHeight = window.innerHeight;
+	  maybeReinitOnSectionExit() {
+		const contact = this.getContactSection();
+		if (!contact) return;
 
-      if (rect.bottom <= -offset) return "outsideTop";
-      if (rect.top >= viewportHeight + offset) return "outsideBottom";
+		const zone = this.getContactViewportZone();
+		const previousZone = state.ui.contactMapLastOutsideZone;
 
-      return "inside";
-    },
+		if (previousZone === null) {
+		  state.ui.contactMapLastOutsideZone = zone;
+		  return;
+		}
 
-    maybeReinitOnSectionExit() {
-      const contact = this.getContactSection();
-      if (!contact) return;
+		if (zone === "inside") {
+		  state.ui.contactMapReinitArmed = false;
+		  this.clearReinitTimer();
+		  state.ui.contactMapLastOutsideZone = zone;
+		  return;
+		}
 
-      const zone = this.getContactViewportZone();
-      const previousZone = state.ui.contactMapLastOutsideZone;
+		if (zone !== previousZone) {
+		  state.ui.contactMapReinitArmed = true;
+		  this.clearReinitTimer();
 
-      // Beim ersten Lauf nur Zustand setzen
-      if (previousZone === null) {
-        state.ui.contactMapLastOutsideZone = zone;
-        return;
-      }
+		  state.ui.contactMapReinitTimer = setTimeout(() => {
+			state.ui.contactMapReinitTimer = null;
 
-      // Innerhalb/Nähe des Viewports -> Reinit wieder entschärfen
-      if (zone === "inside") {
-        state.ui.contactMapReinitArmed = false;
-        this.clearReinitTimer();
-        state.ui.contactMapLastOutsideZone = zone;
-        return;
-      }
+			if (this.getContactViewportZone() === zone) {
+			  this.reinit();
+			}
 
-      // Nur reagieren, wenn man frisch in einen echten Outside-Zustand kommt
-      if (zone !== previousZone) {
-        state.ui.contactMapReinitArmed = true;
-        this.clearReinitTimer();
+			state.ui.contactMapReinitArmed = false;
+		  }, 120);
+		}
 
-        state.ui.contactMapReinitTimer = setTimeout(() => {
-          state.ui.contactMapReinitTimer = null;
+		state.ui.contactMapLastOutsideZone = zone;
+	  },
 
-          // Zustand nochmal prüfen, um Flackern bei hektischem Scrollen zu vermeiden
-          if (this.getContactViewportZone() === zone) {
-            this.reinit();
-          }
+	  bindPrewarm() {
+		const contact = this.getContactSection();
 
-          state.ui.contactMapReinitArmed = false;
-        }, 120);
-      }
+		prewarmUtils.bind({
+		  element: contact,
+		  stateKeyObserver: "contactMapPrewarmObserver",
+		  stateKeyPrewarmed: "contactMapPrewarmed",
+		  getDistancePx: () => this.getPrewarmDistancePx(),
+		  onPrewarm: () => this.prewarm(),
+		});
+	  },
 
-      state.ui.contactMapLastOutsideZone = zone;
-    }, 
-    
-    bindPrewarm() {
-	  const contact = this.getContactSection();
+	  bindLifecycle() {
+		window.addEventListener(
+		  "scroll",
+		  () => {
+			this.maybeReinitOnSectionExit();
+		  },
+		  { passive: true }
+		);
 
-	  prewarmUtils.bind({
-		element: contact,
-		stateKeyObserver: "contactMapPrewarmObserver",
-		stateKeyPrewarmed: "contactMapPrewarmed",
-		getDistancePx: () => this.getPrewarmDistancePx(),
-		onPrewarm: () => this.prewarm(),
-	  });
-	},
+		document.addEventListener("visibilitychange", () => {
+		  if (!document.hidden) {
+			this.resize();
+		  }
+		});
+	  },
 
-    bindLifecycle() {
-      window.addEventListener(
-        "scroll",
-        () => {
-          this.maybeReinitOnSectionExit();
-        },
-        { passive: true }
-      );
-
-      document.addEventListener("visibilitychange", () => {
-        if (!document.hidden) {
-          this.resize();
-        }
-      });
-    },
-
-    initModule() {
-      this.init();
-      this.bindPrewarm();
-      this.bindLifecycle();
-      this.maybeReinitOnSectionExit();
-    }
-  };
+	  initModule() {
+		this.init();
+		this.bindPrewarm();
+		this.bindLifecycle();
+		this.maybeReinitOnSectionExit();
+	  }
+	};
 
   // ---------------------------------------------------------------------
   // 16) USER-SCROLL-INTERRUPTS
