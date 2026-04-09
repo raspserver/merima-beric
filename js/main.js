@@ -4343,7 +4343,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			  this.isInitializing = false;
 			  this.resize();
 
-			  this.runEntranceAnimationWhenFullyVisible();
+			  this.runEntranceAnimationWhenVisible();
 			});
 
 		  this.map.on("error", (error) => {
@@ -4499,16 +4499,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		  return cssVar.timeMs("--contact-map-animation-delay", 1000);
 		},
 		
-		runEntranceAnimationWhenFullyVisible() {
+		runEntranceAnimationWhenVisible() {
 		  if (!this.map || state.ui.contactMapAnimated) return;
 
-		  const contact = this.getContactSection();
-		  if (!contact) return;
+		  const target = this.getContainer(); // statt komplette #contact section
+		  if (!target) return;
 
 		  const observer = new IntersectionObserver(
 			(entries) => {
 			  const entry = entries[0];
-			  if (!entry || entry.intersectionRatio < 1) return;
+			  if (!entry || entry.intersectionRatio < 0.6) return;
 
 			  observer.disconnect();
 
@@ -4530,13 +4530,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			  }, delay);
 			},
 			{
-			  threshold: 1.0 // wirklich komplett sichtbar
+			  threshold: 0.6
 			}
 		  );
 
-		  observer.observe(contact);
+		  observer.observe(target);
 		}
-	  
+
 	};
 
   // ---------------------------------------------------------------------
