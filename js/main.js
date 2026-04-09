@@ -325,7 +325,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		suppressNextClick: false,
 		heroCalendarOpen: false,
 		ctaDefaultLabel: "",
-		heroCalendarCloseTimer: null,
 		heroCalendarExtraHeight: 0,
 		heroCalendarAnimating: false,
 		heroCalendarLayoutRaf: null,
@@ -335,8 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredExtra: 0,
 		heroCalendarKeepCtaFlat: false,
 		heroCalendarNavbarFreeze: false,
-		heroClosedHeroHeight: 0,
-		heroClosedContentHeight: 0,
 		fullCalendarInstance: null,
 		fullCalendarResizeTimer: null,
 		heroCalendarAutoCloseTimer: null,
@@ -3648,8 +3645,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			);
 		}, this.getHeroCalendarRevealDelay());
 	},
-	
-	closeHeroCalendarInstant({ source = "unknown" } = {}) {
+
+	closeHeroCalendarInstant() {
 		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 		if (!state.ui.heroCalendarOpen) return;
 
@@ -3808,9 +3805,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		clearTimeout(state.ui.heroCalendarRevealTimer);
 		state.ui.heroCalendarRevealTimer = null;
-
-		clearTimeout(state.ui.heroCalendarCloseTimer);
-		state.ui.heroCalendarCloseTimer = null;
 
 		clearTimeout(state.ui.heroCalendarAutoCloseTimer);
 		state.ui.heroCalendarAutoCloseTimer = null;
