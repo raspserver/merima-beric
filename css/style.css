@@ -1634,6 +1634,15 @@ section .section-title:first-child {
   padding: 2px 6px;
 }
 
+.maplibregl-ctrl-attrib {
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+
+.maplibregl-ctrl-attrib:hover {
+  opacity: 0.9;
+}
+
 @media (max-width: 768px) {
 	.contact-map-embed {
 		height: 260px;
