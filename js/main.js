@@ -4357,15 +4357,16 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.isInitializing = false;
 		  });
 		},
-
+  
 	  destroy() {
-		if (!this.map) return;
+		  if (!this.map) return;
 
-		this.map.remove();
-		this.map = null;
-		this.marker = null;
-		this.isInitializing = false;
-	  },
+		  this.map.remove();
+		  this.map = null;
+		  this.marker = null;
+		  this.isInitializing = false;
+		  state.ui.contactMapAnimated = false;
+		}
 
 	  reinit() {
 		const now = performance.now();
