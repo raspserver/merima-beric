@@ -4223,7 +4223,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  },
 
 	  getMapStyle() {
-		return "https://tiles.openfreemap.org/styles/bright";
+		return "https://tiles.openfreemap.org/styles/liberty";
 	  },
 
 	  getVectorSourceUrl() {
@@ -4305,68 +4305,70 @@ document.addEventListener("DOMContentLoaded", () => {
 		  labelLayerId
 		);
 	  },
-	  
+
 	  init() {
-		  this.container = this.getContainer();
+		this.container = this.getContainer();
 
-		  if (!this.container || typeof maplibregl === "undefined") return;
-		  if (this.map || this.isInitializing) return;
+		if (!this.container || typeof maplibregl === "undefined") return;
+		if (this.map || this.isInitializing) return;
 
-		  this.isInitializing = true;
+		this.isInitializing = true;
 
-		  const salonCoords = this.getSalonCoords();
+		const salonCoords = this.getSalonCoords();
 
-		  this.map = new maplibregl.Map({
-			container: this.container,
-			style: "https://tiles.openfreemap.org/styles/liberty",
-			
-			center: salonCoords,
-			//~ zoom: 16.9,
-			zoom: 14.0,
-			pitch: 52,
-			bearing: -14,
+		this.map = new maplibregl.Map({
+		  container: this.container,
+		  style: this.getMapStyle(),
+		  center: salonCoords,
+		  zoom: 14.0,
+		  pitch: 52,
+		  bearing: -14,
+		  attributionControl: false,
+		  canvasContextAttributes: { antialias: true }
+		});
 
-			attributionControl: false,
-			canvasContextAttributes: { antialias: true }
-		  });
+		this.marker = new maplibregl.Marker({ color: "#d4af37" })
+		  .setLngLat(salonCoords)
+		  .addTo(this.map);
 
-		  this.marker = new maplibregl.Marker({ color: "#d4af37" })
-			.setLngLat(salonCoords)
-			.addTo(this.map);
-	  	
-			this.map.once("load", () => {
-			  if (!this.map) {
-				this.isInitializing = false;
-				return;
-			  }
-
-			  this.isInitializing = false;
-			  this.resize();
-
-			  this.runEntranceAnimationWhenVisible();
-			});
-
-		  this.map.on("error", (error) => {
-			console.error("MapLibre Fehler:", error);
+		this.map.once("load", () => {
+		  if (!this.map) {
 			this.isInitializing = false;
-		  });
+			return;
+		  }
 
-		  this.map.on("remove", () => {
-			this.map = null;
-			this.marker = null;
-			this.isInitializing = false;
-		  });
-		},
-  
-	  destroy() {
-		  if (!this.map) return;
+		  this.isInitializing = false;
+		  this.resize();
 
-		  this.map.remove();
+		  // optional: 3D buildings aktivieren
+		  // Falls du sie nutzen willst, Zeile aktiv lassen
+		  this.add3DBuildings();
+
+		  this.runEntranceAnimationWhenVisible();
+		});
+
+		this.map.on("error", (error) => {
+		  console.error("MapLibre Fehler:", error);
+		  this.isInitializing = false;
+		});
+
+		this.map.on("remove", () => {
 		  this.map = null;
 		  this.marker = null;
 		  this.isInitializing = false;
 		  state.ui.contactMapAnimated = false;
-		},
+		});
+	  },
+
+	  destroy() {
+		if (!this.map) return;
+
+		this.map.remove();
+		this.map = null;
+		this.marker = null;
+		this.isInitializing = false;
+		state.ui.contactMapAnimated = false;
+	  },
 
 	  reinit() {
 		const now = performance.now();
@@ -4495,51 +4497,50 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.bindLifecycle();
 		this.maybeReinitOnSectionExit();
 	  },
-	  
+
 	  getAnimationDelayMs() {
-		  return cssVar.timeMs("--contact-map-animation-delay", 1000);
-		},
-		
-		runEntranceAnimationWhenVisible() {
-		  if (!this.map || state.ui.contactMapAnimated) return;
+		return cssVar.timeMs("--contact-map-animation-delay", 1000);
+	  },
 
-		  const target = this.getContainer(); // statt komplette #contact section
-		  if (!target) return;
+	  runEntranceAnimationWhenVisible() {
+		if (!this.map || state.ui.contactMapAnimated) return;
 
-		  const observer = new IntersectionObserver(
-			(entries) => {
-			  const entry = entries[0];
-			  if (!entry || entry.intersectionRatio < 0.6) return;
+		const target = this.getContainer();
+		if (!target) return;
 
-			  observer.disconnect();
+		const observer = new IntersectionObserver(
+		  (entries) => {
+			const entry = entries[0];
+			if (!entry || entry.intersectionRatio < 0.6) return;
 
-			  const delay = this.getAnimationDelayMs();
+			observer.disconnect();
 
-			  setTimeout(() => {
-				if (!this.map || state.ui.contactMapAnimated) return;
+			const delay = this.getAnimationDelayMs();
 
-				this.map.easeTo({
-				  center: this.getSalonCoords(),
-				  zoom: 15.0,
-				  pitch: 56,
-				  bearing: -18,
-				  duration: 2200,
-				  essential: true
-				});
+			setTimeout(() => {
+			  if (!this.map || state.ui.contactMapAnimated) return;
 
-				state.ui.contactMapAnimated = true;
-			  }, delay);
-			},
-			{
-			  threshold: 0.6
-			}
-		  );
+			  this.map.easeTo({
+				center: this.getSalonCoords(),
+				zoom: 15.0,
+				pitch: 56,
+				bearing: -18,
+				duration: 2200,
+				essential: true
+			  });
 
-		  observer.observe(target);
-		}
+			  state.ui.contactMapAnimated = true;
+			}, delay);
+		  },
+		  {
+			threshold: 0.6
+		  }
+		);
 
+		observer.observe(target);
+	  }
 	};
-
+  
   // ---------------------------------------------------------------------
   // 16) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
