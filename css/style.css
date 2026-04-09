@@ -39,12 +39,6 @@
 	
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
-	
-	--hero-cta-height: 64px;
-	
-/*
-	--hero-cta-bottom-offset: clamp(40px, 8vh, 120px);
-*/
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
@@ -587,7 +581,7 @@ html.hero-calendar-animating body,
 	margin: 0 auto;
 
 	padding-top: var(--hero-cta-gap-to-boundary);
-	padding-bottom: calc( var(--hero-cta-gap-to-boundary) + var(--hero-cta-height) );
+	padding-bottom: calc( var(--hero-cta-gap-to-boundary) + var(--cta-height-live, 0px) );
 
 	height: 100%;
 	min-height: 100svh;

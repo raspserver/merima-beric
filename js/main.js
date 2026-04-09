@@ -3842,8 +3842,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		const gap = this.getHeroCalendarGap();
 		const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
 		const desiredBottomOffset = cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
-		const ctaHeight =
-			DOM.cta.offsetHeight || cssVar.lengthPx("--hero-cta-height", 64);
+		const ctaHeight = DOM.cta.getBoundingClientRect().height || 64;
+		
+		DOM.heroContent?.style.setProperty(
+			"--cta-height-live",
+			`${ctaHeight}px`
+		);
 
 		/* gedachte kompakte Navbar-Unterkante */
 		const compactNavHeight = cssVar.lengthPx("--nav-height-min", 58);
