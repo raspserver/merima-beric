@@ -58,6 +58,10 @@
 		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.20/index.global.min.js"></script>
 		
+		<!-- maplibre.org -->
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.22.0/dist/maplibre-gl.css" />
+		<script src="https://unpkg.com/maplibre-gl@5.22.0/dist/maplibre-gl.js"></script>
+		
 	</head>
 	<body>
 		<!-- Top Navigationsleiste -->
@@ -543,6 +547,11 @@
 					
 					<div class="contact-content">
 						<div class="contact-info">
+							
+							<div class="contact-map-embed">
+								<div id="contact-map" aria-label="Karte des Standorts Gablenberger Hauptstraße 92, 70186 Stuttgart"></div>
+							</div>
+							
 							<div class="info-item fade-in">
 								<span class="info-icon">📍</span>
 								<div class="info-details">
