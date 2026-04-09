@@ -3614,18 +3614,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		/* erst Kalender ausblenden, dann Layout zurückfahren */
 		state.ui.heroCalendarRevealTimer = setTimeout(() => {
 			this.freezeNavbarForHeroCalendar();
-					
+
 			this.animateHeroCalendarLayout(
 				state.ui.heroCalendarExtraHeight,
 				0,
 				{
 					mode: preserveAboutBoundaryAtTop
 						? "close-keep-about-position"
-						: "close",			
-					
+						: "close",
+
 					onComplete: () => {
 						state.ui.heroCalendarOpen = false;
-						
+
 						state.ui.heroCalendarAutoCloseArmed = false;
 
 						clearTimeout(state.ui.heroCalendarAutoCloseTimer);
@@ -3656,7 +3656,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					},
 				}
 			);
-		}, this.getHeroCalendarRevealDelay());
+		}, Math.max(0, this.getHeroCalendarRevealDelay()));
 	},
 
 	closeHeroCalendarInstant() {
