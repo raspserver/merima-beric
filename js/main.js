@@ -4258,8 +4258,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		new maplibregl.AttributionControl({ compact: true }),
 		"top-left"
 		);
-		
-		new maplibregl.AttributionControl({ compact: true }),
 
 	  new maplibregl.Marker({ color: "#d4af37" })
 		.setLngLat(salonCoords)
