@@ -3820,6 +3820,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		);
 	},
 	
+	getHeroCalendarPrewarmDistancePx() {
+	  const about = document.getElementById("about");
+	  if (!about) return window.innerHeight * 0.2;
+
+	  const ratio = cssVar.number("--hero-calendar-prewarm-about-ratio", 0.2);
+	  return Math.max(0, about.offsetHeight * ratio);
+	},
+	
 	setHeroCalendarExtraHeight(px) {
 		const value = Math.max(0, px);
 		state.ui.heroCalendarExtraHeight = value;
@@ -4121,26 +4129,29 @@ document.addEventListener("DOMContentLoaded", () => {
 	},
 	
 	bindHeroCalendarPrewarm() {
-		if (!DOM.hero || state.ui.heroCalendarPrewarmObserver) return;
+	  if (!DOM.hero || state.ui.heroCalendarPrewarmObserver) return;
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				const entry = entries[0];
-				if (!entry?.isIntersecting) return;
+	  const prewarmDistance = this.getHeroCalendarPrewarmDistancePx();
 
-				this.prewarmHeroCalendar();
+	  const observer = new IntersectionObserver(
+		(entries) => {
+		  const entry = entries[0];
+		  if (!entry?.isIntersecting) return;
 
-				observer.disconnect();
-				state.ui.heroCalendarPrewarmObserver = null;
-			},
-			{
-				root: null,
-				threshold: 0.2,
-			}
-		);
+		  this.prewarmHeroCalendar();
 
-		observer.observe(DOM.hero);
-		state.ui.heroCalendarPrewarmObserver = observer;
+		  observer.disconnect();
+		  state.ui.heroCalendarPrewarmObserver = null;
+		},
+		{
+		  root: null,
+		  threshold: 0,
+		  rootMargin: `${prewarmDistance}px 0px ${prewarmDistance}px 0px`,
+		}
+	  );
+
+	  observer.observe(DOM.hero);
+	  state.ui.heroCalendarPrewarmObserver = observer;
 	}
 
   };
@@ -4612,6 +4623,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	  physics.update();
 	  galleryModule.setPosition(galleryModule.currentIndex, false);
 	  contactMapModule.resize();
+	  
+	  if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
+		uiModule.bindHeroCalendarPrewarm();
+	  }
 
 	  if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
 		contactMapModule.bindPrewarm();

@@ -28,6 +28,9 @@
 	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 
+	--hero-cta-gap-to-boundary: 90px;
+	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
+
 	--hero-calendar-gap: 20px;
 
 	--hero-calendar-layout-duration: 0.75s;
@@ -36,10 +39,8 @@
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
 	--hero-calendar-close-about-depth: 120px;
-	
-	--hero-cta-gap-to-boundary: 90px;
-	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
-	
+	--hero-calendar-prewarm-about-ratio: 0.2;
+
 	--contact-map-reinit-offset: 120px;
 	--contact-map-prewarm-about-ratio: 0.2;
 
