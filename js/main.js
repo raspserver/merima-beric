@@ -4253,12 +4253,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		canvasContextAttributes: { antialias: true }
 	  });
 
-	  this.map.addControl(new maplibregl.NavigationControl(), "top-right");
-	  this.map.addControl(
-		new maplibregl.AttributionControl({ compact: true }),
-		"top-left"
-		);
-
 	  new maplibregl.Marker({ color: "#d4af37" })
 		.setLngLat(salonCoords)
 		.addTo(this.map);
