@@ -4632,14 +4632,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	  physics.update();
 	  galleryModule.setPosition(galleryModule.currentIndex, false);
 	  contactMapModule.resize();
-	  
-	  if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
-		uiModule.bindHeroCalendarPrewarm();
-	  }
 
-	  if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
-		contactMapModule.bindPrewarm();
-	  }
+	  if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
+		  uiModule.bindHeroCalendarPrewarm();
+		}
+
+		if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
+		  contactMapModule.bindPrewarm();
+		}
 
 	  if (state.ui.heroCalendarOpen) {
 		clearTimeout(state.ui.fullCalendarResizeTimer);
