@@ -3757,8 +3757,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (currentAboutTop <= currentNavbarBottom - autoCloseOffset) {
 					this.closeHeroCalendar({
-						preserveAboutBoundaryAtTop: true,
-						source: "closeHeroCalendarIfHeroFullyOut",
+						preserveAboutBoundaryAtTop: true
 					});
 				} else {
 					state.ui.heroCalendarAutoCloseArmed = false;
