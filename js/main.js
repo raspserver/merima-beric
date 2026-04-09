@@ -4209,6 +4209,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  container: null,
 	  marker: null,
 	  isInitializing: false,
+	  entranceObserver: null,
 
 	  getContainer() {
 		return document.getElementById("contact-map");
@@ -4228,6 +4229,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	  getVectorSourceUrl() {
 		return "https://tiles.openfreemap.org/planet";
+	  },
+
+	  getStartZoom() {
+		return cssVar.number("--contact-map-zoom-start", 14);
+	  },
+
+	  getEndZoom() {
+		return cssVar.number("--contact-map-zoom-end", 15);
+	  },
+
+	  getStartPitch() {
+		return cssVar.number("--contact-map-pitch-start", 52);
+	  },
+
+	  getEndPitch() {
+		return cssVar.number("--contact-map-pitch-end", 56);
+	  },
+
+	  getStartBearing() {
+		return cssVar.number("--contact-map-bearing-start", -14);
+	  },
+
+	  getEndBearing() {
+		return cssVar.number("--contact-map-bearing-end", -18);
+	  },
+
+	  getAnimationDurationMs() {
+		return cssVar.timeMs("--contact-map-animation-duration", 2200);
+	  },
+
+	  getAnimationDelayMs() {
+		return cssVar.timeMs("--contact-map-animation-delay", 1000);
 	  },
 
 	  findFirstLabelLayerId() {
@@ -4321,8 +4354,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		  style: this.getMapStyle(),
 		  center: salonCoords,
 		  zoom: this.getStartZoom(),
-		  pitch: 52,
-		  bearing: -14,
+		  pitch: this.getStartPitch(),
+		  bearing: this.getStartBearing(),
 		  attributionControl: false,
 		  canvasContextAttributes: { antialias: true }
 		});
@@ -4339,11 +4372,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		  this.isInitializing = false;
 		  this.resize();
-
-		  // optional: 3D buildings aktivieren
-		  // Falls du sie nutzen willst, Zeile aktiv lassen
 		  this.add3DBuildings();
-
 		  this.runEntranceAnimationWhenVisible();
 		});
 
@@ -4353,6 +4382,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 
 		this.map.on("remove", () => {
+		  this.disconnectEntranceObserver();
 		  this.map = null;
 		  this.marker = null;
 		  this.isInitializing = false;
@@ -4363,24 +4393,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	  destroy() {
 		if (!this.map) return;
 
+		this.disconnectEntranceObserver();
+
 		this.map.remove();
 		this.map = null;
 		this.marker = null;
 		this.isInitializing = false;
 		state.ui.contactMapAnimated = false;
-	  },
-
-	  reinit() {
-		const now = performance.now();
-		if (now - state.ui.contactMapLastReinitAt < 1200) return;
-
-		state.ui.contactMapLastReinitAt = now;
-
-		this.destroy();
-
-		requestAnimationFrame(() => {
-		  this.init();
-		});
 	  },
 
 	  resize() {
@@ -4398,6 +4417,45 @@ document.addEventListener("DOMContentLoaded", () => {
 	  clearReinitTimer() {
 		clearTimeout(state.ui.contactMapReinitTimer);
 		state.ui.contactMapReinitTimer = null;
+	  },
+
+	  disconnectEntranceObserver() {
+		if (!this.entranceObserver) return;
+		this.entranceObserver.disconnect();
+		this.entranceObserver = null;
+	  },
+
+	  resetView() {
+		if (!this.map) return;
+
+		this.map.stop();
+
+		this.map.jumpTo({
+		  center: this.getSalonCoords(),
+		  zoom: this.getStartZoom(),
+		  pitch: this.getStartPitch(),
+		  bearing: this.getStartBearing()
+		});
+
+		state.ui.contactMapAnimated = false;
+		this.disconnectEntranceObserver();
+	  },
+
+	  playEntranceAnimation() {
+		if (!this.map || state.ui.contactMapAnimated) return;
+
+		this.map.stop();
+
+		this.map.easeTo({
+		  center: this.getSalonCoords(),
+		  zoom: this.getEndZoom(),
+		  pitch: this.getEndPitch(),
+		  bearing: this.getEndBearing(),
+		  duration: this.getAnimationDurationMs(),
+		  essential: true
+		});
+
+		state.ui.contactMapAnimated = true;
 	  },
 
 	  getReinitOffsetPx() {
@@ -4426,7 +4484,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		return "inside";
 	  },
 
-	  maybeReinitOnSectionExit() {
+	  maybeResetOnSectionExit() {
 		const contact = this.getContactSection();
 		if (!contact) return;
 
@@ -4441,6 +4499,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (zone === "inside") {
 		  state.ui.contactMapReinitArmed = false;
 		  this.clearReinitTimer();
+
+		  if (previousZone !== "inside") {
+			this.runEntranceAnimationWhenVisible();
+		  }
+
 		  state.ui.contactMapLastOutsideZone = zone;
 		  return;
 		}
@@ -4453,7 +4516,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			state.ui.contactMapReinitTimer = null;
 
 			if (this.getContactViewportZone() === zone) {
-			  this.reinit();
+			  this.resetView();
 			}
 
 			state.ui.contactMapReinitArmed = false;
@@ -4479,7 +4542,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.addEventListener(
 		  "scroll",
 		  () => {
-			this.maybeReinitOnSectionExit();
+			this.maybeResetOnSectionExit();
 		  },
 		  { passive: true }
 		);
@@ -4495,20 +4558,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.init();
 		this.bindPrewarm();
 		this.bindLifecycle();
-		this.maybeReinitOnSectionExit();
+		this.maybeResetOnSectionExit();
 	  },
-
-	  getAnimationDelayMs() {
-		return cssVar.timeMs("--contact-map-animation-delay", 1000);
-	  },
-	  
-	  getStartZoom() {
-		  return cssVar.number("--contact-map-zoom-start", 14);
-		},
-
-		getEndZoom() {
-		  return cssVar.number("--contact-map-zoom-end", 15);
-		},
 
 	  runEntranceAnimationWhenVisible() {
 		if (!this.map || state.ui.contactMapAnimated) return;
@@ -4516,28 +4567,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		const target = this.getContainer();
 		if (!target) return;
 
-		const observer = new IntersectionObserver(
+		this.disconnectEntranceObserver();
+
+		this.entranceObserver = new IntersectionObserver(
 		  (entries) => {
 			const entry = entries[0];
 			if (!entry || entry.intersectionRatio < 0.6) return;
 
-			observer.disconnect();
+			this.disconnectEntranceObserver();
 
 			const delay = this.getAnimationDelayMs();
 
 			setTimeout(() => {
 			  if (!this.map || state.ui.contactMapAnimated) return;
-
-			  this.map.easeTo({
-				center: this.getSalonCoords(),
-				zoom: this.getEndZoom(),
-				pitch: 56,
-				bearing: -18,
-				duration: 2200,
-				essential: true
-			  });
-
-			  state.ui.contactMapAnimated = true;
+			  this.playEntranceAnimation();
 			}, delay);
 		  },
 		  {
@@ -4545,10 +4588,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 		);
 
-		observer.observe(target);
+		this.entranceObserver.observe(target);
 	  }
 	};
-  
+
   // ---------------------------------------------------------------------
   // 16) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
