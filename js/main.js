@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarPrewarmed: false,
 		heroCalendarPrewarmObserver: null,
 		
-		pendingNavAfterHeroCalendarClose: false,
+		pendingNavAfterHeroCalendarCloseToken: 0,
 		
 		contactMapPrewarmed: false,
 		contactMapPrewarmObserver: null,
@@ -782,13 +782,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	  if (!target) return;
 
 	  const isHeroTarget = target === DOM.hero || target.id === "home";
+	  const navToken = ++state.ui.pendingNavAfterHeroCalendarCloseToken;
 
 	  const startNavigation = () => {
-		if (!state.ui.pendingNavAfterHeroCalendarClose && state.ui.heroCalendarAnimating) {
-		  return;
-		}
-
-		state.ui.pendingNavAfterHeroCalendarClose = false;
+		if (navToken !== state.ui.pendingNavAfterHeroCalendarCloseToken) return;
 
 		const mode = forcedMode || this.getModeForTarget(target);
 
@@ -804,12 +801,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbarModule.startAnimation();
 	  };
 
-	  // Während Kalender-Schließen nur eine Navigation vormerken
 	  if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
-		if (state.ui.pendingNavAfterHeroCalendarClose) return;
-
-		state.ui.pendingNavAfterHeroCalendarClose = true;
-
 		uiModule.closeHeroCalendar({
 		  preserveAboutBoundaryAtTop: false,
 		  onComplete: startNavigation,
@@ -3674,7 +3666,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
 	  if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
-	  // Falls bereits geschlossen und trotzdem ein Callback gewünscht ist
 	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
 		onComplete?.();
 		return;
@@ -3688,7 +3679,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  DOM.heroCalendar.classList.remove("is-open");
 	  DOM.heroCalendar.setAttribute("aria-hidden", "true");
 
-	  /* erst Kalender ausblenden, dann Layout zurückfahren */
 	  state.ui.heroCalendarRevealTimer = setTimeout(() => {
 		this.freezeNavbarForHeroCalendar();
 
