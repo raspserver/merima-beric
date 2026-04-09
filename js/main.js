@@ -4236,97 +4236,33 @@ document.addEventListener("DOMContentLoaded", () => {
     map: null,
 
     init() {
-      const mapContainer = document.getElementById("contact-map");
-      if (!mapContainer || typeof maplibregl === "undefined") return;
-      if (this.map) return;
+	  const mapContainer = document.getElementById("contact-map");
+	  if (!mapContainer || typeof maplibregl === "undefined") return;
+	  if (this.map) return;
 
-      const salonCoords = [9.2045023, 48.7765731];
+	  const salonCoords = [9.2045023, 48.7765731];
 
-      this.map = new maplibregl.Map({
-        container: "contact-map",
-        style: "https://tiles.openfreemap.org/styles/bright",
-        center: salonCoords,
-        zoom: 17,
-        pitch: 60,
-        bearing: -20,
-        canvasContextAttributes: { antialias: true }
-      });
+	  this.map = new maplibregl.Map({
+		container: "contact-map",
+		style: "https://tiles.openfreemap.org/styles/bright",
+		center: salonCoords,
+		zoom: 17,
+		pitch: 60,
+		bearing: -20,
+		attributionControl: false,
+		canvasContextAttributes: { antialias: true }
+	  });
 
-      this.map.addControl(new maplibregl.NavigationControl(), "top-right");
-      
-      this.map.addControl(
-		  new maplibregl.AttributionControl({ compact: true }),
-		  "top-left"
+	  this.map.addControl(new maplibregl.NavigationControl(), "top-right");
+	  this.map.addControl(
+		new maplibregl.AttributionControl({ compact: true }),
+		"top-left"
 	  );
 
-      new maplibregl.Marker({ color: "#d4af37" })
-        .setLngLat(salonCoords)
-        .setPopup(
-          new maplibregl.Popup({ offset: 25 }).setHTML(`
-            <strong>B E.autiful by Merima B E.ric</strong>
-            Gablenberger Hauptstraße 92<br>
-            70186 Stuttgart
-          `)
-        )
-        .addTo(this.map);
-
-      this.map.on("load", () => {
-        const layers = this.map.getStyle().layers || [];
-        let labelLayerId;
-
-        for (let i = 0; i < layers.length; i += 1) {
-          if (
-            layers[i].type === "symbol" &&
-            layers[i].layout &&
-            layers[i].layout["text-field"]
-          ) {
-            labelLayerId = layers[i].id;
-            break;
-          }
-        }
-
-        this.map.addSource("openfreemap", {
-          type: "vector",
-          url: "https://tiles.openfreemap.org/planet"
-        });
-
-        this.map.addLayer(
-          {
-            id: "3d-buildings",
-            type: "fill-extrusion",
-            source: "openfreemap",
-            "source-layer": "building",
-            minzoom: 15,
-            filter: ["!=", ["get", "hide_3d"], true],
-            paint: {
-              "fill-extrusion-color": [
-                "interpolate",
-                ["linear"],
-                ["get", "render_height"],
-                0, "#d9d3c7",
-                60, "#c7b28a",
-                200, "#d4af37"
-              ],
-              "fill-extrusion-height": [
-                "interpolate",
-                ["linear"],
-                ["zoom"],
-                15, 0,
-                16, ["get", "render_height"]
-              ],
-              "fill-extrusion-base": [
-                "case",
-                [">=", ["zoom"], 16],
-                ["get", "render_min_height"],
-                0
-              ],
-              "fill-extrusion-opacity": 0.88
-            }
-          },
-          labelLayerId
-        );
-      });
-    },
+	  new maplibregl.Marker({ color: "#d4af37" })
+		.setLngLat(salonCoords)
+		.addTo(this.map);
+	},
 
     resize() {
       if (!this.map) return;
