@@ -3517,10 +3517,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	getHeroCalendarGap() {
 		return cssVar.lengthPx("--hero-calendar-gap", 20);
 	},
-	
-	getHeroCalendarAutoCloseOffset() {
-		return window.innerWidth <= 768 ? 32 : 24;
-	},
 
 	positionHeroCalendar() {
 		if (!DOM.heroCalendar) return;
@@ -3715,7 +3711,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			this.openHeroCalendar();
 		}
 	},
-	
+
 	closeHeroCalendarIfHeroFullyOut() {
 		if (!state.ui.heroCalendarOpen) return;
 		if (state.scroll.programmatic) return;
@@ -3729,15 +3725,24 @@ document.addEventListener("DOMContentLoaded", () => {
 			: 0;
 
 		const aboutTop = about.getBoundingClientRect().top;
-		const autoCloseOffset = this.getHeroCalendarAutoCloseOffset();
-		const triggerY = navbarBottom - autoCloseOffset;
+		const autoCloseDepth = cssVar.lengthPx(
+			"--hero-calendar-auto-close-depth",
+			120
+		);
 
 		const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
 		state.ui.heroCalendarLastScrollY = currentY;
 
 		if (!scrollingDown) return;
 
-		if (aboutTop <= triggerY) {
+		/*
+		  Wie tief ist #about bereits "unter" die Navbar-Unterkante gewandert?
+		  0   => Boundary ist noch unterhalb / genau auf Navbar-Niveau
+		  80  => #about ist bereits 80px weiter hineingescrollt
+		*/
+		const scrolledIntoAbout = Math.max(0, navbarBottom - aboutTop);
+
+		if (scrolledIntoAbout >= autoCloseDepth) {
 			if (state.ui.heroCalendarAutoCloseArmed) return;
 
 			state.ui.heroCalendarAutoCloseArmed = true;
@@ -3754,7 +3759,12 @@ document.addEventListener("DOMContentLoaded", () => {
 					? DOM.navbar.getBoundingClientRect().bottom
 					: 0;
 
-				if (currentAboutTop <= currentNavbarBottom - autoCloseOffset) {
+				const currentScrolledIntoAbout = Math.max(
+					0,
+					currentNavbarBottom - currentAboutTop
+				);
+
+				if (currentScrolledIntoAbout >= autoCloseDepth) {
 					this.closeHeroCalendar({
 						preserveAboutBoundaryAtTop: true
 					});
