@@ -774,29 +774,38 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       });
     },
-    
+
 	goTo(targetOrSelector, forcedMode = null) {
-		const target = utils.resolveTarget(targetOrSelector);
-		if (!target) return;
+	  const target = utils.resolveTarget(targetOrSelector);
+	  if (!target) return;
 
-		const isHeroTarget = target === DOM.hero || target.id === "home";
+	  const isHeroTarget = target === DOM.hero || target.id === "home";
 
-		// Kalender bei jeder Navigation schließen – auch bei HOME / Logo
-		if (state.ui.heroCalendarOpen) {
-			uiModule.closeHeroCalendar();
-		}
-
+	  const startNavigation = () => {
 		const mode = forcedMode || this.getModeForTarget(target);
+
 		state.nav.manualOpen = false;
 
 		if (isHeroTarget && window.scrollY <= 5) {
-			navbarModule.setTargets(0, 0, 0);
+		  navbarModule.setTargets(0, 0, 0);
 		} else {
-			navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
+		  navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
 		}
 
 		this.scrollToSection(target, mode);
 		navbarModule.startAnimation();
+	  };
+
+	  // Kalender erst vollständig schließen, danach Zielposition berechnen + scrollen
+	  if (state.ui.heroCalendarOpen) {
+		uiModule.closeHeroCalendar({
+		  preserveAboutBoundaryAtTop: false,
+		  onComplete: startNavigation,
+		});
+		return;
+	  }
+
+	  startNavigation();
 	},
 
     scrollToPageBottom() {
@@ -3649,63 +3658,72 @@ document.addEventListener("DOMContentLoaded", () => {
 			},
 		});
 	},
-	
-	closeHeroCalendar({ preserveAboutBoundaryAtTop = false } = {}) {
-		if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
-		if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
-		state.ui.heroCalendarAnimating = true;
-		this.clearHeroCalendarTimers();
+	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
+	  if (!DOM.cta || !DOM.heroCalendar || !DOM.hero) return;
 
-		DOM.heroCalendar.classList.remove("is-open");
-		DOM.heroCalendar.setAttribute("aria-hidden", "true");
+	  // Falls bereits geschlossen und trotzdem ein Callback gewünscht ist
+	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
+		onComplete?.();
+		return;
+	  }
 
-		/* erst Kalender ausblenden, dann Layout zurückfahren */
-		state.ui.heroCalendarRevealTimer = setTimeout(() => {
-			this.freezeNavbarForHeroCalendar();
+	  if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
-			this.animateHeroCalendarLayout(
-				state.ui.heroCalendarExtraHeight,
-				0,
-				{
-					mode: preserveAboutBoundaryAtTop
-						? "close-keep-about-position"
-						: "close",
+	  state.ui.heroCalendarAnimating = true;
+	  this.clearHeroCalendarTimers();
 
-					onComplete: () => {
-						state.ui.heroCalendarOpen = false;
+	  DOM.heroCalendar.classList.remove("is-open");
+	  DOM.heroCalendar.setAttribute("aria-hidden", "true");
 
-						state.ui.heroCalendarAutoCloseArmed = false;
+	  /* erst Kalender ausblenden, dann Layout zurückfahren */
+	  state.ui.heroCalendarRevealTimer = setTimeout(() => {
+		this.freezeNavbarForHeroCalendar();
 
-						clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-						state.ui.heroCalendarAutoCloseTimer = null;
+		this.animateHeroCalendarLayout(
+		  state.ui.heroCalendarExtraHeight,
+		  0,
+		  {
+			mode: preserveAboutBoundaryAtTop
+			  ? "close-keep-about-position"
+			  : "close",
 
-						DOM.cta.classList.remove("calendar-open");
-						DOM.cta.setAttribute("aria-expanded", "false");
+			onComplete: () => {
+			  state.ui.heroCalendarOpen = false;
 
-						if (DOM.ctaLabel) {
-							DOM.ctaLabel.textContent =
-								state.ui.ctaDefaultLabel || "Termin vereinbaren";
-						}
+			  state.ui.heroCalendarAutoCloseArmed = false;
 
-						DOM.hero.classList.remove("hero-calendar-open");
-						DOM.hero.classList.remove("hero-calendar-active");
-						DOM.hero.classList.remove("hero-calendar-lock-motion");
-						DOM.heroCalendar.style.top = "";
-						DOM.heroCalendar.style.height = "";
+			  clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+			  state.ui.heroCalendarAutoCloseTimer = null;
 
-						this.destroyFullCalendar();
+			  DOM.cta.classList.remove("calendar-open");
+			  DOM.cta.setAttribute("aria-expanded", "false");
 
-						resetAnimatedValue(state.cta.elasticY, 0);
-						navbarModule.renderCTA();
+			  if (DOM.ctaLabel) {
+				DOM.ctaLabel.textContent =
+				  state.ui.ctaDefaultLabel || "Termin vereinbaren";
+			  }
 
-						navbarModule.suppressCtaHoverTemporarily(250);
+			  DOM.hero.classList.remove("hero-calendar-open");
+			  DOM.hero.classList.remove("hero-calendar-active");
+			  DOM.hero.classList.remove("hero-calendar-lock-motion");
+			  DOM.heroCalendar.style.top = "";
+			  DOM.heroCalendar.style.height = "";
 
-						this.restoreNavbarAfterHeroCalendar({ preserveState: true });
-					},
-				}
-			);
-		}, Math.max(0, this.getHeroCalendarRevealDelay()));
+			  this.destroyFullCalendar();
+
+			  resetAnimatedValue(state.cta.elasticY, 0);
+			  navbarModule.renderCTA();
+
+			  navbarModule.suppressCtaHoverTemporarily(250);
+
+			  this.restoreNavbarAfterHeroCalendar({ preserveState: true });
+
+			  onComplete?.();
+			},
+		  }
+		);
+	  }, Math.max(0, this.getHeroCalendarRevealDelay()));
 	},
 
 	closeHeroCalendarInstant() {
