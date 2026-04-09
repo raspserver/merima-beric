@@ -31,7 +31,7 @@
 	--hero-calendar-gap: 20px;
 
 	--hero-calendar-layout-duration: 0.75s;
-	--hero-calendar-reveal-delay: 0.00s;
+	--hero-calendar-reveal-delay: -0.20s;
 	--hero-calendar-preferred-height: clamp(420px, 56vh, 620px);
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
