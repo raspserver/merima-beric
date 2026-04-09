@@ -43,6 +43,7 @@
 
 	--contact-map-reinit-offset: 120px;
 	--contact-map-prewarm-about-ratio: 0.2;
+	--contact-map-animation-delay: 1000ms;
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;

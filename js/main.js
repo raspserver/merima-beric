@@ -352,6 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		contactMapReinitArmed: false,
 		contactMapReinitTimer: null,
 		contactMapLastReinitAt: 0,
+		contactMapAnimated: false,
 	},
 
     orderedSections: [],
@@ -4332,25 +4333,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.marker = new maplibregl.Marker({ color: "#d4af37" })
 			.setLngLat(salonCoords)
 			.addTo(this.map);
-	  
-		  this.map.once("load", () => {
+	  	
+			this.map.once("load", () => {
 			  if (!this.map) {
 				this.isInitializing = false;
 				return;
 			  }
 
-			  this.map.easeTo({
-				center: salonCoords,
-				//~ zoom: 17.15,
-				zoom: 15.00,
-				pitch: 56,
-				bearing: -18,
-				duration: 2200,
-				essential: true
-			  });
-
 			  this.isInitializing = false;
 			  this.resize();
+
+			  this.runEntranceAnimationWhenFullyVisible();
 			});
 
 		  this.map.on("error", (error) => {
@@ -4500,7 +4493,50 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.bindPrewarm();
 		this.bindLifecycle();
 		this.maybeReinitOnSectionExit();
-	  }
+	  },
+	  
+	  getAnimationDelayMs() {
+		  return cssVar.timeMs("--contact-map-animation-delay", 1000);
+		},
+		
+		runEntranceAnimationWhenFullyVisible() {
+		  if (!this.map || state.ui.contactMapAnimated) return;
+
+		  const contact = this.getContactSection();
+		  if (!contact) return;
+
+		  const observer = new IntersectionObserver(
+			(entries) => {
+			  const entry = entries[0];
+			  if (!entry || entry.intersectionRatio < 1) return;
+
+			  observer.disconnect();
+
+			  const delay = this.getAnimationDelayMs();
+
+			  setTimeout(() => {
+				if (!this.map || state.ui.contactMapAnimated) return;
+
+				this.map.easeTo({
+				  center: this.getSalonCoords(),
+				  zoom: 15.0,
+				  pitch: 56,
+				  bearing: -18,
+				  duration: 2200,
+				  essential: true
+				});
+
+				state.ui.contactMapAnimated = true;
+			  }, delay);
+			},
+			{
+			  threshold: 1.0 // wirklich komplett sichtbar
+			}
+		  );
+
+		  observer.observe(contact);
+		}
+	  
 	};
 
   // ---------------------------------------------------------------------
