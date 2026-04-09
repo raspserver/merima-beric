@@ -339,6 +339,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarAutoCloseTimer: null,
 		heroCalendarAutoCloseArmed: false,
 		heroCalendarLastScrollY: window.scrollY,
+		heroCalendarPrewarmed: false,
+		heroCalendarPrewarmObserver: null,
 	},
 
     orderedSections: [],
@@ -3563,26 +3565,39 @@ document.addEventListener("DOMContentLoaded", () => {
 		DOM.heroCalendar.classList.remove("is-open");
 
 		this.applyMeasuredHeroCalendarBox();
-
 		this.freezeNavbarForHeroCalendar();
+
+		const layoutDuration = this.getHeroCalendarLayoutDuration();
+		const revealDelay = this.getHeroCalendarRevealDelay();
+
+		/*
+		  Negative Werte bedeuten:
+		  Schon vor Ende der Layout-Animation einblenden.
+		  Beispiel:
+		  layoutDuration = 750ms
+		  revealDelay = -200ms
+		  => Reveal startet nach 550ms
+		*/
+		const revealAfterMs = Math.max(0, layoutDuration + revealDelay);
+
+		const revealCalendar = () => {
+			DOM.heroCalendar.classList.add("is-open");
+			DOM.heroCalendar.setAttribute("aria-hidden", "false");
+
+			requestAnimationFrame(() => {
+				this.updateFullCalendarSize();
+			});
+		};
+
+		state.ui.heroCalendarRevealTimer = setTimeout(revealCalendar, revealAfterMs);
 
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
-		
+
 			onComplete: () => {
 				state.ui.heroCalendarOpen = true;
-
 				this.restoreNavbarAfterHeroCalendar({ preserveState: false });
-
-				state.ui.heroCalendarRevealTimer = setTimeout(() => {
-					DOM.heroCalendar.classList.add("is-open");
-					DOM.heroCalendar.setAttribute("aria-hidden", "false");
-
-					requestAnimationFrame(() => {
-						this.updateFullCalendarSize();
-					});
-				}, this.getHeroCalendarRevealDelay());
-			},	
+			},
 		});
 	},
 	
@@ -4073,6 +4088,50 @@ document.addEventListener("DOMContentLoaded", () => {
 			navbarModule.handleScroll();
 			navbarModule.startAnimation();
 		}
+	},
+	
+	prewarmHeroCalendar() {
+		if (
+			state.ui.heroCalendarPrewarmed ||
+			state.ui.fullCalendarInstance ||
+			!DOM.heroCalendarEl
+		) {
+			return;
+		}
+
+		state.ui.heroCalendarPrewarmed = true;
+
+		this.ensureFullCalendar();
+		this.positionHeroCalendar();
+		this.applyMeasuredHeroCalendarBox();
+
+		if (DOM.heroCalendar) {
+			DOM.heroCalendar.classList.remove("is-open");
+			DOM.heroCalendar.setAttribute("aria-hidden", "true");
+		}
+	},
+	
+	bindHeroCalendarPrewarm() {
+		if (!DOM.hero || state.ui.heroCalendarPrewarmObserver) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const entry = entries[0];
+				if (!entry?.isIntersecting) return;
+
+				this.prewarmHeroCalendar();
+
+				observer.disconnect();
+				state.ui.heroCalendarPrewarmObserver = null;
+			},
+			{
+				root: null,
+				threshold: 0.2,
+			}
+		);
+
+		observer.observe(DOM.hero);
+		state.ui.heroCalendarPrewarmObserver = observer;
 	}
 
   };
@@ -4316,11 +4375,12 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollSectionHintModule.init();
     scrollSectionHintPositionModule.init();
     galleryModule.init();
-
+    
     uiModule.bindCTA();
-    uiModule.bindHeroClickBehavior();
-    uiModule.bindPricingTabs();
-    uiModule.setInitialVisualState();
+	uiModule.bindHeroClickBehavior();
+	uiModule.bindHeroCalendarPrewarm();
+	uiModule.bindPricingTabs();
+	uiModule.setInitialVisualState();
 
 	contactMapModule.init();
 
