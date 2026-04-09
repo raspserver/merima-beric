@@ -986,9 +986,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		/* Auch während Navbar-Freeze den Scroll-State aktuell halten */
-		if (state.ui.heroCalendarNavbarFreeze) {
-			state.lastScrollY = currentY;
-			return;
+		if (state.ui.heroCalendarNavbarFreeze && state.ui.heroCalendarAnimating) {
+		  state.lastScrollY = currentY;
+		  return;
 		}
 
 		if (
