@@ -4318,10 +4318,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.map = new maplibregl.Map({
 			container: this.container,
 			style: "https://tiles.openfreemap.org/styles/liberty",
+			
 			center: salonCoords,
-			zoom: 17.2,
-			pitch: 55,
-			bearing: -17.6,
+			zoom: 16.9,
+			pitch: 52,
+			bearing: -14,
+			
 			attributionControl: false,
 			canvasContextAttributes: { antialias: true }
 		  });
