@@ -48,6 +48,49 @@
 	--contact-map-zoom-start: 13.;
 	--contact-map-zoom-end: 15.0;
 	--contact-map-animation-duration: 5000ms;
+	
+	/* --------------------------------------------------
+   * Contact map – cinematic flight
+   * -------------------------------------------------- */
+  --contact-map-cinematic-start-zoom: 17.4;
+  --contact-map-cinematic-start-pitch: 60;
+  --contact-map-cinematic-start-bearing: -32;
+
+  --contact-map-cinematic-delay: 120ms;
+
+  /* Slowly fly to a location */
+  --contact-map-fly-speed: 0.18;
+  --contact-map-fly-curve: 1;
+  --contact-map-fly-screen-speed: 0.16;
+  --contact-map-fly-min-zoom: 11.8;
+  --contact-map-fly-use-min-zoom: true;
+
+  /* --------------------------------------------------
+   * Contact map – controls
+   * -------------------------------------------------- */
+  --contact-map-controls-nav-enabled: true;
+  --contact-map-controls-attribution-enabled: true;
+
+  --contact-map-controls-nav-position: top-right;
+  --contact-map-controls-attribution-position: bottom-right;
+  --contact-map-controls-attribution-compact: true;
+
+  --contact-map-control-offset-top: 14px;
+  --contact-map-control-offset-right: 14px;
+  --contact-map-control-offset-bottom: 14px;
+  --contact-map-control-offset-left: 14px;
+
+  --contact-map-control-group-gap: 10px;
+  --contact-map-control-border-radius: 16px;
+  --contact-map-control-padding: 2px;
+  --contact-map-control-button-size: 42px;
+
+  --contact-map-control-bg: rgba(255, 248, 240, 0.88);
+  --contact-map-control-bg-hover: rgba(255, 248, 240, 0.98);
+  --contact-map-control-color: #3c3128;
+  --contact-map-control-border: 1px solid rgba(120, 95, 68, 0.18);
+  --contact-map-control-shadow: 0 10px 30px rgba(38, 24, 12, 0.16);
+  --contact-map-control-backdrop-filter: blur(10px);
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
@@ -1629,6 +1672,67 @@ section .section-title:first-child {
 	margin-bottom: 0.25rem;
 	color: var(--secondary-color);
 }
+
+
+
+
+#contact-map .maplibregl-ctrl-top-right {
+  top: var(--contact-map-control-offset-top);
+  right: var(--contact-map-control-offset-right);
+}
+
+#contact-map .maplibregl-ctrl-top-left {
+  top: var(--contact-map-control-offset-top);
+  left: var(--contact-map-control-offset-left);
+}
+
+#contact-map .maplibregl-ctrl-bottom-right {
+  right: var(--contact-map-control-offset-right);
+  bottom: var(--contact-map-control-offset-bottom);
+}
+
+#contact-map .maplibregl-ctrl-bottom-left {
+  left: var(--contact-map-control-offset-left);
+  bottom: var(--contact-map-control-offset-bottom);
+}
+
+#contact-map .maplibregl-ctrl-group {
+  overflow: hidden;
+  border: var(--contact-map-control-border);
+  border-radius: var(--contact-map-control-border-radius);
+  background: var(--contact-map-control-bg);
+  box-shadow: var(--contact-map-control-shadow);
+  backdrop-filter: var(--contact-map-control-backdrop-filter);
+  -webkit-backdrop-filter: var(--contact-map-control-backdrop-filter);
+}
+
+#contact-map .maplibregl-ctrl-group:not(:empty) {
+  padding: var(--contact-map-control-padding);
+}
+
+#contact-map .maplibregl-ctrl-group button {
+  width: var(--contact-map-control-button-size);
+  height: var(--contact-map-control-button-size);
+  color: var(--contact-map-control-color);
+  background: transparent;
+}
+
+#contact-map .maplibregl-ctrl-group button:hover {
+  background: var(--contact-map-control-bg-hover);
+}
+
+#contact-map .maplibregl-ctrl.maplibregl-ctrl-attrib {
+  border-radius: calc(var(--contact-map-control-border-radius) - 4px);
+  border: var(--contact-map-control-border);
+  background: var(--contact-map-control-bg);
+  box-shadow: var(--contact-map-control-shadow);
+  backdrop-filter: var(--contact-map-control-backdrop-filter);
+  -webkit-backdrop-filter: var(--contact-map-control-backdrop-filter);
+}
+
+
+
+
 
 .maplibregl-ctrl-attrib {
   font-size: 10px;
