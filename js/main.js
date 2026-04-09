@@ -3988,6 +3988,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		const startScrollY = window.scrollY;
 		const startAboutViewportTop = about ? about.getBoundingClientRect().top : 0;
 
+		const getParallaxCompensatedScrollY = (baseScrollY) => {
+			const factor = physics.values.heroParallaxFactor;
+
+			/* visual stabil halten trotz später wieder aktivem Hero-Parallax:
+			   y * (1 - factor) = baseScrollY  =>  y = baseScrollY / (1 - factor)
+			*/
+			const compensated =
+				Math.abs(1 - factor) > 0.0001
+					? baseScrollY / (1 - factor)
+					: baseScrollY;
+
+			return clamp(compensated, 0, utils.getMaxScrollY());
+		};
+
 		state.scroll.programmatic = true;
 		this.lockHeroCalendarScrollBehavior();
 
@@ -4008,9 +4022,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					nextScrollY = window.scrollY + deltaToTarget;
 				}
 			} else if (mode === "close") {
-				/* normales manuelles Schließen */
+				/* normales manuelles Schließen, aber parallax-kompensiert */
 				const scrollDeltaTotal = from - to;
-				nextScrollY = startScrollY - (scrollDeltaTotal * eased);
+				const baseScrollY = startScrollY - (scrollDeltaTotal * eased);
+				nextScrollY = getParallaxCompensatedScrollY(baseScrollY);
 			}
 
 			window.scrollTo(0, Math.max(0, nextScrollY));
@@ -4038,13 +4053,18 @@ document.addEventListener("DOMContentLoaded", () => {
 					Math.max(0, window.scrollY + (finalAboutTop - startAboutViewportTop))
 				);
 			} else if (mode === "close") {
-				window.scrollTo(0, Math.max(0, startScrollY - (from - to)));
+				const baseFinalScrollY = Math.max(0, startScrollY - (from - to));
+				const compensatedFinalScrollY =
+					getParallaxCompensatedScrollY(baseFinalScrollY);
+
+				window.scrollTo(0, compensatedFinalScrollY);
 			}
 
 			state.lastScrollY = window.scrollY;
 
 			this.unlockHeroCalendarScrollBehavior();
 			navbarModule.handleScroll();
+			navbarModule.startAnimation();
 			onComplete?.();
 		};
 
