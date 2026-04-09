@@ -4314,50 +4314,32 @@ document.addEventListener("DOMContentLoaded", () => {
 		this.isInitializing = true;
 
 		const salonCoords = this.getSalonCoords();
-/*
+
 		this.map = new maplibregl.Map({
 		  container: this.container,
-		  style: this.getMapStyle(),
+		  style: "https://tiles.openfreemap.org/styles/liberty",
 		  center: salonCoords,
 		  zoom: 17.2,
-		  pitch: 45,
+		  pitch: 55,
 		  bearing: -17.6,
 		  attributionControl: false,
 		  canvasContextAttributes: { antialias: true }
 		});
-*/
-
-this.map = new maplibregl.Map({
-  container: this.container,
-  style: "https://tiles.openfreemap.org/styles/liberty",
-  center: salonCoords,
-  zoom: 17.2,
-  pitch: 55,
-  bearing: -17.6,
-  attributionControl: false,
-  canvasContextAttributes: { antialias: true }
-});
 
 		this.marker = new maplibregl.Marker({ color: "#d4af37" })
 		  .setLngLat(salonCoords)
 		  .addTo(this.map);
-/*
+		  
 		this.map.once("load", () => {
 		  if (!this.map) {
 			this.isInitializing = false;
 			return;
 		  }
 
-		  try {
-			this.add3DBuildings();
-		  } catch (error) {
-			console.error("3D-Gebäude konnten nicht hinzugefügt werden:", error);
-		  }
-
 		  this.isInitializing = false;
 		  this.resize();
 		});
- */
+
 		this.map.on("error", (error) => {
 		  console.error("MapLibre Fehler:", error);
 		  this.isInitializing = false;
