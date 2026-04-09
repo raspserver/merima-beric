@@ -3572,9 +3572,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 			mode: "open",
+		
 			onComplete: () => {
-				
 				state.ui.heroCalendarOpen = true;
+
+				this.restoreNavbarAfterHeroCalendar({ preserveState: false });
 
 				state.ui.heroCalendarRevealTimer = setTimeout(() => {
 					DOM.heroCalendar.classList.add("is-open");
@@ -3584,7 +3586,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						this.updateFullCalendarSize();
 					});
 				}, this.getHeroCalendarRevealDelay());
-			},
+			},	
 		});
 	},
 	
