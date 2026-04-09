@@ -344,6 +344,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarPrewarmed: false,
 		heroCalendarPrewarmObserver: null,
 		
+		pendingNavAfterHeroCalendarClose: false,
+		
 		contactMapPrewarmed: false,
 		contactMapPrewarmObserver: null,
 		contactMapLastOutsideZone: null,
@@ -782,6 +784,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	  const isHeroTarget = target === DOM.hero || target.id === "home";
 
 	  const startNavigation = () => {
+		if (!state.ui.pendingNavAfterHeroCalendarClose && state.ui.heroCalendarAnimating) {
+		  return;
+		}
+
+		state.ui.pendingNavAfterHeroCalendarClose = false;
+
 		const mode = forcedMode || this.getModeForTarget(target);
 
 		state.nav.manualOpen = false;
@@ -796,8 +804,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		navbarModule.startAnimation();
 	  };
 
-	  // Kalender erst vollständig schließen, danach Zielposition berechnen + scrollen
-	  if (state.ui.heroCalendarOpen) {
+	  // Während Kalender-Schließen nur eine Navigation vormerken
+	  if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
+		if (state.ui.pendingNavAfterHeroCalendarClose) return;
+
+		state.ui.pendingNavAfterHeroCalendarClose = true;
+
 		uiModule.closeHeroCalendar({
 		  preserveAboutBoundaryAtTop: false,
 		  onComplete: startNavigation,
