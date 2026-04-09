@@ -4304,53 +4304,53 @@ document.addEventListener("DOMContentLoaded", () => {
 		  labelLayerId
 		);
 	  },
-
+	  
 	  init() {
-		this.container = this.getContainer();
+		  this.container = this.getContainer();
 
-		if (!this.container || typeof maplibregl === "undefined") return;
-		if (this.map || this.isInitializing) return;
+		  if (!this.container || typeof maplibregl === "undefined") return;
+		  if (this.map || this.isInitializing) return;
 
-		this.isInitializing = true;
+		  this.isInitializing = true;
 
-		const salonCoords = this.getSalonCoords();
+		  const salonCoords = this.getSalonCoords();
 
-		this.map = new maplibregl.Map({
-		  container: this.container,
-		  style: "https://tiles.openfreemap.org/styles/liberty",
-		  center: salonCoords,
-		  zoom: 17.2,
-		  pitch: 55,
-		  bearing: -17.6,
-		  attributionControl: false,
-		  canvasContextAttributes: { antialias: true }
-		});
+		  this.map = new maplibregl.Map({
+			container: this.container,
+			style: "https://tiles.openfreemap.org/styles/liberty",
+			center: salonCoords,
+			zoom: 17.2,
+			pitch: 55,
+			bearing: -17.6,
+			attributionControl: false,
+			canvasContextAttributes: { antialias: true }
+		  });
 
-		this.marker = new maplibregl.Marker({ color: "#d4af37" })
-		  .setLngLat(salonCoords)
-		  .addTo(this.map);
-		  
-		this.map.once("load", () => {
-		  if (!this.map) {
+		  this.marker = new maplibregl.Marker({ color: "#d4af37" })
+			.setLngLat(salonCoords)
+			.addTo(this.map);
+
+		  this.map.once("load", () => {
+			if (!this.map) {
+			  this.isInitializing = false;
+			  return;
+			}
+
 			this.isInitializing = false;
-			return;
-		  }
+			this.resize();
+		  });
 
-		  this.isInitializing = false;
-		  this.resize();
-		});
+		  this.map.on("error", (error) => {
+			console.error("MapLibre Fehler:", error);
+			this.isInitializing = false;
+		  });
 
-		this.map.on("error", (error) => {
-		  console.error("MapLibre Fehler:", error);
-		  this.isInitializing = false;
-		});
-
-		this.map.on("remove", () => {
-		  this.map = null;
-		  this.marker = null;
-		  this.isInitializing = false;
-		});
-	  },
+		  this.map.on("remove", () => {
+			this.map = null;
+			this.marker = null;
+			this.isInitializing = false;
+		  });
+		},
 
 	  destroy() {
 		if (!this.map) return;
