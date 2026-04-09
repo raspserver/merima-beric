@@ -4320,7 +4320,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			style: "https://tiles.openfreemap.org/styles/liberty",
 			
 			center: salonCoords,
-			zoom: 16.9,
+			//~ zoom: 16.9,
+			zoom: 19.0,
 			pitch: 52,
 			bearing: -14,
 
@@ -4340,7 +4341,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			  this.map.easeTo({
 				center: salonCoords,
-				zoom: 17.15,
+				//~ zoom: 17.15,
+				zoom: 20.00,
 				pitch: 56,
 				bearing: -18,
 				duration: 2200,
