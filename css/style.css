@@ -45,8 +45,8 @@
 	--contact-map-prewarm-about-ratio: 0.2;
 	--contact-map-animation-delay: 1000ms;
 	
-	--contact-map-zoom-start: 15;
-	--contact-map-zoom-end: 16;
+	--contact-map-zoom-start: 15.0;
+	--contact-map-zoom-end: 15.5;
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
