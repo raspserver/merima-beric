@@ -4366,7 +4366,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  this.marker = null;
 		  this.isInitializing = false;
 		  state.ui.contactMapAnimated = false;
-		}
+		},
 
 	  reinit() {
 		const now = performance.now();
