@@ -3992,6 +3992,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		state.scroll.programmatic = true;
 		this.lockHeroCalendarScrollBehavior();
 
+		const finish = () => {
+			state.lastScrollY = window.scrollY;
+			this.unlockHeroCalendarScrollBehavior();
+			navbarModule.handleScroll();
+			navbarModule.startAnimation();
+			onComplete?.();
+		};
+
 		const step = (now) => {
 			const t = Math.min(1, (now - start) / duration);
 			const eased = this.easeHeroCalendar(t);
@@ -4009,8 +4017,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					nextScrollY = window.scrollY + deltaToTarget;
 				}
 			} else if (mode === "close") {
-				/* normales manuelles Schließen:
-				   CTA visuell exakt festhalten */
+				/* normales manuelles Schließen: CTA visuell festhalten */
 				if (DOM.cta) {
 					const currentCtaTop = DOM.cta.getBoundingClientRect().top;
 					const deltaToTarget = currentCtaTop - startCtaViewportTop;
@@ -4036,57 +4043,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			this.setHeroCalendarExtraHeight(to);
 
-			/* Vor dem Entsperren nochmal exakt ausrichten */
+			/* Vor dem Unlock exakt ausrichten */
 			if ((mode === "open" || mode === "close-keep-about-position") && about) {
 				const finalAboutTop = about.getBoundingClientRect().top;
 				window.scrollTo(
 					0,
 					Math.max(0, window.scrollY + (finalAboutTop - startAboutViewportTop))
 				);
-			} else if (mode === "close" && DOM.cta) {
+				finish();
+				return;
+			}
+
+			if (mode === "close" && DOM.cta) {
 				const finalCtaTop = DOM.cta.getBoundingClientRect().top;
 				window.scrollTo(
 					0,
 					Math.max(0, window.scrollY + (finalCtaTop - startCtaViewportTop))
 				);
-			}
 
-			state.lastScrollY = window.scrollY;
-
-			/*
-			  Wichtig:
-			  Parallax nicht sofort "hart" zurückgeben und dann fertig sein,
-			  sondern nach dem Unlock noch 2 Frames später die CTA-Position
-			  erneut visuell korrigieren. Das verhindert den kleinen Rest-Hop
-			  und vor allem den Drift über mehrere Open/Close-Zyklen.
-			*/
-			this.unlockHeroCalendarScrollBehavior();
-			navbarModule.handleScroll();
-			navbarModule.startAnimation();
-
-			if (mode === "close" && DOM.cta) {
+				/* Noch NICHT freigeben – erst nach der visuellen Endkorrektur */
 				requestAnimationFrame(() => {
 					requestAnimationFrame(() => {
 						const correctedCtaTop = DOM.cta.getBoundingClientRect().top;
-						const deltaAfterParallax = correctedCtaTop - startCtaViewportTop;
+						const deltaAfterUnlock = correctedCtaTop - startCtaViewportTop;
 
-						if (Math.abs(deltaAfterParallax) > 0.5) {
+						if (Math.abs(deltaAfterUnlock) > 0.5) {
 							window.scrollTo(
 								0,
-								Math.max(0, window.scrollY + deltaAfterParallax)
+								Math.max(0, window.scrollY + deltaAfterUnlock)
 							);
-							state.lastScrollY = window.scrollY;
-							navbarModule.handleScroll();
-							navbarModule.startAnimation();
 						}
 
-						onComplete?.();
+						/* Erst jetzt CTA wieder freigeben */
+						state.ui.heroCalendarKeepCtaFlat = false;
+
+						finish();
 					});
 				});
 				return;
 			}
 
-			onComplete?.();
+			finish();
 		};
 
 		state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
