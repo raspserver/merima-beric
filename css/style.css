@@ -39,6 +39,9 @@
 	
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
+	
+	--contact-map-reinit-offset: 120px;
+	--contact-map-prewarm-about-ratio: 0.2;
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;

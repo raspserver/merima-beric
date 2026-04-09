@@ -323,8 +323,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	ui: {
 		suppressCtaHoverCleanup: null,
 		suppressNextClick: false,
-		heroCalendarOpen: false,
 		ctaDefaultLabel: "",
+		
+		fullCalendarInstance: null,
+		fullCalendarResizeTimer: null,
+		
+		heroCalendarOpen: false,
 		heroCalendarExtraHeight: 0,
 		heroCalendarAnimating: false,
 		heroCalendarLayoutRaf: null,
@@ -334,13 +338,18 @@ document.addEventListener("DOMContentLoaded", () => {
 		heroCalendarMeasuredExtra: 0,
 		heroCalendarKeepCtaFlat: false,
 		heroCalendarNavbarFreeze: false,
-		fullCalendarInstance: null,
-		fullCalendarResizeTimer: null,
 		heroCalendarAutoCloseTimer: null,
 		heroCalendarAutoCloseArmed: false,
 		heroCalendarLastScrollY: window.scrollY,
 		heroCalendarPrewarmed: false,
 		heroCalendarPrewarmObserver: null,
+		
+		contactMapPrewarmed: false,
+		contactMapPrewarmObserver: null,
+		contactMapLastOutsideZone: null,
+		contactMapReinitArmed: false,
+		contactMapReinitTimer: null,
+		contactMapLastReinitAt: 0,
 	},
 
     orderedSections: [],
@@ -4141,33 +4150,225 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------
   const contactMapModule = {
     map: null,
+    container: null,
+    marker: null,
+    isInitializing: false,
+
+    getContainer() {
+      return document.getElementById("contact-map");
+    },
+
+    getContactSection() {
+      return document.getElementById("contact");
+    },
+
+    getSalonCoords() {
+      return [9.2045023, 48.7765731];
+    },
 
     init() {
-	  const mapContainer = document.getElementById("contact-map");
-	  if (!mapContainer || typeof maplibregl === "undefined") return;
-	  if (this.map) return;
+      this.container = this.getContainer();
 
-	  const salonCoords = [9.2045023, 48.7765731];
+      if (!this.container || typeof maplibregl === "undefined") return;
+      if (this.map || this.isInitializing) return;
 
-	  this.map = new maplibregl.Map({
-		container: "contact-map",
-		style: "https://tiles.openfreemap.org/styles/bright",
-		center: salonCoords,
-		zoom: 17,
-		pitch: 60,
-		bearing: -20,
-		attributionControl: false,
-		canvasContextAttributes: { antialias: true }
+      this.isInitializing = true;
+
+      const salonCoords = this.getSalonCoords();
+
+      this.map = new maplibregl.Map({
+        container: this.container,
+        style: "https://tiles.openfreemap.org/styles/bright",
+        center: salonCoords,
+        zoom: 17,
+        pitch: 60,
+        bearing: -20,
+        attributionControl: false,
+        canvasContextAttributes: { antialias: true }
+      });
+
+      this.marker = new maplibregl.Marker({ color: "#d4af37" })
+        .setLngLat(salonCoords)
+        .addTo(this.map);
+
+      this.map.once("load", () => {
+        this.isInitializing = false;
+        this.resize();
+      });
+
+      this.map.on("remove", () => {
+        this.map = null;
+        this.marker = null;
+        this.isInitializing = false;
+      });
+    },
+
+    destroy() {
+      if (!this.map) return;
+
+      this.map.remove();
+      this.map = null;
+      this.marker = null;
+      this.isInitializing = false;
+    },
+
+    reinit() {
+	  const now = performance.now();
+	  if (now - state.ui.contactMapLastReinitAt < 1200) return;
+
+	  state.ui.contactMapLastReinitAt = now;
+
+	  this.destroy();
+
+	  requestAnimationFrame(() => {
+		this.init();
 	  });
-
-	  new maplibregl.Marker({ color: "#d4af37" })
-		.setLngLat(salonCoords)
-		.addTo(this.map);
 	},
 
     resize() {
       if (!this.map) return;
       this.map.resize();
+    },
+
+    prewarm() {
+      if (state.ui.contactMapPrewarmed || this.map) return;
+
+      state.ui.contactMapPrewarmed = true;
+      this.init();
+    },
+
+    clearReinitTimer() {
+      clearTimeout(state.ui.contactMapReinitTimer);
+      state.ui.contactMapReinitTimer = null;
+    },
+
+    getReinitOffsetPx() {
+      return cssVar.lengthPx("--contact-map-reinit-offset", 120);
+    },
+
+    getPrewarmDistancePx() {
+      const about = document.getElementById("about");
+      if (!about) return window.innerHeight * 0.2;
+
+      const ratio = cssVar.number("--contact-map-prewarm-about-ratio", 0.2);
+      return Math.max(0, about.offsetHeight * ratio);
+    },
+
+    /**
+     * outsideTop:
+     *   #contact ist komplett oberhalb des Viewports verschwunden
+     *   + zusätzlicher Offset
+     *
+     * outsideBottom:
+     *   #contact ist komplett unterhalb des Viewports verschwunden
+     *   + zusätzlicher Offset
+     *
+     * inside:
+     *   #contact ist noch im / nahe am Viewport
+     */
+    getContactViewportZone() {
+      const contact = this.getContactSection();
+      if (!contact) return "inside";
+
+      const rect = contact.getBoundingClientRect();
+      const offset = this.getReinitOffsetPx();
+      const viewportHeight = window.innerHeight;
+
+      if (rect.bottom <= -offset) return "outsideTop";
+      if (rect.top >= viewportHeight + offset) return "outsideBottom";
+
+      return "inside";
+    },
+
+    maybeReinitOnSectionExit() {
+      const contact = this.getContactSection();
+      if (!contact) return;
+
+      const zone = this.getContactViewportZone();
+      const previousZone = state.ui.contactMapLastOutsideZone;
+
+      // Beim ersten Lauf nur Zustand setzen
+      if (previousZone === null) {
+        state.ui.contactMapLastOutsideZone = zone;
+        return;
+      }
+
+      // Innerhalb/Nähe des Viewports -> Reinit wieder entschärfen
+      if (zone === "inside") {
+        state.ui.contactMapReinitArmed = false;
+        this.clearReinitTimer();
+        state.ui.contactMapLastOutsideZone = zone;
+        return;
+      }
+
+      // Nur reagieren, wenn man frisch in einen echten Outside-Zustand kommt
+      if (zone !== previousZone) {
+        state.ui.contactMapReinitArmed = true;
+        this.clearReinitTimer();
+
+        state.ui.contactMapReinitTimer = setTimeout(() => {
+          state.ui.contactMapReinitTimer = null;
+
+          // Zustand nochmal prüfen, um Flackern bei hektischem Scrollen zu vermeiden
+          if (this.getContactViewportZone() === zone) {
+            this.reinit();
+          }
+
+          state.ui.contactMapReinitArmed = false;
+        }, 120);
+      }
+
+      state.ui.contactMapLastOutsideZone = zone;
+    },
+
+    bindPrewarm() {
+      const contact = this.getContactSection();
+      if (!contact || state.ui.contactMapPrewarmObserver) return;
+
+      const prewarmDistance = this.getPrewarmDistancePx();
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry?.isIntersecting) return;
+
+          this.prewarm();
+
+          observer.disconnect();
+          state.ui.contactMapPrewarmObserver = null;
+        },
+        {
+          root: null,
+          threshold: 0,
+          rootMargin: `${prewarmDistance}px 0px ${prewarmDistance}px 0px`
+        }
+      );
+
+      observer.observe(contact);
+      state.ui.contactMapPrewarmObserver = observer;
+    },
+
+    bindLifecycle() {
+      window.addEventListener(
+        "scroll",
+        () => {
+          this.maybeReinitOnSectionExit();
+        },
+        { passive: true }
+      );
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+          this.resize();
+        }
+      });
+    },
+
+    initModule() {
+      this.init();
+      this.bindPrewarm();
+      this.bindLifecycle();
+      this.maybeReinitOnSectionExit();
     }
   };
 
@@ -4255,7 +4456,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
   // ---------------------------------------------------------------------
-  // 15) POSITIONIERUNG DER SCROLL-HINT-SPALTE
+  // 16) POSITIONIERUNG DER SCROLL-HINT-SPALTE
   // ---------------------------------------------------------------------
   const scrollSectionHintPositionModule = {
     update() {
@@ -4319,7 +4520,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 16) PERFORMANCE-MODUL
+  // 17) PERFORMANCE-MODUL
   // ---------------------------------------------------------------------
   const performanceModule = {
     fpsSampleFrames: 45,
@@ -4363,7 +4564,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------------------------------------------
-  // 17) INITIALISIERUNG
+  // 18) INITIALISIERUNG
   // ---------------------------------------------------------------------
   function init() {
     // performanceModule.init(); // optional wieder aktivieren
@@ -4382,7 +4583,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	uiModule.bindPricingTabs();
 	uiModule.setInitialVisualState();
 
-	contactMapModule.init();
+	contactMapModule.initModule();
 
     bindUserScrollInterrupts();
     
@@ -4406,27 +4607,31 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 		{ passive: true }
 	);
-
+	
 	window.addEventListener("resize", () => {
-		physics.update();
-		galleryModule.setPosition(galleryModule.currentIndex, false);
-		contactMapModule.resize();
-		
-		if (state.ui.heroCalendarOpen) {
-			clearTimeout(state.ui.fullCalendarResizeTimer);
+	  physics.update();
+	  galleryModule.setPosition(galleryModule.currentIndex, false);
+	  contactMapModule.resize();
 
-			state.ui.fullCalendarResizeTimer = setTimeout(() => {
-				uiModule.positionHeroCalendar();
-				uiModule.refreshFullCalendarView();
-				uiModule.applyMeasuredHeroCalendarBox();
-				uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+	  if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
+		contactMapModule.bindPrewarm();
+	  }
 
-				requestAnimationFrame(() => {
-					uiModule.applyMeasuredHeroCalendarBox();
-					uiModule.updateFullCalendarSize();
-				});
-			}, 120);
-		}
+	  if (state.ui.heroCalendarOpen) {
+		clearTimeout(state.ui.fullCalendarResizeTimer);
+
+		state.ui.fullCalendarResizeTimer = setTimeout(() => {
+		  uiModule.positionHeroCalendar();
+		  uiModule.refreshFullCalendarView();
+		  uiModule.applyMeasuredHeroCalendarBox();
+		  uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+
+		  requestAnimationFrame(() => {
+			uiModule.applyMeasuredHeroCalendarBox();
+			uiModule.updateFullCalendarSize();
+		  });
+		}, 120);
+	  }
 	});
 
     document.addEventListener("visibilitychange", () => {
