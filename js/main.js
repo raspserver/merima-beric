@@ -1258,8 +1258,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			  
 */
 
-				const isContactTarget = hash === "#contact" || target.id === "contact";
-
 				if (isContactTarget) {
 				  contactMapModule.markNavbarContactIntent();
 				  contactMapModule.prewarm(); // nur prewarm, kein warten!
