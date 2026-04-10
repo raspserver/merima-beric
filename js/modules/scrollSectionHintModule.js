@@ -3,7 +3,7 @@
   // ---------------------------------------------------------------------
   // 11) SCROLL-HINT-SYSTEM
   // ---------------------------------------------------------------------
-	const scrollSectionHintModule = {
+export const scrollSectionHintModule = {
 	  root: null,
 	  measurer: null,
 	  metricsCache: new Map(),
