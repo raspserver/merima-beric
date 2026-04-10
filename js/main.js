@@ -3047,7 +3047,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.playOnly(this.currentIndex);
       this.bindTrackEvents();
       this.bindVisibilityEvents();
-    }
+    },
   };
 
 	// ---------------------------------------------------------------------
@@ -4664,12 +4664,15 @@ const contactMapModule = {
 	  await this.waitForStableRender();
 
 	  if (!this.map || state.ui.contactMapAnimated) return;
-
+  
 	  if (cinematic) {
-		this.playNavbarCinematic();
-	  } else {
-		this.playEntranceAnimation();
-	  }
+		  this.map.once("render", () => {
+			if (!this.map || state.ui.contactMapAnimated) return;
+			this.playNavbarCinematic();
+		  });
+		} else {
+		  this.playEntranceAnimation();
+		}
 	},
 
   playEntranceAnimation() {
