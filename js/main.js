@@ -4664,11 +4664,13 @@ const contactMapModule = {
 	  await this.waitForStableRender();
 
 	  if (!this.map || state.ui.contactMapAnimated) return;
-  
-	  if (cinematic) {
+		
+		if (cinematic) {
 		  this.map.once("render", () => {
-			if (!this.map || state.ui.contactMapAnimated) return;
-			this.playNavbarCinematic();
+			this.map.once("idle", () => {
+			  if (!this.map || state.ui.contactMapAnimated) return;
+			  this.playNavbarCinematic();
+			});
 		  });
 		} else {
 		  this.playEntranceAnimation();
