@@ -1210,69 +1210,152 @@ document.addEventListener("DOMContentLoaded", () => {
       state.ui.suppressCtaHoverCleanup = cleanup;
       window.addEventListener("pointermove", cleanup);
     },
-  
-    DOM.navLinks.forEach((link) => {
-	  link.addEventListener("click", async (e) => {
-		const rawHref = link.getAttribute("href");
-		if (!rawHref) return;
 
-		let hash = "";
 
-		try {
-		  hash = rawHref.startsWith("#")
-			? rawHref
-			: new URL(rawHref, window.location.href).hash;
-		} catch {
-		  hash = rawHref.startsWith("#") ? rawHref : "";
-		}
 
-		if (!hash) return;
 
-		const target = utils.resolveTarget(hash);
-		if (!target) return;
 
-		e.preventDefault();
-		e.stopPropagation();
 
-		const doScroll = async () => {
-		  const isContactTarget = hash === "#contact" || target.id === "contact";
+    bindEvents() {
+      if (DOM.navToggle && DOM.navMenu) {
+        DOM.navToggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.isOpen() ? this.closeMenu() : this.openMenu();
+        });
+      }
 
-		  if (isContactTarget) {
-			contactMapModule.markNavbarContactIntent();
-			await contactMapModule.waitForReady();
-		  }
+      DOM.navLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          const rawHref = link.getAttribute("href");
+          if (!rawHref) return;
 
-		  scrollEngine.goTo(target, scrollEngine.getModeForTarget(target));
-		};
+          let hash = "";
 
-		if (utils.isMobileViewport() && this.isOpen()) {
-		  const menu = DOM.navMenu;
-		  const isHeroTarget = target.classList?.contains("hero");
+          try {
+            hash = rawHref.startsWith("#")
+              ? rawHref
+              : new URL(rawHref, window.location.href).hash;
+          } catch {
+            hash = rawHref.startsWith("#") ? rawHref : "";
+          }
 
-		  this.closeMenu({ keepNavbarVisible: !isHeroTarget });
+          if (!hash) return;
 
-		  let done = false;
+          const target = utils.resolveTarget(hash);
+          if (!target) return;
 
-		  const finish = async () => {
-			if (done) return;
-			done = true;
-			menu?.removeEventListener("transitionend", onEnd);
-			await doScroll();
-		  };
+          e.preventDefault();
+          e.stopPropagation();
 
-		  const onEnd = (evt) => {
-			if (evt.target === menu) finish();
-		  };
+          const doScroll = () =>
+            scrollEngine.goTo(target, scrollEngine.getModeForTarget(target));
 
-		  menu?.addEventListener("transitionend", onEnd, { once: true });
-		  setTimeout(finish, 450);
+          if (utils.isMobileViewport() && this.isOpen()) {
+            const menu = DOM.navMenu;
+            const isHeroTarget = target.classList?.contains("hero");
+
+            this.closeMenu({ keepNavbarVisible: !isHeroTarget });
+
+            let done = false;
+
+            const finish = () => {
+              if (done) return;
+              done = true;
+              menu?.removeEventListener("transitionend", onEnd);
+              doScroll();
+            };
+
+            const onEnd = (evt) => {
+              if (evt.target === menu) finish();
+            };
+
+            menu?.addEventListener("transitionend", onEnd, { once: true });
+            setTimeout(finish, 450);
+            return;
+          }
+
+          doScroll();
+        });
+      });
+
+      DOM.navLogo?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const goHome = () => scrollEngine.goTo(DOM.hero, "hero-top");
+
+        if (utils.isMobileViewport() && this.isOpen()) {
+          const menu = DOM.navMenu;
+
+          this.closeMenu({ keepNavbarVisible: false });
+
+          let done = false;
+
+          const finish = () => {
+            if (done) return;
+            done = true;
+            menu?.removeEventListener("transitionend", onEnd);
+            goHome();
+          };
+
+          const onEnd = (evt) => {
+            if (evt.target === menu) finish();
+          };
+
+          menu?.addEventListener("transitionend", onEnd, { once: true });
+          setTimeout(finish, 450);
+          return;
+        }
+
+        goHome();
+      });
+
+      document.addEventListener("pointerdown", (e) => {
+        if (!utils.isMobileViewport() || !this.isOpen()) return;
+
+        const target = e.target instanceof Element ? e.target : null;
+        if (!target) return;
+
+        const insideMenu = target.closest(".nav-menu");
+        const onToggle = target.closest(".nav-toggle");
+        const onLogo = target.closest(".nav-logo");
+        const onCta = target.closest(".cta-button");
+        const onSectionScrollHead = target.closest(".section-scroll-head");
+
+        if (insideMenu || onToggle || onLogo) return;
+
+		/* CTA soll NICHT als Outside-Click gelten */
+		if (onCta) {
+		  this.suppressCtaHoverTemporarily();
+		  uiModule.resetCtaMagnetic();
 		  return;
 		}
 
-		await doScroll();
-	  });
-	});
+		e.preventDefault();
+		e.stopPropagation();
+		state.ui.suppressNextClick = true;
 
+		if (onSectionScrollHead) {
+		  this.suppressCtaHoverTemporarily();
+		  uiModule.resetCtaMagnetic();
+		}
+
+		this.closeMenu();
+
+      });
+
+      document.addEventListener(
+        "click",
+        (e) => {
+          if (!state.ui.suppressNextClick) return;
+          state.ui.suppressNextClick = false;
+          e.preventDefault();
+          e.stopPropagation();
+        },
+        true
+      );
+    },
   };
 
   // ---------------------------------------------------------------------
@@ -4736,36 +4819,18 @@ const contactMapModule = {
 	waitForReady() {
 	  this.prewarm();
 
-	  if (!this.map) return Promise.resolve();
+	  if (!this.map) {
+		return Promise.resolve();
+	  }
 
-	  return new Promise((resolve) => {
-		const map = this.map;
-		let done = false;
-
-		const finish = () => {
-		  if (done) return;
-		  done = true;
-		  resolve();
-		};
-
-		if (map.loaded()) {
-		  map.once("idle", finish);
-		  setTimeout(finish, 1200);
-		  return;
-		}
-
-		map.once("load", () => {
-		  if (!this.map) {
-			finish();
-			return;
-		  }
-
-		  this.map.once("idle", finish);
-		  setTimeout(finish, 1200);
+	  if (this.map.loaded()) {
+		return new Promise((resolve) => {
+		  this.map.once("idle", resolve);
 		});
+	  }
 
-		setTimeout(finish, 1800);
-	  });
+	  this.createReadyPromise();
+	  return this.readyPromise;
 	}
 };
 
