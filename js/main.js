@@ -4912,7 +4912,7 @@ const contactMapModule = {
 		  setTimeout(resolve, 1000);
 		});
 	  });
-	}
+	},
 	
 };
 
