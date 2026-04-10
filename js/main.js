@@ -4325,13 +4325,10 @@ const contactMapModule = {
   getReducedMotionEnabled() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   },
-
+  
   getNavbarIntentSelector() {
-    return this.getCssVarString(
-      "--contact-map-nav-intent-selector",
-      'nav a[href="#contact"], .navbar a[href="#contact"], [data-navbar] a[href="#contact"]'
-    );
-  },
+	  return '[data-contact-nav-flyto]';
+	},
 
   findFirstLabelLayerId() {
     if (!this.map) return undefined;
@@ -4513,32 +4510,45 @@ const contactMapModule = {
   },
 
   bindNavbarIntent() {
-    if (this.navIntentHandlersBound) return;
+	  if (this.navIntentHandlersBound) return;
 
-    const selector = this.getNavbarIntentSelector();
-    if (!selector) return;
+	  const selector = this.getNavbarIntentSelector();
+	  if (!selector) return;
 
-    const handler = (event) => {
-      const trigger = event.target?.closest?.(selector);
-      if (!trigger) return;
+	  const handler = (event) => {
+		const trigger = event.target?.closest?.(selector);
+		if (!trigger) return;
 
-      state.ui.contactMapNavCinematicRequested = true;
-      this.prewarm();
-    };
+		// Zusätzliche Absicherung:
+		// Nur Links/Buttons akzeptieren, die wirklich auf #contact zeigen
+		const href = trigger.getAttribute("href");
+		const target = trigger.getAttribute("data-target");
+		const controls = trigger.getAttribute("aria-controls");
 
-    document.addEventListener("click", handler, true);
+		const pointsToContact =
+		  href === "#contact" ||
+		  target === "#contact" ||
+		  controls === "contact";
 
-    document.addEventListener(
-      "keydown",
-      (event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        handler(event);
-      },
-      true
-    );
+		if (!pointsToContact) return;
 
-    this.navIntentHandlersBound = true;
-  },
+		state.ui.contactMapNavCinematicRequested = true;
+		this.prewarm();
+	  };
+
+	  document.addEventListener("click", handler, true);
+
+	  document.addEventListener(
+		"keydown",
+		(event) => {
+		  if (event.key !== "Enter" && event.key !== " ") return;
+		  handler(event);
+		},
+		true
+	  );
+
+	  this.navIntentHandlersBound = true;
+	},
 
   resetView() {
     if (!this.map) return;
