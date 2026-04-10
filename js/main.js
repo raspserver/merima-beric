@@ -2936,54 +2936,6 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     },
 
-	waitUntilVisible() {
-	  const el = this.getContainer();
-	  if (!el) return Promise.resolve();
-
-	  return new Promise((resolve) => {
-		const check = () => {
-		  const rect = el.getBoundingClientRect();
-		  const visible = rect.top < window.innerHeight && rect.bottom > 0;
-
-		  if (visible) {
-			resolve();
-		  } else {
-			requestAnimationFrame(check);
-		  }
-		};
-
-		check();
-	  });
-	},
-
-	waitForStableRender() {
-	  if (!this.map) return Promise.resolve();
-
-	  return new Promise((resolve) => {
-		requestAnimationFrame(() => {
-		  this.resize();
-
-		  let resolved = false;
-
-		  const done = () => {
-			if (resolved) return;
-			resolved = true;
-			resolve();
-		  };
-
-		  this.map.once("render", () => {
-			this.map.once("idle", done);
-		  });
-
-		  setTimeout(done, 800);
-		});
-	  });
-	},
-
-
-
-
-
     bindVisibilityEvents() {
       const gallerySection = document.querySelector(".gallery");
 
@@ -3018,12 +2970,6 @@ document.addEventListener("DOMContentLoaded", () => {
         this.setPosition(this.currentIndex, false);
       });
     },
-    
-    
-    
-    
-    
-    
 
     init() {
       if (!DOM.track) return;
@@ -4458,23 +4404,7 @@ const contactMapModule = {
             ["zoom"],
             15, 0,
             16, ["coalesce", ["get", "render_height"], 0]
-          ],
-          
-          
-          /*
-          
-          "fill-extrusion-base": [
-            "case",
-            [">=", ["zoom"], 16],
-            ["coalesce", ["get", "render_min_height"], 0],
-            0
-          ]
-          
-          */
-          
-          
-          
-          
+          ],    
           "fill-extrusion-base": [
 			  "interpolate",
 			  ["linear"],
@@ -4913,6 +4843,52 @@ const contactMapModule = {
 		this.map.once("load", () => {
 		  this.map.once("idle", resolve);
 		  setTimeout(resolve, 1000);
+		});
+	  });
+	},
+	
+	waitUntilVisible() {
+	  const el = this.getContainer();
+	  if (!el) return Promise.resolve();
+
+	  return new Promise((resolve) => {
+		const check = () => {
+		  const rect = el.getBoundingClientRect();
+		  const visible =
+			rect.top < window.innerHeight &&
+			rect.bottom > 0;
+
+		  if (visible) {
+			resolve();
+		  } else {
+			requestAnimationFrame(check);
+		  }
+		};
+
+		check();
+	  });
+	},
+	
+	waitForStableRender() {
+	  if (!this.map) return Promise.resolve();
+
+	  return new Promise((resolve) => {
+		requestAnimationFrame(() => {
+		  this.resize();
+
+		  let done = false;
+
+		  const finish = () => {
+			if (done) return;
+			done = true;
+			resolve();
+		  };
+
+		  this.map.once("render", () => {
+			this.map.once("idle", finish);
+		  });
+
+		  setTimeout(finish, 800);
 		});
 	  });
 	},
