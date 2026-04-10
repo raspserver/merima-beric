@@ -1211,6 +1211,11 @@ document.addEventListener("DOMContentLoaded", () => {
       window.addEventListener("pointermove", cleanup);
     },
 
+
+/*
+
+
+
     bindEvents() {
       if (DOM.navToggle && DOM.navMenu) {
         DOM.navToggle.addEventListener("click", (e) => {
@@ -1351,6 +1356,73 @@ document.addEventListener("DOMContentLoaded", () => {
         true
       );
     },
+    
+    */
+    
+    
+    
+    
+    DOM.navLinks.forEach((link) => {
+  link.addEventListener("click", async (e) => {
+    const rawHref = link.getAttribute("href");
+    if (!rawHref) return;
+
+    let hash = "";
+
+    try {
+      hash = rawHref.startsWith("#")
+        ? rawHref
+        : new URL(rawHref, window.location.href).hash;
+    } catch {
+      hash = rawHref.startsWith("#") ? rawHref : "";
+    }
+
+    if (!hash) return;
+
+    const target = utils.resolveTarget(hash);
+    if (!target) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const doScroll = async () => {
+      const isContactTarget = hash === "#contact" || target.id === "contact";
+
+      if (isContactTarget) {
+        contactMapModule.markNavbarContactIntent();
+        await contactMapModule.waitForReady();
+      }
+
+      scrollEngine.goTo(target, scrollEngine.getModeForTarget(target));
+    };
+
+    if (utils.isMobileViewport() && this.isOpen()) {
+      const menu = DOM.navMenu;
+      const isHeroTarget = target.classList?.contains("hero");
+
+      this.closeMenu({ keepNavbarVisible: !isHeroTarget });
+
+      let done = false;
+
+      const finish = async () => {
+        if (done) return;
+        done = true;
+        menu?.removeEventListener("transitionend", onEnd);
+        await doScroll();
+      };
+
+      const onEnd = (evt) => {
+        if (evt.target === menu) finish();
+      };
+
+      menu?.addEventListener("transitionend", onEnd, { once: true });
+      setTimeout(finish, 450);
+      return;
+    }
+
+    await doScroll();
+  });
+});
   };
 
   // ---------------------------------------------------------------------
@@ -4214,6 +4286,9 @@ const contactMapModule = {
   entranceObserver: null,
   navIntentHandlersBound: false,
   navAnimationTimer: null,
+  
+	readyPromise: null,
+	readyResolve: null,
 
   getContainer() {
     return document.getElementById("contact-map");
@@ -4405,58 +4480,67 @@ const contactMapModule = {
       labelLayerId
     );
   },
-
+  
   init() {
-    this.container = this.getContainer();
+	  this.container = this.getContainer();
 
-    if (!this.container || typeof maplibregl === "undefined") return;
-    if (this.map || this.isInitializing) return;
+	  if (!this.container || typeof maplibregl === "undefined") return;
+	  if (this.map || this.isInitializing) return;
 
-    this.isInitializing = true;
+	  this.isInitializing = true;
+	  this.createReadyPromise();
 
-    const salonCoords = this.getSalonCoords();
+	  const salonCoords = this.getSalonCoords();
 
-    this.map = new maplibregl.Map({
-      container: this.container,
-      style: this.getMapStyle(),
-      center: salonCoords,
-      zoom: this.getStartZoom(),
-      pitch: this.getStartPitch(),
-      bearing: this.getStartBearing(),
-      attributionControl: false,
-      canvasContextAttributes: { antialias: true }
-    });
+	  this.map = new maplibregl.Map({
+		container: this.container,
+		style: this.getMapStyle(),
+		center: salonCoords,
+		zoom: this.getStartZoom(),
+		pitch: this.getStartPitch(),
+		bearing: this.getStartBearing(),
+		attributionControl: false,
+		canvasContextAttributes: { antialias: true }
+	  });
 
-    this.marker = new maplibregl.Marker({ color: "#d4af37" })
-      .setLngLat(salonCoords)
-      .addTo(this.map);
+	  this.marker = new maplibregl.Marker({ color: "#d4af37" })
+		.setLngLat(salonCoords)
+		.addTo(this.map);
 
-    this.map.once("load", () => {
-      if (!this.map) {
-        this.isInitializing = false;
-        return;
-      }
+	  this.map.once("load", () => {
+		if (!this.map) {
+		  this.isInitializing = false;
+		  return;
+		}
 
-      this.isInitializing = false;
-      this.resize();
-      this.add3DBuildings();
-      this.runEntranceAnimationWhenVisible();
-    });
+		this.isInitializing = false;
+		this.resize();
+		this.add3DBuildings();
+		this.runEntranceAnimationWhenVisible();
 
-    this.map.on("error", (error) => {
-      console.error("MapLibre Fehler:", error);
-      this.isInitializing = false;
-    });
+		this.map.once("idle", () => {
+		  this.resolveReady();
+		});
+	  });
 
-    this.map.on("remove", () => {
-      this.disconnectEntranceObserver();
-      this.clearNavAnimationTimer();
-      this.map = null;
-      this.marker = null;
-      this.isInitializing = false;
-      state.ui.contactMapAnimated = false;
-    });
-  },
+	  this.map.on("error", (error) => {
+		console.error("MapLibre Fehler:", error);
+		this.isInitializing = false;
+		this.resolveReady();
+	  });
+
+	  this.map.on("remove", () => {
+		this.disconnectEntranceObserver();
+		this.clearNavAnimationTimer();
+		this.map = null;
+		this.marker = null;
+		this.isInitializing = false;
+		state.ui.contactMapAnimated = false;
+
+		this.readyPromise = null;
+		this.readyResolve = null;
+	  });
+	},
 
   destroy() {
     if (!this.map) return;
@@ -4780,7 +4864,41 @@ const contactMapModule = {
     );
 
     this.entranceObserver.observe(target);
-  }
+  },
+  
+  createReadyPromise() {
+	  if (this.readyPromise) return this.readyPromise;
+
+	  this.readyPromise = new Promise((resolve) => {
+		this.readyResolve = resolve;
+	  });
+
+	  return this.readyPromise;
+	},
+
+	resolveReady() {
+	  if (this.readyResolve) {
+		this.readyResolve();
+		this.readyResolve = null;
+	  }
+	},
+
+	waitForReady() {
+	  this.prewarm();
+
+	  if (!this.map) {
+		return Promise.resolve();
+	  }
+
+	  if (this.map.loaded()) {
+		return new Promise((resolve) => {
+		  this.map.once("idle", resolve);
+		});
+	  }
+
+	  this.createReadyPromise();
+	  return this.readyPromise;
+	}
 };
 
   // ---------------------------------------------------------------------
