@@ -3047,7 +3047,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.playOnly(this.currentIndex);
       this.bindTrackEvents();
       this.bindVisibilityEvents();
-    },
+    }
   };
 
 	// ---------------------------------------------------------------------
