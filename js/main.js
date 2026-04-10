@@ -1212,66 +1212,67 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   
     DOM.navLinks.forEach((link) => {
-  link.addEventListener("click", async (e) => {
-    const rawHref = link.getAttribute("href");
-    if (!rawHref) return;
+	  link.addEventListener("click", async (e) => {
+		const rawHref = link.getAttribute("href");
+		if (!rawHref) return;
 
-    let hash = "";
+		let hash = "";
 
-    try {
-      hash = rawHref.startsWith("#")
-        ? rawHref
-        : new URL(rawHref, window.location.href).hash;
-    } catch {
-      hash = rawHref.startsWith("#") ? rawHref : "";
-    }
+		try {
+		  hash = rawHref.startsWith("#")
+			? rawHref
+			: new URL(rawHref, window.location.href).hash;
+		} catch {
+		  hash = rawHref.startsWith("#") ? rawHref : "";
+		}
 
-    if (!hash) return;
+		if (!hash) return;
 
-    const target = utils.resolveTarget(hash);
-    if (!target) return;
+		const target = utils.resolveTarget(hash);
+		if (!target) return;
 
-    e.preventDefault();
-    e.stopPropagation();
+		e.preventDefault();
+		e.stopPropagation();
 
-    const doScroll = async () => {
-      const isContactTarget = hash === "#contact" || target.id === "contact";
+		const doScroll = async () => {
+		  const isContactTarget = hash === "#contact" || target.id === "contact";
 
-      if (isContactTarget) {
-        contactMapModule.markNavbarContactIntent();
-        await contactMapModule.waitForReady();
-      }
+		  if (isContactTarget) {
+			contactMapModule.markNavbarContactIntent();
+			await contactMapModule.waitForReady();
+		  }
 
-      scrollEngine.goTo(target, scrollEngine.getModeForTarget(target));
-    };
+		  scrollEngine.goTo(target, scrollEngine.getModeForTarget(target));
+		};
 
-    if (utils.isMobileViewport() && this.isOpen()) {
-      const menu = DOM.navMenu;
-      const isHeroTarget = target.classList?.contains("hero");
+		if (utils.isMobileViewport() && this.isOpen()) {
+		  const menu = DOM.navMenu;
+		  const isHeroTarget = target.classList?.contains("hero");
 
-      this.closeMenu({ keepNavbarVisible: !isHeroTarget });
+		  this.closeMenu({ keepNavbarVisible: !isHeroTarget });
 
-      let done = false;
+		  let done = false;
 
-      const finish = async () => {
-        if (done) return;
-        done = true;
-        menu?.removeEventListener("transitionend", onEnd);
-        await doScroll();
-      };
+		  const finish = async () => {
+			if (done) return;
+			done = true;
+			menu?.removeEventListener("transitionend", onEnd);
+			await doScroll();
+		  };
 
-      const onEnd = (evt) => {
-        if (evt.target === menu) finish();
-      };
+		  const onEnd = (evt) => {
+			if (evt.target === menu) finish();
+		  };
 
-      menu?.addEventListener("transitionend", onEnd, { once: true });
-      setTimeout(finish, 450);
-      return;
-    }
+		  menu?.addEventListener("transitionend", onEnd, { once: true });
+		  setTimeout(finish, 450);
+		  return;
+		}
 
-    await doScroll();
-  });
-});
+		await doScroll();
+	  });
+	});
+
   };
 
   // ---------------------------------------------------------------------
