@@ -1246,18 +1246,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const doScroll = async () => {
 			  const isContactTarget = hash === "#contact" || target.id === "contact";
 
-/*
-
-
-			  if (isContactTarget) {
-				contactMapModule.markNavbarContactIntent();
-				await contactMapModule.waitForReady();
-			  }
-
-			  scrollEngine.goTo(target, scrollEngine.getModeForTarget(target));
-			  
-*/
-
 				if (isContactTarget) {
 				  contactMapModule.markNavbarContactIntent();
 				  contactMapModule.prewarm(); // nur prewarm, kein warten!
@@ -4471,12 +4459,29 @@ const contactMapModule = {
             15, 0,
             16, ["coalesce", ["get", "render_height"], 0]
           ],
+          
+          
+          /*
+          
           "fill-extrusion-base": [
             "case",
             [">=", ["zoom"], 16],
             ["coalesce", ["get", "render_min_height"], 0],
             0
-          ],
+          ]
+          
+          */
+          
+          
+          
+          
+          "fill-extrusion-base": [
+			  "interpolate",
+			  ["linear"],
+			  ["zoom"],
+			  15, 0,
+			  16, ["coalesce", ["get", "render_min_height"], 0]
+			],
           "fill-extrusion-opacity": 0.92
         }
       },
