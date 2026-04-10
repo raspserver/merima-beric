@@ -4818,22 +4818,40 @@ const contactMapModule = {
 		this.readyResolve = null;
 	  }
 	},
-
+	
 	waitForReady() {
 	  this.prewarm();
 
-	  if (!this.map) {
-		return Promise.resolve();
-	  }
+	  if (!this.map) return Promise.resolve();
 
-	  if (this.map.loaded()) {
-		return new Promise((resolve) => {
-		  this.map.once("idle", resolve);
+	  return new Promise((resolve) => {
+		const map = this.map;
+		let done = false;
+
+		const finish = () => {
+		  if (done) return;
+		  done = true;
+		  resolve();
+		};
+
+		if (map.loaded()) {
+		  map.once("idle", finish);
+		  setTimeout(finish, 1200);
+		  return;
+		}
+
+		map.once("load", () => {
+		  if (!this.map) {
+			finish();
+			return;
+		  }
+
+		  this.map.once("idle", finish);
+		  setTimeout(finish, 1200);
 		});
-	  }
 
-	  this.createReadyPromise();
-	  return this.readyPromise;
+		setTimeout(finish, 1800);
+	  });
 	}
 };
 
