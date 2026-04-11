@@ -1,6 +1,10 @@
 
 import { state } from "../../main.js";
 import { scrollEngine } from "../../main.js";
+import { cssVar } from "../../main.js";
+
+
+
 
 // ---------------------------------------------------------------------
 // SCROLL-SECTION-HINT-MODULE
