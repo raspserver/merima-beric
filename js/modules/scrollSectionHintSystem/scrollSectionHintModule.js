@@ -10,6 +10,7 @@ import {
     createSpring
 } from '../../utils/helper.js';
 import { navbarModule } from "../../modules/navbar/navbarModule.js";
+import { scrollEngine } from "../../modules/scroll/scrollEngine.js";
 
 // ---------------------------------------------------------------------
 // SCROLL-SECTION-HINT-MODULE
