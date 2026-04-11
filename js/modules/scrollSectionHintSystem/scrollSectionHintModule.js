@@ -1211,6 +1211,32 @@ export const scrollSectionHintModule = {
 	  },
 
 	  init() {
+	
+	
+	
+	
+	
+    console.log("✅ scrollSectionHintModule.init() wurde aufgerufen");
+    
+    try {
+        this.build();
+        console.log("✅ build() fertig");
+        this.refreshTimingVars();
+        this.bindHintClicks();
+        console.log("✅ bindHintClicks() fertig");
+        this.hide();
+        this.update();
+        this.bindEvents();
+        console.log("✅ scrollSectionHintModule vollständig initialisiert");
+    } catch (e) {
+        console.error("❌ Fehler in scrollSectionHintModule.init():", e);
+    }
+
+		  
+		  
+		  
+		  
+		  
 		this.build();
 		this.refreshTimingVars();
 		this.bindHintClicks();
