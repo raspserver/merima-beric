@@ -1,14 +1,14 @@
 
+// ---------------------------------------------------------------------
+// SCROLL-SECTION-HINT-MODULE
+// ---------------------------------------------------------------------
 
-  // ---------------------------------------------------------------------
-  // 11) SCROLL-HINT-SYSTEM
-  // ---------------------------------------------------------------------
 export const scrollSectionHintModule = {
-	  root: null,
-	  measurer: null,
-	  metricsCache: new Map(),
-	  hintSlots: [],
-	  updateRaf: null,
+	root: null,
+	measurer: null,
+	metricsCache: new Map(),
+	hintSlots: [],
+	updateRaf: null,
 
 	  maxVisibleHints: 2,
 	  isVisible: false,
@@ -1208,4 +1208,4 @@ export const scrollSectionHintModule = {
 		this.update();
 		this.bindEvents();
 	  },
-	};
+};
