@@ -2,8 +2,14 @@
 import { state } from "../../core/state.js";
 import { cssVar } from "../../utils/cssVar.js";
 import { utils } from "../../utils/utils.js";
+import {
+    clamp,
+    easeOutCubic,
+    createAnimatedValue,
+    resetAnimatedValue,
+    createSpring
+} from '../../utils/helper.js';
 import { navbarModule } from "../../modules/navbar/navbarModule.js";
-import * as helper from "../../utils/helper.js";
 
 // ---------------------------------------------------------------------
 // SCROLL-SECTION-HINT-MODULE
