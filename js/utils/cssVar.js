@@ -2,6 +2,7 @@
 // ---------------------------------------------------------------------
 // CSS-VARIABLEN
 // ---------------------------------------------------------------------
+
 export const cssVar = {
     raw(name) {
       return getComputedStyle(document.documentElement)
