@@ -3894,7 +3894,7 @@ const contactMapModule = {
 
     navbarModule.bindEvents();
     sectionNavigationModule.bindEvents();
-    scrollSectionHintModule.init();
+    //~ scrollSectionHintModule.init();
     scrollSectionHintPositionModule.init();
     galleryModule.init();
     
