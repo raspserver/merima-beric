@@ -59,6 +59,7 @@ export const scrollSectionHintModule = {
 	  },
 
 	  labels: {
+		home: "START",
 		about: "ÜBER MICH",
 		gallery: "VIDEO-FUN",
 		services: "LEISTUNGEN",
