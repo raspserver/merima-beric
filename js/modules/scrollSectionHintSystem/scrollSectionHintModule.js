@@ -68,9 +68,9 @@ export const scrollSectionHintModule = {
 		contact: "KONTAKT",
 	  },
 
-	//~ cacheDOM() {
-		//~ this.navbar = document.querySelector(".navbar");
-	//~ },
+	cacheDOM() {
+		this.navbar = document.querySelector(".navbar");
+	},
 
 	  build() {
 		if (this.root) return;
@@ -1221,10 +1221,14 @@ export const scrollSectionHintModule = {
 
 
 	  //~ init(DOM, externalState) {
-		  init(DOM) {
+		  //~ init(DOM) {
+			  init() {
 		//~ this.state = externalState;
-		this.DOM = DOM;
-		this.navbar = DOM.navbar;
+		//~ this.DOM = DOM;
+		//~ this.navbar = DOM.navbar;
+
+		this.cacheDOM();
+
 
 		this.build();
 		this.refreshTimingVars();
