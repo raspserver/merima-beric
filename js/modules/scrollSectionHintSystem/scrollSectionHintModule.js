@@ -848,11 +848,7 @@ export const scrollSectionHintModule = {
 		document.body.classList.toggle("in-gallery", currentSection?.id === "gallery");
 	  },
 
-	  update() {
-		  console.log("orderedSections:", state.orderedSections);
-		  
-		  
-		  
+	  update() {  
 		if (!this.root) return;
 
 		const context = this.getSectionContext();
@@ -1223,8 +1219,7 @@ export const scrollSectionHintModule = {
 	  },
 
 	  init() {
-		if (this._initialized) return;
-		this._initialized = true;
+		console.log("scrollSectionHintModule init");
 		  
 		this.cacheDOM(); 
 		this.build();
