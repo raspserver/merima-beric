@@ -3891,18 +3891,16 @@ const contactMapModule = {
   // ---------------------------------------------------------------------
   // 19) INITIALISIERUNG
   // ---------------------------------------------------------------------
-  function init() {
-	  
-	  console.log("Anfang init() main.js");
-	  
-	  
+  function init() { 
     // performanceModule.init(); // optional wieder aktivieren
     physics.update();
     sectionNavigationModule.buildOrderedSections();
 
     navbarModule.bindEvents();
     sectionNavigationModule.bindEvents();
+    console.log("vor scrollSectionHintModule.init() main.js");
     scrollSectionHintModule.init();
+    console.log("nach scrollSectionHintModule.init() main.js");
     scrollSectionHintPositionModule.init();
     galleryModule.init();
     
