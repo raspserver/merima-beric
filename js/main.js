@@ -1,5 +1,5 @@
 
-import { scrollSectionHintModule } from "./modules/scrollSectionHintSystem/scrollSectionHintModule.js";
+//~ import { scrollSectionHintModule } from "./modules/scrollSectionHintSystem/scrollSectionHintModule.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   /*
