@@ -1221,9 +1221,9 @@ export const scrollSectionHintModule = {
 
 
 	  init(DOM, externalState) {
-			this.state = externalState;
-	  this.DOM = DOM;
-	  this.navbar = DOM.navbar;
+		//~ this.state = externalState;
+		this.DOM = DOM;
+		this.navbar = DOM.navbar;
 
 		this.build();
 		this.refreshTimingVars();
