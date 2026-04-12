@@ -1219,9 +1219,9 @@ export const scrollSectionHintModule = {
 	  },
 
 	  init() {
-		console.log("scrollSectionHintModule init");
-		  
+		
 		this.cacheDOM(); 
+		console.log("scrollSectionHintModule init");
 		this.build();
 		this.refreshTimingVars();
 		this.bindHintClicks();
@@ -1231,6 +1231,5 @@ export const scrollSectionHintModule = {
 		this.update();
 		this.bindEvents();
 		
-		console.log("scrollSectionHintModule init");
 	  },
 };
