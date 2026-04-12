@@ -1230,5 +1230,7 @@ export const scrollSectionHintModule = {
 		this.lastStopCheckY = window.scrollY;
 		this.update();
 		this.bindEvents();
+		
+		console.log("scrollSectionHintModule init");
 	  },
 };
