@@ -5,13 +5,13 @@ import { utils } from "../../utils/utils.js";
 import { scrollEngine } from "../../modules/scroll/scrollEngine.js";
 //~ import { navbarModule } from "../../modules/navbar/navbarModule.js";
 
-//~ import {
-    //~ clamp,
-    //~ easeOutCubic,
-    //~ createAnimatedValue,
-    //~ resetAnimatedValue,
-    //~ createSpring
-//~ } from '../../utils/helper.js';
+import {
+    clamp,
+    easeOutCubic,
+    createAnimatedValue,
+    resetAnimatedValue,
+    createSpring
+} from '../../utils/helper.js';
 
 
 // ---------------------------------------------------------------------
