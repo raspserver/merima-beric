@@ -1219,7 +1219,7 @@ export const scrollSectionHintModule = {
 	  },
 
 	  init() {
-		
+		console.log("vor this.cacheDOM(); ");
 		this.cacheDOM(); 
 		console.log("nach this.cacheDOM(); ");
 		this.build();
