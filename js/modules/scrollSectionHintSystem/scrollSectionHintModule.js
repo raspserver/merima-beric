@@ -19,8 +19,11 @@ import {
 // ---------------------------------------------------------------------
 
 export const scrollSectionHintModule = {
+	
 	root: null,
+	
 	navbar: null,
+	
 	measurer: null,
 	metricsCache: new Map(),
 	hintSlots: [],
