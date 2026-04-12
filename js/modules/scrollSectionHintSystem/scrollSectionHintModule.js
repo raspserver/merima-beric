@@ -2,7 +2,7 @@
 import { state } from "../../core/state.js";
 import { cssVar } from "../../utils/cssVar.js";
 import { utils } from "../../utils/utils.js";
-import { navbarModule } from "../../modules/navbar/navbarModule.js";
+//~ import { navbarModule } from "../../modules/navbar/navbarModule.js";
 import { scrollEngine } from "../../modules/scroll/scrollEngine.js";
 import {
     clamp,
