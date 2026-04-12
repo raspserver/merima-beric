@@ -1235,6 +1235,7 @@ export const scrollSectionHintModule = {
 		console.log("vor this.DOM = DOM; this.navbar = DOM.navbar; ");
 		
 	  this.DOM = DOM;
+	  this.state = DOM.state;
 	  this.navbar = DOM.navbar;
 		
 		console.log("nach  this.DOM = DOM; this.navbar = DOM.navbar; ");
