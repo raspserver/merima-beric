@@ -1220,12 +1220,12 @@ export const scrollSectionHintModule = {
 	  },
 
 
-	  //~ init(DOM, externalState) {
-			//~ this.state = externalState;
+	  init(DOM, externalState) {
+			this.state = externalState;
 
 
-	  init(DOM) {
-			console.log("orderedSections:", this.state.orderedSections);
+	  //~ init(DOM) {
+			//~ console.log("orderedSections:", this.state.orderedSections);
 		
 		
 		
@@ -1235,7 +1235,7 @@ export const scrollSectionHintModule = {
 		console.log("vor this.DOM = DOM; this.navbar = DOM.navbar; ");
 		
 	  this.DOM = DOM;
-	  this.state = DOM.state;
+	  //~ this.state = DOM.state;
 	  this.navbar = DOM.navbar;
 		
 		console.log("nach  this.DOM = DOM; this.navbar = DOM.navbar; ");
