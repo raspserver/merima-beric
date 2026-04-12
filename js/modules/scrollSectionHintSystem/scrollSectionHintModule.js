@@ -1222,41 +1222,16 @@ export const scrollSectionHintModule = {
 
 	  init(DOM, externalState) {
 			this.state = externalState;
-
-
-	  //~ init(DOM) {
-			//~ console.log("orderedSections:", this.state.orderedSections);
-		
-		
-		
-		//~ this.cacheDOM(); 
-		console.log("STATE MODULE", this.state);
-		//~ console.log("orderedSections:", state.orderedSections);
-		console.log("vor this.DOM = DOM; this.navbar = DOM.navbar; ");
-		
 	  this.DOM = DOM;
-	  //~ this.state = DOM.state;
 	  this.navbar = DOM.navbar;
-		
-		console.log("nach  this.DOM = DOM; this.navbar = DOM.navbar; ");
-		
-		
-		
+
 		this.build();
-		console.log("nach this.build();");
 		this.refreshTimingVars();
-		console.log("nach this.refreshTimingVars();");
 		this.bindHintClicks();
-		console.log("nach this.bindHintClicks();");
 		this.hide();
-		console.log("nach this.hide();");
 		this.lastObservedScrollY = window.scrollY;
-		console.log("nach this.lastObservedScrollY = window.scrollY;");
 		this.lastStopCheckY = window.scrollY;
-		console.log("nach this.lastStopCheckY = window.scrollY;");
 		this.update();
-		console.log("nach this.update();");
 		this.bindEvents();
-		console.log("nach this.bindEvents();");
 	  }
 };
