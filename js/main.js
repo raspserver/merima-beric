@@ -3892,6 +3892,10 @@ const contactMapModule = {
   // 19) INITIALISIERUNG
   // ---------------------------------------------------------------------
   function init() {
+	  
+	  console.log("Anfang init() main.js");
+	  
+	  
     // performanceModule.init(); // optional wieder aktivieren
     physics.update();
     sectionNavigationModule.buildOrderedSections();
