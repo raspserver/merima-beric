@@ -1238,6 +1238,5 @@ export const scrollSectionHintModule = {
 		console.log("nach this.update();");
 		this.bindEvents();
 		console.log("nach this.bindEvents();");
-		
-	  },
+	  }
 };
