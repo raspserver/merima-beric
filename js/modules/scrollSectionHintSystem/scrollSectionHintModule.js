@@ -1220,6 +1220,9 @@ export const scrollSectionHintModule = {
 
 	  init(DOM) {
 		
+		console.log("orderedSections:", state.orderedSections);
+		
+		
 		//~ this.cacheDOM(); 
 		
 		
