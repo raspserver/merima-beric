@@ -1,8 +1,5 @@
 
-import {
-    createAnimatedValue,
-    resetAnimatedValue
-} from "../utils/helper.js";
+import { createAnimatedValue, resetAnimatedValue } from "../utils/helper.js";
 
 // ---------------------------------------------------------------------
 // ZENTRALER STATE
