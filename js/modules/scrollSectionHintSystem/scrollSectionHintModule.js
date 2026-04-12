@@ -1221,7 +1221,7 @@ export const scrollSectionHintModule = {
 	  init() {
 		
 		this.cacheDOM(); 
-		
+		console.log("scrollSectionHintModule init");
 		this.build();
 		this.refreshTimingVars();
 		this.bindHintClicks();
@@ -1230,6 +1230,6 @@ export const scrollSectionHintModule = {
 		this.lastStopCheckY = window.scrollY;
 		this.update();
 		this.bindEvents();
-		console.log("scrollSectionHintModule init");
+		
 	  },
 };
