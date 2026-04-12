@@ -1,7 +1,7 @@
 
 import {
     createAnimatedValue,
-    resetAnimatedValue,
+    resetAnimatedValue
 } from "../utils/helper.js";
 
 // ---------------------------------------------------------------------

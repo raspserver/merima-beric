@@ -1212,16 +1212,9 @@ export const scrollSectionHintModule = {
 		}	
 	  },
 
-
-	  //~ init(DOM, externalState) {
-		  //~ init(DOM) {
-			  init() {
-		//~ this.state = externalState;
-		//~ this.DOM = DOM;
-		//~ this.navbar = DOM.navbar;
+	init() {
 
 		this.cacheDOM();
-
 
 		this.build();
 		this.refreshTimingVars();
