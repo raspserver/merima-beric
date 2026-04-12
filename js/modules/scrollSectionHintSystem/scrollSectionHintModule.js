@@ -67,9 +67,9 @@ export const scrollSectionHintModule = {
 		contact: "KONTAKT",
 	  },
 
-	cacheDOM() {
-		this.navbar = document.querySelector(".navbar");
-	},
+	//~ cacheDOM() {
+		//~ this.navbar = document.querySelector(".navbar");
+	//~ },
 
 	  build() {
 		if (this.root) return;
@@ -1218,10 +1218,20 @@ export const scrollSectionHintModule = {
 		}	
 	  },
 
-	  init() {
-		console.log("vor this.cacheDOM(); ");
-		this.cacheDOM(); 
-		console.log("nach this.cacheDOM(); ");
+	  init(DOM) {
+		
+		//~ this.cacheDOM(); 
+		
+		
+		console.log("vor this.DOM = DOM; this.navbar = DOM.navbar; ");
+		
+	  this.DOM = DOM;
+	  this.navbar = DOM.navbar;
+		
+		console.log("nach  this.DOM = DOM; this.navbar = DOM.navbar; ");
+		
+		
+		
 		this.build();
 		console.log("nach this.build();");
 		this.refreshTimingVars();
