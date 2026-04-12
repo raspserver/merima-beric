@@ -1,5 +1,5 @@
 
-import { state } from "../../core/state.js";
+//~ import { state } from "../../core/state.js";
 import { cssVar } from "../../utils/cssVar.js";
 import { utils } from "../../utils/utils.js";
 import { scrollEngine } from "../../modules/scroll/scrollEngine.js";
@@ -1218,13 +1218,15 @@ export const scrollSectionHintModule = {
 		}	
 	  },
 
-	  init(DOM) {
-		
+	  init(DOM, externalState) {
+			this.state = externalState;
+
+			//~ console.log("orderedSections:", this.state.orderedSections);
 		
 		
 		
 		//~ this.cacheDOM(); 
-		console.log("STATE MODULE", state);
+		//~ console.log("STATE MODULE", state);
 		console.log("orderedSections:", state.orderedSections);
 		console.log("vor this.DOM = DOM; this.navbar = DOM.navbar; ");
 		
