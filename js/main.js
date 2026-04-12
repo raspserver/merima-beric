@@ -1369,17 +1369,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // 10) SECTION-NAVIGATION
   // ---------------------------------------------------------------------
   const sectionNavigationModule = {
-    buildOrderedSections() {
-      state.orderedSections = [
-        document.querySelector(".hero"),
-        document.querySelector("#about"),
-        document.querySelector("#gallery"),
-        document.querySelector("#services"),
-        document.querySelector("#pricing"),
-        document.querySelector("#testimonials"),
-        document.querySelector("#contact"),
-      ].filter(Boolean);
-    },
+	  
+	 buildOrderedSections() {
+	  state.orderedSections = [
+		document.getElementById("home"),
+		document.getElementById("about"),
+		document.getElementById("gallery"),
+		document.getElementById("services"),
+		document.getElementById("pricing"),
+		document.getElementById("testimonials"),
+		document.getElementById("contact"),
+	  ].filter(Boolean);
+	},	  
 
     getSectionIndex(sectionEl) {
       return state.orderedSections.findIndex((section) => section === sectionEl);
