@@ -2,16 +2,9 @@
 import { state } from "../../core/state.js";
 import { cssVar } from "../../utils/cssVar.js";
 import { utils } from "../../utils/utils.js";
+import { clamp } from '../../utils/helper.js';
 import { scrollEngine } from "../../modules/scroll/scrollEngine.js";
-//~ import { navbarModule } from "../../modules/navbar/navbarModule.js";
 
-import {
-    clamp,
-    easeOutCubic,
-    createAnimatedValue,
-    resetAnimatedValue,
-    createSpring
-} from '../../utils/helper.js';
 
 
 // ---------------------------------------------------------------------
@@ -19,11 +12,8 @@ import {
 // ---------------------------------------------------------------------
 
 export const scrollSectionHintModule = {
-	
 	root: null,
-	
 	navbar: null,
-	
 	measurer: null,
 	metricsCache: new Map(),
 	hintSlots: [],
