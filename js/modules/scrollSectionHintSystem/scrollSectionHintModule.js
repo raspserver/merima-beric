@@ -849,6 +849,10 @@ export const scrollSectionHintModule = {
 	  },
 
 	  update() {
+		  console.log("orderedSections:", state.orderedSections);
+		  
+		  
+		  
 		if (!this.root) return;
 
 		const context = this.getSectionContext();
