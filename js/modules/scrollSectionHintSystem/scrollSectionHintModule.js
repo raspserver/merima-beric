@@ -1220,7 +1220,8 @@ export const scrollSectionHintModule = {
 	  },
 
 
-	  init(DOM, externalState) {
+	  //~ init(DOM, externalState) {
+		  init(DOM) {
 		//~ this.state = externalState;
 		this.DOM = DOM;
 		this.navbar = DOM.navbar;

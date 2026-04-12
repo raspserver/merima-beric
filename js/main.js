@@ -3822,8 +3822,8 @@ const contactMapModule = {
     navbarModule.bindEvents();
     sectionNavigationModule.bindEvents();
     //~ scrollSectionHintModule.init();
-    //~ scrollSectionHintModule.init(DOM);
-    scrollSectionHintModule.init(DOM, state);
+    scrollSectionHintModule.init(DOM);
+    //~ scrollSectionHintModule.init(DOM, state);
     console.log("nach scrollSectionHintModule.init(DOM); main.js");
     scrollSectionHintPositionModule.init();
     galleryModule.init();
