@@ -1219,9 +1219,12 @@ export const scrollSectionHintModule = {
 		}	
 	  },
 
-	  init(DOM, externalState) {
-			this.state = externalState;
 
+	  //~ init(DOM, externalState) {
+			//~ this.state = externalState;
+
+
+	  init(DOM) {
 			console.log("orderedSections:", this.state.orderedSections);
 		
 		
