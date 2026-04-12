@@ -1219,6 +1219,9 @@ export const scrollSectionHintModule = {
 	  },
 
 	  init() {
+		if (this._initialized) return;
+		this._initialized = true;
+		  
 		this.cacheDOM(); 
 		this.build();
 		this.refreshTimingVars();
