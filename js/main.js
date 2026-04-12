@@ -3821,8 +3821,6 @@ const contactMapModule = {
 
     navbarModule.bindEvents();
     sectionNavigationModule.bindEvents();
-    console.log("STATE MAIN", state);
-    console.log("vor scrollSectionHintModule.init(DOM); main.js");
     //~ scrollSectionHintModule.init();
     //~ scrollSectionHintModule.init(DOM);
     scrollSectionHintModule.init(DOM, state);
