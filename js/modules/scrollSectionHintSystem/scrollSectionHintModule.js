@@ -2,8 +2,9 @@
 import { state } from "../../core/state.js";
 import { cssVar } from "../../utils/cssVar.js";
 import { utils } from "../../utils/utils.js";
-//~ import { navbarModule } from "../../modules/navbar/navbarModule.js";
 import { scrollEngine } from "../../modules/scroll/scrollEngine.js";
+//~ import { navbarModule } from "../../modules/navbar/navbarModule.js";
+
 //~ import {
     //~ clamp,
     //~ easeOutCubic,
@@ -19,6 +20,7 @@ import { scrollEngine } from "../../modules/scroll/scrollEngine.js";
 
 export const scrollSectionHintModule = {
 	root: null,
+	navbar: null,
 	measurer: null,
 	metricsCache: new Map(),
 	hintSlots: [],
@@ -64,6 +66,10 @@ export const scrollSectionHintModule = {
 		testimonials: "BEWERTUNGEN",
 		contact: "KONTAKT",
 	  },
+
+	cacheDOM() {
+		this.navbar = document.querySelector(".navbar");
+	},
 
 	  build() {
 		if (this.root) return;
@@ -160,12 +166,12 @@ export const scrollSectionHintModule = {
 	  getBoundaryGapPx() {
 		return cssVar.remPx("--section-hint-boundary-gap", 4.8);
 	  },
-
+ 
 	  getNavbarBottom() {
-		return DOM.navbar
-		  ? DOM.navbar.getBoundingClientRect().bottom
-		  : cssVar.number("--nav-height", 78);
-	  },
+		  return this.navbar
+			? this.navbar.getBoundingClientRect().bottom
+			: cssVar.number("--nav-height", 78);
+		},
 
 	  getSectionContext() {
 		const sections = this.getContentSections();
@@ -1212,7 +1218,8 @@ export const scrollSectionHintModule = {
 		}	
 	  },
 
-	  init() {	  
+	  init() {
+		this.cacheDOM(); 
 		this.build();
 		this.refreshTimingVars();
 		this.bindHintClicks();
