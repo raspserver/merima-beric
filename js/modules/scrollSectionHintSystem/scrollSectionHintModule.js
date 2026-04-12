@@ -1224,7 +1224,7 @@ export const scrollSectionHintModule = {
 		
 		
 		//~ this.cacheDOM(); 
-		
+		console.log("STATE MODULE", state);
 		console.log("orderedSections:", state.orderedSections);
 		console.log("vor this.DOM = DOM; this.navbar = DOM.navbar; ");
 		
