@@ -19,6 +19,7 @@
 // ---------------------------------------------------------------------
 
 import { physics }														from	"../core/physics.js";
+import { scrollEngine }													from	"../core/scrollEngine.js";
 import { SETTINGS }														from	"../core/settings.js";
 import { springs }														from	"../core/springs.js";
 import { state }														from	"../core/state.js";
