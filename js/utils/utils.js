@@ -1,3 +1,4 @@
+import { SETTINGS } from "../core/settings.js";
 
 // ---------------------------------------------------------------------
 // ALLGEMEINE UTILS
