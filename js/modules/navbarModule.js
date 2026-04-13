@@ -1,5 +1,6 @@
 import { state } from "../core/state.js";
 import { SETTINGS } from "../core/settings.js";
+import { springs } from "../core/springs.js";
 import { clamp,stepAnimatedValue,isAnimatedValueMoving } from '../utils/helper.js';
 
 // ---------------------------------------------------------------------
