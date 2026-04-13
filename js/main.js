@@ -3512,7 +3512,7 @@ const contactMapModule = {
 
     navbarModule.bindEvents();
     sectionNavigationModule.bindEvents();
-    scrollEngine.init();
+    //~ scrollEngine.init();
     scrollSectionHintModule.init();
     scrollSectionHintPositionModule.init();
     
