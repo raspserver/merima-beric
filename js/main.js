@@ -7,6 +7,7 @@ import { cssVar } from "./utils/cssVar.js";
 //~ import * as helper from "./utils/helper.js";
 import { clamp }			from	"./utils/helper.js";
 import { utils } from "./utils/utils.js";
+import { prewarmUtils } from "./utils/prewarmUtils.js";
 import { navbarModule } from "./modules/navbarModule.js";
 import { scrollSectionHintModule } from "./modules/scrollSectionHintModule.js";
 import { sectionNavigationModule } from "./modules/sectionNavigationModule.js";
@@ -322,42 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// ---------------------------------------------------------------------
 	// 13) PREWARM UTILITY (für HeroCalendar + ContactMap)
 	// ---------------------------------------------------------------------
-	const prewarmUtils = {
-	  bind({
-		element,
-		stateKeyObserver,
-		stateKeyPrewarmed,
-		getDistancePx,
-		onPrewarm,
-	  }) {
-		if (!element) return;
-		if (state.ui[stateKeyObserver] || state.ui[stateKeyPrewarmed]) return;
 
-		const distance = typeof getDistancePx === "function"
-		  ? getDistancePx()
-		  : 0;
-
-		const observer = new IntersectionObserver(
-		  (entries) => {
-			const entry = entries[0];
-			if (!entry?.isIntersecting) return;
-
-			onPrewarm?.();
-
-			observer.disconnect();
-			state.ui[stateKeyObserver] = null;
-		  },
-		  {
-			root: null,
-			threshold: 0,
-			rootMargin: `${distance}px 0px ${distance}px 0px`,
-		  }
-		);
-
-		observer.observe(element);
-		state.ui[stateKeyObserver] = observer;
-	  },
-	};
 
   // ---------------------------------------------------------------------
   // 14) UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
