@@ -18,8 +18,8 @@
 //		/main.js
 // ---------------------------------------------------------------------
 
-import { state }			from	"../core/state.js";
 import { scrollEngine }		from	"../core/scrollEngine.js";
+import { state }			from	"../core/state.js";
 
 import { cssVar }			from	"../utils/cssVar.js";
 import { clamp }			from	"../utils/helper.js";
