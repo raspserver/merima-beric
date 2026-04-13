@@ -5,12 +5,14 @@
 //		/core
 //			/physics.js
 //			/scrollEngine.js
+//			/sectionSelector.js
 //			/settings.js
 //			/springs.js
 //			/state.js
 //		/modules
 //			/navbarModule.js
 //			/scrollSectionHintModule.js
+//			/sectionNavigationModule.js
 //		/utils
 //			/cssVar.js
 //			/helper.js
