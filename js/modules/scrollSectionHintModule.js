@@ -1,9 +1,9 @@
 
-import { state } from "../core/state.js";
-import { cssVar } from "../utils/cssVar.js";
-import { utils } from "../utils/utils.js";
-import { clamp } from '../utils/helper.js';
-import { scrollEngine } from "../modules/scrollEngine.js";
+import { state } from "../../core/state.js";
+import { cssVar } from "../../utils/cssVar.js";
+import { utils } from "../../utils/utils.js";
+import { clamp } from '../../utils/helper.js';
+import { scrollEngine } from "./scrollEngine.js";
 
 
 
