@@ -1,4 +1,5 @@
 import { utils } from "../utils/utils.js";
+import { cssVar } from "../utils/cssVar.js";
 
 // ---------------------------------------------------------------------
 // PHYSIK-WERTE
