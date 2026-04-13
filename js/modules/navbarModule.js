@@ -4,21 +4,39 @@
 // ---------------------------------------------------------------------
 
 export const navbarModule = {
+	navToggle: null,
+	navMenu: null,
+	cta: null,
+	navbar: null,
+	hero: null,
+	navLinks: null,
+	navLogo: null,
+	
+	cacheDOM() {
+		this.navToggle = document.querySelector(".nav-toggle"),
+		this.navMenu = document.querySelector(".nav-menu"),
+		this.cta = document.querySelector(".cta-button"),	
+		this.navbar = document.querySelector(".navbar");
+		this.hero = document.querySelector(".hero");
+		this.navLinks = [...document.querySelectorAll(".nav-menu a")],
+		this.navLogo = document.querySelector(".nav-logo"),
+	},
+	
     isOpen() {
       return !!(
-        DOM.navMenu &&
-        DOM.navToggle &&
-        DOM.navMenu.classList.contains("active")
+        this.navMenu &&
+        this.navToggle &&
+        this.navMenu.classList.contains("active")
       );
     },
 
     applyCtaNeutralState() {
-      if (!DOM.cta) return;
+      if (!this.cta) return;
 
-      DOM.cta.classList.remove("is-magnetic-near", "is-hovered");
-      DOM.cta.blur();
+      this.cta.classList.remove("is-magnetic-near", "is-hovered");
+      this.cta.blur();
 
-      utils.setVars(DOM.cta, {
+      utils.setVars(this.cta, {
         "--magnetic-x": "0px",
         "--magnetic-y": "0px",
         "--hover-lift": "0px",
@@ -36,10 +54,10 @@ export const navbarModule = {
     },
 
     openMenu() {
-      if (!DOM.navMenu || !DOM.navToggle) return;
+      if (!this.navMenu || !this.navToggle) return;
 
-      DOM.navMenu.classList.add("active");
-      DOM.navToggle.classList.add("active");
+      this.navMenu.classList.add("active");
+      this.navToggle.classList.add("active");
       document.body.classList.add("nav-menu-open");
 
       state.nav.gestureStretch.target = 0;
@@ -47,10 +65,10 @@ export const navbarModule = {
     },
 
     closeMenu({ keepNavbarVisible = false } = {}) {
-      if (!DOM.navMenu || !DOM.navToggle) return;
+      if (!this.navMenu || !this.navToggle) return;
 
-      DOM.navMenu.classList.remove("active");
-      DOM.navToggle.classList.remove("active");
+      this.navMenu.classList.remove("active");
+      this.navToggle.classList.remove("active");
       document.body.classList.remove("nav-menu-open");
 
       uiModule.resetCtaMagnetic();
@@ -74,7 +92,7 @@ export const navbarModule = {
     },
 
     setTargets(visible, compact, surface) {
-      if (!DOM.navbar) return;
+      if (!this.navbar) return;
 
       state.nav.visible.target = visible;
       state.nav.compact.target = compact;
@@ -133,7 +151,7 @@ export const navbarModule = {
     },
  
     handleScroll() {
-		if (!DOM.navbar) return;
+		if (!this.navbar) return;
 
 		const currentY = window.scrollY;
 		const deltaY = currentY - state.lastScrollY;
@@ -174,7 +192,7 @@ export const navbarModule = {
 		}
 
 		state.lastScrollY = currentY;
-		DOM.hero?.classList.toggle("scrolled", currentY > 10);
+		this.hero?.classList.toggle("scrolled", currentY > 10);
 
 		if (state.scroll.mode === "down") {
 			this.setTargets(1, 1, 1);
@@ -214,7 +232,7 @@ export const navbarModule = {
       const easedCompact = easeOutCubic(state.nav.compact.current);
       const easedSurface = easeOutCubic(state.nav.surface.current);
 
-      utils.setVars(DOM.navbar, {
+      utils.setVars(this.navbar, {
         "--nav-visible": state.nav.visible.current,
         "--nav-compact": easedCompact,
         "--nav-settle": easedCompact,
@@ -229,18 +247,18 @@ export const navbarModule = {
 
       const velocityShadow = Math.min(Math.abs(state.scrollVelocity) * 0.02, 0.2);
 
-      DOM.navbar.style.boxShadow = `0 ${10 * easedSurface}px ${
+      this.navbar.style.boxShadow = `0 ${10 * easedSurface}px ${
         40 * easedSurface
       }px rgba(0,0,0, ${0.45 * easedSurface + velocityShadow})`;
     },
 
     renderHero() {
-      if (!DOM.hero) return;
+      if (!this.hero) return;
 
       const scrollY = window.scrollY;
       const progress = Math.min(scrollY / SETTINGS.thresholds.inertia, 1);
 
-      utils.setVars(DOM.hero, {
+      utils.setVars(this.hero, {
         "--hero-scale": 1 - progress * physics.values.heroScaleScrollFactor,
         "--hero-brightness":
           1 - progress * physics.values.heroBrightnessScrollFactor,
@@ -249,15 +267,15 @@ export const navbarModule = {
     },
     
 	renderCTA() {
-	  if (!DOM.cta) return;
+	  if (!this.cta) return;
 
-	  utils.setVars(DOM.cta, {
+	  utils.setVars(this.cta, {
 		"--cta-elastic-y": `${state.cta.elasticY.current}px`,
 	  });
 	},
 
     animate(now) {
-      if (!DOM.navbar || document.hidden) {
+      if (!this.navbar || document.hidden) {
         state.animation.running = false;
         return;
       }
@@ -347,15 +365,15 @@ export const navbarModule = {
     },
 
     bindEvents() {
-      if (DOM.navToggle && DOM.navMenu) {
-        DOM.navToggle.addEventListener("click", (e) => {
+      if (this.navToggle && this.navMenu) {
+        this.navToggle.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
           this.isOpen() ? this.closeMenu() : this.openMenu();
         });
       }
 
-      DOM.navLinks.forEach((link) => {
+      this.navLinks.forEach((link) => {
 		  link.addEventListener("click", async (e) => {
 			const rawHref = link.getAttribute("href");
 			if (!rawHref) return;
@@ -391,7 +409,7 @@ export const navbarModule = {
 			};
 
 			if (utils.isMobileViewport() && this.isOpen()) {
-			  const menu = DOM.navMenu;
+			  const menu = this.navMenu;
 			  const isHeroTarget = target.classList?.contains("hero");
 
 			  this.closeMenu({ keepNavbarVisible: !isHeroTarget });
@@ -418,14 +436,14 @@ export const navbarModule = {
 		  });
 		});
 
-      DOM.navLogo?.addEventListener("click", (e) => {
+      this.navLogo?.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        const goHome = () => scrollEngine.goTo(DOM.hero, "hero-top");
+        const goHome = () => scrollEngine.goTo(this.hero, "hero-top");
 
         if (utils.isMobileViewport() && this.isOpen()) {
-          const menu = DOM.navMenu;
+          const menu = this.navMenu;
 
           this.closeMenu({ keepNavbarVisible: false });
 
@@ -495,4 +513,9 @@ export const navbarModule = {
         true
       );
     },
+    
+    init() {
+		this.cacheDOM();
+		this.bindEvents();
+	  }
   };

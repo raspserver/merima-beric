@@ -3510,7 +3510,8 @@ const contactMapModule = {
     physics.update();
     sectionNavigationModule.buildOrderedSections();
 
-    navbarModule.bindEvents();
+    //~ navbarModule.bindEvents();
+    navbarModule.init();
     sectionNavigationModule.bindEvents();
     scrollEngine.init();
     scrollSectionHintModule.init();
