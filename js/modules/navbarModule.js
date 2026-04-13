@@ -1,4 +1,5 @@
 import { state } from "../core/state.js";
+import { SETTINGS } from "../core/settings.js";
 import { stepAnimatedValue,isAnimatedValueMoving } from '../utils/helper.js';
 
 // ---------------------------------------------------------------------

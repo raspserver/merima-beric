@@ -24,8 +24,7 @@ export function resetAnimatedValue(animated, value = 0) {
     animated.velocity = 0;
   }
 
-
-function stepAnimatedValue(animated, spring, delta) {
+export function stepAnimatedValue(animated, spring, delta) {
     const result = spring.step(
       animated.current,
       animated.target,
@@ -37,7 +36,7 @@ function stepAnimatedValue(animated, spring, delta) {
     animated.velocity = result.velocity;
   }
 
-function isAnimatedValueMoving(animated, spring) {
+export function isAnimatedValueMoving(animated, spring) {
     return !spring.isSettled(animated.current, animated.target, animated.velocity);
   }
 
