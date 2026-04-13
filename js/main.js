@@ -8,7 +8,7 @@ import * as helper from "./utils/helper.js";
 import { utils } from "./utils/utils.js";
 import { navbarModule } from "./modules/navbarModule.js";
 import { scrollSectionHintModule } from "./modules/scrollSectionHintModule.js";
-
+import { SECTION_SELECTOR }			from	"./core/sectionSelector.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   /*
@@ -57,9 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	pricingContents: [...document.querySelectorAll(".pricing-content")],
 	year: document.getElementById("year"),
   };
-
-  const SECTION_SELECTOR =
-    "#about, #gallery, #services, #pricing, #testimonials, #contact";
 
   // ---------------------------------------------------------------------
   // 3) KLEINE BASIS-HELPER
