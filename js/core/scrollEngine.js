@@ -1,9 +1,10 @@
-import { state } from "./state.js";
-import { physics } from "./physics.js";
-import { cssVar } from "../utils/cssVar.js";
-import { utils } from "../utils/utils.js";
-import { clamp } from '../utils/helper.js';
-import { navbarModule } from '../modules/navbarModule.js';
+import { state }					from	"./state.js";
+import { physics }					from	"./physics.js";
+import { cssVar }					from	"../utils/cssVar.js";
+import { utils }					from	"../utils/utils.js";
+import { clamp }					from	'../utils/helper.js';
+import { navbarModule }				from	'../modules/navbarModule.js';
+import { scrollSectionHintModule }	from	'../modules/scrollSectionHintModule.js';
 
 // ---------------------------------------------------------------------
 // SCROLL-ENGINE
