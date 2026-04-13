@@ -5,6 +5,7 @@
 //		/core
 //			/physics.js
 //			/scrollEngine.js
+//			/sectionSelector.js
 //			/settings.js
 //			/springs.js
 //			/state.js
@@ -19,6 +20,7 @@
 // ---------------------------------------------------------------------
 
 import { physics }					from	"./physics.js";
+import { SECTION_SELECTOR }			from	"./sectionSelector.js";
 import { state }					from	"./state.js";
 
 import { navbarModule }				from	'../modules/navbarModule.js';
