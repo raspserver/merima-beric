@@ -22,15 +22,16 @@
 //		/main.js
 // ---------------------------------------------------------------------
 
-import { physics }			from	"../core/physics.js";
-import { state }			from	"../core/state.js";
+import { physics }						from	"../core/physics.js";
+import { state }						from	"../core/state.js";
 
-import { navbarModule }		from	'./navbarModule.js';
+import { navbarModule }					from	'./navbarModule.js';
 
-import { cssVar }			from	"../utils/cssVar.js";
-import { clamp }			from	'../utils/helper.js';
-import { prewarmUtils }		from	"../utils/prewarmUtils.js";
-import { utils }			from	"../utils/utils.js";
+import { cssVar }						from	"../utils/cssVar.js";
+import { clamp,resetAnimatedValue }		from	'../utils/helper.js';
+
+import { prewarmUtils }					from	"../utils/prewarmUtils.js";
+import { utils }						from	"../utils/utils.js";
 
 // ---------------------------------------------------------------------
 // UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
