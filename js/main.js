@@ -1209,18 +1209,15 @@ const contactMapModule = {
   function init() { 
     // performanceModule.init(); // optional wieder aktivieren
     physics.update();
-    sectionNavigationModule.buildOrderedSections();
-
-    //~ navbarModule.bindEvents();
+	uiModule.init();
+	sectionNavigationModule.init();
     navbarModule.init();
-    sectionNavigationModule.bindEvents();
     scrollEngine.init();
     scrollSectionHintModule.init();
     scrollSectionHintPositionModule.init();
-    
     galleryModule.init();
     
-    uiModule.init();
+    
     
 
 	contactMapModule.initModule();

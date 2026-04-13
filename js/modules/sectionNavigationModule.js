@@ -207,5 +207,10 @@ export const sectionNavigationModule = {
 
       this.bindDirectScrollTargets();
     },
+    
+    init() {
+		this.buildOrderedSections();
+		this.bindEvents();
+	  }
   };
 
