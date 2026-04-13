@@ -17,11 +17,14 @@
 //		/utils
 //			/cssVar.js
 //			/helper.js
+//			/prewarmUtils.js
 //			/utils.js
 //		/main.js
 // ---------------------------------------------------------------------
 
 import { state }			from	"../core/state.js";
+
+import { prewarmUtils }		from	"../utils/prewarmUtils.js";
 
 // ---------------------------------------------------------------------
 // UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
