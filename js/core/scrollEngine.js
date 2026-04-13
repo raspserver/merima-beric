@@ -2,6 +2,7 @@ import { state } from "./state.js";
 import { cssVar } from "../utils/cssVar.js";
 import { utils } from "../utils/utils.js";
 import { clamp } from '../utils/helper.js';
+import { navbarModule } from '../modules/navbarModule.js';
 
 // ---------------------------------------------------------------------
 // SCROLL-ENGINE
