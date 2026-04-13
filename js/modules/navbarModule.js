@@ -19,7 +19,7 @@ export const navbarModule = {
 		this.navbar = document.querySelector(".navbar");
 		this.hero = document.querySelector(".hero");
 		this.navLinks = [...document.querySelectorAll(".nav-menu a")],
-		this.navLogo = document.querySelector(".nav-logo"),
+		this.navLogo = document.querySelector(".nav-logo")
 	},
 	
     isOpen() {
