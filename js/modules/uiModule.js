@@ -22,7 +22,10 @@
 //		/main.js
 // ---------------------------------------------------------------------
 
+import { physics }			from	"../core/physics.js";
 import { state }			from	"../core/state.js";
+
+import { navbarModule }		from	'./navbarModule.js';
 
 import { cssVar }			from	"../utils/cssVar.js";
 import { prewarmUtils }		from	"../utils/prewarmUtils.js";
