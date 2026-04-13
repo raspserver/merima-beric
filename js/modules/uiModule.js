@@ -26,7 +26,8 @@ import { state }			from	"../core/state.js";
 // ---------------------------------------------------------------------
 // UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
 // ---------------------------------------------------------------------
-  const uiModule = {
+
+export const uiModule = {
 	  navbar: null,
 	  hero: null,
 	  heroContent: null,
