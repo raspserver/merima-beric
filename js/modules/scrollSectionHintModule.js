@@ -1,8 +1,9 @@
 import { state } from "../core/state.js";
+import { scrollEngine } from "../core/scrollEngine.js";
 import { cssVar } from "../utils/cssVar.js";
 import { utils } from "../utils/utils.js";
 import { clamp } from '../utils/helper.js';
-import { scrollEngine } from "./scrollEngine.js";
+
 
 // ---------------------------------------------------------------------
 // SCROLL-SECTION-HINT-MODULE

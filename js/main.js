@@ -1,6 +1,8 @@
 
 import { state } from "./core/state.js";
+import { scrollEngine } from "./core/scrollEngine.js";
 import { scrollSectionHintModule } from "./modules/scrollSectionHintModule.js";
+
 
 document.addEventListener("DOMContentLoaded", () => {
   /*
@@ -3822,8 +3824,10 @@ const contactMapModule = {
 
     navbarModule.bindEvents();
     sectionNavigationModule.bindEvents();
+    scrollEngine.init();
     scrollSectionHintModule.init();
     scrollSectionHintPositionModule.init();
+    
     galleryModule.init();
     
     uiModule.bindCTA();

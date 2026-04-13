@@ -1,4 +1,4 @@
-import { state } from "../core/state.js";
+import { state } from "./state.js";
 import { cssVar } from "../utils/cssVar.js";
 import { utils } from "../utils/utils.js";
 import { clamp } from '../utils/helper.js';
@@ -8,6 +8,15 @@ import { clamp } from '../utils/helper.js';
 // ---------------------------------------------------------------------
   
 export const scrollEngine = {
+	navbar: null,
+	hero: null,
+	
+	cacheDOM() {
+		this.navbar = document.querySelector(".navbar");
+		this.hero = document.querySelector(".hero");
+	},
+	
+	
     easeOutElastic(t) {
       if (t === 0) return 0;
       if (t === 1) return 1;
@@ -28,14 +37,14 @@ export const scrollEngine = {
     },
 
     getTargetNavOffset(navMode = null) {
-      if (!DOM.navbar) return 0;
+      if (!this.navbar) return 0;
 
       const navMax = cssVar.number("--nav-height-max", 78);
       const navMin = cssVar.number("--nav-height-min", 58);
 
       return navMode === "down" || navMode === "up-section"
         ? navMin
-        : DOM.navbar.offsetHeight || navMax;
+        : this.navbar.offsetHeight || navMax;
     },
 
     getModeForTarget(target) {
@@ -240,7 +249,7 @@ export const scrollEngine = {
 	  const target = utils.resolveTarget(targetOrSelector);
 	  if (!target) return;
 
-	  const isHeroTarget = target === DOM.hero || target.id === "home";
+	  const isHeroTarget = target === this.hero || target.id === "home";
 	  const navToken = ++state.ui.pendingNavAfterHeroCalendarCloseToken;
 
 	  const startNavigation = () => {
@@ -319,4 +328,8 @@ export const scrollEngine = {
       navbarModule.handleScroll();
       navbarModule.startAnimation();
     },
+    
+    init() {
+		this.cacheDOM();
+	  }
   };
