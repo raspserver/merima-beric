@@ -1216,10 +1216,6 @@ const contactMapModule = {
     scrollSectionHintModule.init();
     scrollSectionHintPositionModule.init();
     galleryModule.init();
-    
-    
-    
-
 	contactMapModule.initModule();
 
     bindUserScrollInterrupts();

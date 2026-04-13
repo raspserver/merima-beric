@@ -546,6 +546,10 @@ export const uiModule = {
 		};
 	},
 
+
+
+
+/*
 	ensureFullCalendar() {
 		if (state.ui.fullCalendarInstance || !this.heroCalendarEl) return;
 
@@ -592,6 +596,64 @@ export const uiModule = {
 			},
 			loading(isLoading) {
 				this.heroCalendarEl.classList.toggle("is-loading", isLoading);
+			}
+		});
+
+		state.ui.fullCalendarInstance.render();
+	},
+	*/
+	
+	
+	
+	
+	ensureFullCalendar() {
+		if (state.ui.fullCalendarInstance || !this.heroCalendarEl) return;
+
+		const { googleCalendarApiKey, calendarId } = this.getCalendarConfig();
+
+		const el = this.heroCalendarEl;
+
+		state.ui.fullCalendarInstance = new FullCalendar.Calendar(el, {
+			locale: "de",
+			timeZone: "Europe/Berlin",
+			initialView: window.innerWidth <= 768 ? "listMonth" : "dayGridMonth",
+			height: "100%",
+			firstDay: 1,
+			weekends: true,
+			navLinks: false,
+			nowIndicator: true,
+			expandRows: true,
+			headerToolbar: {
+				left: "prev,next today",
+				center: "title",
+				right: window.innerWidth <= 768
+					? "listMonth,dayGridMonth"
+					: "dayGridMonth,timeGridWeek,listMonth"
+			},
+			buttonText: {
+				today: "Heute",
+				month: "Monat",
+				week: "Woche",
+				list: "Liste"
+			},
+			noEventsContent: "Keine Termine vorhanden",
+			eventTimeFormat: {
+				hour: "2-digit",
+				minute: "2-digit",
+				hour12: false
+			},
+			googleCalendarApiKey,
+			events: {
+				googleCalendarId: calendarId
+			},
+			eventClick(info) {
+				if (info.event.url) {
+					info.jsEvent.preventDefault();
+					window.open(info.event.url, "_blank", "noopener");
+				}
+			},
+			loading(isLoading) {
+				el.classList.toggle("is-loading", isLoading);
 			}
 		});
 
