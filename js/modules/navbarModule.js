@@ -13,13 +13,13 @@ export const navbarModule = {
 	navLogo: null,
 	
 	cacheDOM() {
-		this.navToggle = document.querySelector(".nav-toggle"),
-		this.navMenu = document.querySelector(".nav-menu"),
-		this.cta = document.querySelector(".cta-button"),	
+		this.navToggle = document.querySelector(".nav-toggle");
+		this.navMenu = document.querySelector(".nav-menu");
+		this.cta = document.querySelector(".cta-button");
 		this.navbar = document.querySelector(".navbar");
 		this.hero = document.querySelector(".hero");
-		this.navLinks = [...document.querySelectorAll(".nav-menu a")],
-		this.navLogo = document.querySelector(".nav-logo")
+		this.navLinks = [...document.querySelectorAll(".nav-menu a")];
+		this.navLogo = document.querySelector(".nav-logo");
 	},
 	
     isOpen() {

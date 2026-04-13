@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------
 // MOTION-WERTE
 // ---------------------------------------------------------------------
-  const springs = {
+export const springs = {
     navVisible: createSpring({ stiffness: 0.08, damping: 0.82 }),
     navCompact: createSpring({ stiffness: 0.045, damping: 0.88 }),
     navSurface: createSpring({ stiffness: 0.045, damping: 0.88 }),

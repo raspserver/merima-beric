@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------
 // PHYSIK-WERTE
 // ---------------------------------------------------------------------
-  const physics = {
+export const physics = {
     values: {
       navVisibleStiffness: 0.08,
       navVisibleDamping: 0.82,
