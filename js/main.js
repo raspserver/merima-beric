@@ -298,21 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------
   // 7) GEMEINSAME HILFSFUNKTIONEN FÜR ANIMATIONEN
   // ---------------------------------------------------------------------
-  function stepAnimatedValue(animated, spring, delta) {
-    const result = spring.step(
-      animated.current,
-      animated.target,
-      animated.velocity,
-      delta
-    );
-
-    animated.current = result.current;
-    animated.velocity = result.velocity;
-  }
-
-  function isAnimatedValueMoving(animated, spring) {
-    return !spring.isSettled(animated.current, animated.target, animated.velocity);
-  }
+  
 
   // ---------------------------------------------------------------------
   // 8) SCROLL-ENGINE
