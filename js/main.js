@@ -1,6 +1,5 @@
 
 import { state } from "./core/state.js";
-//~ import { DOM } from "./core/dom.js";
 import { scrollSectionHintModule } from "./modules/scrollSectionHintModule.js";
 
 document.addEventListener("DOMContentLoaded", () => {
