@@ -24,7 +24,9 @@
 
 import { state }			from	"../core/state.js";
 
+import { cssVar }			from	"../utils/cssVar.js";
 import { prewarmUtils }		from	"../utils/prewarmUtils.js";
+import { utils }			from	"../utils/utils.js";
 
 // ---------------------------------------------------------------------
 // UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
