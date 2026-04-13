@@ -13,6 +13,7 @@
 //			/navbarModule.js
 //			/scrollSectionHintModule.js
 //			/sectionNavigationModule.js
+//			/uiModule.js
 //		/utils
 //			/cssVar.js
 //			/helper.js
