@@ -1,12 +1,32 @@
+// ---------------------------------------------------------------------
+// javascript Verzeichnisstruktur
+// ---------------------------------------------------------------------
+//	/js
+//		/core
+//			/physics.js
+//			/scrollEngine.js
+//			/settings.js
+//			/springs.js
+//			/state.js
+//		/modules
+//			/navbarModule.js
+//			/scrollSectionHintModule.js
+//		/utils
+//			/cssVar.js
+//			/helper.js
+//			/utils.js
+//		/main.js
+// ---------------------------------------------------------------------
+
 import { physics }					from	"./physics.js";
 import { state }					from	"./state.js";
+
+import { navbarModule }				from	'../modules/navbarModule.js';
+import { scrollSectionHintModule }	from	'../modules/scrollSectionHintModule.js';
 
 import { cssVar }					from	"../utils/cssVar.js";
 import { clamp }					from	'../utils/helper.js';
 import { utils }					from	"../utils/utils.js";
-
-import { navbarModule }				from	'../modules/navbarModule.js';
-import { scrollSectionHintModule }	from	'../modules/scrollSectionHintModule.js';
 
 // ---------------------------------------------------------------------
 // SCROLL-ENGINE

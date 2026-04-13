@@ -1,9 +1,29 @@
-import { state } from "../core/state.js";
-import { scrollEngine } from "../core/scrollEngine.js";
-import { cssVar } from "../utils/cssVar.js";
-import { utils } from "../utils/utils.js";
-import { clamp } from '../utils/helper.js';
+// ---------------------------------------------------------------------
+// javascript Verzeichnisstruktur
+// ---------------------------------------------------------------------
+//	/js
+//		/core
+//			/physics.js
+//			/scrollEngine.js
+//			/settings.js
+//			/springs.js
+//			/state.js
+//		/modules
+//			/navbarModule.js
+//			/scrollSectionHintModule.js
+//		/utils
+//			/cssVar.js
+//			/helper.js
+//			/utils.js
+//		/main.js
+// ---------------------------------------------------------------------
 
+import { state }			from	"../core/state.js";
+import { scrollEngine }		from	"../core/scrollEngine.js";
+
+import { cssVar }			from	"../utils/cssVar.js";
+import { clamp }			from	"../utils/helper.js";
+import { utils }			from	"../utils/utils.js";
 
 // ---------------------------------------------------------------------
 // SCROLL-SECTION-HINT-MODULE

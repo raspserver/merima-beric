@@ -1,9 +1,31 @@
-import { state } from "../core/state.js";
-import { SETTINGS } from "../core/settings.js";
-import { physics } from "../core/physics.js";
-import { springs } from "../core/springs.js";
-import { utils } from "../utils/utils.js";
-import { clamp,easeOutCubic,stepAnimatedValue,isAnimatedValueMoving } from '../utils/helper.js';
+// ---------------------------------------------------------------------
+// javascript Verzeichnisstruktur
+// ---------------------------------------------------------------------
+//	/js
+//		/core
+//			/physics.js
+//			/scrollEngine.js
+//			/settings.js
+//			/springs.js
+//			/state.js
+//		/modules
+//			/navbarModule.js
+//			/scrollSectionHintModule.js
+//		/utils
+//			/cssVar.js
+//			/helper.js
+//			/utils.js
+//		/main.js
+// ---------------------------------------------------------------------
+
+import { physics }														from	"../core/physics.js";
+import { SETTINGS }														from	"../core/settings.js";
+import { springs }														from	"../core/springs.js";
+import { state }														from	"../core/state.js";
+
+import { clamp,easeOutCubic,stepAnimatedValue,isAnimatedValueMoving }	from	"../utils/helper.js";
+import { utils }														from	"../utils/utils.js";
+
 
 // ---------------------------------------------------------------------
 // NAVBAR-MODUL

@@ -1,6 +1,24 @@
+// ---------------------------------------------------------------------
+// javascript Verzeichnisstruktur
+// ---------------------------------------------------------------------
+//	/js
+//		/core
+//			/physics.js
+//			/scrollEngine.js
+//			/settings.js
+//			/springs.js
+//			/state.js
+//		/modules
+//			/navbarModule.js
+//			/scrollSectionHintModule.js
+//		/utils
+//			/cssVar.js
+//			/helper.js
+//			/utils.js
+//		/main.js
+// ---------------------------------------------------------------------
 
 import { createSpring } from '../utils/helper.js';
-
 
 // ---------------------------------------------------------------------
 // MOTION-WERTE
