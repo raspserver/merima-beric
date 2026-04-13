@@ -155,5 +155,5 @@ export const physics = {
 
       springs.heroParallax.stiffness = this.values.heroParallaxStiffness;
       springs.heroParallax.damping = this.values.heroParallaxDamping;
-    },
+    }
   };
