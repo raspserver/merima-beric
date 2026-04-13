@@ -4,7 +4,7 @@ import { SETTINGS } from "./core/settings.js";
 import { springs } from "./core/springs.js";
 import { state } from "./core/state.js";
 import { cssVar } from "./utils/cssVar.js";
-import * from "./utils/helper.js";
+import * as helper from "./utils/helper.js";
 import { utils } from "./utils/utils.js";
 import { navbarModule } from "./modules/navbarModule.js";
 import { scrollSectionHintModule } from "./modules/scrollSectionHintModule.js";
