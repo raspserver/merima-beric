@@ -44,15 +44,15 @@ import { state }			from	"../core/state.js";
 
 	cacheDOM() {
 		this.navbar = document.querySelector(".navbar");
-		this.hero: document.querySelector(".hero");
-		this.heroContent: document.querySelector(".hero-content");
-		this.cta: document.querySelector(".cta-button");
-		this.ctaLabel: document.querySelector(".cta-button .cta-label");
-		this.heroCalendar: document.getElementById("hero-calendar");
-		this.heroCalendarEl: document.getElementById("hero-fullcalendar");
-		this.pricingTabs: [...document.querySelectorAll(".pricing-tab")];
-		this.pricingContents: [...document.querySelectorAll(".pricing-content")];
-		this.year: document.getElementById("year");
+		this.hero = document.querySelector(".hero");
+		this.heroContent = document.querySelector(".hero-content");
+		this.cta = document.querySelector(".cta-button");
+		this.ctaLabel = document.querySelector(".cta-button .cta-label");
+		this.heroCalendar = document.getElementById("hero-calendar");
+		this.heroCalendarEl = document.getElementById("hero-fullcalendar");
+		this.pricingTabs = [...document.querySelectorAll(".pricing-tab")];
+		this.pricingContents = [...document.querySelectorAll(".pricing-content")];
+		this.year = document.getElementById("year");
 	},
 
     createMagneticItem(button) {
