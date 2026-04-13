@@ -1,6 +1,6 @@
 
 import { state } from "./core/state.js";
-import { DOM } from "./core/dom.js";
+//~ import { DOM } from "./core/dom.js";
 import { scrollSectionHintModule } from "./modules/scrollSectionHintModule.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------
   // 2) DOM-REFERENZEN
   // ---------------------------------------------------------------------
-  /*
+  
   const DOM = {
 	navbar: document.querySelector(".navbar"),
 	hero: document.querySelector(".hero"),
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	pricingContents: [...document.querySelectorAll(".pricing-content")],
 	year: document.getElementById("year"),
   };
-*/
+
   const SECTION_SELECTOR =
     "#about, #gallery, #services, #pricing, #testimonials, #contact";
 
