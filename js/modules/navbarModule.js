@@ -1,4 +1,5 @@
 import { state } from "../core/state.js";
+import { stepAnimatedValue,isAnimatedValueMoving } from '../utils/helper.js';
 
 // ---------------------------------------------------------------------
 // NAVBAR-MODUL

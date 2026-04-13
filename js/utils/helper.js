@@ -1,4 +1,3 @@
-
 // ---------------------------------------------------------------------
 // KLEINE BASIS-HELPER
 // ---------------------------------------------------------------------
@@ -23,6 +22,23 @@ export function resetAnimatedValue(animated, value = 0) {
     animated.current = value;
     animated.target = value;
     animated.velocity = 0;
+  }
+
+
+function stepAnimatedValue(animated, spring, delta) {
+    const result = spring.step(
+      animated.current,
+      animated.target,
+      animated.velocity,
+      delta
+    );
+
+    animated.current = result.current;
+    animated.velocity = result.velocity;
+  }
+
+function isAnimatedValueMoving(animated, spring) {
+    return !spring.isSettled(animated.current, animated.target, animated.velocity);
   }
 
 export function createSpring({ stiffness, damping, precision = 0.001 }) {
