@@ -8,7 +8,7 @@ import { navbarModule } from '../modules/navbarModule.js';
 // ---------------------------------------------------------------------
 // SCROLL-ENGINE
 // ---------------------------------------------------------------------
-  
+
 export const scrollEngine = {
 	navbar: null,
 	hero: null,
