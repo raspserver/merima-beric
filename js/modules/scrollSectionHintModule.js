@@ -1211,9 +1211,7 @@ export const scrollSectionHintModule = {
 	  },
 
 	init() {
-
 		this.cacheDOM();
-
 		this.build();
 		this.refreshTimingVars();
 		this.bindHintClicks();
