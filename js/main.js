@@ -41,96 +41,23 @@ import { uiModule }									from	"./modules/uiModule.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ---------------------------------------------------------------------
-  // 2) DOM-REFERENZEN
-  // ---------------------------------------------------------------------
-
-  const DOM = {
-	//~ navbar: document.querySelector(".navbar"),
-	//~ hero: document.querySelector(".hero"),
-	//~ heroContent: document.querySelector(".hero-content"),
-	//~ navToggle: document.querySelector(".nav-toggle"),
-	//~ navMenu: document.querySelector(".nav-menu"),
-	//~ navLinks: [...document.querySelectorAll(".nav-menu a")],
-	//~ navLogo: document.querySelector(".nav-logo"),
-	//~ cta: document.querySelector(".cta-button"),
-	//~ ctaLabel: document.querySelector(".cta-button .cta-label"),
-	//~ heroInner: document.querySelector(".hero-inner"),
-	//~ heroCalendar: document.getElementById("hero-calendar"),
-	//~ heroCalendarEl: document.getElementById("hero-fullcalendar"),
-	//~ footer: document.querySelector("footer"),
-	//~ track: document.querySelector(".gallery-track"),
-	//~ pricingTabs: [...document.querySelectorAll(".pricing-tab")],
-	//~ pricingContents: [...document.querySelectorAll(".pricing-content")],
-	//~ year: document.getElementById("year"),
-  };
-
-
 // ---------------------------------------------------------------------
 // INITIALISIERUNG
 // ---------------------------------------------------------------------
-  function init() { 
-    
-    physics.update();
-    scrollEngine.init();
-    
-    contactMapModule.initModule();
-    galleryModule.init();
-    navbarModule.init();
-    //~ performanceModule.init();
-    scrollSectionHintModule.init();
-    scrollSectionHintPositionModule.init();
-	sectionNavigationModule.init();
-	uiModule.init();
-    
   
-/*
-	window.addEventListener("resize", () => {
-	  physics.update();
-	  galleryModule.setPosition(galleryModule.currentIndex, false);
-	  contactMapModule.resize();
+	function init() { 
+		physics.update();
+		scrollEngine.init();
+		contactMapModule.initModule();
+		galleryModule.init();
+		navbarModule.init();
+		//~ performanceModule.init();
+		scrollSectionHintModule.init();
+		scrollSectionHintPositionModule.init();
+		sectionNavigationModule.init();
+		uiModule.init();
+	}
 
-	  if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
-		  uiModule.bindHeroCalendarPrewarm();
-		}
-
-		if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
-		  contactMapModule.bindPrewarm();
-		}
-
-	  if (state.ui.heroCalendarOpen) {
-		clearTimeout(state.ui.fullCalendarResizeTimer);
-
-		state.ui.fullCalendarResizeTimer = setTimeout(() => {
-		  uiModule.positionHeroCalendar();
-		  uiModule.refreshFullCalendarView();
-		  uiModule.applyMeasuredHeroCalendarBox();
-		  uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
-
-		  requestAnimationFrame(() => {
-			uiModule.applyMeasuredHeroCalendarBox();
-			uiModule.updateFullCalendarSize();
-		  });
-		}, 120);
-	  }
-	});
-*/
-
-
-
-
-/*
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        state.animation.running = false;
-      } else {
-        navbarModule.handleScroll();
-      }
-    });
-*/
-    
-  }
-
-  init();
+	init();
 
 });
