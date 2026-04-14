@@ -16,6 +16,7 @@
 //			/navbarModule.js
 //			/performanceModule.js
 //			/scrollSectionHintModule.js
+//			/scrollSectionHintPositionModule.js
 //			/sectionNavigationModule.js
 //			/uiModule.js
 //		/utils
@@ -31,7 +32,8 @@ import { utils }				from	"../utils/utils.js";
 // ---------------------------------------------------------------------
 // PERFORMANCE-MODUL
 // ---------------------------------------------------------------------
-  const performanceModule = {
+ 
+export const performanceModule = {
     fpsSampleFrames: 45,
     lowFpsThreshold: 42,
 
@@ -69,5 +71,5 @@ import { utils }				from	"../utils/utils.js";
     init() {
       this.applyInitialProfile();
       window.addEventListener("load", () => this.measureInitialFPS());
-    },
+    }
   };
