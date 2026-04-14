@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // INITIALISIERUNG
 // ---------------------------------------------------------------------
   function init() { 
-    // performanceModule.init(); // optional wieder aktivieren
+    performanceModule.init();
     physics.update();
 	uiModule.init();
 	sectionNavigationModule.init();
