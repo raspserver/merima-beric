@@ -70,29 +70,20 @@ document.addEventListener("DOMContentLoaded", () => {
 // INITIALISIERUNG
 // ---------------------------------------------------------------------
   function init() { 
-    //~ performanceModule.init();
+    
     physics.update();
-	uiModule.init();
-	sectionNavigationModule.init();
-    navbarModule.init();
     scrollEngine.init();
+    
+    contactMapModule.initModule();
+    galleryModule.init();
+    navbarModule.init();
+    //~ performanceModule.init();
     scrollSectionHintModule.init();
     scrollSectionHintPositionModule.init();
-    galleryModule.init();
-	contactMapModule.initModule();
-
-	//~ bindGlobalScroll();
-    //~ bindUserScrollInterrupts();
+	sectionNavigationModule.init();
+	uiModule.init();
     
-    
-    
-    
-    
-    
-
-
-
-	
+  
 
 	window.addEventListener("resize", () => {
 	  physics.update();
