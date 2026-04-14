@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	uiModule.init();
     
   
-
+/*
 	window.addEventListener("resize", () => {
 	  physics.update();
 	  galleryModule.setPosition(galleryModule.currentIndex, false);
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, 120);
 	  }
 	});
-
+*/
 
 
 
