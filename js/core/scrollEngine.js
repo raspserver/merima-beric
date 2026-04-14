@@ -26,6 +26,7 @@ import { state }					from	"./state.js";
 
 import { navbarModule }				from	'../modules/navbarModule.js';
 import { scrollSectionHintModule }	from	'../modules/scrollSectionHintModule.js';
+import { uiModule }					from	'../modules/uiModule.js';
 
 import { cssVar }					from	"../utils/cssVar.js";
 import { clamp }					from	'../utils/helper.js';
