@@ -24,13 +24,13 @@ import { physics }					from	"./physics.js";
 import { SECTION_SELECTOR }			from	"./sectionSelector.js";
 import { state }					from	"./state.js";
 
-//~ import { heroCalendarModule }		from	'../modules/heroCalendarModule.js';
-import { uiModule }					from	'../modules/uiModule.js';
-import { navbarModule }				from	'../modules/navbarModule.js';
-import { scrollSectionHintModule }	from	'../modules/scrollSectionHintModule.js';
+//~ import { heroCalendarModule }		from	"../modules/heroCalendarModule.js";
+import { uiModule }					from	"../modules/uiModule.js";
+import { navbarModule }				from	"../modules/navbarModule.js";
+import { scrollSectionHintModule }	from	"../modules/scrollSectionHintModule.js";
 
 import { cssVar }					from	"../utils/cssVar.js";
-import { clamp }					from	'../utils/helper.js';
+import { clamp }					from	"../utils/helper.js";
 import { utils }					from	"../utils/utils.js";
 
 // ---------------------------------------------------------------------
