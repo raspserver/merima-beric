@@ -63,7 +63,7 @@ export const heroCalendarModule = {
     }, 300);
   },
 
-  close() {
+  closeHeroCalendar() {
     state.ui.heroCalendarAnimating = true;
 
     this.hero.classList.remove("hero-calendar-open");
