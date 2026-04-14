@@ -24,9 +24,9 @@ import { physics }					from	"./physics.js";
 import { SECTION_SELECTOR }			from	"./sectionSelector.js";
 import { state }					from	"./state.js";
 
+import { heroCalendarModule }		from	'../modules/heroCalendarModule.js';
 import { navbarModule }				from	'../modules/navbarModule.js';
 import { scrollSectionHintModule }	from	'../modules/scrollSectionHintModule.js';
-import { uiModule }					from	'../modules/uiModule.js';
 
 import { cssVar }					from	"../utils/cssVar.js";
 import { clamp }					from	'../utils/helper.js';
@@ -299,7 +299,7 @@ export const scrollEngine = {
 	  };
 
 	  if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
-		uiModule.closeHeroCalendar({
+		heroCalendarModule.closeHeroCalendar({
 		  preserveAboutBoundaryAtTop: false,
 		  onComplete: startNavigation,
 		});
@@ -460,7 +460,7 @@ export const scrollEngine = {
 	  contactMapModule.resize();
 
 	  if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
-		  uiModule.bindHeroCalendarPrewarm();
+		  heroCalendarModule.bindHeroCalendarPrewarm();
 		}
 
 		if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
@@ -471,14 +471,14 @@ export const scrollEngine = {
 		clearTimeout(state.ui.fullCalendarResizeTimer);
 
 		state.ui.fullCalendarResizeTimer = setTimeout(() => {
-		  uiModule.positionHeroCalendar();
-		  uiModule.refreshFullCalendarView();
-		  uiModule.applyMeasuredHeroCalendarBox();
-		  uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+		  heroCalendarModule.positionHeroCalendar();
+		  heroCalendarModule.refreshFullCalendarView();
+		  heroCalendarModule.applyMeasuredHeroCalendarBox();
+		  heroCalendarModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
 
 		  requestAnimationFrame(() => {
-			uiModule.applyMeasuredHeroCalendarBox();
-			uiModule.updateFullCalendarSize();
+			heroCalendarModule.applyMeasuredHeroCalendarBox();
+			heroCalendarModule.updateFullCalendarSize();
 		  });
 		}, 120);
 	  }
@@ -493,7 +493,7 @@ export const scrollEngine = {
 		state.ui.heroCalendarKeepCtaFlat = false;
 	  }
 
-	  uiModule.closeHeroCalendarIfHeroFullyOut();
+	  heroCalendarModule.closeHeroCalendarIfHeroFullyOut();
 	  navbarModule.handleScroll();
 	},
     

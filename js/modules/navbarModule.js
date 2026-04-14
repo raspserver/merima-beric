@@ -25,7 +25,7 @@ import { springs }														from	"../core/springs.js";
 import { state }														from	"../core/state.js";
 
 import { contactMapModule }												from	'./contactMapModule.js';
-import { uiModule }														from	'./uiModule.js';
+import { ctaMagneticModule }											from	'./ctaMagneticModule.js';
 
 import { clamp,easeOutCubic,resetAnimatedValue,stepAnimatedValue,isAnimatedValueMoving }	from	"../utils/helper.js";
 import { utils }														from	"../utils/utils.js";
@@ -103,7 +103,7 @@ export const navbarModule = {
       this.navToggle.classList.remove("active");
       document.body.classList.remove("nav-menu-open");
 
-      uiModule.resetCtaMagnetic();
+      ctaMagneticModule.resetCtaMagnetic();
       this.applyCtaNeutralState();
       this.suppressCtaHoverTemporarily(700);
 
@@ -517,7 +517,7 @@ export const navbarModule = {
 		/* CTA soll NICHT als Outside-Click gelten */
 		if (onCta) {
 		  this.suppressCtaHoverTemporarily();
-		  uiModule.resetCtaMagnetic();
+		  ctaMagneticModule.resetCtaMagnetic();
 		  return;
 		}
 
@@ -527,7 +527,7 @@ export const navbarModule = {
 
 		if (onSectionScrollHead) {
 		  this.suppressCtaHoverTemporarily();
-		  uiModule.resetCtaMagnetic();
+		  ctaMagneticModule.resetCtaMagnetic();
 		}
 
 		this.closeMenu();
