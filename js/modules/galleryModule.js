@@ -257,5 +257,5 @@ export const galleryModule = {
       this.playOnly(this.currentIndex);
       this.bindTrackEvents();
       this.bindVisibilityEvents();
-    },
+    }
   };
