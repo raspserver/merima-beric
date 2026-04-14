@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryModule.init();
 	contactMapModule.initModule();
 
-	bindGlobalScroll();
+	//~ bindGlobalScroll();
     bindUserScrollInterrupts();
     
     

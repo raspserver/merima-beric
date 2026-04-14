@@ -358,7 +358,21 @@ export const scrollEngine = {
       navbarModule.startAnimation();
     },
     
+    bindGlobalScroll() {
+	  window.addEventListener("scroll", this.onScroll, { passive: true });
+	},
+	
+	onScroll() {
+	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
+		state.ui.heroCalendarKeepCtaFlat = false;
+	  }
+
+	  uiModule.closeHeroCalendarIfHeroFullyOut();
+	  navbarModule.handleScroll();
+	},
+    
     init() {
 		this.cacheDOM();
+		this.bindGlobalScroll()
 	  }
   };
