@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // INITIALISIERUNG
 // ---------------------------------------------------------------------
   function init() { 
-    performanceModule.init();
+    //~ performanceModule.init();
     physics.update();
 	uiModule.init();
 	sectionNavigationModule.init();
@@ -100,26 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+	
 
-
-/*
-	window.addEventListener(
-		"scroll",
-		() => {
-			if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
-				state.ui.heroCalendarKeepCtaFlat = false;
-			}
-
-			uiModule.closeHeroCalendarIfHeroFullyOut();
-			navbarModule.handleScroll();
-		},
-		{ passive: true }
-	);
-*/	
-	
-	
-	
-	
 	window.addEventListener("resize", () => {
 	  physics.update();
 	  galleryModule.setPosition(galleryModule.currentIndex, false);
