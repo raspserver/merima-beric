@@ -449,7 +449,41 @@ export const scrollEngine = {
         navbarModule.handleScroll();
       }
 	},
+	
+	bindResize() {
+	  window.addEventListener("resize", this.onResize);
+	},
+	
+	onResize() {
+		physics.update();
+	  galleryModule.setPosition(galleryModule.currentIndex, false);
+	  contactMapModule.resize();
 
+	  if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
+		  uiModule.bindHeroCalendarPrewarm();
+		}
+
+		if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
+		  contactMapModule.bindPrewarm();
+		}
+
+	  if (state.ui.heroCalendarOpen) {
+		clearTimeout(state.ui.fullCalendarResizeTimer);
+
+		state.ui.fullCalendarResizeTimer = setTimeout(() => {
+		  uiModule.positionHeroCalendar();
+		  uiModule.refreshFullCalendarView();
+		  uiModule.applyMeasuredHeroCalendarBox();
+		  uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+
+		  requestAnimationFrame(() => {
+			uiModule.applyMeasuredHeroCalendarBox();
+			uiModule.updateFullCalendarSize();
+		  });
+		}, 120);
+	  }
+	},
+	
     bindGlobalScroll() {
 	  window.addEventListener("scroll", this.onScroll, { passive: true });
 	},
@@ -467,6 +501,7 @@ export const scrollEngine = {
 		this.cacheDOM();
 		this.bindUserScrollInterrupts();
 		this.bindVisibilityChange();
+		this.bindResize();
 		this.bindGlobalScroll();
 	  }
   };
