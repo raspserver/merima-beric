@@ -358,6 +358,86 @@ export const scrollEngine = {
       navbarModule.startAnimation();
     },
     
+    bindUserScrollInterrupts() {
+	  let touchReleaseTimer = null;
+
+	  const clearTouchReleaseTimer = () => {
+		if (touchReleaseTimer) {
+		  clearTimeout(touchReleaseTimer);
+		  touchReleaseTimer = null;
+		}
+	  };
+
+	  const releaseTouchStateDelayed = (delay = 700) => {
+		clearTouchReleaseTimer();
+
+		touchReleaseTimer = setTimeout(() => {
+		  touchReleaseTimer = null;
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		  navbarModule.startAnimation();
+		}, delay);
+	  };
+
+	  window.addEventListener("wheel", () => {
+		scrollEngine.cancelActiveScroll();
+		clearTouchReleaseTimer();
+		state.touch.active = false;
+		state.nav.gestureStretch.target = 0;
+		navbarModule.startAnimation();
+	  }, { passive: true });
+
+	  window.addEventListener("touchstart", () => {
+		clearTouchReleaseTimer();
+		scrollEngine.cancelActiveScroll();
+		state.touch.active = true;
+	  }, { passive: true });
+
+	  window.addEventListener("touchmove", () => {
+		clearTouchReleaseTimer();
+		state.touch.active = true;
+	  }, { passive: true });
+
+	  window.addEventListener("touchend", () => {
+		releaseTouchStateDelayed(700);
+	  }, { passive: true });
+
+	  window.addEventListener("touchcancel", () => {
+		releaseTouchStateDelayed(700);
+	  }, { passive: true });
+
+	  window.addEventListener("scroll", () => {
+		if (state.touch.active) {
+		  releaseTouchStateDelayed(700);
+		}
+	  }, { passive: true });
+
+	  window.addEventListener("pointerdown", (e) => {
+		if (e.pointerType === "mouse") {
+		  clearTouchReleaseTimer();
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		  navbarModule.startAnimation();
+		}
+	  }, { passive: true });
+
+	  window.addEventListener("blur", () => {
+		clearTouchReleaseTimer();
+		state.touch.active = false;
+		state.nav.gestureStretch.target = 0;
+		navbarModule.startAnimation();
+	  });
+
+	  document.addEventListener("visibilitychange", () => {
+		if (document.hidden) {
+		  clearTouchReleaseTimer();
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		  navbarModule.startAnimation();
+		}
+	  });
+	},
+
     bindGlobalScroll() {
 	  window.addEventListener("scroll", this.onScroll, { passive: true });
 	},
@@ -373,6 +453,7 @@ export const scrollEngine = {
     
     init() {
 		this.cacheDOM();
-		this.bindGlobalScroll()
+		this.bindUserScrollInterrupts();
+		this.bindGlobalScroll();
 	  }
   };

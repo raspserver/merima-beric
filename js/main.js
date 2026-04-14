@@ -3,8 +3,6 @@
 // ---------------------------------------------------------------------
 //	/js
 //		/core
-//			/bindGlobalScroll.js
-//			/bindUserScrollInterrupts.js
 //			/physics.js
 //			/scrollEngine.js
 //			/sectionSelector.js
@@ -28,8 +26,6 @@
 //		/main.js
 // ---------------------------------------------------------------------
 
-//~ import { bindGlobalScroll }							from	"./core/bindGlobalScroll.js";
-import { bindUserScrollInterrupts }					from	"./core/bindUserScrollInterrupts.js";
 import { physics }									from	"./core/physics.js";
 import { scrollEngine }								from	"./core/scrollEngine.js";
 import { state }									from	"./core/state.js";
@@ -86,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	contactMapModule.initModule();
 
 	//~ bindGlobalScroll();
-    bindUserScrollInterrupts();
+    //~ bindUserScrollInterrupts();
     
     
     
