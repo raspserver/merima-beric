@@ -14,6 +14,7 @@
 //			/contactMapModule.js
 //			/galleryModule.js
 //			/navbarModule.js
+//			/performanceModule.js
 //			/scrollSectionHintModule.js
 //			/sectionNavigationModule.js
 //			/uiModule.js
