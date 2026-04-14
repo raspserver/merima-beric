@@ -34,8 +34,11 @@ import { utils }				from	"../utils/utils.js";
 // ---------------------------------------------------------------------
  
 export const performanceModule = {
-    fpsSampleFrames: 45,
-    lowFpsThreshold: 42,
+    //~ fpsSampleFrames: 45,
+    //~ lowFpsThreshold: 42,
+    
+    fpsSampleFrames: 35,
+    lowFpsThreshold: 32,
 
     applyInitialProfile() {
       if (utils.getPerformanceProfile().lowEnd) {
