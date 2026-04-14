@@ -31,6 +31,7 @@ import { state }					from	"../core/state.js";
 
 import { cssVar }					from	"../utils/cssVar.js";
 import { clamp }					from	'../utils/helper.js';
+import { prewarmUtils }				from	"../utils/prewarmUtils.js";
 import { utils }					from	"../utils/utils.js";
 
 import { navbarModule }		from	'./navbarModule.js';
