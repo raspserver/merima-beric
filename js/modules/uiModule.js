@@ -1249,8 +1249,8 @@ export const uiModule = {
 	},
 
 	bindHeroCalendarEvents() {
-	  DOM.heroCalendar?.addEventListener("click", this.stopPropagation);
-	  DOM.heroCalendarEl?.addEventListener("click", this.stopPropagation);
+	  this.heroCalendar?.addEventListener("click", this.stopPropagation);
+	  this.heroCalendarEl?.addEventListener("click", this.stopPropagation);
 	},
 
 	stopPropagation(e) {
