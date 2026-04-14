@@ -25,7 +25,7 @@
 
 import { SETTINGS }			from	"../core/settings.js";
 
-import { navbarModule }					from	'./navbarModule.js';
+import { navbarModule }		from	'./navbarModule.js';
 
 import { utils }			from	"../utils/utils.js";
 
