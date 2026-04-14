@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------------
 //	/js
 //		/core
+//			/bindUserScrollInterrupts.js
 //			/physics.js
 //			/scrollEngine.js
 //			/sectionSelector.js

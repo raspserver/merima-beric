@@ -3,6 +3,7 @@ import { scrollEngine } from "./core/scrollEngine.js";
 import { SETTINGS } from "./core/settings.js";
 import { springs } from "./core/springs.js";
 import { state } from "./core/state.js";
+import { bindUserScrollInterrupts } from "./core/bindUserScrollInterrupts.js";
 import { cssVar } from "./utils/cssVar.js";
 import { clamp }			from	"./utils/helper.js";
 import { utils } from "./utils/utils.js";
@@ -110,85 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------
   // 16) USER-SCROLL-INTERRUPTS
   // ---------------------------------------------------------------------
-	function bindUserScrollInterrupts() {
-	  let touchReleaseTimer = null;
 
-	  const clearTouchReleaseTimer = () => {
-		if (touchReleaseTimer) {
-		  clearTimeout(touchReleaseTimer);
-		  touchReleaseTimer = null;
-		}
-	  };
-
-	  const releaseTouchStateDelayed = (delay = 700) => {
-		clearTouchReleaseTimer();
-
-		touchReleaseTimer = setTimeout(() => {
-		  touchReleaseTimer = null;
-		  state.touch.active = false;
-		  state.nav.gestureStretch.target = 0;
-		  navbarModule.startAnimation();
-		}, delay);
-	  };
-
-	  window.addEventListener("wheel", () => {
-		scrollEngine.cancelActiveScroll();
-		clearTouchReleaseTimer();
-		state.touch.active = false;
-		state.nav.gestureStretch.target = 0;
-		navbarModule.startAnimation();
-	  }, { passive: true });
-
-	  window.addEventListener("touchstart", () => {
-		clearTouchReleaseTimer();
-		scrollEngine.cancelActiveScroll();
-		state.touch.active = true;
-	  }, { passive: true });
-
-	  window.addEventListener("touchmove", () => {
-		clearTouchReleaseTimer();
-		state.touch.active = true;
-	  }, { passive: true });
-
-	  window.addEventListener("touchend", () => {
-		releaseTouchStateDelayed(700);
-	  }, { passive: true });
-
-	  window.addEventListener("touchcancel", () => {
-		releaseTouchStateDelayed(700);
-	  }, { passive: true });
-
-	  window.addEventListener("scroll", () => {
-		if (state.touch.active) {
-		  releaseTouchStateDelayed(700);
-		}
-	  }, { passive: true });
-
-	  window.addEventListener("pointerdown", (e) => {
-		if (e.pointerType === "mouse") {
-		  clearTouchReleaseTimer();
-		  state.touch.active = false;
-		  state.nav.gestureStretch.target = 0;
-		  navbarModule.startAnimation();
-		}
-	  }, { passive: true });
-
-	  window.addEventListener("blur", () => {
-		clearTouchReleaseTimer();
-		state.touch.active = false;
-		state.nav.gestureStretch.target = 0;
-		navbarModule.startAnimation();
-	  });
-
-	  document.addEventListener("visibilitychange", () => {
-		if (document.hidden) {
-		  clearTouchReleaseTimer();
-		  state.touch.active = false;
-		  state.nav.gestureStretch.target = 0;
-		  navbarModule.startAnimation();
-		}
-	  });
-	}
 
   // ---------------------------------------------------------------------
   // 17) POSITIONIERUNG DER SCROLL-HINT-SPALTE
