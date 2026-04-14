@@ -28,7 +28,7 @@
 //		/main.js
 // ---------------------------------------------------------------------
 
-import { bindGlobalScroll }							from	"./core/bindGlobalScroll.js";
+//~ import { bindGlobalScroll }							from	"./core/bindGlobalScroll.js";
 import { bindUserScrollInterrupts }					from	"./core/bindUserScrollInterrupts.js";
 import { physics }									from	"./core/physics.js";
 import { scrollEngine }								from	"./core/scrollEngine.js";
