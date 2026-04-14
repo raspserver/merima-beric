@@ -1,34 +1,52 @@
-import { physics } from "./core/physics.js";
-import { scrollEngine } from "./core/scrollEngine.js";
-import { SETTINGS } from "./core/settings.js";
-import { springs } from "./core/springs.js";
-import { state } from "./core/state.js";
-import { bindUserScrollInterrupts } from "./core/bindUserScrollInterrupts.js";
-import { cssVar } from "./utils/cssVar.js";
-import { clamp }			from	"./utils/helper.js";
-import { utils } from "./utils/utils.js";
-import { prewarmUtils } from "./utils/prewarmUtils.js";
-import { navbarModule } from "./modules/navbarModule.js";
-import { performanceModule } from "./modules/performanceModule.js";
-import { scrollSectionHintModule } from "./modules/scrollSectionHintModule.js";
-import { scrollSectionHintPositionModule } from "./modules/scrollSectionHintPositionModule.js";
-import { sectionNavigationModule } from "./modules/sectionNavigationModule.js";
-import { uiModule } from "./modules/uiModule.js";
-import { galleryModule } from "./modules/galleryModule.js";
-import { contactMapModule } from "./modules/contactMapModule.js";
-import { SECTION_SELECTOR }			from	"./core/sectionSelector.js";
+// ---------------------------------------------------------------------
+// javascript Verzeichnisstruktur
+// ---------------------------------------------------------------------
+//	/js
+//		/core
+//			/bindUserScrollInterrupts.js
+//			/physics.js
+//			/scrollEngine.js
+//			/sectionSelector.js
+//			/settings.js
+//			/springs.js
+//			/state.js
+//		/modules
+//			/contactMapModule.js
+//			/galleryModule.js
+//			/navbarModule.js
+//			/performanceModule.js
+//			/scrollSectionHintModule.js
+//			/scrollSectionHintPositionModule.js
+//			/sectionNavigationModule.js
+//			/uiModule.js
+//		/utils
+//			/cssVar.js
+//			/helper.js
+//			/prewarmUtils.js
+//			/utils.js
+//		/main.js
+// ---------------------------------------------------------------------
+
+import { bindUserScrollInterrupts }					from	"./core/bindUserScrollInterrupts.js";
+import { physics }									from	"./core/physics.js";
+import { scrollEngine }								from	"./core/scrollEngine.js";
+import { state }									from	"./core/state.js";
+
+import { contactMapModule }							from	"./modules/contactMapModule.js";
+import { galleryModule }							from	"./modules/galleryModule.js";
+import { navbarModule }								from	"./modules/navbarModule.js";
+import { performanceModule }						from	"./modules/performanceModule.js";
+import { scrollSectionHintModule }					from	"./modules/scrollSectionHintModule.js";
+import { scrollSectionHintPositionModule }			from	"./modules/scrollSectionHintPositionModule.js";
+import { sectionNavigationModule }					from	"./modules/sectionNavigationModule.js";
+import { uiModule }									from	"./modules/uiModule.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
   // ---------------------------------------------------------------------
-  // 1) GLOBALE EINSTELLUNGEN
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
   // 2) DOM-REFERENZEN
   // ---------------------------------------------------------------------
-  
+  /*
   const DOM = {
 	navbar: document.querySelector(".navbar"),
 	hero: document.querySelector(".hero"),
@@ -48,86 +66,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	pricingContents: [...document.querySelectorAll(".pricing-content")],
 	year: document.getElementById("year"),
   };
+*/
 
-  // ---------------------------------------------------------------------
-  // 3) KLEINE BASIS-HELPER
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 4) CSS-VARIABLEN UND ALLGEMEINE UTILS
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 5) ZENTRALER STATE
-  // ---------------------------------------------------------------------
-  
-  // ---------------------------------------------------------------------
-  // 6) PHYSIK-/MOTION-WERTE
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 7) GEMEINSAME HILFSFUNKTIONEN FÜR ANIMATIONEN
-  // ---------------------------------------------------------------------
-  
-
-  // ---------------------------------------------------------------------
-  // 8) SCROLL-ENGINE
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 9) NAVBAR-MODUL
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 10) SECTION-NAVIGATION
-  // ---------------------------------------------------------------------
-
-  // ---------------------------------------------------------------------
-  // 11) SCROLL-HINT-SYSTEM
-  // ---------------------------------------------------------------------
-
-  // ---------------------------------------------------------------------
-  // 12) GALLERY-MODUL
-  // ---------------------------------------------------------------------
-
-
-	// ---------------------------------------------------------------------
-	// 13) PREWARM UTILITY (für HeroCalendar + ContactMap)
-	// ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 14) UI-MODUL (CTA, HERO-KLICK, PRICING TABS)
-  // ---------------------------------------------------------------------
-  
 // ---------------------------------------------------------------------
-// 15) CONTACT MAP (MAPLIBRE 3D)
+// INITIALISIERUNG
 // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 16) USER-SCROLL-INTERRUPTS
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 17) POSITIONIERUNG DER SCROLL-HINT-SPALTE
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 18) PERFORMANCE-MODUL
-  // ---------------------------------------------------------------------
-
-
-  // ---------------------------------------------------------------------
-  // 19) INITIALISIERUNG
-  // ---------------------------------------------------------------------
   function init() { 
     // performanceModule.init(); // optional wieder aktivieren
     physics.update();
