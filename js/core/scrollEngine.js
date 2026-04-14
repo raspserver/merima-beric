@@ -437,6 +437,18 @@ export const scrollEngine = {
 		}
 	  });
 	},
+	
+	bindVisibilityChange() {
+	  window.addEventListener("visibilitychange", this.visibilityChange, { passive: true });
+	},
+	
+	visibilityChange() {
+		if (document.hidden) {
+        state.animation.running = false;
+      } else {
+        navbarModule.handleScroll();
+      }
+	},
 
     bindGlobalScroll() {
 	  window.addEventListener("scroll", this.onScroll, { passive: true });
@@ -454,6 +466,7 @@ export const scrollEngine = {
     init() {
 		this.cacheDOM();
 		this.bindUserScrollInterrupts();
+		this.bindVisibilityChange();
 		this.bindGlobalScroll();
 	  }
   };

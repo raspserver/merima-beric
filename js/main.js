@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
+/*
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         state.animation.running = false;
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
         navbarModule.handleScroll();
       }
     });
-
+*/
     
   }
 
