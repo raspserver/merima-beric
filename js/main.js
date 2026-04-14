@@ -4,7 +4,6 @@ import { SETTINGS } from "./core/settings.js";
 import { springs } from "./core/springs.js";
 import { state } from "./core/state.js";
 import { cssVar } from "./utils/cssVar.js";
-//~ import * as helper from "./utils/helper.js";
 import { clamp }			from	"./utils/helper.js";
 import { utils } from "./utils/utils.js";
 import { prewarmUtils } from "./utils/prewarmUtils.js";
@@ -12,6 +11,7 @@ import { navbarModule } from "./modules/navbarModule.js";
 import { scrollSectionHintModule } from "./modules/scrollSectionHintModule.js";
 import { sectionNavigationModule } from "./modules/sectionNavigationModule.js";
 import { uiModule } from "./modules/uiModule.js";
+import { galleryModule } from "./modules/galleryModule.js";
 import { SECTION_SELECTOR }			from	"./core/sectionSelector.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -87,238 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // 11) SCROLL-HINT-SYSTEM
   // ---------------------------------------------------------------------
 
-
-
-
-
-
   // ---------------------------------------------------------------------
   // 12) GALLERY-MODUL
   // ---------------------------------------------------------------------
-  const galleryModule = {
-    videos: [],
-    currentIndex: 1,
-    isAnimating: false,
-    startX: 0,
-    isDragging: false,
 
-    buildVideos() {
-      if (!DOM.track) return;
-
-      const shuffled = utils.shuffle([...SETTINGS.gallery.videoFiles]);
-      const fullList = [shuffled[shuffled.length - 1], ...shuffled, shuffled[0]];
-
-      fullList.forEach((src) => {
-        const video = document.createElement("video");
-
-        video.src = src;
-        video.playsInline = true;
-        video.preload = "auto";
-        video.controls = false;
-        video.muted = true;
-
-        video.addEventListener("loadeddata", () => {
-          video.currentTime = 0.01;
-        });
-
-        video.addEventListener("pointerdown", (e) => {
-          if (utils.isMobileViewport() && navbarModule.isOpen()) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-        });
-
-        video.addEventListener("pointerup", (e) => {
-          if (utils.isMobileViewport() && navbarModule.isOpen()) {
-            e.preventDefault();
-            e.stopPropagation();
-            navbarModule.closeMenu();
-            return;
-          }
-
-          e.stopPropagation();
-          if (video.paused) {
-            utils.safePlay(video);
-          } else {
-            video.pause();
-          }
-        });
-
-        video.addEventListener("ended", () => {
-          this.moveTo(this.currentIndex + 1, true);
-        });
-
-        DOM.track.appendChild(video);
-        this.videos.push(video);
-      });
-    },
-
-    playOnly(index) {
-      this.videos.forEach((video, i) => {
-        if (i === index) {
-          video.currentTime = 0;
-          utils.safePlay(video);
-        } else {
-          video.pause();
-        }
-      });
-    },
-
-    setPosition(index, animate = true) {
-      if (!this.videos.length || !DOM.track) return;
-
-      const videoWidth = this.videos[0].offsetWidth;
-      const padding = DOM.track.parentElement.offsetWidth * 0.1;
-      const offset = videoWidth * index - padding;
-
-      DOM.track.style.transition = animate
-        ? "transform 0.6s cubic-bezier(.16,.84,.44,1)"
-        : "none";
-
-      DOM.track.style.transform = `translateX(-${offset}px)`;
-    },
-
-    moveTo(index, autoPlay = false) {
-      if (this.isAnimating) return;
-
-      this.isAnimating = true;
-      this.currentIndex = index;
-      this.setPosition(this.currentIndex, true);
-
-      if (autoPlay) {
-        this.playOnly(this.currentIndex);
-      } else {
-        this.videos.forEach((video) => video.pause());
-      }
-    },
-
-    bindTrackEvents() {
-      if (!DOM.track) return;
-
-      DOM.track.addEventListener("transitionend", () => {
-        this.isAnimating = false;
-
-        if (this.currentIndex === this.videos.length - 1) {
-          this.currentIndex = 1;
-        }
-
-        if (this.currentIndex === 0) {
-          this.currentIndex = this.videos.length - 2;
-        }
-
-        requestAnimationFrame(() => this.setPosition(this.currentIndex, false));
-      });
-
-      DOM.track.style.touchAction = "pan-y";
-
-      DOM.track.addEventListener(
-        "touchstart",
-        (e) => {
-          if (utils.isMobileViewport() && navbarModule.isOpen()) {
-            e.preventDefault();
-            return;
-          }
-
-          this.startX = e.touches[0].clientX;
-          this.isDragging = true;
-          DOM.track.style.transition = "none";
-        },
-        { passive: false }
-      );
-
-      DOM.track.addEventListener(
-        "touchmove",
-        (e) => {
-          if (utils.isMobileViewport() && navbarModule.isOpen()) {
-            e.preventDefault();
-            return;
-          }
-
-          if (!this.isDragging || !this.videos.length) return;
-
-          const diff = e.touches[0].clientX - this.startX;
-          const videoWidth = this.videos[0].offsetWidth;
-          const padding = DOM.track.parentElement.offsetWidth * 0.1;
-
-          DOM.track.style.transform = `translateX(${
-            -this.currentIndex * videoWidth + diff - padding
-          }px)`;
-        },
-        { passive: false }
-      );
-
-      DOM.track.addEventListener(
-        "touchend",
-        (e) => {
-          if (utils.isMobileViewport() && navbarModule.isOpen()) {
-            e.preventDefault();
-            this.isDragging = false;
-            return;
-          }
-
-          if (!this.isDragging) return;
-
-          const diff = e.changedTouches[0].clientX - this.startX;
-
-          if (diff > SETTINGS.gallery.swipeThreshold) {
-            this.moveTo(this.currentIndex - 1, true);
-          } else if (diff < -SETTINGS.gallery.swipeThreshold) {
-            this.moveTo(this.currentIndex + 1, true);
-          } else {
-            this.setPosition(this.currentIndex, true);
-          }
-
-          this.isDragging = false;
-        },
-        { passive: false }
-      );
-    },
-
-    bindVisibilityEvents() {
-      const gallerySection = document.querySelector(".gallery");
-
-      if (gallerySection) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!this.videos[this.currentIndex]) return;
-
-              if (entry.isIntersecting) {
-                this.playOnly(this.currentIndex);
-              } else {
-                this.videos.forEach((video) => video.pause());
-              }
-            });
-          },
-          { threshold: 0.4 }
-        );
-
-        observer.observe(gallerySection);
-      }
-
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden) {
-          this.videos.forEach((video) => video.pause());
-        } else {
-          this.playOnly(this.currentIndex);
-        }
-      });
-
-      window.addEventListener("resize", () => {
-        this.setPosition(this.currentIndex, false);
-      });
-    },
-
-    init() {
-      if (!DOM.track) return;
-
-      this.buildVideos();
-      this.setPosition(this.currentIndex, false);
-      this.playOnly(this.currentIndex);
-      this.bindTrackEvents();
-      this.bindVisibilityEvents();
-    },
-  };
 
 	// ---------------------------------------------------------------------
 	// 13) PREWARM UTILITY (für HeroCalendar + ContactMap)
