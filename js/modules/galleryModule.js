@@ -10,6 +10,7 @@
 //			/springs.js
 //			/state.js
 //		/modules
+//			/contactMapModule.js
 //			/galleryModule.js
 //			/navbarModule.js
 //			/scrollSectionHintModule.js
