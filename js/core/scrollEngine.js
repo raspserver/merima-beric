@@ -25,7 +25,7 @@ import { SECTION_SELECTOR }			from	"./sectionSelector.js";
 import { state }					from	"./state.js";
 
 //~ import { heroCalendarModule }		from	'../modules/heroCalendarModule.js';
-import { uiModule }					from	'./uiModule.js';
+import { uiModule }					from	'../modules/uiModule.js';
 import { navbarModule }				from	'../modules/navbarModule.js';
 import { scrollSectionHintModule }	from	'../modules/scrollSectionHintModule.js';
 
