@@ -23,6 +23,7 @@
 // ---------------------------------------------------------------------
 
 import { physics }						from	"../core/physics.js";
+import { scrollEngine }					from	"../core/scrollEngine.js";
 import { state }						from	"../core/state.js";
 
 import { navbarModule }					from	'./navbarModule.js';
