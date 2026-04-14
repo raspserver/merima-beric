@@ -23,6 +23,7 @@
 // ---------------------------------------------------------------------
 
 import { scrollEngine }		from	"../core/scrollEngine.js";
+import { SETTINGS }			from	"../core/settings.js";
 import { state }			from	"../core/state.js";
 
 // ---------------------------------------------------------------------
