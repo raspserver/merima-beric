@@ -24,6 +24,7 @@ import { SETTINGS }														from	"../core/settings.js";
 import { springs }														from	"../core/springs.js";
 import { state }														from	"../core/state.js";
 
+import { contactMapModule }												from	'./contactMapModule.js';
 import { uiModule }														from	'./uiModule.js';
 
 import { clamp,easeOutCubic,resetAnimatedValue,stepAnimatedValue,isAnimatedValueMoving }	from	"../utils/helper.js";
