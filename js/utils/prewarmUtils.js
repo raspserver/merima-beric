@@ -25,7 +25,7 @@
 import { state }			from	"../core/state.js";
 
 // ---------------------------------------------------------------------
-// 13) PREWARM UTILITY (für HeroCalendar + ContactMap)
+// PREWARM UTILITY (für HeroCalendar + ContactMap)
 // ---------------------------------------------------------------------
 
 export const prewarmUtils = {
@@ -62,5 +62,5 @@ export const prewarmUtils = {
 
 		observer.observe(element);
 		state.ui[stateKeyObserver] = observer;
-	  },
+	  }
 	};
