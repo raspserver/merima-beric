@@ -89,14 +89,10 @@ document.addEventListener("DOMContentLoaded", () => {
     bindUserScrollInterrupts();
     
     
-    DOM.heroCalendar?.addEventListener("click", (e) => {
-	  e.stopPropagation();
-	});
-
-	DOM.heroCalendarEl?.addEventListener("click", (e) => {
-	  e.stopPropagation();
-	});
-
+    
+    
+    
+    
 
 
 
@@ -132,6 +128,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	  }
 	});
 
+
+
+
+
+
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         state.animation.running = false;
@@ -140,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    navbarModule.handleScroll();
+    
   }
 
   init();

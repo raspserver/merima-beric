@@ -1247,12 +1247,22 @@ export const uiModule = {
 		onPrewarm: () => this.prewarmHeroCalendar(),
 	  });
 	},
+
+	bindHeroCalendarEvents() {
+	  DOM.heroCalendar?.addEventListener("click", this.stopPropagation);
+	  DOM.heroCalendarEl?.addEventListener("click", this.stopPropagation);
+	},
+
+	stopPropagation(e) {
+	  e.stopPropagation();
+	},
 	
 	init() {
 		this.cacheDOM();
 		this.bindCTA();
 		this.bindHeroClickBehavior();
 		this.bindHeroCalendarPrewarm();
+		this.bindHeroCalendarEvents();
 		this.bindPricingTabs();
 		this.setInitialVisualState();
 	  }

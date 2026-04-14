@@ -549,5 +549,6 @@ export const navbarModule = {
     init() {
 		this.cacheDOM();
 		this.bindEvents();
+		this.handleScroll();
 	  }
   };
