@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------------
 //	/js
 //		/core
+//			/bindGlobalScroll.js
 //			/bindUserScrollInterrupts.js
 //			/physics.js
 //			/scrollEngine.js
@@ -27,6 +28,7 @@
 //		/main.js
 // ---------------------------------------------------------------------
 
+import { bindGlobalScroll }							from	"./core/bindGlobalScroll.js";
 import { bindUserScrollInterrupts }					from	"./core/bindUserScrollInterrupts.js";
 import { physics }									from	"./core/physics.js";
 import { scrollEngine }								from	"./core/scrollEngine.js";
@@ -83,7 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryModule.init();
 	contactMapModule.initModule();
 
+	bindGlobalScroll();
     bindUserScrollInterrupts();
+    
     
     DOM.heroCalendar?.addEventListener("click", (e) => {
 	  e.stopPropagation();
@@ -93,6 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	  e.stopPropagation();
 	});
 
+
+
+
+
+
+/*
 	window.addEventListener(
 		"scroll",
 		() => {
@@ -105,6 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 		{ passive: true }
 	);
+*/	
+	
+	
+	
 	
 	window.addEventListener("resize", () => {
 	  physics.update();
