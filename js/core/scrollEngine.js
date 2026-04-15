@@ -9,472 +9,468 @@ import { scrollSectionHintModule } from "../modules/scrollSectionHintModule.js";
 import { utils } from "../utils/utils.js";
 
 export const scrollEngine = {
-	navbar: null,
-	hero: null,
-	
-	init() {
-		this.cacheDOM();
-		this.bindUserScrollInterrupts();
-		this.bindVisibilityChange();
-		this.bindResize();
-		this.bindGlobalScroll();
-	  },
-	
-	cacheDOM() {
-		this.navbar = document.querySelector(".navbar");
-		this.hero = document.querySelector(".hero");
-	},
-	
-    easeOutElastic(t) {
-      if (t === 0) return 0;
-      if (t === 1) return 1;
+  navbar: null,
+  hero: null,
 
-      const {
-        scrollElasticDecay,
-        scrollElasticFrequency,
-        scrollElasticPhaseShift,
-      } = physics.values;
+  init() {
+    this.cacheDOM();
+    this.bindUserScrollInterrupts();
+    this.bindVisibilityChange();
+    this.bindResize();
+    this.bindGlobalScroll();
+  },
 
-      const c = (2 * Math.PI) / 3;
+  cacheDOM() {
+    this.navbar = document.querySelector(".navbar");
+    this.hero = document.querySelector(".hero");
+  },
 
-      return (
-        Math.pow(2, -scrollElasticDecay * t) *
-          Math.sin((t * scrollElasticFrequency - scrollElasticPhaseShift) * c) +
-        1
-      );
-    },
+  easeOutElastic(t) {
+    if (t === 0) return 0;
+    if (t === 1) return 1;
 
-    getTargetNavOffset(navMode = null) {
-      if (!this.navbar) return 0;
+    const {
+      scrollElasticDecay,
+      scrollElasticFrequency,
+      scrollElasticPhaseShift,
+    } = physics.values;
 
-      const navMax = utils.cssVar.number("--nav-height-max", 78);
-      const navMin = utils.cssVar.number("--nav-height-min", 58);
+    const c = (2 * Math.PI) / 3;
 
-      return navMode === "down" || navMode === "up-section"
-        ? navMin
-        : this.navbar.offsetHeight || navMax;
-    },
+    return (
+      Math.pow(2, -scrollElasticDecay * t) *
+        Math.sin((t * scrollElasticFrequency - scrollElasticPhaseShift) * c) +
+      1
+    );
+  },
 
-    getModeForTarget(target) {
-      if (!target) return "down";
-      if (target.classList?.contains("hero")) return "up-section";
+  getTargetNavOffset(navMode = null) {
+    if (!this.navbar) return 0;
 
-      const currentY = window.scrollY;
-      const targetY = target.getBoundingClientRect().top + window.pageYOffset;
-      return targetY < currentY ? "up-section" : "down";
-    },
+    const navMax = utils.cssVar.number("--nav-height-max", 78);
+    const navMin = utils.cssVar.number("--nav-height-min", 58);
 
-    getSurfaceForMode(mode) {
-      return mode === "up-section" ? physics.values.NAV_SURFACE_UP : 1;
-    },
+    return navMode === "down" || navMode === "up-section"
+      ? navMin
+      : this.navbar.offsetHeight || navMax;
+  },
 
-    getTargetY(target, navMode = null) {
-      if (!target) return 0;
+  getModeForTarget(target) {
+    if (!target) return "down";
+    if (target.classList?.contains("hero")) return "up-section";
 
-      const isHeroTarget = target.classList?.contains("hero");
-      const isFooterTarget = target.tagName?.toLowerCase() === "footer";
+    const currentY = window.scrollY;
+    const targetY = target.getBoundingClientRect().top + window.pageYOffset;
+    return targetY < currentY ? "up-section" : "down";
+  },
 
-      const effectiveNavMode =
-        isHeroTarget && navMode === "up-section" ? "hero-top" : navMode;
+  getSurfaceForMode(mode) {
+    return mode === "up-section" ? physics.values.NAV_SURFACE_UP : 1;
+  },
 
-      const navOffset =
-        isHeroTarget || isFooterTarget
-          ? 0
-          : this.getTargetNavOffset(effectiveNavMode);
+  getTargetY(target, navMode = null) {
+    if (!target) return 0;
 
-      const inset = target.matches?.(SECTION_SELECTOR)
-        ? physics.values.sectionScrollInset
-        : 0;
+    const isHeroTarget = target.classList?.contains("hero");
+    const isFooterTarget = target.tagName?.toLowerCase() === "footer";
 
-      const y = isHeroTarget
+    const effectiveNavMode =
+      isHeroTarget && navMode === "up-section" ? "hero-top" : navMode;
+
+    const navOffset =
+      isHeroTarget || isFooterTarget
         ? 0
-        : target.getBoundingClientRect().top + window.pageYOffset - navOffset + inset;
+        : this.getTargetNavOffset(effectiveNavMode);
 
-      return utils.clamp(y, 0, utils.getMaxScrollY());
-    },
+    const inset = target.matches?.(SECTION_SELECTOR)
+      ? physics.values.sectionScrollInset
+      : 0;
 
-    hardSnap(y) {
-      window.scrollTo(0, y);
-      requestAnimationFrame(() => window.scrollTo(0, y));
-    },
+    const y = isHeroTarget
+      ? 0
+      : target.getBoundingClientRect().top + window.pageYOffset - navOffset + inset;
 
-    animateWindowScrollTo(targetY, { onComplete } = {}) {
-      if (state.scroll.activeAnimation) {
-        cancelAnimationFrame(state.scroll.activeAnimation);
-        state.scroll.activeAnimation = null;
-      }
+    return utils.clamp(y, 0, utils.getMaxScrollY());
+  },
 
-      const scrollToken = ++state.scroll.activeToken;
-      const maxScrollY = utils.getMaxScrollY();
-      const clampedTargetY = utils.clamp(targetY, 0, maxScrollY);
-      const startY = window.scrollY;
-      const distance = clampedTargetY - startY;
-      const absDistance = Math.abs(distance);
+  hardSnap(y) {
+    window.scrollTo(0, y);
+    requestAnimationFrame(() => window.scrollTo(0, y));
+  },
 
-      if (absDistance < 1) {
-        this.hardSnap(clampedTargetY);
-        onComplete?.(clampedTargetY);
+  animateWindowScrollTo(targetY, { onComplete } = {}) {
+    if (state.scroll.activeAnimation) {
+      cancelAnimationFrame(state.scroll.activeAnimation);
+      state.scroll.activeAnimation = null;
+    }
+
+    const scrollToken = ++state.scroll.activeToken;
+    const maxScrollY = utils.getMaxScrollY();
+    const clampedTargetY = utils.clamp(targetY, 0, maxScrollY);
+    const startY = window.scrollY;
+    const distance = clampedTargetY - startY;
+    const absDistance = Math.abs(distance);
+
+    if (absDistance < 1) {
+      this.hardSnap(clampedTargetY);
+      onComplete?.(clampedTargetY);
+      return;
+    }
+
+    const duration = utils.prefersReducedMotion()
+      ? Math.min(900, Math.max(350, absDistance * 0.35))
+      : Math.min(
+          physics.values.scrollDurationMax,
+          Math.max(
+            physics.values.scrollDurationMin,
+            absDistance * physics.values.scrollDurationFactor
+          )
+        );
+
+    const startTime = performance.now();
+
+    const frame = (now) => {
+      if (scrollToken !== state.scroll.activeToken) return;
+
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = utils.prefersReducedMotion() ? t : this.easeOutElastic(t);
+      const nextY = utils.clamp(startY + distance * eased, 0, maxScrollY);
+
+      window.scrollTo(0, nextY);
+
+      if (t < 1) {
+        state.scroll.activeAnimation = requestAnimationFrame(frame);
         return;
       }
 
-      const duration = utils.prefersReducedMotion()
-        ? Math.min(900, Math.max(350, absDistance * 0.35))
-        : Math.min(
-            physics.values.scrollDurationMax,
-            Math.max(
-              physics.values.scrollDurationMin,
-              absDistance * physics.values.scrollDurationFactor
-            )
-          );
+      this.hardSnap(clampedTargetY);
+      state.scroll.activeAnimation = null;
+      onComplete?.(clampedTargetY);
+    };
 
-      const startTime = performance.now();
+    state.scroll.activeAnimation = requestAnimationFrame(frame);
+  },
 
-      const frame = (now) => {
-        if (scrollToken !== state.scroll.activeToken) return;
+  clearTopSettle() {
+    state.scroll.topSettleRaf = utils.clearRaf(state.scroll.topSettleRaf);
+    state.scroll.topSettleTimeout = utils.clearTimer(
+      state.scroll.topSettleTimeout
+    );
+  },
 
-        const elapsed = now - startTime;
-        const t = Math.min(elapsed / duration, 1);
-        const eased = utils.prefersReducedMotion() ? t : this.easeOutElastic(t);
-        const nextY = utils.clamp(startY + distance * eased, 0, maxScrollY);
+  settleToTop({ onDone } = {}) {
+    this.clearTopSettle();
 
-        window.scrollTo(0, nextY);
+    let stableFrames = 0;
+    let lastY = -1;
+    const startedAt = performance.now();
 
-        if (t < 1) {
-          state.scroll.activeAnimation = requestAnimationFrame(frame);
-          return;
-        }
+    const tick = () => {
+      window.scrollTo(0, 0);
+      const y = window.scrollY;
 
-        this.hardSnap(clampedTargetY);
-        state.scroll.activeAnimation = null;
-        onComplete?.(clampedTargetY);
-      };
+      if (y <= 0) {
+        stableFrames = lastY === 0 ? stableFrames + 1 : 1;
+      } else {
+        stableFrames = 0;
+      }
 
-      state.scroll.activeAnimation = requestAnimationFrame(frame);
-    },
+      lastY = y;
 
-    clearTopSettle() {
-      state.scroll.topSettleRaf = utils.clearRaf(state.scroll.topSettleRaf);
-      state.scroll.topSettleTimeout = utils.clearTimer(
-        state.scroll.topSettleTimeout
-      );
-    },
-
-    settleToTop({ onDone } = {}) {
-      this.clearTopSettle();
-
-      let stableFrames = 0;
-      let lastY = -1;
-      const startedAt = performance.now();
-
-      const tick = () => {
-        window.scrollTo(0, 0);
-        const y = window.scrollY;
-
-        if (y <= 0) {
-          stableFrames = lastY === 0 ? stableFrames + 1 : 1;
-        } else {
-          stableFrames = 0;
-        }
-
-        lastY = y;
-
-        if (stableFrames >= 3 || performance.now() - startedAt > 1200) {
-          window.scrollTo(0, 0);
-          this.clearTopSettle();
-          onDone?.();
-          return;
-        }
-
-        state.scroll.topSettleRaf = requestAnimationFrame(tick);
-      };
-
-      state.scroll.topSettleTimeout = setTimeout(() => {
+      if (stableFrames >= 3 || performance.now() - startedAt > 1200) {
         window.scrollTo(0, 0);
         this.clearTopSettle();
         onDone?.();
-      }, 1400);
+        return;
+      }
 
       state.scroll.topSettleRaf = requestAnimationFrame(tick);
-    },
+    };
 
-    scrollToSection(target, navMode = null) {
-      if (!target) return;
-
-      const isHeroTarget = target.classList?.contains("hero");
-      const effectiveNavMode =
-        isHeroTarget && (navMode === "up-section" || navMode === "hero-top")
-          ? "hero-top"
-          : navMode;
-
-      scrollSectionHintModule.hideImmediatelyForProgrammaticScroll?.();
-
-      state.scroll.programmatic = true;
-      state.scroll.mode = effectiveNavMode;
-      state.nav.gestureStretch.target = 0;
-
-      if (effectiveNavMode === "down") state.scrollDirection = "down";
-      if (effectiveNavMode === "up-section" || effectiveNavMode === "hero-top") {
-        state.scrollDirection = "up";
-      }
-
-      navbarModule.startAnimation();
-
-      this.animateWindowScrollTo(this.getTargetY(target, effectiveNavMode), {
-        onComplete: () => {
-          const finalMode = state.scroll.mode;
-          state.scroll.programmatic = false;
-          state.lastScrollY = window.scrollY;
-
-          if (finalMode === "down") {
-            navbarModule.setTargets(1, 1, 1);
-          } else if (finalMode === "up-section") {
-            navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-          } else if (finalMode === "hero-top") {
-            this.settleToTop({
-              onDone: () => {
-                state.lastScrollY = window.scrollY;
-
-                if (window.scrollY <= 5) {
-                  navbarModule.setTargets(0, 0, 0);
-                } else {
-                  navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-                }
-
-                navbarModule.startAnimation();
-                navbarModule.handleScroll();
-              },
-            });
-          }
-
-          state.scroll.mode = null;
-          navbarModule.startAnimation();
-          navbarModule.handleScroll();
-        },
-      });
-    },
-
-	goTo(targetOrSelector, forcedMode = null) {
-	  const target = utils.resolveTarget(targetOrSelector);
-	  if (!target) return;
-
-	  const isHeroTarget = target === this.hero || target.id === "home";
-	  const navToken = ++state.ui.pendingNavAfterHeroCalendarCloseToken;
-
-	  const startNavigation = () => {
-		if (navToken !== state.ui.pendingNavAfterHeroCalendarCloseToken) return;
-
-		const mode = forcedMode || this.getModeForTarget(target);
-
-		state.nav.manualOpen = false;
-
-		if (isHeroTarget && window.scrollY <= 5) {
-		  navbarModule.setTargets(0, 0, 0);
-		} else {
-		  navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
-		}
-
-		this.scrollToSection(target, mode);
-		navbarModule.startAnimation();
-	  };
-
-	  if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
-		heroCalendarModule.closeHeroCalendar({
-		  preserveAboutBoundaryAtTop: false,
-		  onComplete: startNavigation,
-		});
-		return;
-	  }
-
-	  startNavigation();
-	},
-
-    scrollToPageBottom() {
-      scrollSectionHintModule.hideImmediatelyForProgrammaticScroll?.();
-
-      state.scroll.programmatic = true;
-      state.scroll.mode = "down";
-      state.scrollDirection = "down";
-      state.nav.gestureStretch.target = 0;
-
-      navbarModule.startAnimation();
-
-      this.animateWindowScrollTo(utils.getMaxScrollY(), {
-        onComplete: () => {
-          state.scroll.programmatic = false;
-          state.scroll.mode = null;
-          state.lastScrollY = window.scrollY;
-
-          navbarModule.setTargets(1, 1, 1);
-          navbarModule.startAnimation();
-          navbarModule.handleScroll();
-        },
-      });
-    },
-
-    cancelActiveScroll({ keepPosition = true } = {}) {
+    state.scroll.topSettleTimeout = setTimeout(() => {
+      window.scrollTo(0, 0);
       this.clearTopSettle();
+      onDone?.();
+    }, 1400);
 
-      const hadActiveScroll =
-        !!state.scroll.activeAnimation || state.scroll.programmatic;
+    state.scroll.topSettleRaf = requestAnimationFrame(tick);
+  },
 
-      if (!hadActiveScroll) return;
+  scrollToSection(target, navMode = null) {
+    if (!target) return;
 
-      if (state.scroll.activeAnimation) {
-        cancelAnimationFrame(state.scroll.activeAnimation);
-        state.scroll.activeAnimation = null;
-      }
+    const isHeroTarget = target.classList?.contains("hero");
+    const effectiveNavMode =
+      isHeroTarget && (navMode === "up-section" || navMode === "hero-top")
+        ? "hero-top"
+        : navMode;
 
-      state.scroll.activeToken += 1;
-      state.scroll.programmatic = false;
-      state.scroll.mode = null;
-      state.nav.gestureStretch.target = 0;
+    scrollSectionHintModule.hideImmediatelyForProgrammaticScroll?.();
 
-      if (keepPosition) window.scrollTo(0, window.scrollY);
+    state.scroll.programmatic = true;
+    state.scroll.mode = effectiveNavMode;
+    state.nav.gestureStretch.target = 0;
 
-      state.lastScrollY = window.scrollY;
-      scrollSectionHintModule.scheduleHide?.();
-      navbarModule.handleScroll();
-      navbarModule.startAnimation();
-    },
-    
-    bindUserScrollInterrupts() {
-	  let touchReleaseTimer = null;
+    if (effectiveNavMode === "down") state.scrollDirection = "down";
+    if (effectiveNavMode === "up-section" || effectiveNavMode === "hero-top") {
+      state.scrollDirection = "up";
+    }
 
-	  const clearTouchReleaseTimer = () => {
-		if (touchReleaseTimer) {
-		  clearTimeout(touchReleaseTimer);
-		  touchReleaseTimer = null;
-		}
-	  };
+    navbarModule.startAnimation();
 
-	  const releaseTouchStateDelayed = (delay = 700) => {
-		clearTouchReleaseTimer();
+    this.animateWindowScrollTo(this.getTargetY(target, effectiveNavMode), {
+      onComplete: () => {
+        const finalMode = state.scroll.mode;
+        state.scroll.programmatic = false;
+        state.lastScrollY = window.scrollY;
 
-		touchReleaseTimer = setTimeout(() => {
-		  touchReleaseTimer = null;
-		  state.touch.active = false;
-		  state.nav.gestureStretch.target = 0;
-		  navbarModule.startAnimation();
-		}, delay);
-	  };
+        if (finalMode === "down") {
+          navbarModule.setTargets(1, 1, 1);
+        } else if (finalMode === "up-section") {
+          navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+        } else if (finalMode === "hero-top") {
+          this.settleToTop({
+            onDone: () => {
+              state.lastScrollY = window.scrollY;
 
-	  window.addEventListener("wheel", () => {
-		scrollEngine.cancelActiveScroll();
-		clearTouchReleaseTimer();
-		state.touch.active = false;
-		state.nav.gestureStretch.target = 0;
-		navbarModule.startAnimation();
-	  }, { passive: true });
+              if (window.scrollY <= 5) {
+                navbarModule.setTargets(0, 0, 0);
+              } else {
+                navbarModule.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+              }
 
-	  window.addEventListener("touchstart", () => {
-		clearTouchReleaseTimer();
-		scrollEngine.cancelActiveScroll();
-		state.touch.active = true;
-	  }, { passive: true });
+              navbarModule.startAnimation();
+              navbarModule.handleScroll();
+            },
+          });
+        }
 
-	  window.addEventListener("touchmove", () => {
-		clearTouchReleaseTimer();
-		state.touch.active = true;
-	  }, { passive: true });
-
-	  window.addEventListener("touchend", () => {
-		releaseTouchStateDelayed(700);
-	  }, { passive: true });
-
-	  window.addEventListener("touchcancel", () => {
-		releaseTouchStateDelayed(700);
-	  }, { passive: true });
-
-	  window.addEventListener("scroll", () => {
-		if (state.touch.active) {
-		  releaseTouchStateDelayed(700);
-		}
-	  }, { passive: true });
-
-	  window.addEventListener("pointerdown", (e) => {
-		if (e.pointerType === "mouse") {
-		  clearTouchReleaseTimer();
-		  state.touch.active = false;
-		  state.nav.gestureStretch.target = 0;
-		  navbarModule.startAnimation();
-		}
-	  }, { passive: true });
-
-	  window.addEventListener("blur", () => {
-		clearTouchReleaseTimer();
-		state.touch.active = false;
-		state.nav.gestureStretch.target = 0;
-		navbarModule.startAnimation();
-	  });
-
-	  document.addEventListener("visibilitychange", () => {
-		if (document.hidden) {
-		  clearTouchReleaseTimer();
-		  state.touch.active = false;
-		  state.nav.gestureStretch.target = 0;
-		  navbarModule.startAnimation();
-		}
-	  });
-	},
-	
-	bindVisibilityChange() {
-	  window.addEventListener("visibilitychange", this.visibilityChange.bind(this), { passive: true });
-	},
-	
-	visibilityChange() {
-		if (document.hidden) {
-        state.animation.running = false;
-      } else {
+        state.scroll.mode = null;
+        navbarModule.startAnimation();
         navbarModule.handleScroll();
+      },
+    });
+  },
+
+  goTo(targetOrSelector, forcedMode = null) {
+    const target = utils.resolveTarget(targetOrSelector);
+    if (!target) return;
+
+    const isHeroTarget = target === this.hero || target.id === "home";
+    const navToken = ++state.ui.pendingNavAfterHeroCalendarCloseToken;
+
+    const startNavigation = () => {
+      if (navToken !== state.ui.pendingNavAfterHeroCalendarCloseToken) return;
+
+      const mode = forcedMode || this.getModeForTarget(target);
+
+      state.nav.manualOpen = false;
+
+      if (isHeroTarget && window.scrollY <= 5) {
+        navbarModule.setTargets(0, 0, 0);
+      } else {
+        navbarModule.setTargets(1, 1, this.getSurfaceForMode(mode));
       }
-	},
-	
-	bindResize() {
-	  window.addEventListener("resize", this.onResize.bind(this));
-	},
 
-	onResize() {
-		physics.update();
-	  galleryModule.setPosition(galleryModule.currentIndex, false);
-	  contactMapModule.resize();
+      this.scrollToSection(target, mode);
+      navbarModule.startAnimation();
+    };
 
-	  if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
-		  heroCalendarModule.bindHeroCalendarPrewarm();
-		}
+    if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
+      heroCalendarModule.closeHeroCalendar({
+        preserveAboutBoundaryAtTop: false,
+        onComplete: startNavigation,
+      });
+      return;
+    }
 
-		if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
-		  contactMapModule.bindPrewarm();
-		}
+    startNavigation();
+  },
 
-	  if (state.ui.heroCalendarOpen) {
-		clearTimeout(state.ui.fullCalendarResizeTimer);
+  scrollToPageBottom() {
+    scrollSectionHintModule.hideImmediatelyForProgrammaticScroll?.();
 
-		state.ui.fullCalendarResizeTimer = setTimeout(() => {
-		  heroCalendarModule.positionHeroCalendar();
-		  heroCalendarModule.refreshFullCalendarView();
-		  heroCalendarModule.applyMeasuredHeroCalendarBox();
-		  heroCalendarModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+    state.scroll.programmatic = true;
+    state.scroll.mode = "down";
+    state.scrollDirection = "down";
+    state.nav.gestureStretch.target = 0;
 
-		  requestAnimationFrame(() => {
-			heroCalendarModule.applyMeasuredHeroCalendarBox();
-			heroCalendarModule.updateFullCalendarSize();
-		  });
-		}, 120);
-	  }
-	},
-	
-    bindGlobalScroll() {
-	  window.addEventListener("scroll", this.onScroll, { passive: true });
-	},
-	
-	onScroll() {
-	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
-		state.ui.heroCalendarKeepCtaFlat = false;
-	  }
+    navbarModule.startAnimation();
 
-	  heroCalendarModule.closeHeroCalendarIfHeroFullyOut();
-	  navbarModule.handleScroll();
-	}
-    
-    
-  };
+    this.animateWindowScrollTo(utils.getMaxScrollY(), {
+      onComplete: () => {
+        state.scroll.programmatic = false;
+        state.scroll.mode = null;
+        state.lastScrollY = window.scrollY;
+
+        navbarModule.setTargets(1, 1, 1);
+        navbarModule.startAnimation();
+        navbarModule.handleScroll();
+      },
+    });
+  },
+
+  cancelActiveScroll({ keepPosition = true } = {}) {
+    this.clearTopSettle();
+
+    const hadActiveScroll =
+      !!state.scroll.activeAnimation || state.scroll.programmatic;
+
+    if (!hadActiveScroll) return;
+
+    if (state.scroll.activeAnimation) {
+      cancelAnimationFrame(state.scroll.activeAnimation);
+      state.scroll.activeAnimation = null;
+    }
+
+    state.scroll.activeToken += 1;
+    state.scroll.programmatic = false;
+    state.scroll.mode = null;
+    state.nav.gestureStretch.target = 0;
+
+    if (keepPosition) window.scrollTo(0, window.scrollY);
+
+    state.lastScrollY = window.scrollY;
+    scrollSectionHintModule.scheduleHide?.();
+    navbarModule.handleScroll();
+    navbarModule.startAnimation();
+  },
+
+  bindUserScrollInterrupts() {
+    let touchReleaseTimer = null;
+
+    const clearTouchReleaseTimer = () => {
+      if (touchReleaseTimer) {
+        clearTimeout(touchReleaseTimer);
+        touchReleaseTimer = null;
+      }
+    };
+
+    const releaseTouchStateDelayed = (delay = 700) => {
+      clearTouchReleaseTimer();
+
+      touchReleaseTimer = setTimeout(() => {
+        touchReleaseTimer = null;
+        state.touch.active = false;
+        state.nav.gestureStretch.target = 0;
+        navbarModule.startAnimation();
+      }, delay);
+    };
+
+    window.addEventListener("wheel", () => {
+      scrollEngine.cancelActiveScroll();
+      clearTouchReleaseTimer();
+      state.touch.active = false;
+      state.nav.gestureStretch.target = 0;
+      navbarModule.startAnimation();
+    }, { passive: true });
+
+    window.addEventListener("touchstart", () => {
+      clearTouchReleaseTimer();
+      scrollEngine.cancelActiveScroll();
+      state.touch.active = true;
+    }, { passive: true });
+
+    window.addEventListener("touchmove", () => {
+      clearTouchReleaseTimer();
+      state.touch.active = true;
+    }, { passive: true });
+
+    window.addEventListener("touchend", () => {
+      releaseTouchStateDelayed(700);
+    }, { passive: true });
+
+    window.addEventListener("touchcancel", () => {
+      releaseTouchStateDelayed(700);
+    }, { passive: true });
+
+    window.addEventListener("scroll", () => {
+      if (state.touch.active) {
+        releaseTouchStateDelayed(700);
+      }
+    }, { passive: true });
+
+    window.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse") {
+        clearTouchReleaseTimer();
+        state.touch.active = false;
+        state.nav.gestureStretch.target = 0;
+        navbarModule.startAnimation();
+      }
+    }, { passive: true });
+
+    window.addEventListener("blur", () => {
+      clearTouchReleaseTimer();
+      state.touch.active = false;
+      state.nav.gestureStretch.target = 0;
+      navbarModule.startAnimation();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        clearTouchReleaseTimer();
+        state.touch.active = false;
+        state.nav.gestureStretch.target = 0;
+        navbarModule.startAnimation();
+      }
+    });
+  },
+
+  bindVisibilityChange() {
+    window.addEventListener("visibilitychange", this.visibilityChange.bind(this), { passive: true });
+  },
+
+  visibilityChange() {
+    if (document.hidden) {
+      state.animation.running = false;
+    } else {
+      navbarModule.handleScroll();
+    }
+  },
+
+  bindResize() {
+    window.addEventListener("resize", this.onResize.bind(this));
+  },
+
+  onResize() {
+    physics.update();
+    galleryModule.setPosition(galleryModule.currentIndex, false);
+    contactMapModule.resize();
+
+    if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
+      heroCalendarModule.bindHeroCalendarPrewarm();
+    }
+
+    if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
+      contactMapModule.bindPrewarm();
+    }
+
+    if (state.ui.heroCalendarOpen) {
+      clearTimeout(state.ui.fullCalendarResizeTimer);
+      state.ui.fullCalendarResizeTimer = setTimeout(() => {
+        heroCalendarModule.positionHeroCalendar();
+        heroCalendarModule.refreshFullCalendarView();
+        heroCalendarModule.applyMeasuredHeroCalendarBox();
+        heroCalendarModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+
+        requestAnimationFrame(() => {
+          heroCalendarModule.applyMeasuredHeroCalendarBox();
+          heroCalendarModule.updateFullCalendarSize();
+        });
+      }, 120);
+    }
+  },
+
+  bindGlobalScroll() {
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+  },
+
+  onScroll() {
+    if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
+      state.ui.heroCalendarKeepCtaFlat = false;
+    }
+    heroCalendarModule.closeHeroCalendarIfHeroFullyOut();
+    navbarModule.handleScroll();
+  }
+};
