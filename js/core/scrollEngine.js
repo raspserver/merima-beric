@@ -6,7 +6,7 @@ import { state } from "./state.js";
 import { heroCalendarModule } from "../modules/heroCalendarModule.js";
 import { navbarModule } from "../modules/navbarModule.js";
 import { scrollSectionHintModule } from "../modules/scrollSectionHintModule.js"; 
-import { clamp } from "../utils/helper.js";
+//~ import { clamp } from "../utils/helper.js";
 import { utils } from "../utils/utils.js";
 
 export const scrollEngine = {
