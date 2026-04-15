@@ -1,5 +1,6 @@
 // utils.js
 
+import { state } from "../core/state.js";
 import { SETTINGS } from "../core/settings.js";
 
 export const utils = {
