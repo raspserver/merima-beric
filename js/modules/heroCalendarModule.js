@@ -733,7 +733,7 @@ export const heroCalendarModule = {
 	},
 
 	bindHeroCalendarPrewarm() {
-	  prewarmUtils.bind({
+	  this.prewarmUtils.bind({
 		element: this.hero,
 		stateKeyObserver: "heroCalendarPrewarmObserver",
 		stateKeyPrewarmed: "heroCalendarPrewarmed",
