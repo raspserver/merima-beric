@@ -83,7 +83,7 @@ export const scrollEngine = {
         ? 0
         : this.getTargetNavOffset(effectiveNavMode);
 
-    const inset = target.matches?.(SECTION_SELECTOR)
+    const inset = target.matches?.(SETTINGS.SECTION_SELECTOR)
       ? physics.values.sectionScrollInset
       : 0;
 
