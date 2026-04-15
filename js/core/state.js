@@ -1,9 +1,7 @@
+// state.js
 
-import { createAnimatedValue, resetAnimatedValue } from "../utils/helper.js";
-
-// ---------------------------------------------------------------------
-// ZENTRALER STATE
-// ---------------------------------------------------------------------
+//~ import { createAnimatedValue, resetAnimatedValue } from "../utils/helper.js";
+import { utils } from "../utils/utils.js";
 
 export const state = {
     lastScrollY: window.scrollY,
@@ -16,19 +14,19 @@ export const state = {
     },
 
     nav: {
-      visible: createAnimatedValue(0),
-      compact: createAnimatedValue(0),
-      surface: createAnimatedValue(0),
-      gestureStretch: createAnimatedValue(0),
+      visible: utils.createAnimatedValue(0),
+      compact: utils.createAnimatedValue(0),
+      surface: utils.createAnimatedValue(0),
+      gestureStretch: utils.createAnimatedValue(0),
       manualOpen: false,
     },
 
     hero: {
-      parallax: createAnimatedValue(0),
+      parallax: utils.createAnimatedValue(0),
     },
 	
 	cta: {
-	  elasticY: createAnimatedValue(0),
+	  elasticY: utils.createAnimatedValue(0),
 	},
 
     scroll: {
@@ -83,4 +81,4 @@ export const state = {
 	},
 
     orderedSections: [],
-  };
+};
