@@ -419,7 +419,7 @@ export const scrollEngine = {
 	},
 	
 	bindVisibilityChange() {
-	  window.addEventListener("visibilitychange", this.visibilityChange, { passive: true });
+	  window.addEventListener("visibilitychange", this.visibilityChange.bind(this), { passive: true });
 	},
 	
 	visibilityChange() {
@@ -431,9 +431,9 @@ export const scrollEngine = {
 	},
 	
 	bindResize() {
-	  window.addEventListener("resize", this.onResize);
+	  window.addEventListener("resize", this.onResize.bind(this));
 	},
-	
+
 	onResize() {
 		physics.update();
 	  galleryModule.setPosition(galleryModule.currentIndex, false);
