@@ -97,6 +97,10 @@ export const utils = {
         };
     },
 
+// ---------------------------------------------------------------------
+// cssVar
+// ---------------------------------------------------------------------
+
     cssVar: {
         raw(name) {
             return getComputedStyle(document.documentElement)
