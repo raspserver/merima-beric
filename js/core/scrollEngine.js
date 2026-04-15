@@ -6,7 +6,6 @@ import { state } from "./state.js";
 import { heroCalendarModule } from "../modules/heroCalendarModule.js";
 import { navbarModule } from "../modules/navbarModule.js";
 import { scrollSectionHintModule } from "../modules/scrollSectionHintModule.js"; 
-import { cssVar } from "../utils/cssVar.js";
 import { clamp } from "../utils/helper.js";
 import { utils } from "../utils/utils.js";
 
@@ -49,8 +48,8 @@ export const scrollEngine = {
     getTargetNavOffset(navMode = null) {
       if (!this.navbar) return 0;
 
-      const navMax = cssVar.number("--nav-height-max", 78);
-      const navMin = cssVar.number("--nav-height-min", 58);
+      const navMax = utils.cssVar.number("--nav-height-max", 78);
+      const navMin = utils.cssVar.number("--nav-height-min", 58);
 
       return navMode === "down" || navMode === "up-section"
         ? navMin
