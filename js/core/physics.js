@@ -20,7 +20,7 @@
 
 import { springs }		from	"./springs.js";
 
-import { cssVar }		from	"../utils/cssVar.js";
+//~ import { cssVar }		from	"../utils/cssVar.js";
 import { utils }		from	"../utils/utils.js";
 
 // ---------------------------------------------------------------------
@@ -66,100 +66,100 @@ export const physics = {
       const isMobile = utils.isPhysicsMobileViewport();
 
       this.values.NAV_SURFACE_UP = utils.cssVar.number("--nav-surface-up", 0.18);
-      this.values.sectionScrollInset = cssVar.number("--section-scroll-inset", 1);
+      this.values.sectionScrollInset = utils.cssVar.number("--section-scroll-inset", 1);
 
-      this.values.scrollElasticDecay = cssVar.number("--scroll-elastic-decay", 10);
-      this.values.scrollElasticFrequency = cssVar.number(
+      this.values.scrollElasticDecay = utils.cssVar.number("--scroll-elastic-decay", 10);
+      this.values.scrollElasticFrequency = utils.cssVar.number(
         "--scroll-elastic-frequency",
         10
       );
-      this.values.scrollElasticPhaseShift = cssVar.number(
+      this.values.scrollElasticPhaseShift = utils.cssVar.number(
         "--scroll-elastic-phase-shift",
         0.75
       );
-      this.values.scrollDurationFactor = cssVar.number(
+      this.values.scrollDurationFactor = utils.cssVar.number(
         "--scroll-duration-factor",
         0.6
       );
-      this.values.scrollDurationMin = cssVar.number("--scroll-duration-min", 700);
-      this.values.scrollDurationMax = cssVar.number("--scroll-duration-max", 1600);
+      this.values.scrollDurationMin = utils.cssVar.number("--scroll-duration-min", 700);
+      this.values.scrollDurationMax = utils.cssVar.number("--scroll-duration-max", 1600);
 
-      this.values.heroParallaxFactor = cssVar.number("--hero-parallax-factor", -0.06);
-      this.values.heroParallaxStiffness = cssVar.number(
+      this.values.heroParallaxFactor = utils.cssVar.number("--hero-parallax-factor", -0.06);
+      this.values.heroParallaxStiffness = utils.cssVar.number(
         "--hero-parallax-stiffness",
         0.04
       );
-      this.values.heroParallaxDamping = cssVar.number(
+      this.values.heroParallaxDamping = utils.cssVar.number(
         "--hero-parallax-damping",
         0.85
       );
-      this.values.heroScaleScrollFactor = cssVar.number(
+      this.values.heroScaleScrollFactor = utils.cssVar.number(
         "--hero-scale-scroll-factor",
         0.01
       );
-      this.values.heroBrightnessScrollFactor = cssVar.number(
+      this.values.heroBrightnessScrollFactor = utils.cssVar.number(
         "--hero-brightness-scroll-factor",
         0.06
       );
 
-      this.values.navGestureExpandMax = cssVar.number("--nav-gesture-expand-max", 22);
-      this.values.navGestureCompressMax = cssVar.number(
+      this.values.navGestureExpandMax = utils.cssVar.number("--nav-gesture-expand-max", 22);
+      this.values.navGestureCompressMax = utils.cssVar.number(
         "--nav-gesture-compress-max",
         12
       );
-      this.values.navGestureExpandVelocityFactor = cssVar.number(
+      this.values.navGestureExpandVelocityFactor = utils.cssVar.number(
         "--nav-gesture-expand-velocity-factor",
         0.18
       );
-      this.values.navGestureCompressVelocityFactor = cssVar.number(
+      this.values.navGestureCompressVelocityFactor = utils.cssVar.number(
         "--nav-gesture-compress-velocity-factor",
         0.12
       );
-      this.values.navGestureStiffness = cssVar.number(
+      this.values.navGestureStiffness = utils.cssVar.number(
         "--nav-gesture-stiffness",
         0.18
       );
-      this.values.navGestureDamping = cssVar.number("--nav-gesture-damping", 0.74);
+      this.values.navGestureDamping = utils.cssVar.number("--nav-gesture-damping", 0.74);
 	
-	this.values.ctaElasticStiffness = cssVar.number("--cta-elastic-stiffness", 0.032);
-	this.values.ctaElasticDamping = cssVar.number("--cta-elastic-damping", 0.87);
-	this.values.ctaElasticVelocityFactor = cssVar.number("--cta-elastic-velocity-factor", 0.10);
-	this.values.ctaElasticMax = cssVar.number("--cta-elastic-max", 18);
+	this.values.ctaElasticStiffness = utils.cssVar.number("--cta-elastic-stiffness", 0.032);
+	this.values.ctaElasticDamping = utils.cssVar.number("--cta-elastic-damping", 0.87);
+	this.values.ctaElasticVelocityFactor = utils.cssVar.number("--cta-elastic-velocity-factor", 0.10);
+	this.values.ctaElasticMax = utils.cssVar.number("--cta-elastic-max", 18);
 
 	springs.ctaElastic.stiffness = this.values.ctaElasticStiffness;
 	springs.ctaElastic.damping = this.values.ctaElasticDamping;
 
       if (isMobile) {
-        this.values.navVisibleStiffness = cssVar.number(
+        this.values.navVisibleStiffness = utils.cssVar.number(
           "--nav-spring-stiffness-mobile",
           0.06
         );
-        this.values.navVisibleDamping = cssVar.number(
+        this.values.navVisibleDamping = utils.cssVar.number(
           "--nav-spring-damping-mobile",
           0.85
         );
-        this.values.navCompactStiffness = cssVar.number(
+        this.values.navCompactStiffness = utils.cssVar.number(
           "--nav-compact-stiffness-mobile",
           0.035
         );
-        this.values.navCompactDamping = cssVar.number(
+        this.values.navCompactDamping = utils.cssVar.number(
           "--nav-compact-damping-mobile",
           0.9
         );
       } else {
-        this.values.navVisibleStiffness = cssVar.number(
+        this.values.navVisibleStiffness = utils.cssVar.number(
           "--nav-spring-stiffness-desktop",
           0.08
         );
-        this.values.navVisibleDamping = cssVar.number(
+        this.values.navVisibleDamping = utils.cssVar.number(
           "--nav-spring-damping-desktop",
           0.82
         );
-        this.values.navCompactStiffness = cssVar.number(
+        this.values.navCompactStiffness = utils.cssVar.number(
           "--nav-compact-stiffness-desktop",
           0.045
         );
-        this.values.navCompactDamping = cssVar.number(
+        this.values.navCompactDamping = utils.cssVar.number(
           "--nav-compact-damping-desktop",
           0.88
         );
