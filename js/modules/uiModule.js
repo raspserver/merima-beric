@@ -2,8 +2,8 @@
 
 import { physics } from "../core/physics.js";
 import { state } from "../core/state.js";
-import { utils } from "../utils/utils.js";
 import { navbarModule } from "./navbarModule.js";
+import { utils } from "../utils/utils.js";
 
 export const uiModule = {
 
