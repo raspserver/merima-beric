@@ -1,3 +1,5 @@
+// utils.js
+
 import { SETTINGS } from "../core/settings.js";
 
 export const utils = {
