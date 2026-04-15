@@ -16,6 +16,17 @@ export const galleryModule = {
   startX: 0,
   isDragging: false,
 
+  init() {
+    this.cacheDOM();
+    if (!this.track) return;
+
+    this.buildVideos();
+    this.setPosition(this.currentIndex, false);
+    this.playOnly(this.currentIndex);
+    this.bindTrackEvents();
+    this.bindVisibilityEvents();
+  },
+
   cacheDOM() {
     this.track = document.querySelector(".gallery-track");
   },
@@ -224,16 +235,5 @@ export const galleryModule = {
     window.addEventListener("resize", () => {
       this.setPosition(this.currentIndex, false);
     });
-  },
-
-  init() {
-    this.cacheDOM();
-    if (!this.track) return;
-
-    this.buildVideos();
-    this.setPosition(this.currentIndex, false);
-    this.playOnly(this.currentIndex);
-    this.bindTrackEvents();
-    this.bindVisibilityEvents();
   }
 };
