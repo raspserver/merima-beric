@@ -1,39 +1,15 @@
-// ---------------------------------------------------------------------
-// javascript Verzeichnisstruktur
-// ---------------------------------------------------------------------
-//	/js
-//		/core
-//			/bindUserScrollInterrupts.js
-//			/physics.js
-//			/scrollEngine.js
-//			/sectionSelector.js
-//			/settings.js
-//			/springs.js
-//			/state.js
-//		/modules
-//			/contactMapModule.js
-//			/galleryModule.js
-//			/navbarModule.js
-//			/scrollSectionHintModule.js
-//			/sectionNavigationModule.js
-//			/uiModule.js
-//		/utils
-//			/cssVar.js
-//			/helper.js
-//			/prewarmUtils.js
-//			/utils.js
-//		/main.js
-// ---------------------------------------------------------------------
+// contactMapModule.js
 
-import { state }						from	"../core/state.js";
+import { state } from "../core/state.js";
+import { utils } from "../utils/utils.js";
 
-import { cssVar }						from	"../utils/cssVar.js";
-
-import { prewarmUtils }					from	"../utils/prewarmUtils.js";
+//~ import { cssVar }						from	"../utils/cssVar.js";
+//~ import { prewarmUtils }					from	"../utils/prewarmUtils.js";
 
 // ---------------------------------------------------------------------
 // CONTACT MAP (MAPLIBRE 3D)
 // ---------------------------------------------------------------------
+
 export const contactMapModule = {
   map: null,
   container: null,
@@ -83,70 +59,70 @@ export const contactMapModule = {
   // Standard / kleine Animation
   // --------------------------------------------------
   getStartZoom() {
-    return cssVar.number("--contact-map-zoom-start", 14);
+    return utils.cssVar.number("--contact-map-zoom-start", 14);
   },
 
   getEndZoom() {
-    return cssVar.number("--contact-map-zoom-end", 15);
+    return utils.cssVar.number("--contact-map-zoom-end", 15);
   },
 
   getStartPitch() {
-    return cssVar.number("--contact-map-pitch-start", 52);
+    return utils.cssVar.number("--contact-map-pitch-start", 52);
   },
 
   getEndPitch() {
-    return cssVar.number("--contact-map-pitch-end", 56);
+    return utils.cssVar.number("--contact-map-pitch-end", 56);
   },
 
   getStartBearing() {
-    return cssVar.number("--contact-map-bearing-start", -14);
+    return utils.cssVar.number("--contact-map-bearing-start", -14);
   },
 
   getEndBearing() {
-    return cssVar.number("--contact-map-bearing-end", -18);
+    return utils.cssVar.number("--contact-map-bearing-end", -18);
   },
 
   getAnimationDurationMs() {
-    return cssVar.timeMs("--contact-map-animation-duration", 2200);
+    return utils.cssVar.timeMs("--contact-map-animation-duration", 2200);
   },
 
   getAnimationDelayMs() {
-    return cssVar.timeMs("--contact-map-animation-delay", 1000);
+    return utils.cssVar.timeMs("--contact-map-animation-delay", 1000);
   },
 
   // --------------------------------------------------
   // Große Navbar-Cinematic
   // --------------------------------------------------
   getCinematicStartZoom() {
-    return cssVar.number("--contact-map-cinematic-start-zoom", 17.4);
+    return utils.cssVar.number("--contact-map-cinematic-start-zoom", 17.4);
   },
 
   getCinematicStartPitch() {
-    return cssVar.number("--contact-map-cinematic-start-pitch", 60);
+    return utils.cssVar.number("--contact-map-cinematic-start-pitch", 60);
   },
 
   getCinematicStartBearing() {
-    return cssVar.number("--contact-map-cinematic-start-bearing", -32);
+    return utils.cssVar.number("--contact-map-cinematic-start-bearing", -32);
   },
 
   getCinematicDelayMs() {
-    return cssVar.timeMs("--contact-map-cinematic-delay", 120);
+    return utils.cssVar.timeMs("--contact-map-cinematic-delay", 120);
   },
 
   getFlySpeed() {
-    return cssVar.number("--contact-map-fly-speed", 0.18);
+    return utils.cssVar.number("--contact-map-fly-speed", 0.18);
   },
 
   getFlyCurve() {
-    return cssVar.number("--contact-map-fly-curve", 1);
+    return utils.cssVar.number("--contact-map-fly-curve", 1);
   },
 
   getFlyMinZoom() {
-    return cssVar.number("--contact-map-fly-min-zoom", 11.8);
+    return utils.cssVar.number("--contact-map-fly-min-zoom", 11.8);
   },
 
   getFlyScreenSpeed() {
-    return cssVar.number("--contact-map-fly-screen-speed", 0.16);
+    return utils.cssVar.number("--contact-map-fly-screen-speed", 0.16);
   },
 
   getUseMinZoom() {
@@ -502,14 +478,14 @@ export const contactMapModule = {
   },
 
   getReinitOffsetPx() {
-    return cssVar.lengthPx("--contact-map-reinit-offset", 120);
+    return utils.cssVar.lengthPx("--contact-map-reinit-offset", 120);
   },
 
   getPrewarmDistancePx() {
     const about = document.getElementById("about");
     if (!about) return window.innerHeight * 0.2;
 
-    const ratio = cssVar.number("--contact-map-prewarm-about-ratio", 0.2);
+    const ratio = utils.cssVar.number("--contact-map-prewarm-about-ratio", 0.2);
     return Math.max(0, about.offsetHeight * ratio);
   },
 
@@ -572,7 +548,7 @@ export const contactMapModule = {
   bindPrewarm() {
     const contact = this.getContactSection();
 
-    prewarmUtils.bind({
+    utils.prewarmUtils.bind({
       element: contact,
       stateKeyObserver: "contactMapPrewarmObserver",
       stateKeyPrewarmed: "contactMapPrewarmed",
