@@ -1,41 +1,14 @@
-// ---------------------------------------------------------------------
-// javascript Verzeichnisstruktur
-// ---------------------------------------------------------------------
-//	/js
-//		/core
-//			/physics.js
-//			/scrollEngine.js
-//			/settings.js
-//			/springs.js
-//			/state.js
-//		/modules
-//			/navbarModule.js
-//			/scrollSectionHintModule.js
-//		/utils
-//			/cssVar.js
-//			/helper.js
-//			/utils.js
-//		/main.js
-// ---------------------------------------------------------------------
+// navbarModule.js
 
-import { physics }														from	"../core/physics.js";
-import { scrollEngine }													from	"../core/scrollEngine.js";
-import { SETTINGS }														from	"../core/settings.js";
-import { springs }														from	"../core/springs.js";
-import { state }														from	"../core/state.js";
-
-import { contactMapModule }												from	'./contactMapModule.js';
-//~ import { ctaMagneticModule }											from	'./ctaMagneticModule.js';
-import { uiModule }														from	'./uiModule.js';
-
-
-import { clamp,easeOutCubic,resetAnimatedValue,stepAnimatedValue,isAnimatedValueMoving }	from	"../utils/helper.js";
-import { utils }														from	"../utils/utils.js";
-
-
-// ---------------------------------------------------------------------
-// NAVBAR-MODUL
-// ---------------------------------------------------------------------
+import { physics } from "../core/physics.js";
+import { scrollEngine } from "../core/scrollEngine.js";
+import { SETTINGS } from "../core/settings.js";
+import { springs } from "../core/springs.js";
+import { state } from "../core/state.js";
+import { contactMapModule } from "./contactMapModule.js";
+import { ctaMagneticModule } from "./ctaMagneticModule.js";
+import { clamp,easeOutCubic,resetAnimatedValue,stepAnimatedValue,isAnimatedValueMoving } from "../utils/helper.js";
+import { utils } from "../utils/utils.js";
 
 export const navbarModule = {
 	navToggle: null,
@@ -45,6 +18,12 @@ export const navbarModule = {
 	hero: null,
 	navLinks: null,
 	navLogo: null,
+	
+	init() {
+		this.cacheDOM();
+		this.bindEvents();
+		this.handleScroll();
+	},
 	
 	cacheDOM() {
 		this.navToggle = document.querySelector(".nav-toggle");
@@ -105,7 +84,7 @@ export const navbarModule = {
       this.navToggle.classList.remove("active");
       document.body.classList.remove("nav-menu-open");
 
-      uiModule.resetCtaMagnetic();
+      ctaMagneticModule.resetCtaMagnetic();
       this.applyCtaNeutralState();
       this.suppressCtaHoverTemporarily(700);
 
@@ -519,7 +498,7 @@ export const navbarModule = {
 		/* CTA soll NICHT als Outside-Click gelten */
 		if (onCta) {
 		  this.suppressCtaHoverTemporarily();
-		  uiModule.resetCtaMagnetic();
+		  ctaMagneticModule.resetCtaMagnetic();
 		  return;
 		}
 
@@ -529,7 +508,7 @@ export const navbarModule = {
 
 		if (onSectionScrollHead) {
 		  this.suppressCtaHoverTemporarily();
-		  uiModule.resetCtaMagnetic();
+		  ctaMagneticModule.resetCtaMagnetic();
 		}
 
 		this.closeMenu();
@@ -546,11 +525,6 @@ export const navbarModule = {
         },
         true
       );
-    },
+    }
     
-    init() {
-		this.cacheDOM();
-		this.bindEvents();
-		this.handleScroll();
-	  }
   };

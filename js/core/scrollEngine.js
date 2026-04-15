@@ -1,51 +1,31 @@
-// ---------------------------------------------------------------------
-// javascript Verzeichnisstruktur
-// ---------------------------------------------------------------------
-//	/js
-//		/core
-//			/physics.js
-//			/scrollEngine.js
-//			/sectionSelector.js
-//			/settings.js
-//			/springs.js
-//			/state.js
-//		/modules
-//			/navbarModule.js
-//			/scrollSectionHintModule.js
-//			/sectionNavigationModule.js
-//		/utils
-//			/cssVar.js
-//			/helper.js
-//			/utils.js
-//		/main.js
-// ---------------------------------------------------------------------
+// scrollEngine.js
 
-import { physics }					from	"./physics.js";
-import { SECTION_SELECTOR }			from	"./sectionSelector.js";
-import { state }					from	"./state.js";
-
-//~ import { heroCalendarModule }		from	"../modules/heroCalendarModule.js";
-import { uiModule }					from	"../modules/uiModule.js";
-import { navbarModule }				from	"../modules/navbarModule.js";
-import { scrollSectionHintModule }	from	"../modules/scrollSectionHintModule.js";
-
-import { cssVar }					from	"../utils/cssVar.js";
-import { clamp }					from	"../utils/helper.js";
-import { utils }					from	"../utils/utils.js";
-
-// ---------------------------------------------------------------------
-// SCROLL-ENGINE
-// ---------------------------------------------------------------------
+import { physics } from "./physics.js";
+import { SECTION_SELECTOR } from "./sectionSelector.js";
+import { state } from "./state.js";
+import { heroCalendarModule } from "../modules/heroCalendarModule.js";
+import { navbarModule } from "../modules/navbarModule.js";
+import { scrollSectionHintModule } from "../modules/scrollSectionHintModule.js"; 
+import { cssVar } from "../utils/cssVar.js";
+import { clamp } from "../utils/helper.js";
+import { utils } from "../utils/utils.js";
 
 export const scrollEngine = {
 	navbar: null,
 	hero: null,
 	
+	init() {
+		this.cacheDOM();
+		this.bindUserScrollInterrupts();
+		this.bindVisibilityChange();
+		this.bindResize();
+		this.bindGlobalScroll();
+	  },
+	
 	cacheDOM() {
 		this.navbar = document.querySelector(".navbar");
 		this.hero = document.querySelector(".hero");
 	},
-	
 	
     easeOutElastic(t) {
       if (t === 0) return 0;
@@ -300,7 +280,7 @@ export const scrollEngine = {
 	  };
 
 	  if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
-		uiModule.closeHeroCalendar({
+		heroCalendarModule.closeHeroCalendar({
 		  preserveAboutBoundaryAtTop: false,
 		  onComplete: startNavigation,
 		});
@@ -461,7 +441,7 @@ export const scrollEngine = {
 	  contactMapModule.resize();
 
 	  if (!state.ui.heroCalendarPrewarmObserver && !state.ui.heroCalendarPrewarmed) {
-		  uiModule.bindHeroCalendarPrewarm();
+		  heroCalendarModule.bindHeroCalendarPrewarm();
 		}
 
 		if (!state.ui.contactMapPrewarmed && !state.ui.contactMapPrewarmObserver) {
@@ -472,14 +452,14 @@ export const scrollEngine = {
 		clearTimeout(state.ui.fullCalendarResizeTimer);
 
 		state.ui.fullCalendarResizeTimer = setTimeout(() => {
-		  uiModule.positionHeroCalendar();
-		  uiModule.refreshFullCalendarView();
-		  uiModule.applyMeasuredHeroCalendarBox();
-		  uiModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+		  heroCalendarModule.positionHeroCalendar();
+		  heroCalendarModule.refreshFullCalendarView();
+		  heroCalendarModule.applyMeasuredHeroCalendarBox();
+		  heroCalendarModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
 
 		  requestAnimationFrame(() => {
-			uiModule.applyMeasuredHeroCalendarBox();
-			uiModule.updateFullCalendarSize();
+			heroCalendarModule.applyMeasuredHeroCalendarBox();
+			heroCalendarModule.updateFullCalendarSize();
 		  });
 		}, 120);
 	  }
@@ -494,15 +474,9 @@ export const scrollEngine = {
 		state.ui.heroCalendarKeepCtaFlat = false;
 	  }
 
-	  uiModule.closeHeroCalendarIfHeroFullyOut();
+	  heroCalendarModule.closeHeroCalendarIfHeroFullyOut();
 	  navbarModule.handleScroll();
-	},
+	}
     
-    init() {
-		this.cacheDOM();
-		this.bindUserScrollInterrupts();
-		this.bindVisibilityChange();
-		this.bindResize();
-		this.bindGlobalScroll();
-	  }
+    
   };
