@@ -3,9 +3,8 @@
 import { state } from "../core/state.js";
 import { ctaMagneticModule } from "./ctaMagneticModule.js";
 import { navbarModule } from "./navbarModule.js";
-import { cssVar } from "../utils/cssVar.js";
 import { prewarmUtils } from "../utils/prewarmUtils.js";
-import { resetAnimatedValue } from "../utils/helper.js";
+import { utils } from "../utils/utils.js";
 
 export const heroCalendarModule = {
 	
@@ -119,7 +118,7 @@ export const heroCalendarModule = {
 	},
 	
 	getHeroCalendarGap() {
-		return cssVar.lengthPx("--hero-calendar-gap", 20);
+		return utils.cssVar.lengthPx("--hero-calendar-gap", 20);
 	},
 
 	positionHeroCalendar() {
@@ -148,7 +147,7 @@ export const heroCalendarModule = {
 		state.ui.heroCalendarKeepCtaFlat = true;
 		state.ui.heroCalendarAnimating = true;
 		state.ui.heroCalendarLastScrollY = window.scrollY;
-		resetAnimatedValue(state.cta.elasticY, 0);
+		utils.resetAnimatedValue(state.cta.elasticY, 0);
 		navbarModule.renderCTA();
 
 		this.ensureFullCalendar();
@@ -254,7 +253,7 @@ export const heroCalendarModule = {
 
 			  this.destroyFullCalendar();
 
-			  resetAnimatedValue(state.cta.elasticY, 0);
+			  utils.resetAnimatedValue(state.cta.elasticY, 0);
 			  navbarModule.renderCTA();
 
 			  navbarModule.suppressCtaHoverTemporarily(250);
@@ -306,8 +305,8 @@ export const heroCalendarModule = {
 		this.heroCalendar.style.top = "";
 		this.heroCalendar.style.height = "";
 
-		resetAnimatedValue(state.cta.elasticY, 0);
-		resetAnimatedValue(state.hero.parallax, 0);
+		utils.resetAnimatedValue(state.cta.elasticY, 0);
+		utils.resetAnimatedValue(state.hero.parallax, 0);
 
 		navbarModule.renderCTA();
 		navbarModule.suppressCtaHoverTemporarily(250);
@@ -354,7 +353,7 @@ export const heroCalendarModule = {
 			: 0;
 
 		const aboutTop = about.getBoundingClientRect().top;
-		const autoCloseDepth = cssVar.lengthPx(
+		const autoCloseDepth = utils.cssVar.lengthPx(
 			"--hero-calendar-auto-close-depth",
 			120
 		);
@@ -411,15 +410,15 @@ export const heroCalendarModule = {
 	},
 	
 	getHeroCalendarLayoutDuration() {
-		return cssVar.timeMs("--hero-calendar-layout-duration", 750);
+		return utils.cssVar.timeMs("--hero-calendar-layout-duration", 750);
 	},
 
 	getHeroCalendarRevealDelay() {
-		return cssVar.timeMs("--hero-calendar-reveal-delay", 180);
+		return utils.cssVar.timeMs("--hero-calendar-reveal-delay", 180);
 	},
 
 	getHeroCalendarPreferredHeight() {
-		return cssVar.lengthPx(
+		return utils.cssVar.lengthPx(
 			"--hero-calendar-preferred-height",
 			window.innerWidth <= 768 ? 520 : 560
 		);
@@ -429,7 +428,7 @@ export const heroCalendarModule = {
 	  const about = document.getElementById("about");
 	  if (!about) return window.innerHeight * 0.2;
 
-	  const ratio = cssVar.number("--hero-calendar-prewarm-about-ratio", 0.2);
+	  const ratio = utils.cssVar.number("--hero-calendar-prewarm-about-ratio", 0.2);
 	  return Math.max(0, about.offsetHeight * ratio);
 	},
 	
@@ -478,7 +477,7 @@ export const heroCalendarModule = {
 
 		const gap = this.getHeroCalendarGap();
 		const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
-		const desiredBottomOffset = cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
+		const desiredBottomOffset = utils.cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
 		const ctaHeight = this.cta.getBoundingClientRect().height || 64;
 		
 		this.heroContent?.style.setProperty(
@@ -487,7 +486,7 @@ export const heroCalendarModule = {
 		);
 
 		/* gedachte kompakte Navbar-Unterkante */
-		const compactNavHeight = cssVar.lengthPx("--nav-height-min", 58);
+		const compactNavHeight = utils.cssVar.lengthPx("--nav-height-min", 58);
 
 		/* Ausgangszustand sichern */
 		const previousExtra = state.ui.heroCalendarExtraHeight || 0;
