@@ -684,6 +684,6 @@ export const contactMapModule = {
 		  setTimeout(finish, 800);
 		});
 	  });
-	},
+	}
 	
 };
