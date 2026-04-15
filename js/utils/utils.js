@@ -1,6 +1,6 @@
 import { SETTINGS } from "../core/settings.js";
 
-export const utils = {
+export const utils: {
     PrefersReducedMotion() {
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     },
