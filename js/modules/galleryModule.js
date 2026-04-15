@@ -5,7 +5,7 @@ import { navbarModule } from "./navbarModule.js";
 import { utils } from "../utils/utils.js";
 
 // ---------------------------------------------------------------------
-// GALLERY-MODUL
+// GALLERY MODUL
 // ---------------------------------------------------------------------
 
 export const galleryModule = {

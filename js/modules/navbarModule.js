@@ -10,6 +10,10 @@ import { ctaMagneticModule } from "./ctaMagneticModule.js";
 import { clamp,easeOutCubic,resetAnimatedValue,stepAnimatedValue,isAnimatedValueMoving } from "../utils/helper.js";
 import { utils } from "../utils/utils.js";
 
+// ---------------------------------------------------------------------
+// NAVBAR MODUL
+// ---------------------------------------------------------------------
+
 export const navbarModule = {
 	navToggle: null,
 	navMenu: null,

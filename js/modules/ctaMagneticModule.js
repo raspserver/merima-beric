@@ -6,7 +6,7 @@ import { heroCalendarModule } from "./heroCalendarModule.js";
 import { navbarModule } from "./navbarModule.js";
 
 // ---------------------------------------------------------------------
-// CTA MAGNETIC MODULE
+// CTA MAGNETIC MODUL
 // ---------------------------------------------------------------------
 
 export const ctaMagneticModule = {
