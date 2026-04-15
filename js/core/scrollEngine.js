@@ -91,7 +91,7 @@ export const scrollEngine = {
         ? 0
         : target.getBoundingClientRect().top + window.pageYOffset - navOffset + inset;
 
-      return clamp(y, 0, utils.getMaxScrollY());
+      return utils.clamp(y, 0, utils.getMaxScrollY());
     },
 
     hardSnap(y) {
@@ -107,7 +107,7 @@ export const scrollEngine = {
 
       const scrollToken = ++state.scroll.activeToken;
       const maxScrollY = utils.getMaxScrollY();
-      const clampedTargetY = clamp(targetY, 0, maxScrollY);
+      const clampedTargetY = utils.clamp(targetY, 0, maxScrollY);
       const startY = window.scrollY;
       const distance = clampedTargetY - startY;
       const absDistance = Math.abs(distance);
@@ -136,7 +136,7 @@ export const scrollEngine = {
         const elapsed = now - startTime;
         const t = Math.min(elapsed / duration, 1);
         const eased = utils.prefersReducedMotion() ? t : this.easeOutElastic(t);
-        const nextY = clamp(startY + distance * eased, 0, maxScrollY);
+        const nextY = utils.clamp(startY + distance * eased, 0, maxScrollY);
 
         window.scrollTo(0, nextY);
 
