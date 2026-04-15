@@ -544,7 +544,7 @@ export const contactMapModule = {
   bindPrewarm() {
     const contact = this.getContactSection();
 
-    prewarmUtils.bind({
+    utils.prewarmUtils.bind({
       element: contact,
       stateKeyObserver: "contactMapPrewarmObserver",
       stateKeyPrewarmed: "contactMapPrewarmed",
