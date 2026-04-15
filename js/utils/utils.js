@@ -158,14 +158,12 @@ export const utils = {
 
             return Number.isFinite(px) && px > 0 ? px : fallbackPx;
         }
-    },
+    }
 
 // ---------------------------------------------------------------------
 // HELPER
 // ---------------------------------------------------------------------    
 
-	clamp(value, min, max) {
-		return Math.max(min, Math.min(value, max));
-	}
+	
 
 };
