@@ -495,10 +495,16 @@ export const navbarModule = {
 
         if (insideMenu || onToggle || onLogo) return;
 
-		/* CTA soll NICHT als Outside-Click gelten */
 		if (onCta) {
+		  e.preventDefault();
+		  e.stopPropagation();
+
+		  state.ui.suppressNextClick = true;
+
 		  this.suppressCtaHoverTemporarily();
 		  ctaMagneticModule.resetCtaMagnetic();
+
+		  this.closeMenu();
 		  return;
 		}
 

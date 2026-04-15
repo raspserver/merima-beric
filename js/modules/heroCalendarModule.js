@@ -755,14 +755,15 @@ export const heroCalendarModule = {
   },
 
   toggle() {
-    if (state.ui.heroCalendarAnimating) return;
+	  if (state.ui.heroCalendarAnimating) return;
+	  if (navbarModule.isOpen()) return; // extra safety
 
-    if (state.ui.heroCalendarOpen) {
-      this.closeHeroCalendar();
-    } else {
-      this.openHeroCalendar();
-    }
-  },
+	  if (state.ui.heroCalendarOpen) {
+		this.closeHeroCalendar();
+	  } else {
+		this.openHeroCalendar();
+	  }
+	},
 
   stopPropagation(e) {
     e.stopPropagation();
