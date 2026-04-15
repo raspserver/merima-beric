@@ -1,7 +1,7 @@
 // scrollEngine.js
 
 import { physics } from "./physics.js";
-import { SECTION_SELECTOR } from "./sectionSelector.js";
+//~ import { SECTION_SELECTOR } from "./sectionSelector.js";
 import { SETTINGS } from "./settings.js";
 import { state } from "./state.js";
 import { heroCalendarModule } from "../modules/heroCalendarModule.js";
