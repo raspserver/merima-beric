@@ -18,8 +18,13 @@ export const SETTINGS = {
         "videos/snaptik_7204469200172190982_hd.mp4",
         "videos/snaptik_7208965603661499654_hd.mp4",
         "videos/snaptik_7211607331648441605_hd.mp4",
-        "videos/snaptik_7444629475364474145_hd.mp4",
+        "videos/snaptik_7444629475364474145_hd.mp4"
       ],
       swipeThreshold: 80,
     },
+    
+    SECTION_SELECTOR: {
+    "#about, #gallery, #services, #pricing, #testimonials, #contact"
+    }
+    
   };
