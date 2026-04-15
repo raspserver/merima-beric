@@ -166,11 +166,11 @@ export const utils = {
 
 clamp(value, min, max) {
     return Math.max(min, Math.min(value, max));
-  }
+  };
 
 easeOutCubic(t) {
     return 1 - Math.pow(1 - t, 3);
-  }
+  };
 
 createAnimatedValue(initial = 0) {
     return {
@@ -178,13 +178,13 @@ createAnimatedValue(initial = 0) {
       target: initial,
       velocity: 0,
     };
-  }
+  };
 
 resetAnimatedValue(animated, value = 0) {
     animated.current = value;
     animated.target = value;
     animated.velocity = 0;
-  }
+  };
 
 stepAnimatedValue(animated, spring, delta) {
     const result = spring.step(
@@ -196,11 +196,11 @@ stepAnimatedValue(animated, spring, delta) {
 
     animated.current = result.current;
     animated.velocity = result.velocity;
-  }
+  };
 
 isAnimatedValueMoving(animated, spring) {
     return !spring.isSettled(animated.current, animated.target, animated.velocity);
-  }
+  };
 
 createSpring({ stiffness, damping, precision = 0.001 }) {
     return {
