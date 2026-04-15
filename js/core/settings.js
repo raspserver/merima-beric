@@ -23,8 +23,13 @@ export const SETTINGS = {
       swipeThreshold: 80,
     },
     
-    SECTION_SELECTOR: {
-    "#about, #gallery, #services, #pricing, #testimonials, #contact"
-    }
+    SECTION_SELECTOR: [
+		"#about",
+		"#gallery",
+		"#services",
+		"#pricing",
+		"#testimonials",
+		"#contact"
+    ]
     
   };
