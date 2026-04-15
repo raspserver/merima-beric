@@ -3,6 +3,7 @@
 import { state } from "../core/state.js";
 import { clamp } from "../utils/helper.js";
 import { utils } from "../utils/utils.js";
+import { heroCalendarModule } from "./heroCalendarModule.js";
 import { navbarModule } from "./navbarModule.js";
 
 export const ctaMagneticModule = {
@@ -256,8 +257,7 @@ export const ctaMagneticModule = {
 	this.cta?.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		this.toggleHeroCalendar();
+		heroCalendarModule.toggle();
 	});
 
       this.ctaMagneticButtons = [...document.querySelectorAll(".cta-button")].map(

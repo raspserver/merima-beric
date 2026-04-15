@@ -1,6 +1,7 @@
 // heroCalendarModule.js
 
 import { state } from "../core/state.js";
+import { ctaMagneticModule } from "./ctaMagneticModule.js";
 import { navbarModule } from "./navbarModule.js";
 import { cssVar } from "../utils/cssVar.js";
 import { prewarmUtils } from "../utils/prewarmUtils.js";
@@ -138,7 +139,7 @@ export const heroCalendarModule = {
 		if (state.ui.heroCalendarAnimating || state.ui.heroCalendarOpen) return;
 
 		this.clearHeroCalendarTimers();
-		this.resetCtaMagnetic();
+		ctaMagneticModule.resetCtaMagnetic();
 		navbarModule.applyCtaNeutralState();
 
 		this.hero.classList.add("hero-calendar-active");
