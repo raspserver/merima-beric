@@ -1,95 +1,68 @@
-// ---------------------------------------------------------------------
-// javascript Verzeichnisstruktur
-// ---------------------------------------------------------------------
-//	/js
-//		/core
-//			/bindUserScrollInterrupts.js
-//			/physics.js
-//			/scrollEngine.js
-//			/sectionSelector.js
-//			/settings.js
-//			/springs.js
-//			/state.js
-//		/modules
-//			/contactMapModule.js
-//			/galleryModule.js
-//			/navbarModule.js
-//			/performanceModule.js
-//			/scrollSectionHintModule.js
-//			/scrollSectionHintPositionModule.js
-//			/sectionNavigationModule.js
-//			/uiModule.js
-//		/utils
-//			/cssVar.js
-//			/helper.js
-//			/prewarmUtils.js
-//			/utils.js
-//		/main.js
-// ---------------------------------------------------------------------
+// scrollSectionHintPositionModule.js
 
-import { clamp }		from	'../utils/helper.js';
+import { utils } from "../utils/utils.js";
 
 // ---------------------------------------------------------------------
 // POSITIONIERUNG DER SCROLL-HINT-SPALTE
 // ---------------------------------------------------------------------
 
 export const scrollSectionHintPositionModule = {
-    update() {
-      const hintsRoot = document.querySelector(".scroll-section-hints");
-      if (!hintsRoot) return;
+  init() {
+    this.update();
 
-      const referenceColumn =
-        document.querySelector("#about .about-text") ||
-        document.querySelector("#about .container") ||
-        document.querySelector("section .container");
+    window.addEventListener("resize", () => this.update());
+    window.addEventListener("orientationchange", () =>
+      setTimeout(() => this.update(), 120)
+    );
+    window.addEventListener("pageshow", () =>
+      requestAnimationFrame(() => this.update())
+    );
 
-      if (!referenceColumn) return;
+    document.fonts?.ready?.then(() => this.update());
+  },
+	
+  update() {
+    const hintsRoot = document.querySelector(".scroll-section-hints");
+    if (!hintsRoot) return;
 
-      const contentLeft = referenceColumn.getBoundingClientRect().left;
-      const hintCenterX = contentLeft / 2;
+    const referenceColumn =
+      document.querySelector("#about .about-text") ||
+      document.querySelector("#about .container") ||
+      document.querySelector("section .container");
 
-      document.documentElement.style.setProperty(
-        "--scroll-hint-column-center",
-        `${hintCenterX}px`
-      );
+    if (!referenceColumn) return;
 
-      document.documentElement.style.setProperty(
-        "--gallery-hint-lane-width",
-        `${contentLeft}px`
-      );
+    const contentLeft = referenceColumn.getBoundingClientRect().left;
+    const hintCenterX = contentLeft / 2;
 
-      hintsRoot.style.setProperty(
-        "--scroll-hint-column-center",
-        `${hintCenterX}px`
-      );
+    document.documentElement.style.setProperty(
+      "--scroll-hint-column-center",
+      `${hintCenterX}px`
+    );
 
-      const gallerySlider = document.querySelector(".gallery-slider");
-      if (!gallerySlider) return;
+    document.documentElement.style.setProperty(
+      "--gallery-hint-lane-width",
+      `${contentLeft}px`
+    );
 
-      const sliderRect = gallerySlider.getBoundingClientRect();
-      const laneLeftInsideSlider = clamp(
-        hintCenterX - sliderRect.left,
-        0,
-        sliderRect.width
-      );
+    hintsRoot.style.setProperty(
+      "--scroll-hint-column-center",
+      `${hintCenterX}px`
+    );
 
-      gallerySlider.style.setProperty(
-        "--gallery-lane-left",
-        `${laneLeftInsideSlider}px`
-      );
-    },
+    const gallerySlider = document.querySelector(".gallery-slider");
+    if (!gallerySlider) return;
 
-    init() {
-      this.update();
+    const sliderRect = gallerySlider.getBoundingClientRect();
+    const laneLeftInsideSlider = utils.clamp(
+      hintCenterX - sliderRect.left,
+      0,
+      sliderRect.width
+    );
 
-      window.addEventListener("resize", () => this.update());
-      window.addEventListener("orientationchange", () =>
-        setTimeout(() => this.update(), 120)
-      );
-      window.addEventListener("pageshow", () =>
-        requestAnimationFrame(() => this.update())
-      );
-
-      document.fonts?.ready?.then(() => this.update());
-    }
-  };
+    gallerySlider.style.setProperty(
+      "--gallery-lane-left",
+      `${laneLeftInsideSlider}px`
+    );
+  }
+};
