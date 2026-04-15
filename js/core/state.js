@@ -2,6 +2,10 @@
 
 import { utils } from "../utils/utils.js";
 
+// ---------------------------------------------------------------------
+// ZENTRALER STATE
+// ---------------------------------------------------------------------
+
 export const state = {
   lastScrollY: window.scrollY,
   scrollVelocity: 0,

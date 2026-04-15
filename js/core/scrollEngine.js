@@ -8,6 +8,10 @@ import { navbarModule } from "../modules/navbarModule.js";
 import { scrollSectionHintModule } from "../modules/scrollSectionHintModule.js"; 
 import { utils } from "../utils/utils.js";
 
+// ---------------------------------------------------------------------
+// SCROLL ENGINE
+// ---------------------------------------------------------------------
+
 export const scrollEngine = {
   navbar: null,
   hero: null,

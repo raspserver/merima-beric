@@ -14,23 +14,25 @@ import { scrollSectionHintPositionModule } from "./modules/scrollSectionHintPosi
 import { sectionNavigationModule } from "./modules/sectionNavigationModule.js";
 import { uiModule } from "./modules/uiModule.js";
 
+// ---------------------------------------------------------------------
+// MAIN.JS
+// ---------------------------------------------------------------------
+
 document.addEventListener("DOMContentLoaded", () => {
+  function init() {
+    physics.update();
+    scrollEngine.init();
+    contactMapModule.init();
+    ctaMagneticModule.init();
+    galleryModule.init();
+    heroCalendarModule.init();
+    navbarModule.init();
+    // performanceModule.init();
+    scrollSectionHintModule.init();
+    scrollSectionHintPositionModule.init();
+    sectionNavigationModule.init();
+    uiModule.init();
+  }
 
-	function init() { 
-		physics.update();
-		scrollEngine.init();
-		contactMapModule.init();
-		ctaMagneticModule.init();
-		galleryModule.init();
-		heroCalendarModule.init();
-		navbarModule.init();
-		//~ performanceModule.init();
-		scrollSectionHintModule.init();
-		scrollSectionHintPositionModule.init();
-		sectionNavigationModule.init();
-		uiModule.init();
-	}
-
-	init();
-
+  init();
 });
