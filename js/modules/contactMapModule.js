@@ -9,16 +9,26 @@ import { utils } from "../utils/utils.js";
 // ---------------------------------------------------------------------
 
 export const contactMapModule = {
-  map: null,
-  container: null,
-  marker: null,
-  isInitializing: false,
-  entranceObserver: null,
-  navIntentHandlersBound: false,
-  navAnimationTimer: null,
+	map: null,
+	container: null,
+	marker: null,
+	isInitializing: false,
+	entranceObserver: null,
+	navIntentHandlersBound: false,
+	navAnimationTimer: null,
   
 	readyPromise: null,
 	readyResolve: null,
+
+	init() {
+		state.ui.contactMapNavCinematicRequested ??= false;
+
+		this.initMapLibre();
+		this.bindPrewarm();
+		this.bindLifecycle();
+		this.bindNavbarIntent();
+		this.maybeResetOnSectionExit();
+	  },
 
   getContainer() {
     return document.getElementById("contact-map");
@@ -212,7 +222,7 @@ export const contactMapModule = {
     );
   },
   
-  init() {
+  initMapLibre() {
 	  this.container = this.getContainer();
 
 	  if (!this.container || typeof maplibregl === "undefined") return;
@@ -295,7 +305,7 @@ export const contactMapModule = {
     if (state.ui.contactMapPrewarmed || this.map) return;
 
     state.ui.contactMapPrewarmed = true;
-    this.init();
+    this.initMapLibre();
   },
 
   clearReinitTimer() {
@@ -569,16 +579,6 @@ export const contactMapModule = {
         this.resize();
       }
     });
-  },
-
-  initModule() {
-    state.ui.contactMapNavCinematicRequested ??= false;
-
-    this.init();
-    this.bindPrewarm();
-    this.bindLifecycle();
-    this.bindNavbarIntent();
-    this.maybeResetOnSectionExit();
   },
   
   runEntranceAnimationWhenVisible() {

@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	function init() { 
 		physics.update();
 		scrollEngine.init();
-		contactMapModule.initModule();
+		contactMapModule.init();
 		ctaMagneticModule.init();
 		galleryModule.init();
 		heroCalendarModule.init();
