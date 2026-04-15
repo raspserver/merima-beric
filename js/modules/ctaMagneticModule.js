@@ -5,6 +5,10 @@ import { utils } from "../utils/utils.js";
 import { heroCalendarModule } from "./heroCalendarModule.js";
 import { navbarModule } from "./navbarModule.js";
 
+// ---------------------------------------------------------------------
+// CTA MAGNETIC MODULE
+// ---------------------------------------------------------------------
+
 export const ctaMagneticModule = {
   ctaMagneticButtons: [],
   ctaMagneticRunning: false,
