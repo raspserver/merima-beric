@@ -8,7 +8,7 @@ import { utils } from "../utils/utils.js";
 // CONTACT MAP (MAPLIBRE 3D)
 // ---------------------------------------------------------------------
 
-export const contactMapModule = {
+export const const contactMapModule = {
   map: null,
   container: null,
   marker: null,
@@ -16,8 +16,9 @@ export const contactMapModule = {
   entranceObserver: null,
   navIntentHandlersBound: false,
   navAnimationTimer: null,
-  readyPromise: null,
-  readyResolve: null,
+  
+	readyPromise: null,
+	readyResolve: null,
 
   getContainer() {
     return document.getElementById("contact-map");
@@ -129,10 +130,10 @@ export const contactMapModule = {
   getReducedMotionEnabled() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   },
-
+  
   getNavbarIntentSelector() {
-    return '[data-contact-nav-flyto]';
-  },
+	  return '[data-contact-nav-flyto]';
+	},
 
   findFirstLabelLayerId() {
     if (!this.map) return undefined;
@@ -196,81 +197,81 @@ export const contactMapModule = {
             ["zoom"],
             15, 0,
             16, ["coalesce", ["get", "render_height"], 0]
-          ],
+          ],    
           "fill-extrusion-base": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            15, 0,
-            16, ["coalesce", ["get", "render_min_height"], 0]
-          ],
+			  "interpolate",
+			  ["linear"],
+			  ["zoom"],
+			  15, 0,
+			  16, ["coalesce", ["get", "render_min_height"], 0]
+			],
           "fill-extrusion-opacity": 0.92
         }
       },
       labelLayerId
     );
   },
-
+  
   init() {
-    this.container = this.getContainer();
+	  this.container = this.getContainer();
 
-    if (!this.container || typeof maplibregl === "undefined") return;
-    if (this.map || this.isInitializing) return;
+	  if (!this.container || typeof maplibregl === "undefined") return;
+	  if (this.map || this.isInitializing) return;
 
-    this.isInitializing = true;
-    this.createReadyPromise();
+	  this.isInitializing = true;
+	  this.createReadyPromise();
 
-    const salonCoords = this.getSalonCoords();
+	  const salonCoords = this.getSalonCoords();
 
-    this.map = new maplibregl.Map({
-      container: this.container,
-      style: this.getMapStyle(),
-      center: salonCoords,
-      zoom: this.getStartZoom(),
-      pitch: this.getStartPitch(),
-      bearing: this.getStartBearing(),
-      attributionControl: false,
-      canvasContextAttributes: { antialias: true }
-    });
+	  this.map = new maplibregl.Map({
+		container: this.container,
+		style: this.getMapStyle(),
+		center: salonCoords,
+		zoom: this.getStartZoom(),
+		pitch: this.getStartPitch(),
+		bearing: this.getStartBearing(),
+		attributionControl: false,
+		canvasContextAttributes: { antialias: true }
+	  });
 
-    this.marker = new maplibregl.Marker({ color: "#d4af37" })
-      .setLngLat(salonCoords)
-      .addTo(this.map);
+	  this.marker = new maplibregl.Marker({ color: "#d4af37" })
+		.setLngLat(salonCoords)
+		.addTo(this.map);
 
-    this.map.once("load", () => {
-      if (!this.map) {
-        this.isInitializing = false;
-        return;
-      }
+	  this.map.once("load", () => {
+		if (!this.map) {
+		  this.isInitializing = false;
+		  return;
+		}
 
-      this.isInitializing = false;
-      this.resize();
-      this.add3DBuildings();
-      this.runEntranceAnimationWhenVisible();
+		this.isInitializing = false;
+		this.resize();
+		this.add3DBuildings();
+		this.runEntranceAnimationWhenVisible();
 
-      this.map.once("idle", () => {
-        this.resolveReady();
-      });
-    });
+		this.map.once("idle", () => {
+		  this.resolveReady();
+		});
+	  });
 
-    this.map.on("error", (error) => {
-      console.error("MapLibre Fehler:", error);
-      this.isInitializing = false;
-      this.resolveReady();
-    });
+	  this.map.on("error", (error) => {
+		console.error("MapLibre Fehler:", error);
+		this.isInitializing = false;
+		this.resolveReady();
+	  });
 
-    this.map.on("remove", () => {
-      this.disconnectEntranceObserver();
-      this.clearNavAnimationTimer();
-      this.map = null;
-      this.marker = null;
-      this.isInitializing = false;
-      state.ui.contactMapAnimated = false;
+	  this.map.on("remove", () => {
+		this.disconnectEntranceObserver();
+		this.clearNavAnimationTimer();
+		this.map = null;
+		this.marker = null;
+		this.isInitializing = false;
+		state.ui.contactMapAnimated = false;
 
-      this.readyPromise = null;
-      this.readyResolve = null;
-    });
-  },
+		this.readyPromise = null;
+		this.readyResolve = null;
+	  });
+	},
 
   destroy() {
     if (!this.map) return;
@@ -324,45 +325,45 @@ export const contactMapModule = {
   },
 
   bindNavbarIntent() {
-    if (this.navIntentHandlersBound) return;
+	  if (this.navIntentHandlersBound) return;
 
-    const selector = this.getNavbarIntentSelector();
-    if (!selector) return;
+	  const selector = this.getNavbarIntentSelector();
+	  if (!selector) return;
 
-    const handler = (event) => {
-      const trigger = event.target?.closest?.(selector);
-      if (!trigger) return;
+	  const handler = (event) => {
+		const trigger = event.target?.closest?.(selector);
+		if (!trigger) return;
 
-      // Zusätzliche Absicherung:
-      // Nur Links/Buttons akzeptieren, die wirklich auf #contact zeigen
-      const href = trigger.getAttribute("href");
-      const target = trigger.getAttribute("data-target");
-      const controls = trigger.getAttribute("aria-controls");
+		// Zusätzliche Absicherung:
+		// Nur Links/Buttons akzeptieren, die wirklich auf #contact zeigen
+		const href = trigger.getAttribute("href");
+		const target = trigger.getAttribute("data-target");
+		const controls = trigger.getAttribute("aria-controls");
 
-      const pointsToContact =
-        href === "#contact" ||
-        target === "#contact" ||
-        controls === "contact";
+		const pointsToContact =
+		  href === "#contact" ||
+		  target === "#contact" ||
+		  controls === "contact";
 
-      if (!pointsToContact) return;
+		if (!pointsToContact) return;
 
-      state.ui.contactMapNavCinematicRequested = true;
-      this.prewarm();
-    };
+		state.ui.contactMapNavCinematicRequested = true;
+		this.prewarm();
+	  };
 
-    document.addEventListener("click", handler, true);
+	  document.addEventListener("click", handler, true);
 
-    document.addEventListener(
-      "keydown",
-      (event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        handler(event);
-      },
-      true
-    );
+	  document.addEventListener(
+		"keydown",
+		(event) => {
+		  if (event.key !== "Enter" && event.key !== " ") return;
+		  handler(event);
+		},
+		true
+	  );
 
-    this.navIntentHandlersBound = true;
-  },
+	  this.navIntentHandlersBound = true;
+	},
 
   resetView() {
     if (!this.map) return;
@@ -374,34 +375,33 @@ export const contactMapModule = {
       center: this.getSalonCoords(),
       zoom: this.getStartZoom(),
       pitch: this.getStartPitch(),
-      bearing: this.getStartBearing(),
+      bearing: this.getStartBearing()
     });
 
-    // Animation beendet
     state.ui.contactMapAnimated = false;
     this.disconnectEntranceObserver();
   },
-
+  
   async playAnimationFlow({ cinematic = false } = {}) {
-    this.prewarm();
+	  this.prewarm();
 
-    await this.waitForMapReady();
-    await this.waitUntilVisible();
-    await this.waitForStableRender();
+	  await this.waitForMapReady();
+	  await this.waitUntilVisible();
+	  await this.waitForStableRender();
 
-    if (!this.map || state.ui.contactMapAnimated) return;
-
-    if (cinematic) {
-      this.map.once("render", () => {
-        this.map.once("idle", () => {
-          if (!this.map || state.ui.contactMapAnimated) return;
-          this.playNavbarCinematic();
-        });
-      });
-    } else {
-      this.playEntranceAnimation();
-    }
-  },
+	  if (!this.map || state.ui.contactMapAnimated) return;
+		
+		if (cinematic) {
+		  this.map.once("render", () => {
+			this.map.once("idle", () => {
+			  if (!this.map || state.ui.contactMapAnimated) return;
+			  this.playNavbarCinematic();
+			});
+		  });
+		} else {
+		  this.playEntranceAnimation();
+		}
+	},
 
   playEntranceAnimation() {
     if (!this.map || state.ui.contactMapAnimated) return;
@@ -414,10 +414,9 @@ export const contactMapModule = {
       pitch: this.getEndPitch(),
       bearing: this.getEndBearing(),
       duration: this.getAnimationDurationMs(),
-      essential: true,
+      essential: true
     });
 
-    // Animation gestartet
     state.ui.contactMapAnimated = true;
   },
 
@@ -430,7 +429,7 @@ export const contactMapModule = {
       center: this.getCinematicStartCoords(),
       zoom: this.getCinematicStartZoom(),
       pitch: this.getCinematicStartPitch(),
-      bearing: this.getCinematicStartBearing(),
+      bearing: this.getCinematicStartBearing()
     });
   },
 
@@ -442,10 +441,9 @@ export const contactMapModule = {
         center: this.getSalonCoords(),
         zoom: this.getEndZoom(),
         pitch: this.getEndPitch(),
-        bearing: this.getEndBearing(),
+        bearing: this.getEndBearing()
       });
 
-      // Cinematic übersprungen
       state.ui.contactMapAnimated = true;
       return;
     }
@@ -464,7 +462,7 @@ export const contactMapModule = {
         essential: true,
         speed: this.getFlySpeed(),
         curve: this.getFlyCurve(),
-        screenSpeed: this.getFlyScreenSpeed(),
+        screenSpeed: this.getFlyScreenSpeed()
       };
 
       if (this.getUseMinZoom()) {
@@ -545,4 +543,147 @@ export const contactMapModule = {
     state.ui.contactMapLastOutsideZone = zone;
   },
 
+  bindPrewarm() {
+    const contact = this.getContactSection();
+
+    prewarmUtils.bind({
+      element: contact,
+      stateKeyObserver: "contactMapPrewarmObserver",
+      stateKeyPrewarmed: "contactMapPrewarmed",
+      getDistancePx: () => this.getPrewarmDistancePx(),
+      onPrewarm: () => this.prewarm(),
+    });
+  },
+
+  bindLifecycle() {
+    window.addEventListener(
+      "scroll",
+      () => {
+        this.maybeResetOnSectionExit();
+      },
+      { passive: true }
+    );
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        this.resize();
+      }
+    });
+  },
+
+  initModule() {
+    state.ui.contactMapNavCinematicRequested ??= false;
+
+    this.init();
+    this.bindPrewarm();
+    this.bindLifecycle();
+    this.bindNavbarIntent();
+    this.maybeResetOnSectionExit();
+  },
+  
+  runEntranceAnimationWhenVisible() {
+	  if (state.ui.contactMapAnimated) return;
+
+	  const target = this.getContainer();
+	  if (!target) return;
+
+	  this.disconnectEntranceObserver();
+
+	  this.entranceObserver = new IntersectionObserver(
+		(entries) => {
+		  const entry = entries[0];
+		  if (!entry || entry.intersectionRatio < 0.6) return;
+
+		  this.disconnectEntranceObserver();
+
+		  const cinematic = this.consumeNavbarContactIntent();
+
+		  this.playAnimationFlow({ cinematic });
+		},
+		{ threshold: 0.6 }
+	  );
+
+	  this.entranceObserver.observe(target);
+	},
+  
+  createReadyPromise() {
+	  if (this.readyPromise) return this.readyPromise;
+
+	  this.readyPromise = new Promise((resolve) => {
+		this.readyResolve = resolve;
+	  });
+
+	  return this.readyPromise;
+	},
+
+	resolveReady() {
+	  if (this.readyResolve) {
+		this.readyResolve();
+		this.readyResolve = null;
+	  }
+	},
+	
+	waitForMapReady() {
+	  if (!this.map) return Promise.resolve();
+
+	  return new Promise((resolve) => {
+		if (this.map.loaded()) {
+		  this.map.once("idle", resolve);
+		  setTimeout(resolve, 1000);
+		  return;
+		}
+
+		this.map.once("load", () => {
+		  this.map.once("idle", resolve);
+		  setTimeout(resolve, 1000);
+		});
+	  });
+	},
+	
+	waitUntilVisible() {
+	  const el = this.getContainer();
+	  if (!el) return Promise.resolve();
+
+	  return new Promise((resolve) => {
+		const check = () => {
+		  const rect = el.getBoundingClientRect();
+		  const visible =
+			rect.top < window.innerHeight &&
+			rect.bottom > 0;
+
+		  if (visible) {
+			resolve();
+		  } else {
+			requestAnimationFrame(check);
+		  }
+		};
+
+		check();
+	  });
+	},
+	
+	waitForStableRender() {
+	  if (!this.map) return Promise.resolve();
+
+	  return new Promise((resolve) => {
+		requestAnimationFrame(() => {
+		  this.resize();
+
+		  let done = false;
+
+		  const finish = () => {
+			if (done) return;
+			done = true;
+			resolve();
+		  };
+
+		  this.map.once("render", () => {
+			this.map.once("idle", finish);
+		  });
+
+		  setTimeout(finish, 800);
+		});
+	  });
+	},
+	
 };
