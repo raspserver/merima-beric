@@ -17,7 +17,7 @@ export const heroCalendarModule = {
 	init() {
 		this.cacheDOM();
 		this.bindEvents();
-		this.bindPrewarm();
+		this.prewarmHeroCalendar();
 	  },
 
 	cacheDOM() {
@@ -733,7 +733,7 @@ export const heroCalendarModule = {
 	},
 
 	bindHeroCalendarPrewarm() {
-	  this.prewarmUtils.bind({
+	  prewarmUtils.bind({
 		element: this.hero,
 		stateKeyObserver: "heroCalendarPrewarmObserver",
 		stateKeyPrewarmed: "heroCalendarPrewarmed",
