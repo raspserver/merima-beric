@@ -65,7 +65,7 @@ export const physics = {
     update() {
       const isMobile = utils.isPhysicsMobileViewport();
 
-      this.values.NAV_SURFACE_UP = cssVar.number("--nav-surface-up", 0.18);
+      this.values.NAV_SURFACE_UP = utils.cssVar.number("--nav-surface-up", 0.18);
       this.values.sectionScrollInset = cssVar.number("--section-scroll-inset", 1);
 
       this.values.scrollElasticDecay = cssVar.number("--scroll-elastic-decay", 10);
