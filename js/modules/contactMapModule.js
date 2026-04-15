@@ -7,7 +7,8 @@ import { utils } from "../utils/utils.js";
 // ---------------------------------------------------------------------
 // CONTACT MAP (MAPLIBRE 3D)
 // ---------------------------------------------------------------------
-const contactMapModule = {
+
+export const contactMapModule = {
   map: null,
   container: null,
   marker: null,
