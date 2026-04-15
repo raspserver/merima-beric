@@ -540,11 +540,11 @@ export const contactMapModule = {
 
     state.ui.contactMapLastOutsideZone = zone;
   },
-
+  
   bindPrewarm() {
     const contact = this.getContactSection();
 
-    utils.prewarmUtils.bind({
+    prewarmUtils.bind({
       element: contact,
       stateKeyObserver: "contactMapPrewarmObserver",
       stateKeyPrewarmed: "contactMapPrewarmed",
