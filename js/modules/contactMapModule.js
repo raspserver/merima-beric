@@ -1,6 +1,7 @@
 // contactMapModule.js
 
 import { state } from "../core/state.js";
+import { prewarmUtils } from "../utils/prewarmUtils.js";
 import { utils } from "../utils/utils.js";
 
 // ---------------------------------------------------------------------
@@ -544,7 +545,7 @@ export const contactMapModule = {
   bindPrewarm() {
     const contact = this.getContactSection();
 
-    utils.prewarmUtils.bind({
+    prewarmUtils.bind({
       element: contact,
       stateKeyObserver: "contactMapPrewarmObserver",
       stateKeyPrewarmed: "contactMapPrewarmed",
