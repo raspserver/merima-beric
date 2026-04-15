@@ -101,7 +101,7 @@ export const utils = {
       };
     },
     
-    const cssVar = {
+    cssVar = {
 		raw(name) {
 		  return getComputedStyle(document.documentElement)
 			.getPropertyValue(name)
