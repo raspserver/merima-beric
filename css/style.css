@@ -50,11 +50,9 @@
 	--contact-map-animation-duration: 10000ms;
 	
 	/* --------------------------------------------------
-   * Contact map – cinematic flight
-   * -------------------------------------------------- */
-/*
-  --contact-map-cinematic-start-zoom: 17.4;
-*/
+	* Contact map – cinematic flight
+	* -------------------------------------------------- */
+
   --contact-map-cinematic-start-zoom: 16.0;
   --contact-map-cinematic-start-pitch: 60;
   --contact-map-cinematic-start-bearing: -32;
