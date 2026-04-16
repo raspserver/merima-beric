@@ -22,6 +22,7 @@ export const state = {
     surface: utils.createAnimatedValue(0),
     gestureStretch: utils.createAnimatedValue(0),
     manualOpen: false,
+    behaviorState = "INIT";
   },
 
   hero: {

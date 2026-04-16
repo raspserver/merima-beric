@@ -233,47 +233,93 @@ export const navbarModule = {
       return;
     }
 
-    const isHero = this.isHeroInView();
-	const isOpen = state.nav.visible.target > 0.5;
+	const currentY = window.scrollY;
+	const direction = state.scrollDirection;
+	const isHero = this.isHeroInView();
+	const currentState = state.nav.behaviorState;
 
-	// 🔒 Kalender-Sonderfall → komplett ignorieren
-	if (state.ui.heroCalendarAnimating) {
+	// 🧊 Kalender → komplett ignorieren
+	if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
+	  state.lastScrollY = currentY;
 	  return;
 	}
 
+	// 🔝 TOP STATE
 	if (currentY <= 5) {
-	  state.nav.gestureStretch.target = 0;
+	  state.nav.behaviorState = "AT_TOP";
 	  this.setTargets(0, 0, 0);
 	  return;
 	}
 
-	if (isHero) {
-	  // ---------------------------
-	  // HERO LOGIK
-	  // ---------------------------
+	// ---------------------------
+	// STATE MACHINE
+	// ---------------------------
 
-	  if (!isOpen) {
-		if (state.scrollDirection === "down") {
-		  this.setTargets(1, 1, 1);
-		} else {
-		  this.setTargets(0, 0, 0);
+	switch (currentState) {
+	  case "INIT":
+		state.nav.behaviorState = this.getNavbarState();
+		break;
+
+	  case "AT_TOP":
+		if (currentY > 5) {
+		  state.nav.behaviorState = isHero
+			? "HERO_COLLAPSED"
+			: "SCROLLED";
 		}
-	  } else {
-		if (state.scrollDirection === "up") {
-		  this.setTargets(0, 0, 0);
-		} else {
-		  this.setTargets(1, 1, 1);
+		break;
+
+	  case "HERO_COLLAPSED":
+		if (!isHero) {
+		  state.nav.behaviorState = "SCROLLED";
+		  break;
 		}
-	  }
 
-	} else {
-	  // STANDARD (wie vorher)
+		if (direction === "down") {
+		  state.nav.behaviorState = "HERO_EXPANDED";
+		}
+		break;
 
-	  if (state.scrollDirection === "down") {
+	  case "HERO_EXPANDED":
+		if (!isHero) {
+		  state.nav.behaviorState = "SCROLLED";
+		  break;
+		}
+
+		if (direction === "up") {
+		  state.nav.behaviorState = "HERO_COLLAPSED";
+		}
+		break;
+
+	  case "SCROLLED":
+		if (isHero) {
+		  state.nav.behaviorState =
+			direction === "down"
+			  ? "HERO_EXPANDED"
+			  : "HERO_COLLAPSED";
+		}
+		break;
+	}
+	
+	switch (state.nav.behaviorState) {
+	  case "AT_TOP":
+		this.setTargets(0, 0, 0);
+		break;
+
+	  case "HERO_COLLAPSED":
+		this.setTargets(0, 0, 0);
+		break;
+
+	  case "HERO_EXPANDED":
 		this.setTargets(1, 1, 1);
-	  } else {
-		this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-	  }
+		break;
+
+	  case "SCROLLED":
+		if (direction === "down") {
+		  this.setTargets(1, 1, 1);
+		} else {
+		  this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+		}
+		break;
 	}
   },
   
@@ -282,6 +328,16 @@ export const navbarModule = {
     const rect = this.hero.getBoundingClientRect();
     return rect.top < window.innerHeight && rect.bottom > 0;
   },
+  
+  getNavbarState() {
+	  if (window.scrollY <= 5) return "AT_TOP";
+	  if (this.isHeroInView()) {
+		return state.nav.visible.current > 0.5
+		  ? "HERO_EXPANDED"
+		  : "HERO_COLLAPSED";
+	  }
+	  return "SCROLLED";
+	},
 
   renderNavbar() {
     const easedCompact = utils.easeOutCubic(state.nav.compact.current);
