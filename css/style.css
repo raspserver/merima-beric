@@ -1110,8 +1110,9 @@ body.nav-menu-open .cta-button:focus .cta-label {
   opacity: 0;
 }
 
-/* ===== OPEN PHASE 1 ===== */
-.cta-button.is-transitioning-open .cta-label--primary {
+/* ===== OPEN (immer versteckt sobald geöffnet oder im Übergang) ===== */
+.cta-button.is-transitioning-open .cta-label--primary,
+.cta-button.is-open .cta-label--primary {
   opacity: 0;
 }
 
