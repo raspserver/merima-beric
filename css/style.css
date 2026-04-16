@@ -867,6 +867,25 @@ html.hero-calendar-animating body,
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .cta-button {
 	position: absolute;
 	left: 50%;
@@ -1045,7 +1064,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 
 .cta-shell {
 	position: relative;
-	display: inline-flex;
+	display: inline-block;
 	align-items: center;
 	justify-content: center;
 
@@ -1068,7 +1087,12 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label {
-	position: relative;
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
 	z-index: 2;
 
 	font-weight: 500;
@@ -1080,7 +1104,30 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	transform:
 		translate3d(var(--label-x), var(--label-y), 0)
 		scale(var(--label-scale));
-	transition: color 0.3s ease;
+	transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* Default sichtbar */
+.cta-label--primary {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Default versteckt */
+.cta-label--secondary {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Beim Öffnen */
+.cta-button.calendar-open .cta-label--primary {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.cta-button.calendar-open .cta-label--secondary {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .cta-gloss {

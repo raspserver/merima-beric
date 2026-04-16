@@ -159,10 +159,6 @@ export const heroCalendarModule = {
     this.cta.classList.remove("is-hovered", "is-magnetic-near");
     this.cta.setAttribute("aria-expanded", "true");
 
-    if (this.ctaLabel) {
-      this.ctaLabel.textContent = "Kalender schließen";
-    }
-
     this.hero.classList.add("hero-calendar-open");
     this.heroCalendar.setAttribute("aria-hidden", "true");
     this.heroCalendar.classList.remove("is-open");
@@ -230,11 +226,6 @@ export const heroCalendarModule = {
 
             this.cta.classList.remove("calendar-open");
             this.cta.setAttribute("aria-expanded", "false");
-
-            if (this.ctaLabel) {
-              this.ctaLabel.textContent =
-                state.ui.ctaDefaultLabel || "Termin vereinbaren";
-            }
 
             this.hero.classList.remove("hero-calendar-open");
             this.hero.classList.remove("hero-calendar-active");
