@@ -264,72 +264,75 @@ export const navbarModule = {
 		return;
 	  }
 
-	  // ---------------------------
-	  // 🧠 STATE MACHINE
-	  // ---------------------------
+		// ---------------------------
+		// 🧠 STATE MACHINE
+		// ---------------------------
 
-	  let currentState = state.nav.behaviorState;
+		// INIT nur einmal
+		if (state.nav.behaviorState === "INIT") {
+		  state.nav.behaviorState = this.getNavbarState();
+		}
 
-	  if (currentState === "INIT") {
-		currentState = this.getNavbarState();
-		state.nav.behaviorState = currentState;
-	  }
+		// ❗ Schutz gegen Fake-Triggers (z.B. CTA Klick)
+		if (Math.abs(deltaY) < 0.5 && !state.scroll.programmatic) {
+		  return;
+		}
 
-	  switch (currentState) {
-		case "AT_TOP":
-		  state.nav.behaviorState = isHero
-			? "HERO_COLLAPSED"
-			: "SCROLLED";
-		  break;
+		switch (state.nav.behaviorState) {
+		  case "AT_TOP":
+			state.nav.behaviorState = isHero
+			  ? "HERO_COLLAPSED"
+			  : "SCROLLED";
+			break;
 
-		case "HERO_COLLAPSED":
-		  if (!isHero) {
-			state.nav.behaviorState = "SCROLLED";
-		  } else if (direction === "down") {
-			state.nav.behaviorState = "HERO_EXPANDED";
-		  }
-		  break;
+		  case "HERO_COLLAPSED":
+			if (!isHero) {
+			  state.nav.behaviorState = "SCROLLED";
+			} else if (direction === "down") {
+			  state.nav.behaviorState = "HERO_EXPANDED";
+			}
+			break;
 
-		case "HERO_EXPANDED":
-		  if (!isHero) {
-			state.nav.behaviorState = "SCROLLED";
-		  } else if (direction === "up") {
-			state.nav.behaviorState = "HERO_COLLAPSED";
-		  }
-		  break;
+		  case "HERO_EXPANDED":
+			if (!isHero) {
+			  state.nav.behaviorState = "SCROLLED";
+			} else if (direction === "up") {
+			  state.nav.behaviorState = "HERO_COLLAPSED";
+			}
+			break;
 
-		case "SCROLLED":
-		  if (isHero) {
-			state.nav.behaviorState =
-			  direction === "down"
-				? "HERO_EXPANDED"
-				: "HERO_COLLAPSED";
-		  }
-		  break;
-	  }
+		  case "SCROLLED":
+			if (isHero) {
+			  state.nav.behaviorState =
+				direction === "down"
+				  ? "HERO_EXPANDED"
+				  : "HERO_COLLAPSED";
+			}
+			break;
+		}
 
-	  // ---------------------------
-	  // 🎨 APPLY STATE → UI
-	  // ---------------------------
+		// ---------------------------
+		// 🎨 APPLY STATE → UI
+		// ---------------------------
 
-	  switch (state.nav.behaviorState) {
-		case "AT_TOP":
-		case "HERO_COLLAPSED":
-		  this.setTargets(0, 0, 0);
-		  break;
+		switch (state.nav.behaviorState) {
+		  case "AT_TOP":
+		  case "HERO_COLLAPSED":
+			this.setTargets(0, 0, 0);
+			break;
 
-		case "HERO_EXPANDED":
-		  this.setTargets(1, 1, 1);
-		  break;
-
-		case "SCROLLED":
-		  if (direction === "down") {
+		  case "HERO_EXPANDED":
 			this.setTargets(1, 1, 1);
-		  } else {
-			this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-		  }
-		  break;
-	  }
+			break;
+
+		  case "SCROLLED":
+			if (direction === "down") {
+			  this.setTargets(1, 1, 1);
+			} else {
+			  this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+			}
+			break;
+		}
 	},
   
   isHeroInView() {
