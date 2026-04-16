@@ -233,14 +233,54 @@ export const navbarModule = {
       return;
     }
 
-    if (currentY <= 5) {
-      state.nav.gestureStretch.target = 0;
-      this.setTargets(0, 0, 0);
-    } else if (state.scrollDirection === "down") {
-      this.setTargets(1, 1, 1);
-    } else {
-      this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-    }
+    const isHero = this.isHeroInView();
+	const isOpen = state.nav.visible.target > 0.5;
+
+	// 🔒 Kalender-Sonderfall → komplett ignorieren
+	if (state.ui.heroCalendarAnimating) {
+	  return;
+	}
+
+	if (currentY <= 5) {
+	  state.nav.gestureStretch.target = 0;
+	  this.setTargets(0, 0, 0);
+	  return;
+	}
+
+	if (isHero) {
+	  // ---------------------------
+	  // HERO LOGIK
+	  // ---------------------------
+
+	  if (!isOpen) {
+		if (state.scrollDirection === "down") {
+		  this.setTargets(1, 1, 1);
+		} else {
+		  this.setTargets(0, 0, 0);
+		}
+	  } else {
+		if (state.scrollDirection === "up") {
+		  this.setTargets(0, 0, 0);
+		} else {
+		  this.setTargets(1, 1, 1);
+		}
+	  }
+
+	} else {
+	  // STANDARD (wie vorher)
+
+	  if (state.scrollDirection === "down") {
+		this.setTargets(1, 1, 1);
+	  } else {
+		this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+	  }
+	}
+  },
+  
+  isHeroInView() {
+    if (!this.hero) return false;
+    const rect = this.hero.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0;
   },
 
   renderNavbar() {
