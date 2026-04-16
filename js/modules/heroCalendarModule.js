@@ -136,124 +136,132 @@ export const heroCalendarModule = {
   },
 
   openHeroCalendar() {
-    if (!this.cta || !this.heroCalendar || !this.hero) return;
-    if (state.ui.heroCalendarAnimating || state.ui.heroCalendarOpen) return;
+	  if (!this.cta || !this.heroCalendar || !this.hero) return;
+	  if (state.ui.heroCalendarAnimating || state.ui.heroCalendarOpen) return;
 
-    this.clearHeroCalendarTimers();
-    ctaMagneticModule.resetCtaMagnetic();
-    navbarModule.applyCtaNeutralState();
+	  this.clearHeroCalendarTimers();
+	  ctaMagneticModule.resetCtaMagnetic();
+	  navbarModule.applyCtaNeutralState();
 
-    this.hero.classList.add("hero-calendar-active");
-    this.hero.classList.add("hero-calendar-lock-motion");
+	  this.hero.classList.add("hero-calendar-active");
+	  this.hero.classList.add("hero-calendar-lock-motion");
 
-    state.ui.heroCalendarKeepCtaFlat = true;
-    state.ui.heroCalendarAnimating = true;
-    state.ui.heroCalendarLastScrollY = window.scrollY;
-    utils.resetAnimatedValue(state.cta.elasticY, 0);
-    navbarModule.renderCTA();
+	  state.ui.heroCalendarKeepCtaFlat = true;
+	  state.ui.heroCalendarAnimating = true;
+	  state.ui.heroCalendarLastScrollY = window.scrollY;
+	  utils.resetAnimatedValue(state.cta.elasticY, 0);
+	  navbarModule.renderCTA();
 
-    this.ensureFullCalendar();
-    this.positionHeroCalendar();
+	  this.ensureFullCalendar();
+	  this.positionHeroCalendar();
 
-    this.cta.classList.add("is-transitioning-open");
-    this.cta.classList.remove("is-hovered", "is-magnetic-near");
-    this.cta.setAttribute("aria-expanded", "true");
+	  /* 🔥 NEU: Übergangsphase starten */
+	  this.cta.classList.add("is-transitioning-open");
+	  this.cta.classList.remove("is-open", "is-transitioning-close");
 
-    this.hero.classList.add("hero-calendar-open");
-    this.heroCalendar.setAttribute("aria-hidden", "true");
-    this.heroCalendar.classList.remove("is-open");
+	  this.cta.classList.remove("is-hovered", "is-magnetic-near");
+	  this.cta.setAttribute("aria-expanded", "true");
 
-    this.applyMeasuredHeroCalendarBox();
-    this.freezeNavbarForHeroCalendar();
+	  this.hero.classList.add("hero-calendar-open");
+	  this.heroCalendar.setAttribute("aria-hidden", "true");
+	  this.heroCalendar.classList.remove("is-open");
 
-    const layoutDuration = this.getHeroCalendarLayoutDuration();
-    const revealDelay = this.getHeroCalendarRevealDelay();
+	  this.applyMeasuredHeroCalendarBox();
+	  this.freezeNavbarForHeroCalendar();
 
-    const revealAfterMs = Math.max(0, layoutDuration + revealDelay);
+	  const layoutDuration = this.getHeroCalendarLayoutDuration();
+	  const revealDelay = this.getHeroCalendarRevealDelay();
 
-    const revealCalendar = () => {
-      this.heroCalendar.classList.add("is-open");
-      this.heroCalendar.setAttribute("aria-hidden", "false");
+	  const revealAfterMs = Math.max(0, layoutDuration + revealDelay);
 
-      requestAnimationFrame(() => {
-        this.updateFullCalendarSize();
-      });
-    };
+	  const revealCalendar = () => {
+		this.heroCalendar.classList.add("is-open");
+		this.heroCalendar.setAttribute("aria-hidden", "false");
 
-    state.ui.heroCalendarRevealTimer = setTimeout(revealCalendar, revealAfterMs);
+		requestAnimationFrame(() => {
+		  this.updateFullCalendarSize();
+		});
+	  };
 
-    this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
-      mode: "open",
-      onComplete: () => {
-		this.cta.classList.remove("is-transitioning-open");
-		this.cta.classList.add("is-open");
-        state.ui.heroCalendarOpen = true;
-        this.restoreNavbarAfterHeroCalendar({ preserveState: false });
-      },
-    });
-  },
+	  state.ui.heroCalendarRevealTimer = setTimeout(revealCalendar, revealAfterMs);
 
+	  this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
+		mode: "open",
+		onComplete: () => {
+		  state.ui.heroCalendarOpen = true;
+
+		  /* 🔥 NEU: finaler Zustand */
+		  this.cta.classList.remove("is-transitioning-open");
+		  this.cta.classList.add("is-open");
+
+		  this.restoreNavbarAfterHeroCalendar({ preserveState: false });
+		},
+	  });
+	},
+  
   closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
-    if (!this.cta || !this.heroCalendar || !this.hero) return;
+	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
-    if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
-      onComplete?.();
-      return;
-    }
+	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
+		onComplete?.();
+		return;
+	  }
 
-    if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
+	  if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
-	this.cta.classList.add("is-transitioning-close");
-	this.cta.classList.remove("is-open");
+	  state.ui.heroCalendarAnimating = true;
+	  this.clearHeroCalendarTimers();
 
-    state.ui.heroCalendarAnimating = true;
-    this.clearHeroCalendarTimers();
+	  /* 🔥 NEU: Übergangsphase starten */
+	  this.cta.classList.add("is-transitioning-close");
+	  this.cta.classList.remove("is-open");
 
-    this.heroCalendar.classList.remove("is-open");
-    this.heroCalendar.setAttribute("aria-hidden", "true");
+	  this.heroCalendar.classList.remove("is-open");
+	  this.heroCalendar.setAttribute("aria-hidden", "true");
 
-    state.ui.heroCalendarRevealTimer = setTimeout(() => {
-      this.freezeNavbarForHeroCalendar();
+	  state.ui.heroCalendarRevealTimer = setTimeout(() => {
+		this.freezeNavbarForHeroCalendar();
 
-      this.animateHeroCalendarLayout(
-        state.ui.heroCalendarExtraHeight,
-        0,
-        {
-          mode: preserveAboutBoundaryAtTop
-            ? "close-keep-about-position"
-            : "close",
-          onComplete: () => {
-			this.cta.classList.remove("is-transitioning-close");
-            state.ui.heroCalendarOpen = false;
-            state.ui.heroCalendarAutoCloseArmed = false;
+		this.animateHeroCalendarLayout(
+		  state.ui.heroCalendarExtraHeight,
+		  0,
+		  {
+			mode: preserveAboutBoundaryAtTop
+			  ? "close-keep-about-position"
+			  : "close",
+			onComplete: () => {
+			  state.ui.heroCalendarOpen = false;
+			  state.ui.heroCalendarAutoCloseArmed = false;
 
-            clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-            state.ui.heroCalendarAutoCloseTimer = null;
+			  clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+			  state.ui.heroCalendarAutoCloseTimer = null;
 
-            this.cta.classList.remove("calendar-open");
-            this.cta.setAttribute("aria-expanded", "false");
+			  this.cta.setAttribute("aria-expanded", "false");
 
-            this.hero.classList.remove("hero-calendar-open");
-            this.hero.classList.remove("hero-calendar-active");
-            this.hero.classList.remove("hero-calendar-lock-motion");
-            this.heroCalendar.style.top = "";
-            this.heroCalendar.style.height = "";
+			  this.hero.classList.remove("hero-calendar-open");
+			  this.hero.classList.remove("hero-calendar-active");
+			  this.hero.classList.remove("hero-calendar-lock-motion");
+			  this.heroCalendar.style.top = "";
+			  this.heroCalendar.style.height = "";
 
-            this.destroyFullCalendar();
+			  this.destroyFullCalendar();
 
-            utils.resetAnimatedValue(state.cta.elasticY, 0);
-            navbarModule.renderCTA();
+			  utils.resetAnimatedValue(state.cta.elasticY, 0);
+			  navbarModule.renderCTA();
 
-            navbarModule.suppressCtaHoverTemporarily(250);
+			  navbarModule.suppressCtaHoverTemporarily(250);
 
-            this.restoreNavbarAfterHeroCalendar({ preserveState: true });
+			  this.restoreNavbarAfterHeroCalendar({ preserveState: true });
 
-            onComplete?.();
-          },
-        }
-      );
-    }, Math.max(0, this.getHeroCalendarRevealDelay()));
-  },
+			  /* 🔥 NEU: zurück zum Default */
+			  this.cta.classList.remove("is-transitioning-close");
+
+			  onComplete?.();
+			},
+		  }
+		);
+	  }, Math.max(0, this.getHeroCalendarRevealDelay()));
+	},
 
   closeHeroCalendarInstant() {
     if (!this.cta || !this.heroCalendar || !this.hero) return;
