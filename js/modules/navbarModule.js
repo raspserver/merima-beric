@@ -167,161 +167,170 @@ export const navbarModule = {
   },
 
   handleScroll() {
-    if (!this.navbar) return;
+	  if (!this.navbar) return;
 
-    const currentY = window.scrollY;
-    const deltaY = currentY - state.lastScrollY;
+	  const currentY = window.scrollY;
+	  const deltaY = currentY - state.lastScrollY;
 
-    state.scrollVelocity = deltaY * 0.8;
+	  // ---------------------------
+	  // BASICS
+	  // ---------------------------
 
-    if (
-      !state.scroll.programmatic &&
-      Math.abs(deltaY) > SETTINGS.thresholds.directionLock
-    ) {
-      state.scrollDirection = deltaY > 0 ? "down" : "up";
-    }
+	  state.scrollVelocity = deltaY * 0.8;
 
-    if (state.ui.heroCalendarNavbarFreeze && state.ui.heroCalendarAnimating) {
-      state.lastScrollY = currentY;
-      return;
-    }
+	  if (
+		!state.scroll.programmatic &&
+		Math.abs(deltaY) > SETTINGS.thresholds.directionLock
+	  ) {
+		state.scrollDirection = deltaY > 0 ? "down" : "up";
+	  }
 
-    if (
-      !state.ui.heroCalendarOpen &&
-      !state.ui.heroCalendarAnimating &&
-      !state.ui.heroCalendarKeepCtaFlat
-    ) {
-      const impulse = utils.clamp(
-        -deltaY * physics.values.ctaElasticVelocityFactor,
-        -physics.values.ctaElasticMax,
-        physics.values.ctaElasticMax
-      );
+	  const direction = state.scrollDirection;
+	  const isHero = this.isHeroInView();
 
-      state.cta.elasticY.velocity += impulse;
-    }
+	  // ---------------------------
+	  // 🧊 KALENDER FREEZE
+	  // ---------------------------
 
-    this.updateGestureStretch(deltaY, currentY);
+	  if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
+		state.lastScrollY = currentY;
+		return;
+	  }
 
-    if (state.nav.manualOpen && currentY > 5) {
-      state.nav.manualOpen = false;
-    }
+	  // ---------------------------
+	  // CTA PHYSICS (unverändert)
+	  // ---------------------------
 
-    state.lastScrollY = currentY;
-    this.hero?.classList.toggle("scrolled", currentY > 10);
+	  if (
+		!state.ui.heroCalendarKeepCtaFlat
+	  ) {
+		const impulse = utils.clamp(
+		  -deltaY * physics.values.ctaElasticVelocityFactor,
+		  -physics.values.ctaElasticMax,
+		  physics.values.ctaElasticMax
+		);
 
-    if (state.scroll.mode === "down") {
-      this.setTargets(1, 1, 1);
-      return;
-    }
+		state.cta.elasticY.velocity += impulse;
+	  }
 
-    if (state.scroll.mode === "up-section") {
-      this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-      return;
-    }
+	  this.updateGestureStretch(deltaY, currentY);
 
-    if (state.scroll.mode === "hero-top") {
-      this.setTargets(0, 0, 0);
-      return;
-    }
+	  if (state.nav.manualOpen && currentY > 5) {
+		state.nav.manualOpen = false;
+	  }
 
-    if (state.nav.manualOpen) {
-      if (currentY <= 5) {
-        this.setTargets(0, 0, 0);
-      } else {
-        this.setTargets(1, 1, 1);
-      }
-      return;
-    }
-
-	const currentY = window.scrollY;
-	const direction = state.scrollDirection;
-	const isHero = this.isHeroInView();
-	const currentState = state.nav.behaviorState;
-
-	// 🧊 Kalender → komplett ignorieren
-	if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
 	  state.lastScrollY = currentY;
-	  return;
-	}
+	  this.hero?.classList.toggle("scrolled", currentY > 10);
 
-	// 🔝 TOP STATE
-	if (currentY <= 5) {
-	  state.nav.behaviorState = "AT_TOP";
-	  this.setTargets(0, 0, 0);
-	  return;
-	}
+	  // ---------------------------
+	  // PROGRAMMATIC SCROLL (prio)
+	  // ---------------------------
 
-	// ---------------------------
-	// STATE MACHINE
-	// ---------------------------
+	  if (state.scroll.mode === "down") {
+		this.setTargets(1, 1, 1);
+		return;
+	  }
 
-	switch (currentState) {
-	  case "INIT":
-		state.nav.behaviorState = this.getNavbarState();
-		break;
+	  if (state.scroll.mode === "up-section") {
+		this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+		return;
+	  }
 
-	  case "AT_TOP":
-		if (currentY > 5) {
+	  if (state.scroll.mode === "hero-top") {
+		this.setTargets(0, 0, 0);
+		return;
+	  }
+
+	  // ---------------------------
+	  // MANUAL OPEN (prio)
+	  // ---------------------------
+
+	  if (state.nav.manualOpen) {
+		if (currentY <= 5) {
+		  this.setTargets(0, 0, 0);
+		} else {
+		  this.setTargets(1, 1, 1);
+		}
+		return;
+	  }
+
+	  // ---------------------------
+	  // 🔝 TOP STATE
+	  // ---------------------------
+
+	  if (currentY <= 5) {
+		state.nav.behaviorState = "AT_TOP";
+		this.setTargets(0, 0, 0);
+		return;
+	  }
+
+	  // ---------------------------
+	  // 🧠 STATE MACHINE
+	  // ---------------------------
+
+	  let currentState = state.nav.behaviorState;
+
+	  if (currentState === "INIT") {
+		currentState = this.getNavbarState();
+		state.nav.behaviorState = currentState;
+	  }
+
+	  switch (currentState) {
+		case "AT_TOP":
 		  state.nav.behaviorState = isHero
 			? "HERO_COLLAPSED"
 			: "SCROLLED";
-		}
-		break;
-
-	  case "HERO_COLLAPSED":
-		if (!isHero) {
-		  state.nav.behaviorState = "SCROLLED";
 		  break;
-		}
 
-		if (direction === "down") {
-		  state.nav.behaviorState = "HERO_EXPANDED";
-		}
-		break;
-
-	  case "HERO_EXPANDED":
-		if (!isHero) {
-		  state.nav.behaviorState = "SCROLLED";
+		case "HERO_COLLAPSED":
+		  if (!isHero) {
+			state.nav.behaviorState = "SCROLLED";
+		  } else if (direction === "down") {
+			state.nav.behaviorState = "HERO_EXPANDED";
+		  }
 		  break;
-		}
 
-		if (direction === "up") {
-		  state.nav.behaviorState = "HERO_COLLAPSED";
-		}
-		break;
+		case "HERO_EXPANDED":
+		  if (!isHero) {
+			state.nav.behaviorState = "SCROLLED";
+		  } else if (direction === "up") {
+			state.nav.behaviorState = "HERO_COLLAPSED";
+		  }
+		  break;
 
-	  case "SCROLLED":
-		if (isHero) {
-		  state.nav.behaviorState =
-			direction === "down"
-			  ? "HERO_EXPANDED"
-			  : "HERO_COLLAPSED";
-		}
-		break;
-	}
-	
-	switch (state.nav.behaviorState) {
-	  case "AT_TOP":
-		this.setTargets(0, 0, 0);
-		break;
+		case "SCROLLED":
+		  if (isHero) {
+			state.nav.behaviorState =
+			  direction === "down"
+				? "HERO_EXPANDED"
+				: "HERO_COLLAPSED";
+		  }
+		  break;
+	  }
 
-	  case "HERO_COLLAPSED":
-		this.setTargets(0, 0, 0);
-		break;
+	  // ---------------------------
+	  // 🎨 APPLY STATE → UI
+	  // ---------------------------
 
-	  case "HERO_EXPANDED":
-		this.setTargets(1, 1, 1);
-		break;
+	  switch (state.nav.behaviorState) {
+		case "AT_TOP":
+		case "HERO_COLLAPSED":
+		  this.setTargets(0, 0, 0);
+		  break;
 
-	  case "SCROLLED":
-		if (direction === "down") {
+		case "HERO_EXPANDED":
 		  this.setTargets(1, 1, 1);
-		} else {
-		  this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
-		}
-		break;
-	}
-  },
+		  break;
+
+		case "SCROLLED":
+		  if (direction === "down") {
+			this.setTargets(1, 1, 1);
+		  } else {
+			this.setTargets(1, 1, physics.values.NAV_SURFACE_UP);
+		  }
+		  break;
+	  }
+	},
   
   isHeroInView() {
     if (!this.hero) return false;
