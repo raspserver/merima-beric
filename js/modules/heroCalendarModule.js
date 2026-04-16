@@ -151,13 +151,16 @@ export const heroCalendarModule = {
 	  state.ui.heroCalendarLastScrollY = window.scrollY;
 	  utils.resetAnimatedValue(state.cta.elasticY, 0);
 	  navbarModule.renderCTA();
+ 
+		this.ensureFullCalendar();
+		this.positionHeroCalendar();
 
-	  this.ensureFullCalendar();
-	  this.positionHeroCalendar();
+		/* 🔥 FIX: closed state entfernen */
+		this.cta.classList.remove("is-closed");
 
-	  /* 🔥 NEU: Übergangsphase starten */
-	  this.cta.classList.add("is-transitioning-open");
-	  this.cta.classList.remove("is-open", "is-transitioning-close");
+		/* Übergangsphase starten */
+		this.cta.classList.add("is-transitioning-open");
+		this.cta.classList.remove("is-open", "is-transitioning-close");
 
 	  this.cta.classList.remove("is-hovered", "is-magnetic-near");
 	  this.cta.setAttribute("aria-expanded", "true");
@@ -251,12 +254,13 @@ export const heroCalendarModule = {
 
 			  navbarModule.suppressCtaHoverTemporarily(250);
 
-			  this.restoreNavbarAfterHeroCalendar({ preserveState: true });
+				this.restoreNavbarAfterHeroCalendar({ preserveState: true });
 
-			  /* 🔥 NEU: zurück zum Default */
-			  this.cta.classList.remove("is-transitioning-close");
+				/* 🔥 FIX: finaler Zustand = geschlossen */
+				this.cta.classList.remove("is-transitioning-close");
+				this.cta.classList.add("is-closed");
 
-			  onComplete?.();
+				onComplete?.();
 			},
 		  }
 		);

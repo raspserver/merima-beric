@@ -1101,6 +1101,10 @@ body.nav-menu-open .cta-button:focus .cta-label {
   font-size: 0.9rem;
 }
 
+
+
+
+
 /* Default */
 .cta-label--primary {
   opacity: 1;
@@ -1110,23 +1114,23 @@ body.nav-menu-open .cta-button:focus .cta-label {
   opacity: 0;
 }
 
-/* ===== OPEN PHASE 1 (Hero scrollt raus) ===== */
+/* ===== OPEN PHASE 1 ===== */
 .cta-button.is-transitioning-open .cta-label--primary {
   opacity: 0;
 }
 
-/* ===== OPEN PHASE 2 (Kalender kommt rein) ===== */
+/* ===== OPEN PHASE 2 ===== */
 .cta-button.is-open .cta-label--secondary {
   opacity: 1;
 }
 
-/* ===== CLOSE PHASE 1 (Kalender geht raus) ===== */
+/* ===== CLOSE PHASE 1 ===== */
 .cta-button.is-transitioning-close .cta-label--secondary {
   opacity: 0;
 }
 
-/* ===== CLOSE PHASE 2 (Hero kommt rein) ===== */
-.cta-button:not(.is-open):not(.is-transitioning-close) .cta-label--primary {
+/* ===== CLOSE PHASE 2 ===== */
+.cta-button.is-closed .cta-label--primary {
   opacity: 1;
 }
 
