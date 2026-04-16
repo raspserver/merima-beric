@@ -34,6 +34,7 @@
 	--hero-calendar-gap: 20px;
 
 	--hero-calendar-layout-duration: 0.75s;
+	--cta-label-duration: var(--hero-calendar-layout-duration);
 	--hero-calendar-reveal-delay: -0.20s;
 	--hero-calendar-preferred-height: clamp(420px, 56vh, 620px);
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
@@ -1080,10 +1081,8 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	font-size: 0.9rem;
 
 	will-change: transform;
-	transform:
-		translate3d(var(--label-x), var(--label-y), 0)
-		scale(var(--label-scale));
-	transition: opacity 0.6s ease, transform 0.6s ease;
+	transform: none !important;
+	transition: opacity var(--cta-label-duration, 300ms) ease;
 }
 
 .cta-label--sizer {
@@ -1102,27 +1101,33 @@ body.nav-menu-open .cta-button:focus .cta-label {
   font-size: 0.9rem;
 }
 
-/* Default sichtbar */
+/* Default */
 .cta-label--primary {
   opacity: 1;
-  transform: translateY(0);
 }
 
-/* Default versteckt */
 .cta-label--secondary {
   opacity: 0;
-  transform: translateY(10px);
 }
 
-/* Beim Öffnen */
-.cta-button.calendar-open .cta-label--primary {
+/* ===== OPEN PHASE 1 (Hero scrollt raus) ===== */
+.cta-button.is-transitioning-open .cta-label--primary {
   opacity: 0;
-  transform: translateY(-10px);
 }
 
-.cta-button.calendar-open .cta-label--secondary {
+/* ===== OPEN PHASE 2 (Kalender kommt rein) ===== */
+.cta-button.is-open .cta-label--secondary {
   opacity: 1;
-  transform: translateY(0);
+}
+
+/* ===== CLOSE PHASE 1 (Kalender geht raus) ===== */
+.cta-button.is-transitioning-close .cta-label--secondary {
+  opacity: 0;
+}
+
+/* ===== CLOSE PHASE 2 (Hero kommt rein) ===== */
+.cta-button:not(.is-open):not(.is-transitioning-close) .cta-label--primary {
+  opacity: 1;
 }
 
 .cta-gloss {

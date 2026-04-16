@@ -155,7 +155,7 @@ export const heroCalendarModule = {
     this.ensureFullCalendar();
     this.positionHeroCalendar();
 
-    this.cta.classList.add("calendar-open");
+    this.cta.classList.add("is-transitioning-open");
     this.cta.classList.remove("is-hovered", "is-magnetic-near");
     this.cta.setAttribute("aria-expanded", "true");
 
@@ -185,6 +185,8 @@ export const heroCalendarModule = {
     this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
       mode: "open",
       onComplete: () => {
+		this.cta.classList.remove("is-transitioning-open");
+		this.cta.classList.add("is-open");
         state.ui.heroCalendarOpen = true;
         this.restoreNavbarAfterHeroCalendar({ preserveState: false });
       },
@@ -200,6 +202,9 @@ export const heroCalendarModule = {
     }
 
     if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
+
+	this.cta.classList.add("is-transitioning-close");
+	this.cta.classList.remove("is-open");
 
     state.ui.heroCalendarAnimating = true;
     this.clearHeroCalendarTimers();
@@ -218,6 +223,7 @@ export const heroCalendarModule = {
             ? "close-keep-about-position"
             : "close",
           onComplete: () => {
+			this.cta.classList.remove("is-transitioning-close");
             state.ui.heroCalendarOpen = false;
             state.ui.heroCalendarAutoCloseArmed = false;
 
