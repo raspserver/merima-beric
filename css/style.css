@@ -467,8 +467,8 @@ html.hero-calendar-animating body,
   pointer-events: auto;
 }
 
-/* während closing bleibt sichtbar → blendet aus */
-#hero-calendar.is-closing {
+/* 🔥 wichtig: closing muss AFTER open greifen */
+#hero-calendar.is-open.is-closing {
   opacity: 0;
   pointer-events: none;
 }

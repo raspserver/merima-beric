@@ -223,8 +223,13 @@ export const heroCalendarModule = {
 	this.cta.classList.add("is-transitioning-close");
 	this.cta.classList.remove("is-open");
 
-	/* ❗ WICHTIG: Kalender bleibt erstmal sichtbar */
-	this.heroCalendar.classList.add("is-closing");
+	/* Kalender sichtbar halten */
+	this.heroCalendar.classList.add("is-open");
+
+	/* dann Fade starten */
+	requestAnimationFrame(() => {
+	  this.heroCalendar.classList.add("is-closing");
+	});
 
 	/* Dauer der Label-Animation */
 	const labelDuration = utils.cssVar.timeMs("--cta-label-duration", 300);
@@ -279,7 +284,7 @@ export const heroCalendarModule = {
 			},
 		  }
 		);
-	  }, Math.max(0, this.getHeroCalendarRevealDelay()));
+	  }, labelDuration);
 	},
 
   closeHeroCalendarInstant() {
