@@ -1099,7 +1099,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 
 	will-change: transform;
 	transform: none !important;
-	transition: opacity var(--cta-label-duration, 300ms) ease;
+	transition: opacity var(--hero-calendar-layout-duration, 750ms) ease;
 }
 
 .cta-label--sizer {
