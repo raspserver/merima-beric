@@ -192,9 +192,7 @@ export const navbarModule = {
 	  // 🧊 KALENDER FREEZE
 	  // ---------------------------
 
-	  //~ if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
-
-		if (state.ui.heroCalendarAnimating) {
+	  if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
 		state.lastScrollY = currentY;
 		return;
 	  }
