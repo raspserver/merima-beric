@@ -135,7 +135,7 @@ export const heroCalendarModule = {
     this.applyMeasuredHeroCalendarBox();
   },
 
-  openHeroCalendar() {
+	openHeroCalendar() {
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 	  if (state.ui.heroCalendarAnimating || state.ui.heroCalendarOpen) return;
 
@@ -149,56 +149,59 @@ export const heroCalendarModule = {
 	  state.ui.heroCalendarKeepCtaFlat = true;
 	  state.ui.heroCalendarAnimating = true;
 	  state.ui.heroCalendarLastScrollY = window.scrollY;
+
 	  utils.resetAnimatedValue(state.cta.elasticY, 0);
 	  navbarModule.renderCTA();
- 
-		this.ensureFullCalendar();
-		this.positionHeroCalendar();
 
-		/* 🔥 FIX: closed state entfernen */
-		this.cta.classList.remove("is-closed");
+	  this.ensureFullCalendar();
+	  this.positionHeroCalendar();
 
-		/* Übergangsphase starten */
-		this.cta.classList.add("is-transitioning-open");
-		this.cta.classList.remove("is-open", "is-transitioning-close");
+	  /* 🔥 State vorbereiten */
+	  this.cta.classList.remove("is-closed");
+	  this.cta.classList.add("is-transitioning-open");
+	  this.cta.classList.remove("is-open", "is-transitioning-close");
 
 	  this.cta.classList.remove("is-hovered", "is-magnetic-near");
 	  this.cta.setAttribute("aria-expanded", "true");
 
 	  this.hero.classList.add("hero-calendar-open");
-	  this.heroCalendar.setAttribute("aria-hidden", "true");
-	  this.heroCalendar.classList.remove("is-open");
+
+	  /* 🔥 Kalender direkt vorbereiten (noch unsichtbar) */
+	  this.heroCalendar.setAttribute("aria-hidden", "false");
+	  this.heroCalendar.classList.add("is-open"); // wichtig für Fade-In
+	  this.heroCalendar.classList.remove("is-closing");
 
 	  this.applyMeasuredHeroCalendarBox();
 	  this.freezeNavbarForHeroCalendar();
 
-	  const layoutDuration = this.getHeroCalendarLayoutDuration();
-	  const revealDelay = this.getHeroCalendarRevealDelay();
-
-	  const revealAfterMs = Math.max(0, layoutDuration + revealDelay);
-
-	  const revealCalendar = () => {
-		this.heroCalendar.classList.add("is-open");
-		this.heroCalendar.setAttribute("aria-hidden", "false");
-
-		requestAnimationFrame(() => {
-		  this.updateFullCalendarSize();
-		});
-	  };
-
-	  state.ui.heroCalendarRevealTimer = setTimeout(revealCalendar, revealAfterMs);
-
+	  /* 🔥 Layout SOFORT starten */
 	  this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 		mode: "open",
 		onComplete: () => {
 		  state.ui.heroCalendarOpen = true;
 
-		  /* 🔥 NEU: finaler Zustand */
 		  this.cta.classList.remove("is-transitioning-open");
 		  this.cta.classList.add("is-open");
 
 		  this.restoreNavbarAfterHeroCalendar({ preserveState: false });
 		},
+	  });
+
+	  /* 🔥 Kalender Fade-In leicht verzögert starten (feels smoother) */
+	  const revealDelay = Math.min(
+		180,
+		this.getHeroCalendarLayoutDuration() * 0.25
+	  );
+
+	  requestAnimationFrame(() => {
+		setTimeout(() => {
+		  // triggert CSS opacity transition
+		  this.heroCalendar.classList.add("is-open");
+
+		  requestAnimationFrame(() => {
+			this.updateFullCalendarSize();
+		  });
+		}, revealDelay);
 	  });
 	},
   

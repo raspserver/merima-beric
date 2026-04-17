@@ -458,16 +458,17 @@ html.hero-calendar-animating body,
 
 #hero-calendar {
   opacity: 0;
-  transition: opacity var(--cta-label-duration, 300ms) ease;
   pointer-events: none;
+  transition: opacity var(--cta-label-duration, 300ms) ease;
 }
 
+/* 🔥 Fade-In */
 #hero-calendar.is-open {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* 🔥 wichtig: closing muss AFTER open greifen */
+/* 🔥 Fade-Out */
 #hero-calendar.is-open.is-closing {
   opacity: 0;
   pointer-events: none;
