@@ -218,14 +218,29 @@ export const heroCalendarModule = {
 	  /* 🔥 NEU: Übergangsphase starten */
 	  this.cta.classList.add("is-transitioning-close");
 	  this.cta.classList.remove("is-open");
+			
+	/* Phase 1: Fade-Out starten */
+	this.cta.classList.add("is-transitioning-close");
+	this.cta.classList.remove("is-open");
 
+	/* ❗ WICHTIG: Kalender bleibt erstmal sichtbar */
+	this.heroCalendar.classList.add("is-closing");
+
+	/* Dauer der Label-Animation */
+	const labelDuration = utils.cssVar.timeMs("--cta-label-duration", 300);
+
+	/* Phase 2: Nach Fade-Out → Kalender wirklich schließen + Layout starten */
+	state.ui.heroCalendarRevealTimer = setTimeout(() => {
+
+	  /* Jetzt erst wirklich ausblenden */
 	  this.heroCalendar.classList.remove("is-open");
+	  this.heroCalendar.classList.remove("is-closing");
 	  this.heroCalendar.setAttribute("aria-hidden", "true");
 
-	  state.ui.heroCalendarRevealTimer = setTimeout(() => {
-		this.freezeNavbarForHeroCalendar();
+	  this.freezeNavbarForHeroCalendar();
 
-		this.animateHeroCalendarLayout(
+	  this.animateHeroCalendarLayout(
+
 		  state.ui.heroCalendarExtraHeight,
 		  0,
 		  {

@@ -456,6 +456,23 @@ html.hero-calendar-animating body,
 	overflow-anchor: none;
 }
 
+#hero-calendar {
+  opacity: 0;
+  transition: opacity var(--cta-label-duration, 300ms) ease;
+  pointer-events: none;
+}
+
+#hero-calendar.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* während closing bleibt sichtbar → blendet aus */
+#hero-calendar.is-closing {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .hero {
 	position: relative;
 
