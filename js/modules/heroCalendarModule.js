@@ -134,7 +134,7 @@ export const heroCalendarModule = {
 
     this.applyMeasuredHeroCalendarBox();
   },
-
+	
 	openHeroCalendar() {
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 	  if (state.ui.heroCalendarAnimating || state.ui.heroCalendarOpen) return;
@@ -156,7 +156,7 @@ export const heroCalendarModule = {
 	  this.ensureFullCalendar();
 	  this.positionHeroCalendar();
 
-	  /* 🔥 CTA State */
+	  /* CTA State */
 	  this.cta.classList.remove("is-closed");
 	  this.cta.classList.add("is-transitioning-open");
 	  this.cta.classList.remove("is-open", "is-transitioning-close");
@@ -166,15 +166,14 @@ export const heroCalendarModule = {
 
 	  this.hero.classList.add("hero-calendar-open");
 
-	  /* 🔥 Kalender vorbereiten (WICHTIG: noch NICHT sichtbar!) */
+	  /* 🔥 Kalender initial in "Tiefe" halten */
 	  this.heroCalendar.setAttribute("aria-hidden", "false");
-	  this.heroCalendar.classList.remove("is-open");
-	  this.heroCalendar.classList.remove("is-closing");
+	  this.heroCalendar.classList.remove("is-open", "is-closing");
 
 	  this.applyMeasuredHeroCalendarBox();
 	  this.freezeNavbarForHeroCalendar();
 
-	  /* 🔥 Layout sofort starten */
+	  /* 🔥 Layout startet sofort */
 	  this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
 		mode: "open",
 		onComplete: () => {
@@ -187,10 +186,10 @@ export const heroCalendarModule = {
 		},
 	  });
 
-	  /* 🔥 Fade-In bewusst leicht verzögert (läuft parallel zur Expansion) */
+	  /* 🔥 Depth Fade-In bewusst leicht verzögert */
 	  const revealDelay = Math.min(
-		180,
-		this.getHeroCalendarLayoutDuration() * 0.25
+		140,
+		this.getHeroCalendarLayoutDuration() * 0.18
 	  );
 
 	  requestAnimationFrame(() => {
