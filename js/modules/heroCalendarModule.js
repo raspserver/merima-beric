@@ -202,7 +202,7 @@ export const heroCalendarModule = {
 	  });
 	},
   
-  closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
+	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
 	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
@@ -215,75 +215,68 @@ export const heroCalendarModule = {
 	  state.ui.heroCalendarAnimating = true;
 	  this.clearHeroCalendarTimers();
 
-	  /* 🔥 NEU: Übergangsphase starten */
+	  /* 🔥 CLOSE STATE START */
 	  this.cta.classList.add("is-transitioning-close");
 	  this.cta.classList.remove("is-open");
-			
-	/* Phase 1: Fade-Out starten */
-	this.cta.classList.add("is-transitioning-close");
-	this.cta.classList.remove("is-open");
 
-	/* Kalender sichtbar halten */
-	this.heroCalendar.classList.add("is-open");
+	  /* Kalender bleibt erstmal sichtbar */
+	  this.heroCalendar.classList.add("is-open");
 
-	/* dann Fade starten */
-	requestAnimationFrame(() => {
-	  this.heroCalendar.classList.add("is-closing");
-	});
+	  /* Kalender Fade-Out starten */
+	  requestAnimationFrame(() => {
+		this.heroCalendar.classList.add("is-closing");
+	  });
 
-	/* Dauer der Label-Animation */
-	const labelDuration = utils.cssVar.timeMs("--cta-label-duration", 300);
-
-	/* Phase 2: Nach Fade-Out → Kalender wirklich schließen + Layout starten */
-	state.ui.heroCalendarRevealTimer = setTimeout(() => {
-
-	  /* Jetzt erst wirklich ausblenden */
-	  this.heroCalendar.classList.remove("is-open");
-	  this.heroCalendar.classList.remove("is-closing");
-	  this.heroCalendar.setAttribute("aria-hidden", "true");
-
+	  /* 🔥 Layout SOFORT starten → Primary blendet parallel ein */
 	  this.freezeNavbarForHeroCalendar();
 
 	  this.animateHeroCalendarLayout(
+		state.ui.heroCalendarExtraHeight,
+		0,
+		{
+		  mode: preserveAboutBoundaryAtTop
+			? "close-keep-about-position"
+			: "close",
+		  onComplete: () => {
+			state.ui.heroCalendarOpen = false;
+			state.ui.heroCalendarAutoCloseArmed = false;
 
-		  state.ui.heroCalendarExtraHeight,
-		  0,
-		  {
-			mode: preserveAboutBoundaryAtTop
-			  ? "close-keep-about-position"
-			  : "close",
-			onComplete: () => {
-			  state.ui.heroCalendarOpen = false;
-			  state.ui.heroCalendarAutoCloseArmed = false;
+			clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+			state.ui.heroCalendarAutoCloseTimer = null;
 
-			  clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-			  state.ui.heroCalendarAutoCloseTimer = null;
+			this.cta.setAttribute("aria-expanded", "false");
 
-			  this.cta.setAttribute("aria-expanded", "false");
+			this.hero.classList.remove("hero-calendar-open");
+			this.hero.classList.remove("hero-calendar-active");
+			this.hero.classList.remove("hero-calendar-lock-motion");
+			this.heroCalendar.style.top = "";
+			this.heroCalendar.style.height = "";
 
-			  this.hero.classList.remove("hero-calendar-open");
-			  this.hero.classList.remove("hero-calendar-active");
-			  this.hero.classList.remove("hero-calendar-lock-motion");
-			  this.heroCalendar.style.top = "";
-			  this.heroCalendar.style.height = "";
+			this.destroyFullCalendar();
 
-			  this.destroyFullCalendar();
+			utils.resetAnimatedValue(state.cta.elasticY, 0);
+			navbarModule.renderCTA();
 
-			  utils.resetAnimatedValue(state.cta.elasticY, 0);
-			  navbarModule.renderCTA();
+			navbarModule.suppressCtaHoverTemporarily(250);
 
-			  navbarModule.suppressCtaHoverTemporarily(250);
+			this.restoreNavbarAfterHeroCalendar({ preserveState: true });
 
-				this.restoreNavbarAfterHeroCalendar({ preserveState: true });
+			/* 🔥 finaler Zustand */
+			this.cta.classList.remove("is-transitioning-close");
+			this.cta.classList.add("is-closed");
 
-				/* 🔥 FIX: finaler Zustand = geschlossen */
-				this.cta.classList.remove("is-transitioning-close");
-				this.cta.classList.add("is-closed");
+			onComplete?.();
+		  },
+		}
+	  );
 
-				onComplete?.();
-			},
-		  }
-		);
+	  /* 🔥 Kalender erst nach Label-Fade wirklich entfernen */
+	  const labelDuration = utils.cssVar.timeMs("--cta-label-duration", 300);
+
+	  state.ui.heroCalendarRevealTimer = setTimeout(() => {
+		this.heroCalendar.classList.remove("is-open");
+		this.heroCalendar.classList.remove("is-closing");
+		this.heroCalendar.setAttribute("aria-hidden", "true");
 	  }, labelDuration);
 	},
 
