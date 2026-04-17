@@ -205,6 +205,12 @@ export const heroCalendarModule = {
 	  });
 	},
   
+  
+  
+  
+  
+  
+  
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
@@ -281,6 +287,84 @@ export const heroCalendarModule = {
 		this.heroCalendar.classList.remove("is-closing");
 		this.heroCalendar.setAttribute("aria-hidden", "true");
 	  }, labelDuration);
+	},
+	
+	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
+	  if (!this.cta || !this.heroCalendar || !this.hero) return;
+
+	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
+		onComplete?.();
+		return;
+	  }
+
+	  if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
+
+	  state.ui.heroCalendarAnimating = true;
+	  this.clearHeroCalendarTimers();
+
+	  /* 🔥 CLOSE STATE START */
+	  this.cta.classList.add("is-transitioning-close");
+	  this.cta.classList.remove("is-open");
+
+	  /* 🔥 Kalender bleibt sichtbar (Startzustand für Depth-Out) */
+	  this.heroCalendar.classList.add("is-open");
+
+	  /* 🔥 Depth-Out (Blur + Scale + Fade) */
+	  requestAnimationFrame(() => {
+		this.heroCalendar.classList.add("is-closing");
+	  });
+
+	  /* 🔥 Layout startet sofort → läuft parallel */
+	  this.freezeNavbarForHeroCalendar();
+
+	  this.animateHeroCalendarLayout(
+		state.ui.heroCalendarExtraHeight,
+		0,
+		{
+		  mode: preserveAboutBoundaryAtTop
+			? "close-keep-about-position"
+			: "close",
+		  onComplete: () => {
+			state.ui.heroCalendarOpen = false;
+			state.ui.heroCalendarAutoCloseArmed = false;
+
+			clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+			state.ui.heroCalendarAutoCloseTimer = null;
+
+			this.cta.setAttribute("aria-expanded", "false");
+
+			this.hero.classList.remove("hero-calendar-open");
+			this.hero.classList.remove("hero-calendar-active");
+			this.hero.classList.remove("hero-calendar-lock-motion");
+			this.heroCalendar.style.top = "";
+			this.heroCalendar.style.height = "";
+
+			this.destroyFullCalendar();
+
+			utils.resetAnimatedValue(state.cta.elasticY, 0);
+			navbarModule.renderCTA();
+
+			navbarModule.suppressCtaHoverTemporarily(250);
+
+			this.restoreNavbarAfterHeroCalendar({ preserveState: true });
+
+			/* 🔥 finaler CTA Zustand */
+			this.cta.classList.remove("is-transitioning-close");
+			this.cta.classList.add("is-closed");
+
+			onComplete?.();
+		  },
+		}
+	  );
+
+	  /* 🔥 Kalender erst nach Fade/Depth wirklich entfernen */
+	  const duration = this.getHeroCalendarLayoutDuration();
+
+	  state.ui.heroCalendarRevealTimer = setTimeout(() => {
+		this.heroCalendar.classList.remove("is-open");
+		this.heroCalendar.classList.remove("is-closing");
+		this.heroCalendar.setAttribute("aria-hidden", "true");
+	  }, duration * 0.6); // leicht früher als Layout-Ende → fühlt sich snappier an
 	},
 
   closeHeroCalendarInstant() {
