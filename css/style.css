@@ -1117,7 +1117,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	font-size: 0.9rem;
 
 	will-change: transform;
-	transform: none !important;
+	transform: none;
 	transition: opacity var(--hero-calendar-layout-duration, 750ms) ease;
 }
 
@@ -1137,41 +1137,36 @@ body.nav-menu-open .cta-button:focus .cta-label {
   font-size: 0.9rem;
 }
 
-/* Default */
-.cta-label--primary {
+/* ===== DEFAULT (geschlossen) ===== */
+.cta-button.is-closed .cta-label--primary {
+  opacity: 1;
+}
+.cta-button.is-closed .cta-label--secondary {
+  opacity: 0;
+}
+
+/* ===== OPENING ===== */
+.cta-button.is-transitioning-open .cta-label--primary {
+  opacity: 0;
+}
+.cta-button.is-transitioning-open .cta-label--secondary {
   opacity: 1;
 }
 
-.cta-label--secondary {
-  opacity: 0;
-}
-
-/* ===== OPEN (immer versteckt sobald geöffnet oder im Übergang) ===== */
-.cta-button.is-transitioning-open .cta-label--primary,
+/* ===== OPEN ===== */
 .cta-button.is-open .cta-label--primary {
   opacity: 0;
 }
-
-/* ===== OPEN PHASE 2 ===== */
 .cta-button.is-open .cta-label--secondary {
   opacity: 1;
 }
 
-/* ===== CLOSE PHASE 1 ===== */
-.cta-button.is-transitioning-close .cta-label--secondary {
-  opacity: 0;
-}
-
-/* CLOSE PHASE 1: Secondary raus */
-.cta-button.is-transitioning-close .cta-label--secondary {
-  opacity: 0;
-}
-
-/* 🔥 Primary darf sofort wieder rein (Default = 1 reicht) */
-
-/* ===== CLOSE PHASE 2 ===== */
-.cta-button.is-closed .cta-label--primary {
+/* ===== CLOSING ===== */
+.cta-button.is-transitioning-close .cta-label--primary {
   opacity: 1;
+}
+.cta-button.is-transitioning-close .cta-label--secondary {
+  opacity: 0;
 }
 
 .cta-gloss {
