@@ -520,8 +520,6 @@ html.hero-calendar-animating body,
 
 	will-change: transform, filter, height;
 	transform: translateZ(0);
-	perspective: 1200px;
-	transform-style: preserve-3d;
 }
 
 .hero-calendar {
@@ -532,6 +530,8 @@ html.hero-calendar-animating body,
 
 	height: 0;
 
+	transform: translateY(-12px);
+
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
@@ -541,33 +541,22 @@ html.hero-calendar-animating body,
 	padding: 0;
 	border: 0;
 
-	transform: translateY(20px) scale(0.96);
-	filter: blur(8px);
-	will-change: transform, opacity, filter;
 	transition:
-		transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
-		opacity 500ms ease,
-		filter 500ms ease;
+		opacity 0.35s ease,
+		transform 0.35s var(--hero-calendar-layout-ease),
+		visibility 0s linear 0.35s;
 }
 
 .hero-calendar.is-open {
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
+	transform: translateY(0);
 
 	transition:
 		opacity 0.35s ease,
 		transform 0.35s var(--hero-calendar-layout-ease),
 		visibility 0s linear 0s;
-	transform: translateY(0px) scale(1);
-	filter: blur(0px);	
-}
-
-/* CLOSING */
-.hero-calendar.is-closing {
-  transform: translateY(30px) scale(0.94);
-  opacity: 0;
-  filter: blur(10px);
 }
 
 #hero-fullcalendar {
@@ -963,11 +952,6 @@ html.hero-calendar-animating body,
 	box-shadow:
 		0 var(--magnetic-shadow-y) var(--magnetic-shadow-blur)
 		rgba(212, 175, 55, var(--magnetic-shadow-alpha));
-		
-/*
-	transform: translateZ(0px);
-*/
-	will-change: transform;	
 }
 
 .cta-button.is-hovered {

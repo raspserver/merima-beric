@@ -651,28 +651,11 @@ export const heroCalendarModule = {
     };
 
     const step = (now) => {
-		const parallaxFactor = 0.08; // subtil! 0.05–0.12 sweet spot
-
-		if (this.heroCalendar) {
-		  const offset = (to - from) * eased * parallaxFactor;
-
-		  this.heroCalendar.style.transform = `
-			translateY(${offset}px)
-			scale(${1 - (0.04 * (1 - eased))})
-		  `;
-		}
-		
       const t = Math.min(1, (now - start) / duration);
       const eased = this.easeHeroCalendar(t);
 
       const currentExtra = from + ((to - from) * eased);
       this.setHeroCalendarExtraHeight(currentExtra);
-      
-      // ✨ CTA Micro-Parallax (i-Tüpfelchen)
-		if (this.cta) {
-		  const inverse = (1 - eased) * 6; // 4–8px sweet spot
-		  this.cta.style.transform = `translateY(${-inverse}px)`;
-		}
 
       let nextScrollY = startScrollY;
 
