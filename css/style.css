@@ -1084,7 +1084,8 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	align-items: center;
 	justify-content: center;
 
-	padding: 1.2rem 3rem;
+	padding: 0 1rem;
+	
 	min-width: 240px;
 
 	background: var(--primary-color);
@@ -1150,6 +1151,8 @@ body.nav-menu-open .cta-button:focus .cta-label {
   
   flex-direction: column;
   gap: 0.4em;
+  
+  padding: 0;
 
   /* exakt gleiche Typo wie echte Labels */
   font-weight: 500;
