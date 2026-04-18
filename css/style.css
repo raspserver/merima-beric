@@ -1160,18 +1160,18 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label--sizer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative; /* ❗ bleibt im Flow */
   opacity: 0;
   pointer-events: none;
 
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
   
-  flex-direction: column;
   gap: 0.25em;
   
-  padding: 1rem 0; /* bestimmt Buttonhöhe */
+  padding: 0.9rem 0; /* 🔥 steuert Höhe */
 
   /* exakt gleiche Typo wie echte Labels */
   font-weight: 500;
