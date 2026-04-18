@@ -1124,18 +1124,22 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label--primary {
-  position: relative; /* wichtig für absolute Subline */
-  display: block; /* ❗ wichtig: kein flex mehr */
+  display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+  
+  padding-top: 0.2rem;
+  padding-bottom: 0.8rem; /* 🔥 verschiebt Sub optisch nach unten */
+
+  height: 100%;
+
+  position: relative; /* wichtig für absolute Subline */
+
   gap: 0.25em;
 }
 
 .cta-label-main {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   white-space: nowrap;
 }
 
@@ -1146,7 +1150,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 
   transform: translateX(-50%);
 
-  margin-top: 0.2em;
+  margin-top: 0.35em;
 
   text-transform: none;          /* ❗ wichtig: Groß-/Kleinschreibung behalten */
   letter-spacing: normal;        /* besser lesbar */
