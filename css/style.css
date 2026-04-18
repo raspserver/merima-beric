@@ -1165,7 +1165,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label--sizer {
-  display: block;
+  display: flex;
   flex-direction: column;
   align-items: center;
   position: relative; /* ❗ bleibt im Flow */
@@ -1183,6 +1183,16 @@ body.nav-menu-open .cta-button:focus .cta-label {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-size: 0.9rem;
+}
+
+.cta-label--sizer .cta-label-sub {
+  margin-top: 0.35em;
+}
+
+.cta-label--sizer .cta-label-main,
+.cta-label--sizer .cta-label-sub {
+  position: static;      /* 🔥 zurück in den Flow */
+  transform: none;
 }
 
 /* ===== DEFAULT (geschlossen) ===== */
