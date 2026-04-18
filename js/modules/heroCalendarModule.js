@@ -205,12 +205,6 @@ export const heroCalendarModule = {
 	  });
 	},
   
-  
-  
-  
-  
-  
-  
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
@@ -316,6 +310,9 @@ export const heroCalendarModule = {
 
 	  /* 🔥 Layout startet sofort → läuft parallel */
 	  this.freezeNavbarForHeroCalendar();
+	  
+	  /* 🔥 SOFORT ausblenden */
+	  this.hero.classList.remove("hero-calendar-open");
 
 	  this.animateHeroCalendarLayout(
 		state.ui.heroCalendarExtraHeight,
@@ -333,7 +330,6 @@ export const heroCalendarModule = {
 
 			this.cta.setAttribute("aria-expanded", "false");
 
-			this.hero.classList.remove("hero-calendar-open");
 			this.hero.classList.remove("hero-calendar-active");
 			this.hero.classList.remove("hero-calendar-lock-motion");
 			this.heroCalendar.style.top = "";
