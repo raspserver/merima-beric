@@ -1124,7 +1124,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label--primary {
-  display: flex;
+  display: block;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -1140,13 +1140,18 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label-main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   white-space: nowrap;
 }
 
 .cta-label-sub {
   position: absolute;
   left: 50%;
-  top: calc(50% + 0.9rem); /* Abstand unter Main */
+  /* 🔥 exakt unterhalb der Mitte + halbe Main-Höhe */
+  top: calc(50% + 0.8rem);
 
   transform: translateX(-50%);
 
@@ -1160,7 +1165,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label--sizer {
-  display: flex;
+  display: block;
   flex-direction: column;
   align-items: center;
   position: relative; /* ❗ bleibt im Flow */
@@ -1171,7 +1176,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
   
   gap: 0.25em;
   
-  padding: 0.9rem 0; /* 🔥 steuert Höhe */
+  padding: 1.2rem 0; /* 🔥 Höhe wieder wie vorher */
 
   /* exakt gleiche Typo wie echte Labels */
   font-weight: 500;
