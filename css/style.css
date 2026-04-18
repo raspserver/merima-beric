@@ -1121,6 +1121,24 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	transition: opacity var(--hero-calendar-layout-duration, 750ms) ease;
 }
 
+.cta-label--primary {
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4em; /* Abstand zwischen den beiden Zeilen */
+}
+
+.cta-label-main {
+  white-space: nowrap;
+}
+
+.cta-label-sub {
+  text-transform: none;          /* ❗ wichtig: Groß-/Kleinschreibung behalten */
+  letter-spacing: normal;        /* besser lesbar */
+  font-size: 0.65rem;            /* so klein, dass es in eine Zeile passt */
+  white-space: nowrap;           /* ❗ kein Umbruch */
+  opacity: 0.85;                 /* optional: visuelle Hierarchie */
+}
+
 .cta-label--sizer {
   position: relative; /* ❗ bleibt im Flow */
   opacity: 0;
@@ -1129,6 +1147,9 @@ body.nav-menu-open .cta-button:focus .cta-label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  
+  flex-direction: column;
+  gap: 0.4em;
 
   /* exakt gleiche Typo wie echte Labels */
   font-weight: 500;
