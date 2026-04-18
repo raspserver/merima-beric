@@ -1161,7 +1161,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
   flex-direction: column;
   gap: 0.25em;
   
-  padding: 0.7rem 0; /* 🔥 steuert die Höhe! */
+  padding: 1.0rem 0; /* 🔥 steuert die Höhe! */
 
   /* exakt gleiche Typo wie echte Labels */
   font-weight: 500;
