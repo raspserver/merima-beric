@@ -1125,19 +1125,25 @@ body.nav-menu-open .cta-button:focus .cta-label {
 
 .cta-label--primary {
   position: relative; /* wichtig für absolute Subline */
+  display: block; /* ❗ wichtig: kein flex mehr */
   flex-direction: column;
   justify-content: center;
   gap: 0.25em;
 }
 
 .cta-label-main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   white-space: nowrap;
 }
 
 .cta-label-sub {
   position: absolute;
-  top: 100%;                /* direkt unter Haupttext */
   left: 50%;
+  top: calc(50% + 0.9rem); /* Abstand unter Main */
+
   transform: translateX(-50%);
 
   margin-top: 0.2em;
@@ -1161,7 +1167,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
   flex-direction: column;
   gap: 0.25em;
   
-  padding: 1.0rem 0; /* 🔥 steuert die Höhe! */
+  padding: 1rem 0; /* bestimmt Buttonhöhe */
 
   /* exakt gleiche Typo wie echte Labels */
   font-weight: 500;
