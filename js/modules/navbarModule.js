@@ -367,6 +367,14 @@ export const navbarModule = {
       ),
       "--nav-refraction": Math.min(Math.abs(state.scrollVelocity) * 0.02, 1),
     });
+    
+    // 🔥 Navbar-Unterkante global verfügbar machen
+	const navBottom = this.navbar.getBoundingClientRect().bottom;
+
+	document.documentElement.style.setProperty(
+	  "--nav-bottom",
+	  `${navBottom}px`
+	);
 
     const velocityShadow = Math.min(Math.abs(state.scrollVelocity) * 0.02, 0.2);
 

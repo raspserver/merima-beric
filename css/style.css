@@ -704,6 +704,8 @@ html.hero-calendar-animating body,
 	justify-self: center;
 	align-self: start;
 
+	--hero-description-font-size: 1rem;
+
 	font-size: 1.1rem;
 	color: rgba(255, 255, 255, 0.8);
 	max-width: 600px;
@@ -900,6 +902,32 @@ html.hero-calendar-animating body,
 	to {
 		transform: translateX(120%) skewX(-12deg);
 	}
+}
+
+.hero-calendar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* 🔥 WICHTIG: Referenz zur Navbar */
+  top: var(--nav-bottom, 60px);
+
+  font-size: var(--hero-description-font-size, 1rem);
+  line-height: 1.4;
+  text-align: center;
+
+  font-weight: 400;
+
+  opacity: 0;
+  pointer-events: none;
+
+  z-index: 1; /* unter Navbar */
+
+  transition: opacity 0.4s ease;
+}
+
+.hero.hero-calendar-open .hero-calendar-title {
+  opacity: 1;
 }
 
 .cta-button {
