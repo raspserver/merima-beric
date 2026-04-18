@@ -1123,6 +1123,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label--primary {
+  position: relative; /* wichtig für absolute Subline */
   flex-direction: column;
   justify-content: center;
   gap: 0.4em; /* Abstand zwischen den beiden Zeilen */
@@ -1133,6 +1134,13 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-label-sub {
+  position: absolute;
+  top: 100%;                /* direkt unter Haupttext */
+  left: 50%;
+  transform: translateX(-50%);
+
+  margin-top: 0.2em;
+
   text-transform: none;          /* ❗ wichtig: Groß-/Kleinschreibung behalten */
   letter-spacing: normal;        /* besser lesbar */
   font-size: 0.65rem;            /* so klein, dass es in eine Zeile passt */
@@ -1149,7 +1157,8 @@ body.nav-menu-open .cta-button:focus .cta-label {
   align-items: center;
   justify-content: center;
   
-  flex-direction: column;
+    /* ❗ KEIN column, KEIN gap */
+  flex-direction: row;
   gap: 0.4em;
   
   padding: 0;
@@ -1159,6 +1168,10 @@ body.nav-menu-open .cta-button:focus .cta-label {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-size: 0.9rem;
+}
+
+.cta-label--sizer .cta-label-sub {
+  display: none;
 }
 
 /* ===== DEFAULT (geschlossen) ===== */
