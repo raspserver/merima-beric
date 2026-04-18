@@ -191,11 +191,11 @@ export const navbarModule = {
 	  // ---------------------------
 	  // 🧊 KALENDER FREEZE
 	  // ---------------------------
-
-	  if (state.ui.heroCalendarOpen || state.ui.heroCalendarAnimating) {
-		state.lastScrollY = currentY;
-		return;
-	  }
+	  
+	  if (state.ui.heroCalendarNavbarFreeze) {
+		  state.lastScrollY = currentY;
+		  return;
+		}
 
 	  // ---------------------------
 	  // CTA PHYSICS (unverändert)

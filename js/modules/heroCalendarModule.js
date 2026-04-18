@@ -531,6 +531,7 @@ export const heroCalendarModule = {
     state.ui.heroCalendarAutoCloseArmed = false;
 
     this.unlockHeroCalendarScrollBehavior();
+	state.ui.heroCalendarNavbarFreeze = false;
   },
 
   easeHeroCalendar(t) {
