@@ -1091,6 +1091,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 	background: var(--primary-color);
 	color: var(--secondary-color);
 	border: 2px solid var(--primary-color);
+
 	overflow: hidden;
 
 	will-change: transform, background, border-color;
@@ -1126,7 +1127,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
   position: relative; /* wichtig für absolute Subline */
   flex-direction: column;
   justify-content: center;
-  gap: 0.4em; /* Abstand zwischen den beiden Zeilen */
+  gap: 0.25em;
 }
 
 .cta-label-main {
@@ -1157,11 +1158,10 @@ body.nav-menu-open .cta-button:focus .cta-label {
   align-items: center;
   justify-content: center;
   
-    /* ❗ KEIN column, KEIN gap */
-  flex-direction: row;
-  gap: 0.4em;
+  flex-direction: column;
+  gap: 0.25em;
   
-  padding: 0;
+  padding: 0.6rem 0; /* 🔥 steuert die Höhe! */
 
   /* exakt gleiche Typo wie echte Labels */
   font-weight: 500;
