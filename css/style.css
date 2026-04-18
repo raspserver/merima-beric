@@ -1180,10 +1180,6 @@ body.nav-menu-open .cta-button:focus .cta-label {
   font-size: 0.9rem;
 }
 
-.cta-label--sizer .cta-label-sub {
-  display: none;
-}
-
 /* ===== DEFAULT (geschlossen) ===== */
 .cta-button.is-closed .cta-label--primary {
   opacity: 1;
