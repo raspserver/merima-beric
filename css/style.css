@@ -1079,8 +1079,8 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 .cta-shell {
+	display: inline-flex;
 	position: relative;
-	display: inline-block;
 	align-items: center;
 	justify-content: center;
 
