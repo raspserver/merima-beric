@@ -1901,7 +1901,7 @@ section .section-title:first-child {
 	align-items: flex-end;
 	text-align: right;
 	line-height: 1;
-	transform: translateY(-3px); /* feinjustieren */
+	transform: translateY(-4px); /* feinjustieren */
 }
 
 .contact-logo-main {
