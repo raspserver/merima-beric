@@ -2477,7 +2477,7 @@ footer a:hover {
 footer {
 	background: #0d0d0d;
 	color: rgba(255, 255, 255, 0.6);
-	padding: 3rem 2rem;
+	padding: 3rem 0rem;
 	text-align: center;
 	position: relative;
 }
