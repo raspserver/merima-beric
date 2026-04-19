@@ -182,6 +182,7 @@ export const heroCalendarModule = {
 
 		  this.cta.classList.remove("is-transitioning-open");
 		  this.cta.classList.add("is-open");
+		  this.hero.classList.add("hero-calendar-title-visible");
 
 		  this.restoreNavbarAfterHeroCalendar({ preserveState: false });
 		},
