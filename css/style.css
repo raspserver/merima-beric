@@ -2495,6 +2495,11 @@ footer {
   font-style: normal;
 }
 
+.footer-contact a {
+  color: inherit;          /* übernimmt die Textfarbe vom Footer */
+  text-decoration: none;   /* entfernt Unterstrich */
+}
+
 .footer-row {
   display: flex;
   justify-content: center;
