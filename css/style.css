@@ -2497,7 +2497,7 @@ footer {
 .footer-row {
   display: flex;
   justify-content: center;
-  align-items: baseline;
+  align-items: center; /* 🔥 statt baseline */
   gap: 0.4rem;
 }
 
