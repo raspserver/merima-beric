@@ -918,7 +918,7 @@ html.hero-calendar-animating body,
 
   grid-row: 7; 
 
-  opacity: 1;
+  opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
 
