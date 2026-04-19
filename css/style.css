@@ -627,6 +627,8 @@ html.hero-calendar-animating body,
 }
 
 .hero-content {
+	overflow: visible;
+
 	position: relative;
 
 	display: grid;
@@ -908,6 +910,8 @@ html.hero-calendar-animating body,
 }
 
 .hero-calendar-title {
+  outline: 2px solid red;
+
   position: relative;
   margin-top: var(--hero-calendar-title-gap, 24px);
 
