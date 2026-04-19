@@ -30,6 +30,7 @@
 
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
+	--hero-description-font-size: 1rem;
 
 	--hero-calendar-gap: 20px;
 
@@ -635,7 +636,7 @@ html.hero-calendar-animating body,
 		auto					/* hero-brand			grid-row: 3;	*/
 		var(--hero-stack-gap)
 		auto					/* hero-description		grid-row: 5;	*/
-		40px
+		calc(--nav-height-min - --hero-description-font-size)
 		auto;  					/* hero-calendar-title	grid-row: 7;	*/
 		
 	align-content: start;
@@ -706,9 +707,7 @@ html.hero-calendar-animating body,
 	justify-self: center;
 	align-self: start;
 
-	--hero-description-font-size: 1rem;
-
-	font-size: 1.0rem;
+	font-size: --hero-description-font-size;
 	color: rgba(255, 255, 255, 0.8);
 	max-width: 600px;
 	margin: 0;
@@ -919,9 +918,6 @@ html.hero-calendar-animating body,
   grid-row: 7; 
 
   opacity: 0;
-/*
-  transform: translateY(20px);
-*/
   pointer-events: none;
 
   transition: 
