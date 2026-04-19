@@ -1385,7 +1385,11 @@ section {
 	margin: 0;
 }
 
+
+
 .container {
+	flex: 1;
+	display: flex;
 	max-width: 1200px;
 	margin: 0 auto;
 }
@@ -1766,6 +1770,8 @@ section .section-title:first-child {
 
 /* Contact Section */
 .contact {
+	min-height: 100svh; /* 🔥 entscheidend */
+	display: flex;
 	background: var(--section-bg-contact);
 	color: var(--text-light);
 }
@@ -1775,6 +1781,7 @@ section .section-title:first-child {
 }
 
 .contact-content {
+	flex: 1;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 4rem;
@@ -1783,14 +1790,18 @@ section .section-title:first-child {
 .contact-info {
 	display: flex;
 	flex-direction: column;
+	height: 100%;
 	gap: 0.5rem;
 }
 
 .contact-map-embed {
+	margin: 0 2rem; /* 🔥 2rem Abstand links/rechts */
+  
+	flex: 1;        /* 🔥 nimmt den verfügbaren Platz */
+	min-height: 200px; /* Sicherheit für kleine Screens */
 	border: 2px solid var(--primary-color);
 	border-radius: 2px;
 	overflow: hidden;
-	height: 320px;
 	position: relative;
 	background: #111;
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
@@ -1832,10 +1843,15 @@ section .section-title:first-child {
 }
 
 .contact-contact {
-  text-align: center;
-  line-height: 1.2;
-  font-style: normal;
-  margin-bottom: 1.0rem;
+  
+}
+
+.contact-contact {
+	margin-top: auto;       /* 🔥 schiebt nach unten */
+	margin-bottom: 1rem;    /* dein gewünschter Abstand */
+	text-align: center;
+	line-height: 1.2;
+	font-style: normal;
 }
 
 .contact-contact a {
