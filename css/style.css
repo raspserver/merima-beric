@@ -626,10 +626,6 @@ html.hero-calendar-animating body,
 }
 
 .hero-content {
-/*
-	overflow: visible;
-*/
-
 	position: relative;
 
 	display: grid;
