@@ -1895,14 +1895,6 @@ section .section-title:first-child {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Footer */
-footer {
-	background: #0d0d0d;
-	color: rgba(255, 255, 255, 0.6);
-	padding: 3rem 2rem;
-	text-align: center;
-}
-
 .contact-brand {
 	display: inline-flex;
 	flex-direction: column;
