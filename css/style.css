@@ -2488,6 +2488,10 @@ footer {
 	margin: 0 auto;
 }
 
+.footer-contact {
+	font-style: normal;
+}
+
 /* =========================
    FOOTER COPY + ANCHOR
 ========================= */
