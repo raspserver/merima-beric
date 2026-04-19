@@ -1833,8 +1833,7 @@ section .section-title:first-child {
 }
 
 .contact-contact {
-  text-align: justify;
-  text-justify: inter-word; /* bessere Wortverteilung */
+  text-align: center;
   line-height: 1.2;
   font-style: normal;
 }
