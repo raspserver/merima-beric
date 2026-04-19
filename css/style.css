@@ -42,6 +42,8 @@
 	
 	--hero-calendar-close-about-depth: 120px;
 	--hero-calendar-prewarm-about-ratio: 0.2;
+	
+	--footer-main-size: 1rem;
 
 	--contact-map-reinit-offset: 20px;
 	--contact-map-prewarm-about-ratio: 0.2;
@@ -1889,8 +1891,6 @@ footer {
 	align-items: flex-end;
 	text-align: right;
 	line-height: 1;
-
-	--footer-main-size: clamp(1.6rem, 4.5vw, 2.4rem);
 }
 
 .footer-logo-main {
