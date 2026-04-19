@@ -1835,6 +1835,7 @@ section .section-title:first-child {
   text-align: center;
   line-height: 1.2;
   font-style: normal;
+  margin-bottom: 1.0rem;
 }
 
 .contact-contact a {
