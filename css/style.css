@@ -1894,7 +1894,7 @@ footer {
 }
 
 .footer-logo-main {
-	display: block;
+	display: inline-block;
 	font-size: var(--footer-main-size);
 	font-weight: 400;
 	line-height: 1.08;
@@ -2489,13 +2489,15 @@ footer {
 }
 
 .footer-contact {
-	font-style: normal;
+  display: inline-block;
+  line-height: 1.2;
+  font-style: normal;
 }
 
 .footer-row {
   display: flex;
   justify-content: center;
-  align-items: flex-end; /* 🔥 KEY: gleiche Unterkante */
+  align-items: baseline;
   gap: 2rem;
 }
 
