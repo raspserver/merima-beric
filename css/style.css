@@ -1891,6 +1891,7 @@ footer {
 	align-items: flex-end;
 	text-align: right;
 	line-height: 1;
+	transform: translateY(-2px); /* feinjustieren */
 }
 
 .footer-logo-main {
