@@ -904,10 +904,6 @@ html.hero-calendar-animating body,
 	}
 }
 
-.hero {
-  position: relative;
-}
-
 .hero-calendar-title {
   position: absolute;
   left: 50%;
