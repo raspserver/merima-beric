@@ -1857,6 +1857,7 @@ section .section-title:first-child {
 
 .info-details h3 {
 	font-size: 1.5rem;
+	margin-top: 1.0rem;
 	margin-bottom: 0.5rem;
 	color: var(--primary-color);
 }
