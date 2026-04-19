@@ -2499,7 +2499,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center; /* 🔥 statt baseline */
-  gap: 0.4rem;
+  gap: 0.1rem;
 }
 
 /* =========================
