@@ -216,6 +216,8 @@ export const heroCalendarModule = {
 
 	  if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
+	this.hero.classList.remove("hero-calendar-title-visible");
+
 	  state.ui.heroCalendarAnimating = true;
 	  this.clearHeroCalendarTimers();
 
