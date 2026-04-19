@@ -1839,17 +1839,16 @@ section .section-title:first-child {
 }
 
 .contact-contact a {
-  color: inherit;          /* übernimmt die Textfarbe vom Footer */
+  color: inherit;          /* übernimmt die Textfarbe */
   text-decoration: none;   /* entfernt Unterstrich */
 }
 
 .contact-row {
   display: flex;
   justify-content: center;
-  align-items: center; /* 🔥 statt baseline */
+  align-items: center;
   gap: 0.1rem;
 }
-
 
 .info-item {
 	display: flex;
@@ -2499,8 +2498,6 @@ footer {
 	max-width: 1200px;
 	margin: 0 auto;
 }
-
-
 
 /* =========================
    FOOTER COPY + ANCHOR
