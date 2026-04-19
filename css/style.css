@@ -631,13 +631,13 @@ html.hero-calendar-animating body,
 
 	display: grid;
 	grid-template-rows:
-		auto					/* hero-subtitle	grid-row: 1;	*/
+		auto					/* hero-subtitle		grid-row: 1;	*/
 		var(--hero-stack-gap)
-		auto					/* hero-brand		grid-row: 3;	*/
+		auto					/* hero-brand			grid-row: 3;	*/
 		var(--hero-stack-gap)
-		auto					/* hero-description	grid-row: 5;	*/
-		var(--hero-stack-gap)   /* 👈 NEU */
-		auto;  					/* 👈 calendar-title */
+		auto					/* hero-description		grid-row: 5;	*/
+		var(--hero-stack-gap)
+		auto;  					/* hero-calendar-title	grid-row: 7;	*/
 		
 	align-content: start;
 	justify-items: center;
