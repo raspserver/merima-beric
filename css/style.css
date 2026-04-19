@@ -1833,7 +1833,7 @@ section .section-title:first-child {
 }
 
 .contact-contact {
-  display: inline-block;
+  display: block;
   line-height: 1.2;
   font-style: normal;
 }
