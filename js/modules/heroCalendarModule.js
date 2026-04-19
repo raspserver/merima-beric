@@ -205,7 +205,7 @@ export const heroCalendarModule = {
 		});
 	  });
 	},
-  
+  /*
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
@@ -285,7 +285,7 @@ export const heroCalendarModule = {
 		this.heroCalendar.setAttribute("aria-hidden", "true");
 	  }, labelDuration);
 	},
-	
+	*/
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
@@ -296,6 +296,7 @@ export const heroCalendarModule = {
 
 	  if (state.ui.heroCalendarAnimating || !state.ui.heroCalendarOpen) return;
 
+		this.hero.classList.remove("hero-calendar-title-visible");
 	  state.ui.heroCalendarAnimating = true;
 	  this.clearHeroCalendarTimers();
 
