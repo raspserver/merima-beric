@@ -32,7 +32,6 @@
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
 
 	--hero-calendar-gap: 20px;
-	--hero-calendar-title-gap: 4px;
 
 	--hero-calendar-layout-duration: 0.75s;
 	--cta-label-duration: var(--hero-calendar-layout-duration);
@@ -911,7 +910,7 @@ html.hero-calendar-animating body,
 
 .hero-calendar-title {
   position: relative;
-  margin-top: var(--hero-calendar-title-gap, 24px);
+  margin-top: 0;
 
   text-align: center;
   font-size: var(--hero-description-font-size, 1rem);
