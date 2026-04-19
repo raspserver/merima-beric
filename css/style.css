@@ -1385,11 +1385,10 @@ section {
 	margin: 0;
 }
 
-
-
 .container {
 	flex: 1;
 	display: flex;
+	flex-direction: column;
 	max-width: 1200px;
 	margin: 0 auto;
 }
@@ -1422,6 +1421,7 @@ section .section-title:first-child {
 }
 
 .section-header {
+	flex: 1;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -1772,6 +1772,7 @@ section .section-title:first-child {
 .contact {
 	min-height: 100svh; /* 🔥 entscheidend */
 	display: flex;
+	flex-direction: column; /* 🔥 wichtig */
 	background: var(--section-bg-contact);
 	color: var(--text-light);
 }
@@ -1781,7 +1782,8 @@ section .section-title:first-child {
 }
 
 .contact-content {
-	display: block;
+	display: flex; /* 🔥 statt block */
+	flex-direction: column;
 	flex: 1;
 	gap: 4rem;
 }
