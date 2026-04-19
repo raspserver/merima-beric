@@ -904,13 +904,17 @@ html.hero-calendar-animating body,
 	}
 }
 
+.hero {
+  position: relative;
+}
+
 .hero-calendar-title {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 
-  /* 🔥 WICHTIG: Referenz zur Navbar */
-  top: var(--nav-bottom, 60px);
+  top: calc(var(--nav-bottom, 60px) + 8px);
+
 
   font-size: var(--hero-description-font-size, 1rem);
   line-height: 1.4;
@@ -921,17 +925,13 @@ html.hero-calendar-animating body,
   opacity: 0;
   pointer-events: none;
 
-  z-index: 50;
+  z-index: 5;
 
   transition: opacity 0.4s ease;
-  
-  
-  opacity: 1 !important;
-  background: red;
-  z-index: 9999;
+  will-change: transform, top;
 }
 
-.hero.hero-calendar-open .hero-calendar-title {
+.hero.hero-calendar-active .hero-calendar-title {
   opacity: 1;
 }
 

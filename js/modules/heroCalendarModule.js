@@ -171,6 +171,7 @@ export const heroCalendarModule = {
 	  this.heroCalendar.classList.remove("is-open", "is-closing");
 
 	  this.applyMeasuredHeroCalendarBox();
+	  navbarModule.renderNavbar(); // 🔥 einmal final messen
 	  this.freezeNavbarForHeroCalendar();
 
 	  /* 🔥 Layout startet sofort */
