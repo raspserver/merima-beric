@@ -635,7 +635,7 @@ html.hero-calendar-animating body,
 		auto					/* hero-brand			grid-row: 3;	*/
 		var(--hero-stack-gap)
 		auto					/* hero-description		grid-row: 5;	*/
-		20px
+		0px
 		auto;  					/* hero-calendar-title	grid-row: 7;	*/
 		
 	align-content: start;
