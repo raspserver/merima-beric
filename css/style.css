@@ -2492,6 +2492,13 @@ footer {
 	font-style: normal;
 }
 
+.footer-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* 🔥 KEY: gleiche Unterkante */
+  gap: 2rem;
+}
+
 /* =========================
    FOOTER COPY + ANCHOR
 ========================= */
