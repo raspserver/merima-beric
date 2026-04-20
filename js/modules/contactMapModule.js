@@ -320,6 +320,11 @@ export const contactMapModule = {
     this.marker = null;
     this.isInitializing = false;
     state.ui.contactMapAnimated = false;
+    
+    if (this.resizeObserver) {
+	  this.resizeObserver.disconnect();
+	  this.resizeObserver = null;
+	}
   },
 
   resize() {
