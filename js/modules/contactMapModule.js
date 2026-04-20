@@ -248,21 +248,23 @@ export const contactMapModule = {
       .setLngLat(salonCoords)
       .addTo(this.map);
 
-    this.map.once("load", () => {
-      if (!this.map) {
-        this.isInitializing = false;
-        return;
-      }
+	this.map.once("load", () => {
+	  if (!this.map) return;
 
-      this.isInitializing = false;
-      this.resize();
-      this.add3DBuildings();
-      this.runEntranceAnimationWhenVisible();
+	  this.isInitializing = false;
 
-      this.map.once("idle", () => {
-        this.resolveReady();
-      });
-    });
+	  // 🔥 WICHTIG – mehrfach resize erzwingen
+	  setTimeout(() => this.map.resize(), 0);
+	  setTimeout(() => this.map.resize(), 100);
+	  setTimeout(() => this.map.resize(), 300);
+
+	  this.add3DBuildings();
+	  this.runEntranceAnimationWhenVisible();
+
+	  this.map.once("idle", () => {
+		this.resolveReady();
+	  });
+	});
 
     this.map.on("error", (error) => {
       console.error("MapLibre Fehler:", error);
