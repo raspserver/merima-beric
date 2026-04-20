@@ -244,6 +244,15 @@ export const contactMapModule = {
       canvasContextAttributes: { antialias: true }
     });
     
+    // 🔥 ResizeObserver für Chrome/Android Fix
+	this.resizeObserver = new ResizeObserver(() => {
+	  if (this.map) {
+		this.map.resize();
+	  }
+	});
+
+	this.resizeObserver.observe(this.container);
+    
     this.map.on("styleimagemissing", (e) => {
 	  const id = e.id;
 
