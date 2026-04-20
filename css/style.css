@@ -1801,7 +1801,7 @@ section .section-title:first-child {
 	transform: translateX(-50%); /* 🔥 aus Container "rausziehen" */
 
 	flex: 1;
-	min-height: 200px;
+	min-height: 40svh; /* 🔥 wichtig */
 	
 	border: 2px solid var(--primary-color);
 	border-radius: 2px;
