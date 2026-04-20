@@ -393,14 +393,17 @@ export const contactMapModule = {
     this.disconnectEntranceObserver();
   },
 
-  async playAnimationFlow({ cinematic = false } = {}) {
-    this.prewarm();
+async playAnimationFlow({ cinematic = false } = {}) {
+  this.prewarm();
 
-    await this.waitForMapReady();
-    await this.waitUntilVisible();
-    await this.waitForStableRender();
+  await this.waitForMapReady();
+  await this.waitUntilVisible();
 
-    if (!this.map || state.ui.contactMapAnimated) return;
+  this.resize(); // 🔥 DAS FEHLT
+
+  await this.waitForStableRender();
+
+  if (!this.map || state.ui.contactMapAnimated) return;
 
     if (cinematic) {
       this.map.once("render", () => {
