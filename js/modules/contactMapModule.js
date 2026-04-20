@@ -56,9 +56,9 @@ export const contactMapModule = {
   },
 
   getMapStyle() {
-    return "https://demotiles.maplibre.org/style.json";
+    return "https://tiles.openfreemap.org/styles/liberty";
   },
-  
+
   getVectorSourceUrl() {
     return "https://tiles.openfreemap.org/planet";
   },
@@ -243,6 +243,21 @@ export const contactMapModule = {
       attributionControl: false,
       canvasContextAttributes: { antialias: true }
     });
+    
+    this.map.on("styleimagemissing", (e) => {
+	  const id = e.id;
+
+	  // transparentes 1x1 Pixel als Fallback
+	  const emptyImage = {
+		width: 1,
+		height: 1,
+		data: new Uint8Array([0, 0, 0, 0])
+	  };
+
+	  if (!this.map.hasImage(id)) {
+		this.map.addImage(id, emptyImage);
+	  }
+	});
 
     this.marker = new maplibregl.Marker({ color: "#d4af37" })
       .setLngLat(salonCoords)
