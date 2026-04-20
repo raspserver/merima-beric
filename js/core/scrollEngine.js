@@ -3,6 +3,7 @@
 import { physics } from "./physics.js";
 import { SETTINGS } from "./settings.js";
 import { state } from "./state.js";
+import { contactMapModule } from "../modules/contactMapModule.js";
 import { galleryModule } from "../modules/galleryModule.js";
 import { heroCalendarModule } from "../modules/heroCalendarModule.js";
 import { navbarModule } from "../modules/navbarModule.js";
