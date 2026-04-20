@@ -56,9 +56,9 @@ export const contactMapModule = {
   },
 
   getMapStyle() {
-    return "https://tiles.openfreemap.org/styles/liberty";
+    return "https://demotiles.maplibre.org/style.json";
   },
-
+  
   getVectorSourceUrl() {
     return "https://tiles.openfreemap.org/planet";
   },
