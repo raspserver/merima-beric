@@ -223,91 +223,127 @@ export const contactMapModule = {
   },
 
   initMapLibre() {
-    this.container = this.getContainer();
+	  this.container = this.getContainer();
 
-    if (!this.container || typeof maplibregl === "undefined") return;
-    if (this.map || this.isInitializing) return;
+	  if (!this.container || typeof maplibregl === "undefined") return;
+	  if (this.map || this.isInitializing) return;
 
-    this.isInitializing = true;
-    this.createReadyPromise();
+	  this.isInitializing = true;
+	  this.createReadyPromise();
 
-    const salonCoords = this.getSalonCoords();
+	  const salonCoords = this.getSalonCoords();
 
-    this.map = new maplibregl.Map({
-      container: this.container,
-      style: this.getMapStyle(),
-      center: salonCoords,
-      zoom: this.getStartZoom(),
-      pitch: this.getStartPitch(),
-      bearing: this.getStartBearing(),
-      attributionControl: false,
-      canvasContextAttributes: { antialias: true }
-    });
-    
-    // 🔥 ResizeObserver für Chrome/Android Fix
-	this.resizeObserver = new ResizeObserver(() => {
-	  if (this.map) {
-		this.map.resize();
-	  }
-	});
+	  // --------------------------------------------------
+	  // MAP INIT
+	  // --------------------------------------------------
+	  this.map = new maplibregl.Map({
+		container: this.container,
+		style: this.getMapStyle(),
+		center: salonCoords,
+		zoom: this.getStartZoom(),
+		pitch: this.getStartPitch(),
+		bearing: this.getStartBearing(),
+		attributionControl: false,
+		canvasContextAttributes: { antialias: true }
+	  });
 
-	this.resizeObserver.observe(this.container);
-    
-    this.map.on("styleimagemissing", (e) => {
-	  const id = e.id;
+	  // --------------------------------------------------
+	  // 🔥 CRITICAL: Missing sprite fallback (Chrome fix)
+	  // --------------------------------------------------
+	  this.map.on("styleimagemissing", (e) => {
+		const id = e.id;
 
-	  // transparentes 1x1 Pixel als Fallback
-	  const emptyImage = {
-		width: 1,
-		height: 1,
-		data: new Uint8Array([0, 0, 0, 0])
-	  };
+		if (!this.map.hasImage(id)) {
+		  this.map.addImage(id, {
+			width: 1,
+			height: 1,
+			data: new Uint8Array([0, 0, 0, 0])
+		  });
+		}
+	  });
 
-	  if (!this.map.hasImage(id)) {
-		this.map.addImage(id, emptyImage);
-	  }
-	});
+	  // --------------------------------------------------
+	  // 🔥 CRITICAL: ResizeObserver (Layout + mobile fix)
+	  // --------------------------------------------------
+	  this.resizeObserver = new ResizeObserver(() => {
+		if (!this.map) return;
 
-    this.marker = new maplibregl.Marker({ color: "#d4af37" })
-      .setLngLat(salonCoords)
-      .addTo(this.map);
+		// requestAnimationFrame verhindert Resize-Spam
+		requestAnimationFrame(() => {
+		  this.map.resize();
+		});
+	  });
 
-	this.map.once("load", () => {
-	  if (!this.map) return;
+	  this.resizeObserver.observe(this.container);
 
-	  this.isInitializing = false;
+	  // --------------------------------------------------
+	  // MARKER
+	  // --------------------------------------------------
+	  this.marker = new maplibregl.Marker({ color: "#d4af37" })
+		.setLngLat(salonCoords)
+		.addTo(this.map);
 
-	  // 🔥 WICHTIG – mehrfach resize erzwingen
-	  setTimeout(() => this.map.resize(), 0);
-	  setTimeout(() => this.map.resize(), 100);
-	  setTimeout(() => this.map.resize(), 300);
+	  // --------------------------------------------------
+	  // LOAD HANDLING (ULTRA STABIL)
+	  // --------------------------------------------------
+	  this.map.once("load", () => {
+		if (!this.map) return;
 
-	  this.add3DBuildings();
-	  this.runEntranceAnimationWhenVisible();
+		this.isInitializing = false;
 
-	  this.map.once("idle", () => {
+		// 🔥 Multi-phase resize (Chrome braucht das)
+		const forceResize = () => this.map && this.map.resize();
+
+		requestAnimationFrame(forceResize);
+		setTimeout(forceResize, 50);
+		setTimeout(forceResize, 150);
+		setTimeout(forceResize, 400);
+
+		// 🔥 Extra: nach Fonts + Tiles
+		this.map.once("render", () => {
+		  this.map.once("idle", () => {
+			forceResize();
+		  });
+		});
+
+		this.add3DBuildings();
+		this.runEntranceAnimationWhenVisible();
+
+		this.map.once("idle", () => {
+		  this.resolveReady();
+		});
+	  });
+
+	  // --------------------------------------------------
+	  // ERROR HANDLING
+	  // --------------------------------------------------
+	  this.map.on("error", (error) => {
+		console.error("MapLibre Fehler:", error);
+		this.isInitializing = false;
 		this.resolveReady();
 	  });
-	});
 
-    this.map.on("error", (error) => {
-      console.error("MapLibre Fehler:", error);
-      this.isInitializing = false;
-      this.resolveReady();
-    });
+	  // --------------------------------------------------
+	  // CLEANUP
+	  // --------------------------------------------------
+	  this.map.on("remove", () => {
+		this.disconnectEntranceObserver();
+		this.clearNavAnimationTimer();
 
-    this.map.on("remove", () => {
-      this.disconnectEntranceObserver();
-      this.clearNavAnimationTimer();
-      this.map = null;
-      this.marker = null;
-      this.isInitializing = false;
-      state.ui.contactMapAnimated = false;
+		if (this.resizeObserver) {
+		  this.resizeObserver.disconnect();
+		  this.resizeObserver = null;
+		}
 
-      this.readyPromise = null;
-      this.readyResolve = null;
-    });
-  },
+		this.map = null;
+		this.marker = null;
+		this.isInitializing = false;
+		state.ui.contactMapAnimated = false;
+
+		this.readyPromise = null;
+		this.readyResolve = null;
+	  });
+	},
 
   destroy() {
     if (!this.map) return;
