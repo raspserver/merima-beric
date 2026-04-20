@@ -414,7 +414,7 @@ async playAnimationFlow({ cinematic = false } = {}) {
   await this.waitForMapReady();
   await this.waitUntilVisible();
 
-  this.resize(); // 🔥 DAS FEHLT
+  this.map.resize(); // 🔥 zwingend für Chrome
 
   await this.waitForStableRender();
 
