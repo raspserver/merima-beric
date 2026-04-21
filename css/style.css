@@ -1784,12 +1784,6 @@ section .section-title:first-child {
 	gap: 4rem;
 }
 
-.contact-info {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-}
-
 .contact-map-embed {
 	border: 2px solid var(--primary-color);
 	border-radius: 2px;
