@@ -1794,10 +1794,7 @@ section .section-title:first-child {
   margin-left: 50%;
   transform: translateX(-50%);
 
-  height: 60svh;      /* 🔥 HIER steuerst du alles */
-/*
-  min-height: 280px;
-*/
+  height: 55svh;      /* 🔥 HIER steuerst du alles */
 
   border: 2px solid var(--primary-color);
   background: #111;
