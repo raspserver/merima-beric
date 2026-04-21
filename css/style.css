@@ -1783,9 +1783,7 @@ section .section-title:first-child {
 }
 
 .contact-content {
-/*
   flex: 1;
-*/
   display: flex;
   flex-direction: column;
   gap: 4rem;
@@ -1796,10 +1794,7 @@ section .section-title:first-child {
   margin-left: 50%;
   transform: translateX(-50%);
 
-  flex: 1;
-
-  height: 100%;          /* 🔥 wichtig für gleiche Höhe */
-  min-height: 400px;
+  height: 55svh;      /* 🔥 HIER steuerst du alles */
 
   border: 2px solid var(--primary-color);
   background: #111;
@@ -1840,9 +1835,7 @@ section .section-title:first-child {
 }
 
 .contact-contact {
-/*
     display: flex;
-*/
     gap: 4rem;
     align-items: stretch;
 	margin-top: auto;       /* 🔥 schiebt nach unten */
