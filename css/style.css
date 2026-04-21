@@ -1835,9 +1835,6 @@ section .section-title:first-child {
 }
 
 .contact-contact {
-    display: flex;
-    gap: 4rem;
-    align-items: stretch;
 	margin-top: auto;       /* 🔥 schiebt nach unten */
 	margin-bottom: 1rem;    /* dein gewünschter Abstand */
 	text-align: center;
