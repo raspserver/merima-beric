@@ -1836,7 +1836,7 @@ section .section-title:first-child {
 
 .contact-contact {
 	margin-top: 0rem;       /* 🔥 schiebt nach unten */
-	margin-bottom: 1rem;    /* dein gewünschter Abstand */
+	margin-bottom: 0rem;    /* dein gewünschter Abstand */
 	text-align: center;
 	line-height: 1.2;
 	font-style: normal;
