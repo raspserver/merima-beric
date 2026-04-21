@@ -1837,12 +1837,6 @@ section .section-title:first-child {
 	color: var(--secondary-color);
 }
 
-@media (max-width: 768px) {
-	.contact-map-embed {
-		height: 260px;
-	}
-}
-
 .contact-contact {
 	margin-top: auto;       /* 🔥 schiebt nach unten */
 	margin-bottom: 1rem;    /* dein gewünschter Abstand */
