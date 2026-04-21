@@ -1797,15 +1797,8 @@ section .section-title:first-child {
 }
 
 .contact-map-embed {
-	width: calc(100vw - 4rem); /* 🔥 exakt 2rem links + rechts */
-	margin-left: 50%;
-	transform: translateX(-50%); /* 🔥 aus Container "rausziehen" */
-
 	flex: 1;
 
-	min-height: 300px;
-	height: 100%;
-	
 	border: 2px solid var(--primary-color);
 	border-radius: 2px;
 	overflow: hidden;
