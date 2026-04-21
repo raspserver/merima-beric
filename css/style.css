@@ -1770,7 +1770,6 @@ section .section-title:first-child {
 
 /* Contact Section */
 .contact {
-	min-height: 100svh; /* 🔥 entscheidend */
 	display: flex;
 	flex-direction: column; /* 🔥 wichtig */
 	background: var(--section-bg-contact);
