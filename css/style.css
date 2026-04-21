@@ -1768,19 +1768,6 @@ section .section-title:first-child {
 	letter-spacing: 0.05em;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Contact Section */
 .contact {
 	min-height: 100dvh;
@@ -1807,10 +1794,8 @@ section .section-title:first-child {
   margin-left: 50%;
   transform: translateX(-50%);
 
-/*
-  flex: 1;                     /* 🔥 nimmt restliche Höhe */
-*/
-  min-height: 250px;
+  height: 45dvh;      /* 🔥 HIER steuerst du alles */
+  min-height: 280px;
 
   border: 2px solid var(--primary-color);
   background: #111;
