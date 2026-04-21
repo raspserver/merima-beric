@@ -1770,7 +1770,6 @@ section .section-title:first-child {
 
 /* Contact Section */
 .contact {
-	display: flex;
 	flex-direction: column; /* 🔥 wichtig */
 	background: var(--section-bg-contact);
 	color: var(--text-light);
@@ -1781,9 +1780,7 @@ section .section-title:first-child {
 }
 
 .contact-content {
-	display: flex; /* 🔥 statt block */
 	flex-direction: column;
-	flex: 1;
 	gap: 4rem;
 }
 
@@ -1794,8 +1791,6 @@ section .section-title:first-child {
 }
 
 .contact-map-embed {
-	flex: 1;
-
 	border: 2px solid var(--primary-color);
 	border-radius: 2px;
 	overflow: hidden;
