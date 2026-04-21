@@ -1795,7 +1795,9 @@ section .section-title:first-child {
   transform: translateX(-50%);
 
   height: 45dvh;      /* 🔥 HIER steuerst du alles */
+/*
   min-height: 280px;
+*/
 
   border: 2px solid var(--primary-color);
   background: #111;
