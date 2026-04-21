@@ -1825,7 +1825,7 @@ section .section-title:first-child {
 	font-family: 'Montserrat', sans-serif;
 	color: var(--text-dark);
 	border-radius: 2px;
-	padding: 0.9rem 1rem;
+	padding: 0.9rem 0rem;
 }
 
 #contact-map .maplibregl-popup-content strong {
