@@ -1807,7 +1807,9 @@ section .section-title:first-child {
   margin-left: 50%;
   transform: translateX(-50%);
 
+/*
   flex: 1;                     /* 🔥 nimmt restliche Höhe */
+*/
   min-height: 250px;
 
   border: 2px solid var(--primary-color);
