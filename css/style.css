@@ -1830,7 +1830,7 @@ section .section-title:first-child {
 
 #contact-map .maplibregl-popup-content strong {
 	display: block;
-	margin-bottom: 0.25rem;
+	margin-bottom: 0.0rem;
 	color: var(--secondary-color);
 }
 
