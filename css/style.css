@@ -1923,6 +1923,7 @@ section .section-title:first-child {
 	color: var(--text-light);
 }
 
+/*
 @media (min-width: 900px) {
 
   .contact-content {
@@ -1935,14 +1936,12 @@ section .section-title:first-child {
   }
 
   .contact-map-embed {
-/*
-    width: 100%;          /* 🔥 wichtig */
-*/
+    width: 100%;  
     
     width: calc(100vw - 4rem);
     
-    margin: 0;            /* 🔥 wichtig */
-    transform: none;      /* 🔥 wichtig */
+    margin: 0;          
+    transform: none;    
 
     height: auto;
     min-height: 500px;
@@ -1951,6 +1950,7 @@ section .section-title:first-child {
   .contact-right {
     padding: 0;
   }
+*/
 }
 
 /* ===== NAVBAR ===== */
