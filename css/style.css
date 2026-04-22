@@ -1781,23 +1781,30 @@ section .section-title:first-child {
 }
 
 .contact-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: stretch;
+	gap: 3rem;
+
+	padding: 0; /* ❗ vorher 2rem → jetzt weg */
+
+    flex-direction: column;
   
-  min-height: 0; /* 🔥 Chrome Fix */
+    min-height: 0; /* 🔥 Chrome Fix */
 }
 
 .contact-right {
-  padding: 0 2rem;
+  padding-right: 2rem;  /* 🔥 Abstand zum rechten Rand */
   display: flex;
   flex-direction: column;
 }
 
 .contact-map-embed {
+  margin: 0;
   height: 56svh;
 
-  margin: 0 2rem;
+  padding-left: 2rem;   /* 🔥 Abstand zum linken Rand */
+  box-sizing: border-box;
 
   border: 2px solid var(--primary-color);
   background: #111;
