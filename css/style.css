@@ -1794,9 +1794,10 @@ section .section-title:first-child {
   flex-direction: column;
 }
 
-.contact-map-embed 
+.contact-map-embed {
+  height: 56svh;
 
-  height: 56svh;      /* 🔥 HIER steuerst du alles */
+  margin: 0 2rem;
 
   border: 2px solid var(--primary-color);
   background: #111;
@@ -1805,6 +1806,11 @@ section .section-title:first-child {
   border-radius: 2px;
   position: relative;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.contact-map-embed,
+.contact-right {
+  min-width: 0;
 }
 
 #contact-map {
