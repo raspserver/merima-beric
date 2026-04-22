@@ -1921,14 +1921,13 @@ section .section-title:first-child {
 
 @media (min-width: 900px) {
   .contact-content {
-    position: relative;
-
-    width: 100vw;
-    margin-left: 50%;
-    transform: translateX(-50%);
-
     display: flex;
-    gap: 0; /* wichtig – wir steuern Abstand selbst */
+    gap: 3rem;
+
+    padding-left: 2rem;
+    padding-right: 2rem;
+
+    position: relative;
   }
   
   .contact-map-embed,
@@ -1937,18 +1936,22 @@ section .section-title:first-child {
   }
 
   .contact-map-embed {
+    width: 100%;        /* 🔥 zurück in normales Layout */
+    margin: 0;
+    transform: none;
+  
+    flex: 1;
+  
     padding-left: 2rem;
     padding-right: 1.5rem;
     box-sizing: border-box;
 
     height: auto;
     min-height: 500px;
-
-    transform: none;
-    margin: 0;
   }
 
   .contact-right {
+    flex: 1;
     padding-left: 1.5rem;
     padding-right: 2rem;
     box-sizing: border-box;
@@ -1958,6 +1961,9 @@ section .section-title:first-child {
   }
 
   .contact-contact {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  
     margin-top: 0;
     margin-bottom: 2rem;
     text-align: left;
