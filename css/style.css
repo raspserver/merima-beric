@@ -1930,9 +1930,8 @@ section .section-title:first-child {
   }
 
   .contact-map-embed {
-    margin: 0;         /* ❗ wichtig */
-    height: auto;
-    min-height: 500px;
+    margin: 0;
+    height: 56svh;   /* 🔥 gleiche Logik wie mobile */
   }
 
   .contact-right {
