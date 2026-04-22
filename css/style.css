@@ -1795,9 +1795,11 @@ section .section-title:first-child {
 }
 
 .contact-map-embed {
-  height: 56svh;
+  width: calc(100vw - 4rem);
+  margin-left: 50%;
+  transform: translateX(-50%);
 
-  margin: 0 2rem;
+  height: 56svh;
 
   border: 2px solid var(--primary-color);
   background: #111;
@@ -1920,29 +1922,27 @@ section .section-title:first-child {
 }
 
 @media (min-width: 900px) {
+
   .contact-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-items: stretch;
     gap: 3rem;
 
-    padding: 0 2rem; /* 👉 Abstand zum Screenrand */
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 
   .contact-map-embed {
-    width: calc(100vw - 4rem);
-    margin-left: 50%;
-    transform: translateX(-50%);
-    height: 56svh;   /* 🔥 gleiche Logik wie mobile */
+    width: 100%;          /* 🔥 wichtig */
+    margin: 0;            /* 🔥 wichtig */
+    transform: none;      /* 🔥 wichtig */
+
+    height: auto;
+    min-height: 500px;
   }
 
   .contact-right {
-    padding: 0;        /* Grid regelt Abstand */
-  }
-
-  .contact-contact {
-    text-align: left;
-    margin-top: 0;
+    padding: 0;
   }
 }
 
