@@ -1930,7 +1930,9 @@ section .section-title:first-child {
   }
 
   .contact-map-embed {
-    margin: 0;
+    width: calc(100vw - 4rem);
+    margin-left: 50%;
+    transform: translateX(-50%);
     height: 56svh;   /* 🔥 gleiche Logik wie mobile */
   }
 
