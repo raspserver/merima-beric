@@ -1386,11 +1386,9 @@ section {
 }
 
 .container {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	max-width: 1200px;
-	margin: 0 auto;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .section-title {
@@ -1770,9 +1768,9 @@ section .section-title:first-child {
 
 /* Contact Section */
 .contact {
-	min-height: 100dvh;
-	display: flex;
-	flex-direction: column;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
 
 	background: var(--section-bg-contact);
 	color: var(--text-light);
@@ -1783,24 +1781,20 @@ section .section-title:first-child {
 }
 
 .contact-content {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.0rem;
+  gap: 2rem;
   
   min-height: 0; /* 🔥 Chrome Fix */
 }
 
 .contact-right {
-  flex: 1;
+  padding: 0 2rem;
   display: flex;
   flex-direction: column;
 }
 
-.contact-map-embed {
-  width: calc(100vw - 4rem);   /* 🔥 volle Breite minus 2rem */
-  margin-left: 50%;
-  transform: translateX(-50%);
+.contact-map-embed 
 
   height: 56svh;      /* 🔥 HIER steuerst du alles */
 
@@ -1843,9 +1837,10 @@ section .section-title:first-child {
 }
 
 .contact-contact {
-	margin-top: auto;
-	margin-bottom: 1rem;
-	text-align: center;
+    margin-top: auto;
+    margin-bottom: 1rem;
+    text-align: center;
+
 	line-height: 1.2;
 	font-style: normal;
 }
@@ -1918,55 +1913,29 @@ section .section-title:first-child {
 	color: var(--text-light);
 }
 
-
 @media (min-width: 900px) {
   .contact-content {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
     gap: 3rem;
 
-    padding-left: 2rem;
-    padding-right: 2rem;
-
-    position: relative;
-  }
-  
-  .contact-map-embed,
-  .contact-right {
-    width: 50%;		/* beide Spalten exakt halbieren */
+    padding: 0 2rem; /* 👉 Abstand zum Screenrand */
   }
 
   .contact-map-embed {
-    width: 100%;        /* 🔥 zurück in normales Layout */
-    margin: 0;
-    transform: none;
-  
-    flex: 1;
-  
-    padding-left: 2rem;
-    padding-right: 1.5rem;
-    box-sizing: border-box;
-
+    margin: 0;         /* ❗ wichtig */
     height: auto;
     min-height: 500px;
   }
 
   .contact-right {
-    flex: 1;
-    padding-left: 1.5rem;
-    padding-right: 2rem;
-    box-sizing: border-box;
-
-    display: flex;
-    flex-direction: column;
+    padding: 0;        /* Grid regelt Abstand */
   }
 
   .contact-contact {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  
-    margin-top: 0;
-    margin-bottom: 2rem;
     text-align: left;
+    margin-top: 0;
   }
 }
 
