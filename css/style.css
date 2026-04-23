@@ -1786,7 +1786,9 @@ section .section-title:first-child {
 }
 
 .contact-right {
+/*
   padding: 0 2rem;
+*/
   display: flex;
   flex-direction: column;
 }
