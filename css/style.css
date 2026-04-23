@@ -1928,7 +1928,9 @@ section .section-title:first-child {
   .contact-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
+/*
     gap: 3rem;
+*/
 
     padding-left: 2rem;
     padding-right: 2rem;
