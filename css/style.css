@@ -1849,7 +1849,9 @@ section .section-title:first-child {
 .contact-contact {
     margin-top: auto;
     margin-bottom: 1rem;
+/*
     text-align: left;
+*/
 
 	line-height: 1.2;
 	font-style: normal;
