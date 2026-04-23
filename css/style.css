@@ -1416,11 +1416,7 @@ section .section-title:first-child {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-/*
-	align-items: center;
-*/
 	align-items: stretch;
-	outline: 2px solid red;
 	gap: var(--section-stack-gap);
 	margin-bottom: 1.8rem;
 }
