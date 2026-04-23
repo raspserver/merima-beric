@@ -1420,6 +1420,7 @@ section .section-title:first-child {
 	align-items: center;
 */
 	align-items: stretch;
+	outline: 2px solid red;
 	gap: var(--section-stack-gap);
 	margin-bottom: 1.8rem;
 }
