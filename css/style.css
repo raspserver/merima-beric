@@ -1417,6 +1417,7 @@ section .section-title:first-child {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
+	outline: 2px solid red;
 	gap: var(--section-stack-gap);
 	margin-bottom: 1.8rem;
 }
@@ -1777,7 +1778,9 @@ section .section-title:first-child {
 .contact-content {
   display: flex;
   flex-direction: column;
+/*
   gap: 2rem;
+*/
   
   min-height: 0; /* 🔥 Chrome Fix */
 }
