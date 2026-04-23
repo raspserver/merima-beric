@@ -1385,14 +1385,6 @@ section {
 	margin: 0;
 }
 
-.container {
-/*
-    max-width: 1200px;
-*/
-    margin: 0 auto;
-    width: 100%;
-}
-
 .section-title {
 	font-size: clamp(2.5rem, 5vw, 4rem);
 	font-weight: 400;
