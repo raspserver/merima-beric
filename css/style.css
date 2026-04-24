@@ -2363,6 +2363,8 @@ section .section-title:first-child {
    SECTION SCROLL HEAD
 ========================= */
 .section-scroll-head {
+	outline: 2px solid green;
+
 	position: absolute;
 	top: calc(-1 * var(--section-scroll-hit-offset));
 	left: 50%;
