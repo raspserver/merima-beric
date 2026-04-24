@@ -1808,16 +1808,19 @@ section .section-title:first-child {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
+/*
 .contact-map-embed,
 .contact-right {
   min-width: 0;
 }
+*/
 
 #contact-map {
 	width: 100%;
 	height: 100%;
 }
 
+/*
 #contact-map .maplibregl-ctrl-group {
 	border-radius: 2px;
 	overflow: hidden;
@@ -1841,6 +1844,7 @@ section .section-title:first-child {
 	margin-bottom: 0.0rem;
 	color: var(--secondary-color);
 }
+*/
 
 .contact-contact {
     margin-top: auto;
