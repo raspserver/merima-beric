@@ -1901,7 +1901,7 @@ section .section-title:first-child {
 	margin-bottom: 2rem;
 }
 
-.social-links a {
+.social-links li {
 	color: var(--primary-color);
 	font-size: 1.5rem;
 	transition: var(--transition);
