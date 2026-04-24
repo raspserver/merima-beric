@@ -1902,9 +1902,13 @@ section .section-title:first-child {
 }
 
 .social-links li {
+	display: flex;
+	justify-content: space-between;
+/*
 	color: var(--primary-color);
 	font-size: 1.5rem;
 	transition: var(--transition);
+*/
 }
 
 .social-links a:hover {
