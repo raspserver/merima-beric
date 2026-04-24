@@ -78,7 +78,7 @@
 	--section-indicator-boundary-gap: 1px;
 	--footer-copy-gap: 1.25rem;
 	
-	--section-spacing: 2.5rem;
+	--section-spacing: 2.0rem;
 	--section-scroll-hit-offset: 40px;
 	--section-scroll-hit-height: 80px;
 	--section-scroll-inset: 0;
@@ -1413,11 +1413,13 @@ section .section-title:first-child {
 }
 
 .section-header {
+	outline: 2px solid red;
+
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	outline: 2px solid red;
+	
 	gap: var(--section-stack-gap);
 	margin-bottom: 1.8rem;
 }
@@ -2372,21 +2374,6 @@ section .section-title:first-child {
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
 	z-index: 15;
-}
-
-.section-scroll-indicator {
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-
-	/* Sektionsgrenze liegt 50px unter dem oberen Rand der Hit-Area */
-	top: calc(
-		var(--section-scroll-hit-offset) - (
-			var(--section-indicator-dot-size) +
-			var(--section-indicator-bounce-max-y) +
-			var(--section-indicator-boundary-gap)
-		)
-	);
 }
 
 .section-scroll-indicator {
