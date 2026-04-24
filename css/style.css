@@ -1796,7 +1796,7 @@ section .section-title:first-child {
   margin-left: 50%;
   transform: translateX(-50%);
 
-  height: auto;
+  height: 56svh;
 
   border: 2px solid var(--primary-color);
   background: #111;
