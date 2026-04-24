@@ -1924,7 +1924,9 @@ section .section-title:first-child {
     transform: none;      /* 🔥 wichtig */
 
     height: auto;
+/*
     min-height: 500px;
+*/
   }
 
   .contact-right {
