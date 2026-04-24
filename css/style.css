@@ -1421,7 +1421,7 @@ section .section-title:first-child {
 	align-items: stretch;
 	
 	gap: var(--section-stack-gap);
-	margin-bottom: 1.8rem;
+	margin-bottom: 0.0rem;
 }
 
 .about {
