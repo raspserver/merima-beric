@@ -1910,7 +1910,7 @@ section .section-title:first-child {
 
   .contact-content {
     display: grid;
-    grid-template-columns: 4fr 1fr;
+    grid-template-columns: 2fr 1fr;
     padding-right: 2rem;
   }
 
