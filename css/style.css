@@ -1877,9 +1877,11 @@ section .section-title:first-child {
 	transition: color 0.3s;
 }
 
+/*
 .info-details a:hover {
 	color: var(--primary-color);
 }
+*/
 
 .hours-list {
 	list-style: none;
