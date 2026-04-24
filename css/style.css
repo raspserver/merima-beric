@@ -1854,11 +1854,6 @@ section .section-title:first-child {
   text-decoration: none;   /* entfernt Unterstrich */
 }
 
-.info-item {
-	display: flex;
-	align-items: flex-start;
-}
-
 .info-details h3 {
 	font-size: 1.5rem;
 	margin-top: 0.0rem;
