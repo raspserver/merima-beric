@@ -1922,8 +1922,12 @@ section .section-title:first-child {
 
   .contact-map-embed {
     width: 100%;          /* 🔥 wichtig */
+/*
     margin: 0;            /* 🔥 wichtig */
+/*
     transform: none;      /* 🔥 wichtig */
+*/
+*/
     height: 100%;
   }
 
