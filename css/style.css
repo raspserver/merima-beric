@@ -1792,14 +1792,13 @@ section .section-title:first-child {
 }
 
 .contact-map-embed {
-/*
-  width: calc(100vw - 4rem);
-*/
   width: 100%;
   margin-left: 50%;
   transform: translateX(-50%);
 
+/*
   height: 56svh;
+*/
 
   border: 2px solid var(--primary-color);
   background: #111;
