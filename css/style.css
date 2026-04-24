@@ -1872,12 +1872,6 @@ section .section-title:first-child {
 */
 }
 
-.info-icon {
-	font-size: 2rem;
-	color: var(--primary-color);
-	min-width: 40px;
-}
-
 .info-details h3 {
 	font-size: 1.5rem;
 	margin-top: 1.0rem;
@@ -1955,6 +1949,7 @@ section .section-title:first-child {
 
   .contact-right {
     padding: 0;
+    margin-left: 2rem;
   }
 }
 
