@@ -1765,7 +1765,9 @@ section .section-title:first-child {
 
 /* Contact Section */
 .contact {
+/*
     min-height: 100dvh;
+*/
     display: flex;
     flex-direction: column;
 
@@ -1845,9 +1847,6 @@ section .section-title:first-child {
 .contact-contact {
     margin-top: auto;
     margin-bottom: 1rem;
-/*
-    text-align: left;
-*/
 
 	line-height: 1.2;
 	font-style: normal;
