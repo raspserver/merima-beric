@@ -1797,7 +1797,7 @@ section .section-title:first-child {
   transform: translateX(-50%);
 
   height: 50svh;
-  min-height: 0;
+  min-height: 50svh;
 
   border: 2px solid var(--primary-color);
   background: #111;
