@@ -1796,9 +1796,6 @@ section .section-title:first-child {
   margin-left: 50%;
   transform: translateX(-50%);
 
-/*
-  height: 40svh;
-*/
   min-height: 0;
 
   border: 2px solid var(--primary-color);
@@ -1912,7 +1909,7 @@ section .section-title:first-child {
 
   .contact-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     padding-right: 2rem;
   }
 
