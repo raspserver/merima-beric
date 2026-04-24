@@ -1861,15 +1861,12 @@ section .section-title:first-child {
 .info-item {
 	display: flex;
 	align-items: flex-start;
-/*
-	gap: 1.5rem;
-*/
 }
 
 .info-details h3 {
 	font-size: 1.5rem;
-	margin-top: 1.0rem;
-	margin-bottom: 0.5rem;
+	margin-top: 0.0rem;
+	margin-bottom: 0.0rem;
 	color: var(--primary-color);
 }
 
