@@ -1780,17 +1780,11 @@ section .section-title:first-child {
 .contact-content {
   display: flex;
   flex-direction: column;
-/*
-  gap: 2rem;
-*/
   
   min-height: 0; /* 🔥 Chrome Fix */
 }
 
 .contact-right {
-/*
-  padding: 0 2rem;
-*/
   display: flex;
   flex-direction: column;
 }
@@ -1901,7 +1895,7 @@ section .section-title:first-child {
 .hours-list li {
 	display: flex;
 	justify-content: space-between;
-	padding: 0.5rem 0;
+	padding: 0.0rem 0;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -1928,13 +1922,6 @@ section .section-title:first-child {
   .contact-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-/*
-    gap: 3rem;
-*/
-
-/*
-    padding-left: 2rem;
-*/
     padding-right: 2rem;
   }
 
@@ -1948,7 +1935,6 @@ section .section-title:first-child {
   }
 
   .contact-right {
-    padding: 0;
     margin-left: 2rem;
   }
 }
