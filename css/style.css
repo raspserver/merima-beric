@@ -1923,7 +1923,9 @@ section .section-title:first-child {
     margin: 0;            /* 🔥 wichtig */
     transform: none;      /* 🔥 wichtig */
 
+/*
     height: auto;
+*/
 /*
     min-height: 500px;
 */
