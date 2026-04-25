@@ -1790,7 +1790,7 @@ section .section-title:first-child {
 .contact-map-embed {
   width: 100%;
   margin-left: 50%;
-  margin-bottom: 1.7rem;
+  margin-bottom: 1.6rem;
   transform: translateX(-50%);
 
   height: calc(100svh
