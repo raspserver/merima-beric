@@ -126,7 +126,7 @@ export const contactMapModule = {
   },
 
   getFlyMinZoom() {
-    return utils.cssVar.number("--contact-map-fly-min-zoom", 11.8);
+    return utils.cssVar.number("--contact-map-fly-min-zoom", 13.8);
   },
 
   getFlyScreenSpeed() {
