@@ -1797,7 +1797,7 @@ section .section-title:first-child {
   transform: translateX(-50%);
 
   height: 50svh;
-  min-height: 50svh;
+  min-height: 60svh;
 
   border: 2px solid var(--primary-color);
   background: #111;
@@ -1808,43 +1808,10 @@ section .section-title:first-child {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
-/*
-.contact-map-embed,
-.contact-right {
-  min-width: 0;
-}
-*/
-
 #contact-map {
 	width: 100%;
 	height: 100%;
 }
-
-/*
-#contact-map .maplibregl-ctrl-group {
-	border-radius: 2px;
-	overflow: hidden;
-	box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-}
-
-#contact-map .maplibregl-ctrl button {
-	width: 32px;
-	height: 32px;
-}
-
-#contact-map .maplibregl-popup-content {
-	font-family: 'Montserrat', sans-serif;
-	color: var(--text-dark);
-	border-radius: 2px;
-	padding: 0.9rem 0rem;
-}
-
-#contact-map .maplibregl-popup-content strong {
-	display: block;
-	margin-bottom: 0.0rem;
-	color: var(--secondary-color);
-}
-*/
 
 .contact-contact {
     margin-top: auto;
