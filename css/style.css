@@ -1890,7 +1890,7 @@ section .section-title:first-child {
   .contact-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    padding-right: 2rem;
+    padding-right: 0rem;
   }
 
   .contact-map-embed {
