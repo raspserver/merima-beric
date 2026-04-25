@@ -1790,6 +1790,7 @@ section .section-title:first-child {
 .contact-map-embed {
   width: 100%;
   margin-left: 50%;
+  margin-bottom: 2rem;
   transform: translateX(-50%);
 
   height: 50svh;
@@ -1807,7 +1808,7 @@ section .section-title:first-child {
 #contact-map {
 	width: 100%;
 	height: 100%;
-	margin-bottom: 2rem;
+	
 }
 
 .contact-contact {
