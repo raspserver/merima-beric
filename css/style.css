@@ -1865,9 +1865,11 @@ section .section-title:first-child {
 }
 
 .social-row {
-  display: flex;
-  justify-content: space-between; /* 🔥 links Icon / rechts Text */
-  align-items: center;
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+
+	gap: 0.8rem;
 }
 
 .social-row i {
