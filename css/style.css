@@ -1844,12 +1844,6 @@ section .section-title:first-child {
 	transition: color 0.3s;
 }
 
-/*
-.info-details a:hover {
-	color: var(--primary-color);
-}
-*/
-
 .hours-list {
 	list-style: none;
 }
@@ -1857,10 +1851,6 @@ section .section-title:first-child {
 .hours-list li {
 	display: flex;
 	justify-content: space-between;
-/*
-	padding: 0.0rem 0;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-*/
 }
 
 .social-links {
@@ -1876,9 +1866,6 @@ section .section-title:first-child {
 }
 
 .social-row i {
-/*
-  color: var(--primary-color);
-*/
   font-size: 1.2rem;
 }
 
