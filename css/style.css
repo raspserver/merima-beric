@@ -1793,7 +1793,7 @@ section .section-title:first-child {
   margin-bottom: 3rem;
   transform: translateX(-50%);
 
-  height: 60svh;
+  height: calc(100svh - 272px);
 /*
   min-height: 60svh;
 */
