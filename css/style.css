@@ -1793,7 +1793,11 @@ section .section-title:first-child {
   margin-bottom: 3rem;
   transform: translateX(-50%);
 
-  height: calc(100svh - 272px - var(--nav-height-min));
+  height: calc(100svh
+			- 272px
+			- var(--nav-height-min)
+			- var(--section-scroll-hit-offset)
+	);
 
 
   border: 2px solid var(--primary-color);
