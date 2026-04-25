@@ -1890,81 +1890,38 @@ section .section-title:first-child {
 .hours-list li {
 	display: flex;
 	justify-content: space-between;
+/*
+	padding: 0.0rem 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+*/
 }
 
 .social-links {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-}
-
-/* ROW */
-.social-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0.6rem 0.8rem;
-  border-radius: 6px;
-
-  text-decoration: none;
-  color: rgba(255,255,255,0.8);
-
-  transition: all 0.25s ease;
-}
-
-/* ICON LINKS */
-.social-icon {
-  display: flex;
-  align-items: center;
   gap: 0.5rem;
 }
 
-.social-icon i {
+.social-row {
+  display: flex;
+  justify-content: space-between; /* 🔥 links Icon / rechts Text */
+  align-items: center;
+}
+
+.social-row i {
+/*
+  color: var(--primary-color);
+*/
   font-size: 1.2rem;
-  transition: all 0.25s ease;
 }
 
-/* TEXT RECHTS */
-.social-handle {
-  transition: all 0.25s ease;
+.social-row a {
+  text-decoration: none;
+  color: rgba(255,255,255,0.8);
 }
 
-/* ---------- HOVER EFFECT ---------- */
-
-.social-row:hover {
-  transform: translateX(6px); /* 🔥 leichter Slide */
-  background: rgba(255,255,255,0.04);
-}
-
-/* Text wird heller */
-.social-row:hover .social-handle {
-  color: white;
-}
-
-/* ICON ANIMATION */
-.social-row:hover .social-icon i {
-  transform: scale(1.15);
-}
-
-/* ---------- BRAND COLORS ---------- */
-
-.social-row.tiktok .social-icon i {
-  color: #000;
-}
-
-.social-row.facebook .social-icon i {
-  color: #1877F2;
-}
-
-/* Hover Color Boost */
-.social-row.tiktok:hover .social-icon i {
-  color: #25F4EE;
-  text-shadow: 1px 0 #FE2C55;
-}
-
-.social-row.facebook:hover .social-icon i {
-  color: #4c8df6;
+.social-row a:hover {
+  color: var(--primary-color);
 }
 
 @media (min-width: 900px) {
