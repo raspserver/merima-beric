@@ -1897,27 +1897,29 @@ section .section-title:first-child {
 }
 
 .social-links {
-	display: flex;
-	justify-content: center;
-/*
-	gap: 2rem;
-*/
-	margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.social-links li {
-	display: flex;
-	justify-content: space-between;
-/*
-	color: var(--primary-color);
-	font-size: 1.5rem;
-	transition: var(--transition);
-*/
+.social-row {
+  display: flex;
+  justify-content: space-between; /* 🔥 links Icon / rechts Text */
+  align-items: center;
 }
 
-.social-links a:hover {
-	transform: scale(1.2);
-	color: var(--text-light);
+.social-row i {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+}
+
+.social-row a {
+  text-decoration: none;
+  color: rgba(255,255,255,0.8);
+}
+
+.social-row a:hover {
+  color: var(--primary-color);
 }
 
 @media (min-width: 900px) {
