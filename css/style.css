@@ -1794,9 +1794,10 @@ section .section-title:first-child {
   transform: translateX(-50%);
 
   height: calc(100svh
-			- 272px
+			- 100px
 			- var(--nav-height-min)
 			- var(--section-scroll-hit-offset)
+			- 2rem
 	);
 
 
