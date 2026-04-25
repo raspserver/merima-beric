@@ -1763,11 +1763,7 @@ section .section-title:first-child {
 	letter-spacing: 0.05em;
 }
 
-/* Contact Section */
 .contact {
-/*
-    min-height: 100dvh;
-*/
     display: flex;
     flex-direction: column;
 
@@ -1856,7 +1852,9 @@ section .section-title:first-child {
 .social-links {
   display: flex;
   flex-direction: column;
+/*
   gap: 0.5rem;
+*/
 }
 
 .social-row {
