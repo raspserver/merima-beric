@@ -653,5 +653,9 @@ export const navbarModule = {
       },
       true
     );
+    
+    window.addEventListener("resize", () => {
+	  this.updateNavMetrics();
+	});
   }
 };
