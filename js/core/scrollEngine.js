@@ -480,7 +480,7 @@ export const scrollEngine = {
     }
     
     if (!state.scroll.programmatic) {
-	  heroCalendarModule.closeHeroCalendarIfHeroFullyOut();
+	  //~ heroCalendarModule.closeHeroCalendarIfHeroFullyOut();
 	}
 
     navbarModule.handleScroll();
