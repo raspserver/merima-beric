@@ -206,11 +206,7 @@ export const heroCalendarModule = {
 	  });
 	},
 
-	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
-		clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-		state.ui.heroCalendarAutoCloseTimer = null;
-		state.ui.heroCalendarAutoCloseArmed = false;
-		
+	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {	
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
 	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
@@ -251,10 +247,6 @@ export const heroCalendarModule = {
 			: "close",
 		  onComplete: () => {
 			state.ui.heroCalendarOpen = false;
-			state.ui.heroCalendarAutoCloseArmed = false;
-
-			clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-			state.ui.heroCalendarAutoCloseTimer = null;
 
 			this.cta.setAttribute("aria-expanded", "false");
 
@@ -301,11 +293,7 @@ export const heroCalendarModule = {
     state.ui.heroCalendarAnimating = false;
     state.ui.heroCalendarOpen = false;
     state.ui.heroCalendarKeepCtaFlat = false;
-    state.ui.heroCalendarAutoCloseArmed = false;
     state.scroll.programmatic = false;
-
-    clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-    state.ui.heroCalendarAutoCloseTimer = null;
 
     this.heroCalendar.classList.remove("is-open");
     this.heroCalendar.setAttribute("aria-hidden", "true");
@@ -344,71 +332,6 @@ export const heroCalendarModule = {
     requestAnimationFrame(() => {
       this.hero.classList.remove("hero-calendar-close-instant");
     });
-  },
-
-  closeHeroCalendarIfHeroFullyOut() {
-	if (state.ui.heroCalendarAnimating) return;
-    if (!state.ui.heroCalendarOpen) return;
-    if (state.scroll.programmatic) return;
-
-    const currentY = window.scrollY;
-    const about = this.getHomeAboutBoundaryEl();
-    if (!about) return;
-
-    const navbarBottom = this.navbar
-      ? this.navbar.getBoundingClientRect().bottom
-      : 0;
-
-    const aboutTop = about.getBoundingClientRect().top;
-    const autoCloseDepth = utils.cssVar.lengthPx(
-      "--hero-calendar-auto-close-depth",
-      120
-    );
-
-    const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
-    state.ui.heroCalendarLastScrollY = currentY;
-
-    if (!scrollingDown) return;
-
-    const scrolledIntoAbout = Math.max(0, navbarBottom - aboutTop);
-
-    if (scrolledIntoAbout >= autoCloseDepth) {
-      if (state.ui.heroCalendarAutoCloseArmed) return;
-
-      state.ui.heroCalendarAutoCloseArmed = true;
-
-      clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-      state.ui.heroCalendarAutoCloseTimer = setTimeout(() => {
-        state.ui.heroCalendarAutoCloseTimer = null;
-
-        if (!state.ui.heroCalendarOpen) return;
-        if (state.ui.heroCalendarAnimating) return;
-
-        const currentAboutTop = about.getBoundingClientRect().top;
-        const currentNavbarBottom = this.navbar
-          ? this.navbar.getBoundingClientRect().bottom
-          : 0;
-
-        const currentScrolledIntoAbout = Math.max(
-          0,
-          currentNavbarBottom - currentAboutTop
-        );
-
-        if (currentScrolledIntoAbout >= autoCloseDepth) {
-          this.closeHeroCalendar({
-            preserveAboutBoundaryAtTop: true
-          });
-        } else {
-          state.ui.heroCalendarAutoCloseArmed = false;
-        }
-      }, 180);
-
-      return;
-    }
-
-    state.ui.heroCalendarAutoCloseArmed = false;
-    clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-    state.ui.heroCalendarAutoCloseTimer = null;
   },
 
   getHeroCalendarLayoutDuration() {
@@ -450,10 +373,6 @@ export const heroCalendarModule = {
 
     clearTimeout(state.ui.heroCalendarRevealTimer);
     state.ui.heroCalendarRevealTimer = null;
-
-    clearTimeout(state.ui.heroCalendarAutoCloseTimer);
-    state.ui.heroCalendarAutoCloseTimer = null;
-    state.ui.heroCalendarAutoCloseArmed = false;
 
     this.unlockHeroCalendarScrollBehavior();
 	state.ui.heroCalendarNavbarFreeze = false;

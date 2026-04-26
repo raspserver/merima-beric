@@ -63,10 +63,7 @@ export const state = {
     heroCalendarMeasuredHeight: 0,
     heroCalendarMeasuredExtra: 0,
     heroCalendarKeepCtaFlat: false,
-    heroCalendarNavbarFreeze: false,
-    heroCalendarAutoCloseTimer: null,
-    heroCalendarAutoCloseArmed: false,
-    heroCalendarLastScrollY: window.scrollY,
+    heroCalendarNavbarFreeze: false,  
     heroCalendarPrewarmed: false,
     heroCalendarPrewarmObserver: null,
 
