@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
     heroCalendarModule.init();
     navbarModule.init();
     // performanceModule.init();
-    //~ scrollSectionHintModule.init();
-    //~ scrollSectionHintPositionModule.init();
+    scrollSectionHintModule.init();
+    scrollSectionHintPositionModule.init();
     sectionNavigationModule.init();
     uiModule.init();
   }
