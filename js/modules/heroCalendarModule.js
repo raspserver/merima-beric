@@ -601,7 +601,7 @@ export const heroCalendarModule = {
         }
       }
 
-      //~ window.scrollTo(0, Math.max(0, nextScrollY));
+      window.scrollTo(0, Math.max(0, nextScrollY));
       state.lastScrollY = window.scrollY;
 
       if (state.ui.fullCalendarInstance) {
