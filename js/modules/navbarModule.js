@@ -26,6 +26,7 @@ export const navbarModule = {
     this.cacheDOM();
     this.bindEvents();
     this.handleScroll();
+    this.updateNavMetrics();
   },
 
   cacheDOM() {
@@ -78,6 +79,7 @@ export const navbarModule = {
 
     state.nav.gestureStretch.target = 0;
     this.startAnimation();
+    this.updateNavMetrics();
   },
 
   closeMenu({ keepNavbarVisible = false } = {}) {
@@ -94,6 +96,7 @@ export const navbarModule = {
     state.nav.manualOpen = false;
     state.nav.gestureStretch.target = 0;
     this.startAnimation();
+    this.updateNavMetrics();
 
     if (keepNavbarVisible) {
       this.setTargets(1, 1, 1);
@@ -367,14 +370,6 @@ export const navbarModule = {
       ),
       "--nav-refraction": Math.min(Math.abs(state.scrollVelocity) * 0.02, 1),
     });
-    
-    // 🔥 Navbar-Unterkante global verfügbar machen
-	const navBottom = this.navbar.getBoundingClientRect().bottom;
-
-	document.documentElement.style.setProperty(
-	  "--nav-bottom",
-	  `${navBottom}px`
-	);
 
     const velocityShadow = Math.min(Math.abs(state.scrollVelocity) * 0.02, 0.2);
 
@@ -494,6 +489,17 @@ export const navbarModule = {
     state.ui.suppressCtaHoverCleanup = cleanup;
     window.addEventListener("pointermove", cleanup);
   },
+  
+  updateNavMetrics() {
+	  if (!this.navbar) return;
+
+	  const navBottom = this.navbar.getBoundingClientRect().bottom;
+
+	  document.documentElement.style.setProperty(
+		"--nav-bottom",
+		`${navBottom}px`
+	  );
+	},
 
   bindEvents() {
     if (this.navToggle && this.navMenu) {
