@@ -343,6 +343,14 @@ export const contactMapModule = {
 		this.readyPromise = null;
 		this.readyResolve = null;
 	  });
+	  
+	  this.container.addEventListener("touchstart", () => {
+		  // Wenn gerade gescrollt wird → Map sofort blockieren
+		  if (state.touch.active) {
+			this.setInteractionEnabled(false);
+		  }
+		}, { passive: true });
+	  
 	},
 
   destroy() {
@@ -753,6 +761,22 @@ async playAnimationFlow({ cinematic = false } = {}) {
         setTimeout(finish, 800);
       });
     });
-  }
+  },
+  
+  setInteractionEnabled(enabled) {
+	  if (!this.map) return;
+
+	  if (enabled) {
+		this.map.dragPan.enable();
+		this.map.scrollZoom.enable();
+		this.map.touchZoomRotate.enable();
+		this.map.doubleClickZoom.enable();
+	  } else {
+		this.map.dragPan.disable();
+		this.map.scrollZoom.disable();
+		this.map.touchZoomRotate.disable();
+		this.map.doubleClickZoom.disable();
+	  }
+	}
   
 };

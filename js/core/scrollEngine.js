@@ -17,6 +17,7 @@ import { utils } from "../utils/utils.js";
 export const scrollEngine = {
   navbar: null,
   hero: null,
+  scrollActiveTimer: null,
 
   init() {
     this.cacheDOM();
@@ -475,10 +476,27 @@ export const scrollEngine = {
   onScroll() {
 	if (state.scroll.programmatic) return;
 	if (state.ui.heroCalendarAnimating) return;
+	
+	scrollEngine.handleScrollActivity();
+	
     if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
       state.ui.heroCalendarKeepCtaFlat = false;
     }
 
     navbarModule.handleScroll();
-  }
+  },
+  
+  handleScrollActivity() {
+	  // Map deaktivieren während Scroll
+	  contactMapModule.setInteractionEnabled(false);
+
+	  // Timer zurücksetzen
+	  clearTimeout(this.scrollActiveTimer);
+
+	  // Nach Scroll-Ende wieder aktivieren
+	  this.scrollActiveTimer = setTimeout(() => {
+		contactMapModule.setInteractionEnabled(true);
+	  }, 120); // kleine Delay → fühlt sich natürlich an
+	}
+  
 };
