@@ -343,6 +343,7 @@ export const heroCalendarModule = {
   },
 
   closeHeroCalendarIfHeroFullyOut() {
+	if (state.ui.heroCalendarAnimating) return;
     if (!state.ui.heroCalendarOpen) return;
     if (state.scroll.programmatic) return;
 
