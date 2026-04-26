@@ -447,19 +447,27 @@ export const navbarModule = {
     this.renderNavbar();
     this.renderHero();
     this.renderCTA();
-
+      
     const stillMoving =
-      utils.isAnimatedValueMoving(state.nav.visible, springs.navVisible) ||
-      utils.isAnimatedValueMoving(state.nav.compact, springs.navCompact) ||
-      utils.isAnimatedValueMoving(state.nav.surface, springs.navSurface) ||
-      utils.isAnimatedValueMoving(state.nav.gestureStretch, springs.navGesture) ||
-      utils.isAnimatedValueMoving(state.hero.parallax, springs.heroParallax) ||
-      utils.isAnimatedValueMoving(state.cta.elasticY, springs.ctaElastic);
-
+	  utils.isAnimatedValueMoving(state.nav.visible) ||
+	  utils.isAnimatedValueMoving(state.nav.compact) ||
+	  utils.isAnimatedValueMoving(state.nav.surface) ||
+	  utils.isAnimatedValueMoving(state.nav.gestureStretch) ||
+	  utils.isAnimatedValueMoving(state.hero.parallax) ||
+	  utils.isAnimatedValueMoving(state.cta.elasticY);
+      
     if (!stillMoving) {
-      state.animation.running = false;
-      return;
-    }
+	  state.animation.running = false;
+
+	  state.nav.visible.current = state.nav.visible.target;
+	  state.nav.compact.current = state.nav.compact.target;
+	  state.nav.surface.current = state.nav.surface.target;
+	  state.nav.gestureStretch.current = state.nav.gestureStretch.target;
+	  state.hero.parallax.current = state.hero.parallax.target;
+	  state.cta.elasticY.current = state.cta.elasticY.target;
+
+	  return;
+	}
 
     requestAnimationFrame(this.animate.bind(this));
   },

@@ -140,10 +140,15 @@ export const utils = {
     animated.velocity = result.velocity;
   },
 
-  isAnimatedValueMoving(animated, spring) {
-    return !spring.isSettled(animated.current, animated.target, animated.velocity);
-  },
+  isAnimatedValueMoving(animated) {
+	  const EPSILON = 0.001;
 
+	  return (
+		Math.abs(animated.velocity) > EPSILON ||
+		Math.abs(animated.target - animated.current) > EPSILON
+	  );
+	},
+  
   createSpring({ stiffness, damping, precision = 0.001 }) {
     return {
       stiffness,
