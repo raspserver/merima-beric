@@ -562,11 +562,19 @@ export const heroCalendarModule = {
 
     const duration = this.getHeroCalendarLayoutDuration();
     const start = performance.now();
-
+    
     const about = this.getHomeAboutBoundaryEl();
-    const startScrollY = window.scrollY;
-    const startAboutViewportTop = about ? about.getBoundingClientRect().top : 0;
-    const startCtaViewportTop = this.cta ? this.cta.getBoundingClientRect().top : 0;
+
+	const startScrollY = window.scrollY;
+
+	// 🔥 WICHTIG: absolute Position statt viewport
+	const aboutStartY = about
+	  ? about.getBoundingClientRect().top + window.scrollY
+	  : 0;
+
+	const ctaStartY = this.cta
+	  ? this.cta.getBoundingClientRect().top + window.scrollY
+	  : 0;
 
     this.lockHeroCalendarScrollBehavior();
 
@@ -586,20 +594,19 @@ export const heroCalendarModule = {
       this.setHeroCalendarExtraHeight(currentExtra);
 
       let nextScrollY = startScrollY;
-
+         
       if (mode === "open" || mode === "close-keep-about-position") {
-        if (about) {
-          const currentAboutTop = about.getBoundingClientRect().top;
-          const deltaToTarget = currentAboutTop - startAboutViewportTop;
-          nextScrollY = window.scrollY + deltaToTarget;
-        }
-      } else if (mode === "close") {
-        if (this.cta) {
-          const currentCtaTop = this.cta.getBoundingClientRect().top;
-          const deltaToTarget = currentCtaTop - startCtaViewportTop;
-          nextScrollY = window.scrollY + deltaToTarget;
-        }
-      }
+		  if (about) {
+			const currentScrollDelta = window.scrollY - startScrollY;
+			nextScrollY = aboutStartY - currentScrollDelta;
+		  }
+
+		} else if (mode === "close") {
+		  if (this.cta) {
+			const currentScrollDelta = window.scrollY - startScrollY;
+			nextScrollY = ctaStartY - currentScrollDelta;
+		  }
+		}
 
       window.scrollTo(0, Math.max(0, nextScrollY));
       state.lastScrollY = window.scrollY;
