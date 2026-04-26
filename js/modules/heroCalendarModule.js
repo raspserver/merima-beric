@@ -345,73 +345,71 @@ export const heroCalendarModule = {
       this.hero.classList.remove("hero-calendar-close-instant");
     });
   },
-  
+
   closeHeroCalendarIfHeroFullyOut() {
-	  if (state.ui.heroCalendarAnimating) return;
-	  if (!state.ui.heroCalendarOpen) return;
-	  if (state.scroll.programmatic) return;
+	if (state.ui.heroCalendarAnimating) return;
+    if (!state.ui.heroCalendarOpen) return;
+    if (state.scroll.programmatic) return;
 
-	  const currentY = window.scrollY;
-	  const about = this.getHomeAboutBoundaryEl();
-	  if (!about) return;
+    const currentY = window.scrollY;
+    const about = this.getHomeAboutBoundaryEl();
+    if (!about) return;
 
-	  const autoCloseDepth = utils.cssVar.lengthPx(
-		"--hero-calendar-auto-close-depth",
-		120
-	  );
+    const navbarBottom = this.navbar
+      ? this.navbar.getBoundingClientRect().bottom
+      : 0;
 
-	  const hysteresis = utils.cssVar.lengthPx(
-		"--hero-calendar-auto-close-hysteresis",
-		40
-	  );
+    const aboutTop = about.getBoundingClientRect().top;
+    const autoCloseDepth = utils.cssVar.lengthPx(
+      "--hero-calendar-auto-close-depth",
+      120
+    );
 
-	  const cooldown = 600; // verhindert Flip-Flop
+    const scrollingDown = currentY > state.ui.heroCalendarLastScrollY + 1;
+    state.ui.heroCalendarLastScrollY = currentY;
 
-	  const now = performance.now();
+    if (!scrollingDown) return;
 
-	  const stateAC = state.ui.heroCalendarAutoCloseState ||= {
-		armed: false,
-		triggered: false,
-		lastTriggerAt: 0,
-	  };
+    const scrolledIntoAbout = Math.max(0, navbarBottom - aboutTop);
 
-	  const navbarBottom = this.navbar
-		? this.navbar.getBoundingClientRect().bottom
-		: 0;
+    if (scrolledIntoAbout >= autoCloseDepth) {
+      if (state.ui.heroCalendarAutoCloseArmed) return;
 
-	  const aboutTop = about.getBoundingClientRect().top;
-	  const scrolledIntoAbout = Math.max(0, navbarBottom - aboutTop);
+      state.ui.heroCalendarAutoCloseArmed = true;
 
-	  const scrollingDown = currentY > (state.ui.heroCalendarLastScrollY || 0);
-	  state.ui.heroCalendarLastScrollY = currentY;
+      clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+      state.ui.heroCalendarAutoCloseTimer = setTimeout(() => {
+        state.ui.heroCalendarAutoCloseTimer = null;
 
-	  // ❄️ Reset wenn wir wieder raus aus der Zone gehen (mit Hysterese)
-	  if (scrolledIntoAbout < (autoCloseDepth - hysteresis)) {
-		stateAC.armed = false;
-		return;
-	  }
+        if (!state.ui.heroCalendarOpen) return;
+        if (state.ui.heroCalendarAnimating) return;
 
-	  // 🔒 Cooldown nach Trigger
-	  if (now - stateAC.lastTriggerAt < cooldown) return;
+        const currentAboutTop = about.getBoundingClientRect().top;
+        const currentNavbarBottom = this.navbar
+          ? this.navbar.getBoundingClientRect().bottom
+          : 0;
 
-	  // 🧠 ARM nur einmal beim Eintritt
-	  if (!stateAC.armed && scrollingDown) {
-		stateAC.armed = true;
-	  }
+        const currentScrolledIntoAbout = Math.max(
+          0,
+          currentNavbarBottom - currentAboutTop
+        );
 
-	  if (!stateAC.armed) return;
+        if (currentScrolledIntoAbout >= autoCloseDepth) {
+          this.closeHeroCalendar({
+            preserveAboutBoundaryAtTop: true
+          });
+        } else {
+          state.ui.heroCalendarAutoCloseArmed = false;
+        }
+      }, 180);
 
-	  // 🎯 Trigger nur einmal
-	  if (scrolledIntoAbout >= autoCloseDepth) {
-		stateAC.armed = false;
-		stateAC.triggered = true;
-		stateAC.lastTriggerAt = now;
+      return;
+    }
 
-		this.closeHeroCalendar({
-		  preserveAboutBoundaryAtTop: true,
-		});
-	  }
-	},
+    state.ui.heroCalendarAutoCloseArmed = false;
+    clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+    state.ui.heroCalendarAutoCloseTimer = null;
+  },
 
   getHeroCalendarLayoutDuration() {
     return utils.cssVar.timeMs("--hero-calendar-layout-duration", 750);
