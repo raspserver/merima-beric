@@ -476,7 +476,11 @@ export const scrollEngine = {
     if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
       state.ui.heroCalendarKeepCtaFlat = false;
     }
-    heroCalendarModule.closeHeroCalendarIfHeroFullyOut();
+    
+    if (!state.scroll.programmatic) {
+	  heroCalendarModule.closeHeroCalendarIfHeroFullyOut();
+	}
+
     navbarModule.handleScroll();
   }
 };

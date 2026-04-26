@@ -551,6 +551,8 @@ export const heroCalendarModule = {
   },
 
   animateHeroCalendarLayout(from, to, { mode = "open", onComplete } = {}) {
+	state.scroll.programmatic = true;
+	
     this.hero?.classList.add("hero-calendar-active");
 
     const duration = this.getHeroCalendarLayoutDuration();
