@@ -40,7 +40,6 @@
 	--hero-calendar-preferred-height: clamp(420px, 56vh, 620px);
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
-	--hero-calendar-close-about-depth: 120px;
 	--hero-calendar-prewarm-about-ratio: 0.2;
 	
 	--footer-main-size: 1rem;
