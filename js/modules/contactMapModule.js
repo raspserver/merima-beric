@@ -28,6 +28,7 @@ export const contactMapModule = {
     this.bindLifecycle();
     this.bindNavbarIntent();
     this.maybeResetOnSectionExit();
+    this.bindMapInteractionToScroll();
   },
 
   getContainer() {
@@ -753,5 +754,50 @@ async playAnimationFlow({ cinematic = false } = {}) {
         setTimeout(finish, 800);
       });
     });
-  }
+  },
+  
+  bindMapInteractionToScroll() {
+	  if (!this.map) return;
+
+	  const activateScrollIntent = () => {
+		state.touch.active = true;
+
+		// Wichtig: laufende Scroll-Animation NICHT abbrechen
+		// sondern nur "User ist aktiv" signalisieren
+	  };
+
+	  const releaseScrollIntent = () => {
+		// identisch zu scrollEngine Verhalten
+		clearTimeout(this._mapTouchReleaseTimer);
+
+		this._mapTouchReleaseTimer = setTimeout(() => {
+		  state.touch.active = false;
+		  state.nav.gestureStretch.target = 0;
+		}, 700);
+	  };
+
+	  // 🔥 Drag (Pan)
+	  this.map.on("mousedown", activateScrollIntent);
+	  this.map.on("touchstart", activateScrollIntent);
+
+	  this.map.on("mousemove", activateScrollIntent);
+	  this.map.on("touchmove", activateScrollIntent);
+
+	  this.map.on("mouseup", releaseScrollIntent);
+	  this.map.on("touchend", releaseScrollIntent);
+	  this.map.on("touchcancel", releaseScrollIntent);
+
+	  // 🔥 Zoom (Wheel / Pinch)
+	  this.map.on("wheel", activateScrollIntent);
+	  this.map.on("zoomstart", activateScrollIntent);
+	  this.map.on("zoomend", releaseScrollIntent);
+
+	  // 🔥 Rotation / Pitch (optional aber sinnvoll)
+	  this.map.on("rotatestart", activateScrollIntent);
+	  this.map.on("rotateend", releaseScrollIntent);
+
+	  this.map.on("pitchstart", activateScrollIntent);
+	  this.map.on("pitchend", releaseScrollIntent);
+	}
+	
 };
