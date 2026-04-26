@@ -473,6 +473,7 @@ export const scrollEngine = {
   },
 
   onScroll() {
+	if (state.ui.heroCalendarAnimating) return;
     if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
       state.ui.heroCalendarKeepCtaFlat = false;
     }
