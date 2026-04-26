@@ -555,41 +555,111 @@ export const heroCalendarModule = {
     this.heroCalendar.style.height = `${state.ui.heroCalendarMeasuredHeight}px`;
   },
 
-	animateHeroCalendarLayout(from, to, { onComplete } = {}) {
-	  const duration = this.getHeroCalendarLayoutDuration();
-	  const start = performance.now();
+  animateHeroCalendarLayout(from, to, { mode = "open", onComplete } = {}) {
+	state.scroll.programmatic = true;
+	
+    this.hero?.classList.add("hero-calendar-active");
 
-	  state.ui.heroCalendarAnimating = true;
+    const duration = this.getHeroCalendarLayoutDuration();
+    const start = performance.now();
 
-	  const step = (now) => {
-		const t = Math.min(1, (now - start) / duration);
-		const eased = this.easeHeroCalendar(t);
+    const about = this.getHomeAboutBoundaryEl();
+    const startScrollY = window.scrollY;
+    const startAboutViewportTop = about ? about.getBoundingClientRect().top : 0;
+    const startCtaViewportTop = this.cta ? this.cta.getBoundingClientRect().top : 0;
 
-		const currentExtra = from + ((to - from) * eased);
-		this.setHeroCalendarExtraHeight(currentExtra);
+    this.lockHeroCalendarScrollBehavior();
 
-		// 🔥 KEIN scrollTo mehr
-		// 🔥 KEINE Viewport-Korrektur
+    const finish = () => {
+      state.lastScrollY = window.scrollY;
+      this.unlockHeroCalendarScrollBehavior();
+      navbarModule.handleScroll();
+      navbarModule.startAnimation();
+      onComplete?.();
+    };
 
-		if (state.ui.fullCalendarInstance) {
-		  state.ui.fullCalendarInstance.updateSize();
-		}
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = this.easeHeroCalendar(t);
 
-		if (t < 1) {
-		  state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
-		  return;
-		}
+      const currentExtra = from + ((to - from) * eased);
+      this.setHeroCalendarExtraHeight(currentExtra);
 
-		state.ui.heroCalendarLayoutRaf = null;
-		state.ui.heroCalendarAnimating = false;
+      let nextScrollY = startScrollY;
 
-		this.setHeroCalendarExtraHeight(to);
+      if (mode === "open" || mode === "close-keep-about-position") {
+        if (about) {
+          const currentAboutTop = about.getBoundingClientRect().top;
+          const deltaToTarget = currentAboutTop - startAboutViewportTop;
+          nextScrollY = window.scrollY + deltaToTarget;
+        }
+      } else if (mode === "close") {
+        if (this.cta) {
+          const currentCtaTop = this.cta.getBoundingClientRect().top;
+          const deltaToTarget = currentCtaTop - startCtaViewportTop;
+          nextScrollY = window.scrollY + deltaToTarget;
+        }
+      }
 
-		onComplete?.();
-	  };
+      window.scrollTo(0, Math.max(0, nextScrollY));
+      state.lastScrollY = window.scrollY;
 
-	  state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
-	},
+      if (state.ui.fullCalendarInstance) {
+        state.ui.fullCalendarInstance.updateSize();
+      }
+
+      if (t < 1) {
+        state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
+        return;
+      }
+
+      state.ui.heroCalendarLayoutRaf = null;
+      state.ui.heroCalendarAnimating = false;
+      state.scroll.programmatic = false;
+
+      this.setHeroCalendarExtraHeight(to);
+
+      if ((mode === "open" || mode === "close-keep-about-position") && about) {
+        const finalAboutTop = about.getBoundingClientRect().top;
+        window.scrollTo(
+          0,
+          Math.max(0, window.scrollY + (finalAboutTop - startAboutViewportTop))
+        );
+        finish();
+        return;
+      }
+
+      if (mode === "close" && this.cta) {
+        const finalCtaTop = this.cta.getBoundingClientRect().top;
+        window.scrollTo(
+          0,
+          Math.max(0, window.scrollY + (finalCtaTop - startCtaViewportTop))
+        );
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const correctedCtaTop = this.cta.getBoundingClientRect().top;
+            const deltaAfterUnlock = correctedCtaTop - startCtaViewportTop;
+
+            if (Math.abs(deltaAfterUnlock) > 0.5) {
+              window.scrollTo(
+                0,
+                Math.max(0, window.scrollY + deltaAfterUnlock)
+              );
+            }
+
+            state.ui.heroCalendarKeepCtaFlat = false;
+            finish();
+          });
+        });
+        return;
+      }
+
+      finish();
+    };
+
+    state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
+  },
 
   lockHeroCalendarScrollBehavior() {
     document.documentElement.classList.add("disable-overscroll");
