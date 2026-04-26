@@ -344,13 +344,6 @@ export const contactMapModule = {
 		this.readyResolve = null;
 	  });
 	  
-	  this.container.addEventListener("touchstart", () => {
-		  // Wenn gerade gescrollt wird → Map sofort blockieren
-		  if (state.touch.active) {
-			this.setInteractionEnabled(false);
-		  }
-		}, { passive: true });
-	  
 	},
 
   destroy() {
