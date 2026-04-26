@@ -207,6 +207,10 @@ export const heroCalendarModule = {
 	},
 
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {
+		clearTimeout(state.ui.heroCalendarAutoCloseTimer);
+		state.ui.heroCalendarAutoCloseTimer = null;
+		state.ui.heroCalendarAutoCloseArmed = false;
+		
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
 	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
