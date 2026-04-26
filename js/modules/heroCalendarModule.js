@@ -579,16 +579,31 @@ export const heroCalendarModule = {
 
     state.ui.heroCalendarLayoutRaf = requestAnimationFrame(step);
   },
-
+  
   lockHeroCalendarScrollBehavior() {
-    document.documentElement.classList.add("disable-overscroll");
-    document.documentElement.classList.add("hero-calendar-animating");
-  },
+	  document.documentElement.classList.add("disable-overscroll");
+	  document.documentElement.classList.add("hero-calendar-animating");
 
+	  // 🔥 NEU: Aktiven Scroll komplett blockieren
+	  this._preventScrollHandler = (e) => {
+		e.preventDefault();
+	  };
+
+	  window.addEventListener("wheel", this._preventScrollHandler, { passive: false });
+	  window.addEventListener("touchmove", this._preventScrollHandler, { passive: false });
+	},
+  
   unlockHeroCalendarScrollBehavior() {
-    document.documentElement.classList.remove("disable-overscroll");
-    document.documentElement.classList.remove("hero-calendar-animating");
-  },
+	  document.documentElement.classList.remove("disable-overscroll");
+	  document.documentElement.classList.remove("hero-calendar-animating");
+
+	  // 🔥 Wichtig: Listener entfernen
+	  if (this._preventScrollHandler) {
+		window.removeEventListener("wheel", this._preventScrollHandler);
+		window.removeEventListener("touchmove", this._preventScrollHandler);
+		this._preventScrollHandler = null;
+	  }
+	},
 
   freezeNavbarForHeroCalendar() {
     state.ui.heroCalendarNavbarFreeze = true;
