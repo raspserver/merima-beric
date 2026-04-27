@@ -2381,8 +2381,9 @@ section .section-title:first-child {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-
+*/
   /* 🔥 Startpunkt = Sektionsgrenze */
+  /*
   bottom: 0;
 
   animation: dotBounce var(--section-indicator-bounce-duration) ease-in-out infinite;
