@@ -2466,68 +2466,7 @@ footer {
 	text-align: center;
 }
 
-/* =========================
-   FOOTER SCROLL INDICATOR
-========================= */
-.section-scroll-head--footer {
-	position: absolute;
-	left: 50%;
-	top: 100%;
-	transform: translateX(-50%);
 
-	width: 32px;
-	height: calc(
-		26px +
-		var(--section-indicator-bounce-max-y)
-	);
-
-	pointer-events: auto;
-	z-index: 25;
-}
-
-/* Hit Area (größer für bessere Klickbarkeit) */
-.section-scroll-head--footer::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	top: 0;
-	transform: translateX(-50%);
-	width: max(56px, 100vw);
-	height: 100%;
-}
-
-/* Container für Animation */
-.section-scroll-head--footer .section-scroll-indicator {
-	position: absolute;
-	left: 50%;
-	top: 0;
-	transform: translateX(-50%);
-	width: 32px;
-	height: 100%;
-	pointer-events: none;
-}
-
-/* Linie (Bewegung) */
-.section-scroll-line-motion--footer {
-	position: absolute;
-	left: 50%;
-	top: 0;
-	transform: translateX(-50%);
-	animation: footerLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
-}
-
-/* Linie (Visual) */
-.section-scroll-line-motion--footer .section-scroll-line {
-	display: block;
-	width: var(--section-indicator-line-width);
-	height: 26px;
-	background: linear-gradient(
-		to top,
-		rgba(212,175,55,0.75),
-		rgba(212,175,55,0.22),
-		rgba(212,175,55,0)
-	);
-}
 
 /* =========================
    RESPONSIVE
