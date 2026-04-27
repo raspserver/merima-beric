@@ -2409,7 +2409,6 @@ section .section-title:first-child {
 /*
 	height: 26px;
 */
-	height: 50px;
 	background: linear-gradient(
 		to bottom,
 		rgba(212,175,55,0.55),
