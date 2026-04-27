@@ -2424,12 +2424,24 @@ section .section-title:first-child {
 }
 
 /* Animation */
+/*
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
 	40%  { transform: translateX(-50%) translateY(10px); }
 	60%  { transform: translateX(-50%) translateY(var(--section-indicator-bounce-max-y)); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
+*/
+
+@keyframes sectionLiquidScroll {
+  0%   { transform: translateX(-50%) translateY(0); }
+  40%  { transform: translateX(-50%) translateY(calc(-0.6 * var(--section-scroll-hit-offset))); }
+  60%  { transform: translateX(-50%) translateY(calc(-1 * (var(--section-scroll-hit-offset) - var(--section-indicator-dot-size))); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+
+
+
 
 @keyframes sectionDotSquash {
 	0%   { transform: scale(1); }
