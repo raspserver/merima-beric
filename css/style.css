@@ -2349,12 +2349,18 @@ section .section-title:first-child {
 	);
 
 	width: 32px;
+/*
 	height: calc(
 		var(--section-indicator-dot-size) +
 		16px +
 		26px +
 		var(--section-indicator-bounce-max-y)
 	);
+*/
+	
+	
+	height: 20px;
+	
 	pointer-events: none;
 }
 
