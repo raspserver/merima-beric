@@ -2390,7 +2390,7 @@ section .section-title:first-child {
 /* STRICH */
 .section-scroll-line-motion {
 	transform: translateX(-50%);
-	top: var(--section-scroll-hit-offset);
+	top: calc(var(--section-indicator-dot-size) + var(--section-indicator-bounce-max-y));
 
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 	animation-delay: var(--section-indicator-phase-shift);
