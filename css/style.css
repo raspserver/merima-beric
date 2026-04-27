@@ -2341,28 +2341,8 @@ section .section-title:first-child {
 	left: 50%;
 	transform: translateX(-50%);
 
-/*
-	top: calc(
-		var(--section-scroll-hit-offset) - (
-			var(--section-indicator-dot-size) +
-			var(--section-indicator-bounce-max-y)
-		)
-	);
-*/
 	top: 0px;
 
-/*
-	width: 32px;
-*/
-/*
-	height: calc(
-		var(--section-indicator-dot-size) +
-		16px +
-		26px +
-		var(--section-indicator-bounce-max-y)
-	);
-*/
-	
 	pointer-events: none;
 }
 
@@ -2374,20 +2354,6 @@ section .section-title:first-child {
 	will-change: transform;
 }
 
-/* DOT */
-
-.section-scroll-dot-motion {
-	transform: translateX(-50%);
-/*
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
-*/
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.33, 1, 0.68, 1) infinite;
-}
-
-
-
-
-
 .scroll-dot {
 	display: block;
 	width: var(--section-indicator-dot-size);
@@ -2397,19 +2363,7 @@ section .section-title:first-child {
 	box-shadow:
 		0 0 12px rgba(212,175,55,0.6),
 		0 0 30px rgba(212,175,55,0.3);
-	animation: sectionDotSquash var(--section-indicator-bounce-duration) ease-in-out infinite;
-}
-
-/* STRICH */
-.section-scroll-line-motion {
-	transform: translateX(-50%);
-	top: calc(var(--section-indicator-dot-size) + 24px);
-
-/*
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
-*/
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.33, 1, 0.68, 1) infinite;
-	animation-delay: var(--section-indicator-phase-shift);
+	animation: sectionDotSquash var(--section-indicator-bounce-duration) cubic-bezier(0.25, 0.9, 0.3, 1) infinite;
 }
 
 .section-scroll-line {
@@ -2424,10 +2378,23 @@ section .section-title:first-child {
 	);
 }
 
+.section-scroll-dot-motion {
+	transform: translateX(-50%);
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.25, 0.9, 0.3, 1) infinite;
+}
+
+.section-scroll-line-motion {
+	transform: translateX(-50%);
+	top: calc(var(--section-indicator-dot-size) + 24px);
+
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.25, 0.9, 0.3, 1) infinite;
+	animation-delay: var(--section-indicator-phase-shift);
+}
+
 /* Bewegung */
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
-	35%  { transform: translateX(-50%) translateY(10px); }
+	30%  { transform: translateX(-50%) translateY(8px); }
 	65%  { transform: translateX(-50%) translateY(var(--section-indicator-bounce-max-y)); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
@@ -2439,9 +2406,6 @@ section .section-title:first-child {
 	65%  { transform: scale(0.9, 1.15); }
 	100% { transform: scale(1); }
 }
-
-
-
 
 /* =========================
    FOOTER BASE
