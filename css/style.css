@@ -74,6 +74,7 @@
 
 
 	--section-indicator-dot-size: 8px;
+	--section-indicator-line-length: 16px;
 	--section-indicator-line-width: 1.0px;
 	--section-indicator-bounce-max-y: calc(
 										var(--section-scroll-hit-offset) -
@@ -2376,7 +2377,7 @@ section .section-title:first-child {
 .section-scroll-line {
 	display: block;
 	width: var(--section-indicator-line-width);
-	height: 24px;
+	height: var(--section-indicator-line-length);
 	background: linear-gradient(
 		to bottom,
 		rgba(212,175,55,0.55),
