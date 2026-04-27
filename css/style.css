@@ -1439,7 +1439,7 @@ section .section-title:first-child {
 	flex-direction: column;
 	align-items: stretch;
 	
-	gap: var(--section-scroll-hit-offset);
+	gap: var(--section-spacing);
 	margin-bottom: 0.0rem;
 }
 
