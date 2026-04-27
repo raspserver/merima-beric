@@ -2345,27 +2345,7 @@ section .section-title:first-child {
 	left: 50%;
 	transform: translateX(-50%);
 
-/*
-	top: calc(
-		var(--section-scroll-hit-offset) - (
-			var(--section-indicator-dot-size) +
-			var(--section-indicator-bounce-max-y)
-		)
-	);
-*/
 	top: 0px;
-
-/*
-	width: 32px;
-*/
-/*
-	height: calc(
-		var(--section-indicator-dot-size) +
-		16px +
-		26px +
-		var(--section-indicator-bounce-max-y)
-	);
-*/
 	
 	pointer-events: none;
 }
@@ -2377,17 +2357,6 @@ section .section-title:first-child {
 	top: 0;
 	will-change: transform;
 }
-
-/* DOT */
-
-.section-scroll-dot-motion {
-	transform: translateX(-50%);
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
-}
-
-
-
-
 
 .scroll-dot {
 	display: block;
@@ -2401,15 +2370,6 @@ section .section-title:first-child {
 	animation: sectionDotSquash var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
 
-/* STRICH */
-.section-scroll-line-motion {
-	transform: translateX(-50%);
-	top: calc(var(--section-indicator-dot-size) + 24px);
-
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
-	animation-delay: var(--section-indicator-phase-shift);
-}
-
 .section-scroll-line {
 	display: block;
 	width: var(--section-indicator-line-width);
@@ -2420,6 +2380,20 @@ section .section-title:first-child {
 		rgba(212,175,55,0.15),
 		rgba(212,175,55,0)
 	);
+}
+
+.section-scroll-dot-motion {
+	transform: translateX(-50%);
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
+}
+
+/* STRICH */
+.section-scroll-line-motion {
+	transform: translateX(-50%);
+	top: calc(var(--section-indicator-dot-size) + 24px);
+
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
+	animation-delay: var(--section-indicator-phase-shift);
 }
 
 /* Bewegung */
