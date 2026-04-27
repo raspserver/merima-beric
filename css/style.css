@@ -20,7 +20,9 @@
 	========================= */
 	--brand-sub-ratio: 0.25;
 
+/*
 	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
+*/
 	/* ------------------------------------------------------------------------------------------------ */
 	/* clamp(MIN, BEVORZUGT, MAX);		min						bevorzugt				max				*/
 	/* viewport 952 × 442 (Desktop):	x16px = px		x442x0.01 = px	x16px = px	*/
@@ -1433,7 +1435,7 @@ section .section-title:first-child {
 	flex-direction: column;
 	align-items: stretch;
 	
-	gap: var(--section-stack-gap);
+	gap: var(--section-spacing);
 	margin-bottom: 0.0rem;
 }
 
