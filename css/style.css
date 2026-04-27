@@ -1826,9 +1826,9 @@ section .section-title:first-child {
 			- 8px
 			- var(--nav-height-min)
 			- var(--section-scroll-hit-offset)
-			- 2 * var(--section-spacing)
 			- 2 * var(--fontSizeSectionTitle)
 			- var(--fontSizeSectionSubTitle)
+			- 2 * var(--section-spacing)
 	);
 
 
