@@ -1398,7 +1398,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 /* Section Styles */
 section {
 	position: relative;
-	padding: var(--section-spacing) 2rem;
+	padding: var(--section-scroll-hit-offset) 2rem;
 	margin: 0;
 }
 
