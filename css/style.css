@@ -31,9 +31,6 @@
 	/* ------------------------------------------------------------------------------------------------ */
 
 	--fontSizeSectionTitle: clamp(1.5rem, 8vw, 2.5rem);
-/*
-	--fontSizeSectionTitle: 2.0rem;
-*/
 	--fontSizeSectionSubTitle: 0.9rem;
 
 
