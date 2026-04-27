@@ -80,7 +80,7 @@
 										var(--section-indicator-dot-size) - 
 										1px
 										);
-	--line-bounce-max-y: 16px;
+	--section-indicator-line-bounce-max-y: 16px;
 	--footer-copy-gap: 1.25rem;
 	
 	--section-spacing: 2.0rem;
@@ -2409,8 +2409,8 @@ section .section-title:first-child {
 
 @keyframes lineMotion {
 	0%   { transform: translateX(-50%) translateY(0); }
-	35%  { transform: translateX(-50%) translateY(calc(var(--line-bounce-max-y) / 2)); }
-	65%  { transform: translateX(-50%) translateY(var(--line-bounce-max-y)); }
+	35%  { transform: translateX(-50%) translateY(calc(var(--section-indicator-line-bounce-max-y) / 2)); }
+	65%  { transform: translateX(-50%) translateY(var(--section-indicator-line-bounce-max-y)); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
 
