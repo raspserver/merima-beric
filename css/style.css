@@ -1823,7 +1823,7 @@ section .section-title:first-child {
   transform: translateX(-50%);
 
   height: calc(100svh
-			- 10px
+			- 20px
 			- var(--nav-height-min)
 			- 3 * var(--section-spacing)
 			- 2 * var(--fontSizeSectionTitle)
