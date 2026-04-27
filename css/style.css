@@ -76,7 +76,6 @@
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
 	--section-indicator-bounce-max-y: 14px;
-	--section-indicator-boundary-gap: 1px;
 	--footer-copy-gap: 1.25rem;
 	
 	--section-spacing: 2.0rem;
@@ -2345,8 +2344,7 @@ section .section-title:first-child {
 	top: calc(
 		var(--section-scroll-hit-offset) - (
 			var(--section-indicator-dot-size) +
-			var(--section-indicator-bounce-max-y) +
-			var(--section-indicator-boundary-gap)
+			var(--section-indicator-bounce-max-y)
 		)
 	);
 
