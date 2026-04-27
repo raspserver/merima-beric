@@ -1424,7 +1424,9 @@ section .section-title:first-child {
 }
 
 .section-header {
+/*
 	outline: 2px solid red;
+*/
 
 	flex: 1;
 	display: flex;
@@ -2331,7 +2333,9 @@ section .section-title:first-child {
    SECTION SCROLL HEAD
 ========================= */
 .section-scroll-head {
+/*
 	outline: 2px solid green;
+*/
 
 	position: absolute;
 	top: calc(-1 * var(--section-scroll-hit-offset));
