@@ -33,7 +33,6 @@
 	--fontSizeSectionTitle: clamp(1.5rem, 8vw, 2.5rem);
 	--fontSizeSectionSubTitle: clamp(0.7rem, 4vw, 1.1rem);
 
-
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
 	--hero-description-font-size: 1.1rem;
