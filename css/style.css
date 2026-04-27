@@ -2400,7 +2400,7 @@ section .section-title:first-child {
 /* STRICH */
 .section-scroll-line-motion {
 	transform: translateX(-50%);
-	top: calc(var(--section-indicator-dot-size) + 8px);
+	top: calc(var(--section-indicator-dot-size) + 24px);
 
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 	animation-delay: var(--section-indicator-phase-shift);
