@@ -30,10 +30,7 @@
 	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 
-/*
 	--fontSizeSectionTitle: clamp(2.5rem, 5vw, 4rem);
-*/
-	--fontSizeSectionTitle: 1.5rem;
 	--fontSizeSectionSubTitle: 0.9rem;
 
 
@@ -1831,7 +1828,7 @@ section .section-title:first-child {
 			- 10px
 			- var(--nav-height-min)
 			- var(--section-scroll-hit-offset)
-			- 1 * var(--fontSizeSectionTitle)
+			- 2 * var(--fontSizeSectionTitle)
 			- var(--fontSizeSectionSubTitle)
 			- 2 * var(--section-spacing)
 	);
