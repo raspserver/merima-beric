@@ -80,7 +80,7 @@
 										var(--section-indicator-dot-size) - 
 										1px
 										);
-	--line-bounce-max-y: 8px;
+	--line-bounce-max-y: 16px;
 	--footer-copy-gap: 1.25rem;
 	
 	--section-spacing: 2.0rem;
