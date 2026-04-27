@@ -31,7 +31,7 @@
 	/* ------------------------------------------------------------------------------------------------ */
 
 	--fontSizeSectionTitle: clamp(2.5rem, 5vw, 4rem);
-	--fontSizeSectionSubTitle: 0.9rem;
+	--fontSizeSectionSubTitle: 1.0rem;
 
 
 	--hero-cta-gap-to-boundary: 90px;
