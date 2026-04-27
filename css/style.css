@@ -2402,15 +2402,15 @@ section .section-title:first-child {
 /* Bewegung */
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
-	35%  { transform: translateX(-50%) translateY(calc(var(--line-bounce-max-y) / 2)); }
-	65%  { transform: translateX(-50%) translateY(var(--line-bounce-max-y)); }
+	35%  { transform: translateX(-50%) translateY(calc(var(--section-indicator-bounce-max-y) / 2)); }
+	65%  { transform: translateX(-50%) translateY(var(--section-indicator-bounce-max-y)); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
 
 @keyframes lineMotion {
 	0%   { transform: translateX(-50%) translateY(0); }
-	35%  { transform: translateX(-50%) translateY(calc(var(--section-indicator-bounce-max-y) / 2)); }
-	65%  { transform: translateX(-50%) translateY(var(--section-indicator-bounce-max-y)); }
+	35%  { transform: translateX(-50%) translateY(calc(var(--line-bounce-max-y) / 2)); }
+	65%  { transform: translateX(-50%) translateY(var(--line-bounce-max-y)); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
 
