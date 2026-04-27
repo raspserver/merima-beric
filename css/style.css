@@ -1723,8 +1723,8 @@ section .section-title:first-child {
 	grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 	gap: 2rem;
 	margin-top: 4rem;
-*/
 }
+*/
 
 /*
 .testimonial-card {
@@ -1733,15 +1733,15 @@ section .section-title:first-child {
 	border-left: 4px solid var(--primary-color);
 	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
 	transition: var(--transition);
-*/
 }
+*/
 
 /*
 .testimonial-card:hover {
 	transform: translateY(-5px);
 	box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
-*/
 }
+*/
 
 .testimonial-stars {
 	color: var(--primary-color);
@@ -1772,8 +1772,8 @@ section .section-title:first-child {
 	color: var(--secondary-color);
 	font-size: 0.9rem;
 	letter-spacing: 0.05em;
-*/
 }
+*/
 
 .contact {
     display: flex;
