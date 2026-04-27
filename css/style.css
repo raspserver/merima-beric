@@ -2351,7 +2351,9 @@ section .section-title:first-child {
 */
 	top: 0px;
 
+/*
 	width: 32px;
+*/
 /*
 	height: calc(
 		var(--section-indicator-dot-size) +
@@ -2403,7 +2405,7 @@ section .section-title:first-child {
 /*
 	top: calc(var(--section-indicator-dot-size) + 16px);
 */
-	top: calc(var(--section-indicator-dot-size) + 16px);
+	top: calc(var(--section-indicator-dot-size) + 8px);
 
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 	animation-delay: var(--section-indicator-phase-shift);
@@ -2412,7 +2414,7 @@ section .section-title:first-child {
 .section-scroll-line {
 	display: block;
 	width: var(--section-indicator-line-width);
-	height: 26px;
+	height: 16px;
 	background: linear-gradient(
 		to bottom,
 		rgba(212,175,55,0.55),
