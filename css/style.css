@@ -1477,6 +1477,7 @@ section .section-title:first-child {
 	clear: both;
 }
 
+/*
 .about-highlight {
 	background: linear-gradient(135deg, var(--primary-color) 0%, #b8922e 100%);
 	color: var(--text-light);
@@ -1486,6 +1487,7 @@ section .section-title:first-child {
 	margin-top: 2rem;
 	clear: both;
 }
+*/
 
 .rating-display {
 	display: flex;
