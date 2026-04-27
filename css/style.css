@@ -78,6 +78,14 @@
   --contact-map-fly-use-min-zoom: true;
 
 
+	--section-spacing: 1.5rem;
+	--section-scroll-hit-offset: 32px;
+	--section-scroll-hit-height: 64px;
+	--section-scroll-inset: 0;
+	
+	--section-indicator-bounce-duration: 3.0s;
+	--section-indicator-phase-shift: 0.22s;
+
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-length: 24px;
@@ -94,13 +102,7 @@
 											);
 	--footer-copy-gap: 1.25rem;
 	
-	--section-spacing: 1.0rem;
-	--section-scroll-hit-offset: 32px;
-	--section-scroll-hit-height: 64px;
-	--section-scroll-inset: 0;
-	
-	--section-indicator-bounce-duration: 3.0s;
-	--section-indicator-phase-shift: 0.22s;
+
 	
 	/* =========================
 	   SCROLL SECTION HINTS
