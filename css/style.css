@@ -83,7 +83,7 @@
 	--section-scroll-hit-height: 64px;
 	--section-scroll-inset: 0;
 	
-	--section-indicator-bounce-duration: 4.0s;
+	--section-indicator-bounce-duration: 3.0s;
 	--section-indicator-phase-shift: 0.22s;
 	
 	/* =========================
