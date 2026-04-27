@@ -30,6 +30,10 @@
 	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 
+	--fontSizeSectionTitle: clamp(2.5rem, 5vw, 4rem);
+	--fontSizeSectionSubTitle: 0.9rem;
+
+
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
 	--hero-description-font-size: 1.1rem;
@@ -1399,7 +1403,7 @@ section {
 }
 
 .section-title {
-	font-size: clamp(2.5rem, 5vw, 4rem);
+	font-size: --var(fontSizeSectionTitle);
 	font-weight: 400;
 	text-align: center;
 	margin-top: 0;
@@ -1418,7 +1422,7 @@ section .section-title:first-child {
 .section-subtitle {
 	text-align: center;
 	color: var(--primary-color);
-	font-size: 0.9rem;
+	font-size: --var(fontSizeSectionSubTitle);
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
 	margin: 0;
@@ -1822,6 +1826,8 @@ section .section-title:first-child {
 			- 76px
 			- var(--nav-height-min)
 			- 3 * var(--section-spacing)
+			- var(fontSizeSectionTitle)
+			- var(fontSizeSectionSubTitle)
 	);
 
 
