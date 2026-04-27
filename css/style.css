@@ -79,9 +79,13 @@
 	--section-indicator-bounce-max-y: calc(
 										var(--section-scroll-hit-offset) -
 										var(--section-indicator-dot-size) - 
-										1px
+										1px										/* wegen Verformung) */
 										);
-	--section-indicator-line-bounce-max-y: 16px;
+	--section-indicator-line-bounce-max-y: calc((
+												var(--section-scroll-hit-offset) -
+												var(--section-indicator-line-length)
+												) * 2
+											);
 	--footer-copy-gap: 1.25rem;
 	
 	--section-spacing: 2.0rem;
