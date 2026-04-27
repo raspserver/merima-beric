@@ -1779,15 +1779,15 @@ section .section-title:first-child {
     display: flex;
     flex-direction: column;
 
+/*
 	background: var(--section-bg-contact);
+*/
+	background: #111 !important;
 	color: var(--text-light);
 }
 
 .contact .section-title {
-/*
 	color: var(--text-light);
-*/
-	color: var(--text-light) !important;
 }
 
 .contact-content {
