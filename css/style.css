@@ -74,7 +74,7 @@
 
 
 	--section-indicator-dot-size: 8px;
-	--section-indicator-line-length: 16px;
+	--section-indicator-line-length: 24px;
 	--section-indicator-line-width: 1.0px;
 	--section-indicator-bounce-max-y: calc(
 										var(--section-scroll-hit-offset) -
