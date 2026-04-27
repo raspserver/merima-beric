@@ -2399,7 +2399,7 @@ section .section-title:first-child {
 /* Bewegung */
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
-	35%  { transform: translateX(-50%) translateY(13px); }
+	35%  { transform: translateX(-50%) translateY(12px); }
 	65%  { transform: translateX(-50%) translateY(var(--section-indicator-bounce-max-y)); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
