@@ -2405,7 +2405,10 @@ section .section-title:first-child {
 	transform: translateX(-50%);
 	top: calc(var(--section-indicator-dot-size) + 24px);
 
+/*
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
+*/
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.33, 1, 0.68, 1) infinite;
 	animation-delay: var(--section-indicator-phase-shift);
 }
 
