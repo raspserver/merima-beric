@@ -1403,7 +1403,7 @@ section {
 }
 
 .section-title {
-	font-size: --var(fontSizeSectionTitle);
+	font-size: var(--fontSizeSectionTitle);
 	font-weight: 400;
 	text-align: center;
 	margin-top: 0;
@@ -1422,7 +1422,7 @@ section .section-title:first-child {
 .section-subtitle {
 	text-align: center;
 	color: var(--primary-color);
-	font-size: --var(fontSizeSectionSubTitle);
+	font-size: var(--fontSizeSectionSubTitle);
 	letter-spacing: 0.3em;
 	text-transform: uppercase;
 	margin: 0;
