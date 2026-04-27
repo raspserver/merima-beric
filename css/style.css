@@ -2406,9 +2406,7 @@ section .section-title:first-child {
 .section-scroll-line {
 	display: block;
 	width: var(--section-indicator-line-width);
-/*
 	height: 26px;
-*/
 	background: linear-gradient(
 		to bottom,
 		rgba(212,175,55,0.55),
