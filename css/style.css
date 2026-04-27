@@ -30,7 +30,7 @@
 	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 
-	--fontSizeSectionTitle: clamp(2.5rem, 5vw, 4rem);
+	--fontSizeSectionTitle: clamp(2.0rem, 5vw, 4rem);
 	--fontSizeSectionSubTitle: 0.9rem;
 
 
