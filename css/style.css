@@ -2376,29 +2376,6 @@ section .section-title:first-child {
 }
 
 
-/*
-.section-scroll-dot-motion {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-*/
-  /* 🔥 Startpunkt = Sektionsgrenze */
-  /*
-  bottom: 0;
-
-  animation: dotBounce var(--section-indicator-bounce-duration) ease-in-out infinite;
-}
-*/
-
-
-@keyframes dotBounce {
-  0%   { transform: translateX(-50%) translateY(0); }
-  40%  { transform: translateX(-50%) translateY(calc(-0.6 * var(--section-scroll-hit-offset))); }
-  60%  { transform: translateX(-50%) translateY(calc(-1 * (var(--section-scroll-hit-offset) - var(--section-indicator-dot-size))); }
-  100% { transform: translateX(-50%) translateY(0); }
-}
-
-
 
 
 
