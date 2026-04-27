@@ -2397,7 +2397,7 @@ section .section-title:first-child {
 /*
 	top: calc(var(--section-indicator-dot-size) + 16px);
 */
-	top: calc(var(--section-indicator-dot-size) + 48px);
+	top: calc(var(--section-indicator-dot-size) + 16px);
 
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 	animation-delay: var(--section-indicator-phase-shift);
