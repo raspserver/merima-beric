@@ -1784,7 +1784,10 @@ section .section-title:first-child {
 }
 
 .contact .section-title {
+/*
 	color: var(--text-light);
+*/
+	color: var(--text-light) !important;
 }
 
 .contact-content {
