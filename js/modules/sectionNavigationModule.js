@@ -153,30 +153,30 @@ export const sectionNavigationModule = {
     });
   },
 
-  bindDirectScrollTargets() {
-    document.querySelectorAll("[data-scroll-target]").forEach((triggerEl) => {
-      const targetSelector = triggerEl.getAttribute("data-scroll-target");
-      const forcedMode = triggerEl.getAttribute("data-scroll-mode") || "down";
+  //~ bindDirectScrollTargets() {
+    //~ document.querySelectorAll("[data-scroll-target]").forEach((triggerEl) => {
+      //~ const targetSelector = triggerEl.getAttribute("data-scroll-target");
+      //~ const forcedMode = triggerEl.getAttribute("data-scroll-mode") || "down";
 
-      if (!targetSelector) return;
+      //~ if (!targetSelector) return;
 
-      const go = () => scrollEngine.goTo(targetSelector, forcedMode);
+      //~ const go = () => scrollEngine.goTo(targetSelector, forcedMode);
 
-      triggerEl.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        go();
-      });
+      //~ triggerEl.addEventListener("click", (e) => {
+        //~ e.preventDefault();
+        //~ e.stopPropagation();
+        //~ go();
+      //~ });
 
-      triggerEl.addEventListener("keydown", (e) => {
-        if (e.key !== "Enter" && e.key !== " ") return;
+      //~ triggerEl.addEventListener("keydown", (e) => {
+        //~ if (e.key !== "Enter" && e.key !== " ") return;
 
-        e.preventDefault();
-        e.stopPropagation();
-        go();
-      });
-    });
-  },
+        //~ e.preventDefault();
+        //~ e.stopPropagation();
+        //~ go();
+      //~ });
+    //~ });
+  //~ },
 
   bindEvents() {
     document.querySelectorAll("section").forEach((section) => {
@@ -188,6 +188,6 @@ export const sectionNavigationModule = {
       });
     });
 
-    this.bindDirectScrollTargets();
+    //~ this.bindDirectScrollTargets();
   }
 };
