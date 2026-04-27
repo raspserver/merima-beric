@@ -1424,9 +1424,7 @@ section .section-title:first-child {
 }
 
 .section-header {
-/*
 	outline: 2px solid red;
-*/
 
 	flex: 1;
 	display: flex;
