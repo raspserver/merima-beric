@@ -2390,14 +2390,14 @@ section .section-title:first-child {
 }
 */
 
-/*
+
 @keyframes dotBounce {
   0%   { transform: translateX(-50%) translateY(0); }
   40%  { transform: translateX(-50%) translateY(calc(-0.6 * var(--section-scroll-hit-offset))); }
   60%  { transform: translateX(-50%) translateY(calc(-1 * (var(--section-scroll-hit-offset) - var(--section-indicator-dot-size))); }
   100% { transform: translateX(-50%) translateY(0); }
 }
-*/
+
 
 
 
