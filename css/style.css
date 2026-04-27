@@ -75,7 +75,10 @@
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
+/*
 	--section-indicator-bounce-max-y: 14px;
+*/
+	--section-indicator-bounce-max-y: 24px;
 	--section-indicator-boundary-gap: 1px;
 	--footer-copy-gap: 1.25rem;
 	
