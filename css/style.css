@@ -2369,14 +2369,14 @@ section .section-title:first-child {
 }
 
 /* DOT */
-/*
+
 .section-scroll-dot-motion {
 	transform: translateX(-50%);
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
-*/
 
 
+/*
 .section-scroll-dot-motion {
   position: absolute;
   left: 50%;
@@ -2387,6 +2387,7 @@ section .section-title:first-child {
 
   animation: dotBounce var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
+*/
 
 @keyframes dotBounce {
   0%   { transform: translateX(-50%) translateY(0); }
