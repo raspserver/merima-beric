@@ -2378,11 +2378,9 @@ section .section-title:first-child {
 
 .section-scroll-dot-motion {
 	transform: translateX(-50%);
-/*
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
-*/
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.33, 1, 0.68, 1) infinite;
 }
+
 
 
 
@@ -2399,6 +2397,15 @@ section .section-title:first-child {
 	animation: sectionDotSquash var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
 
+/* STRICH */
+.section-scroll-line-motion {
+	transform: translateX(-50%);
+	top: calc(var(--section-indicator-dot-size) + 24px);
+
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
+	animation-delay: var(--section-indicator-phase-shift);
+}
+
 .section-scroll-line {
 	display: block;
 	width: var(--section-indicator-line-width);
@@ -2409,19 +2416,6 @@ section .section-title:first-child {
 		rgba(212,175,55,0.15),
 		rgba(212,175,55,0)
 	);
-}
-
-.section-scroll-dot-motion {
-	transform: translateX(-50%);
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.25, 0.9, 0.3, 1) infinite;
-}
-
-.section-scroll-line-motion {
-	transform: translateX(-50%);
-	top: calc(var(--section-indicator-dot-size) + 24px);
-
-	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.25, 0.9, 0.3, 1) infinite;
-	animation-delay: var(--section-indicator-phase-shift);
 }
 
 /* Bewegung */
