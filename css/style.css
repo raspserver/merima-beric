@@ -2394,7 +2394,7 @@ section .section-title:first-child {
 /* Bewegung */
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
-	30%  { transform: translateX(-50%) translateY(8px); }
+	35%  { transform: translateX(-50%) translateY(10px); }
 	65%  { transform: translateX(-50%) translateY(var(--section-indicator-bounce-max-y)); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
@@ -2406,6 +2406,9 @@ section .section-title:first-child {
 	65%  { transform: scale(0.9, 1.15); }
 	100% { transform: scale(1); }
 }
+
+
+
 
 /* =========================
    FOOTER BASE
