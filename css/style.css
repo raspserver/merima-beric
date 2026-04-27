@@ -2350,7 +2350,7 @@ section .section-title:first-child {
 	pointer-events: none;
 }
 
-.section-scroll-dot-motion,
+. ,
 .section-scroll-line-motion {
 	position: absolute;
 	left: 50%;
@@ -2390,7 +2390,7 @@ section .section-title:first-child {
 /* STRICH */
 .section-scroll-line-motion {
 	transform: translateX(-50%);
-	top: calc(var(--section-indicator-dot-size) + 25px);
+	top: var(--section-scroll-hit-offset);
 
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 	animation-delay: var(--section-indicator-phase-shift);
@@ -2411,9 +2411,6 @@ section .section-title:first-child {
 	65%  { transform: scale(0.9, 1.15); }
 	100% { transform: scale(1); }
 }
-
-
-
 
 /* =========================
    FOOTER BASE
