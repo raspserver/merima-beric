@@ -1823,7 +1823,7 @@ section .section-title:first-child {
   transform: translateX(-50%);
 
   height: calc(100svh
-			- 8px
+			- 20px
 			- var(--nav-height-min)
 			- var(--section-scroll-hit-offset)
 			- 2 * var(--fontSizeSectionTitle)
