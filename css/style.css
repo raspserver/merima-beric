@@ -1825,7 +1825,8 @@ section .section-title:first-child {
   height: calc(100svh
 			- 8px
 			- var(--nav-height-min)
-			- 3 * var(--section-spacing)
+			- var(--section-scroll-hit-offset)
+			- 2 * var(--section-spacing)
 			- 2 * var(--fontSizeSectionTitle)
 			- var(--fontSizeSectionSubTitle)
 	);
