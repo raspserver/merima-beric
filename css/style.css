@@ -75,7 +75,11 @@
 
 	--section-indicator-dot-size: 8px;
 	--section-indicator-line-width: 1.0px;
-	--section-indicator-bounce-max-y: calc(var(--section-scroll-hit-offset) - var(--section-indicator-dot-size) - 1px);
+	--section-indicator-bounce-max-y: calc(
+										var(--section-scroll-hit-offset) -
+										var(--section-indicator-dot-size) - 
+										1px
+										);
 	--footer-copy-gap: 1.25rem;
 	
 	--section-spacing: 2.0rem;
@@ -2390,7 +2394,7 @@ section .section-title:first-child {
 /* STRICH */
 .section-scroll-line-motion {
 	transform: translateX(-50%);
-	top: calc(var(--section-indicator-dot-size) + 24px);
+	top: var(--section-scroll-hit-offset);
 
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 	animation-delay: var(--section-indicator-phase-shift);
