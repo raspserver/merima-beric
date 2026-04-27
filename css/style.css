@@ -94,7 +94,7 @@
 											);
 	--footer-copy-gap: 1.25rem;
 	
-	--section-spacing: 2.0rem;
+	--section-spacing: 1.0rem;
 	--section-scroll-hit-offset: 32px;
 	--section-scroll-hit-height: 64px;
 	--section-scroll-inset: 0;
@@ -1439,7 +1439,7 @@ section .section-title:first-child {
 	flex-direction: column;
 	align-items: stretch;
 	
-	gap: var(--section-spacing);
+	gap: var(--section-scroll-hit-offset);
 	margin-bottom: 0.0rem;
 }
 
