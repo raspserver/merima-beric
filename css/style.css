@@ -2343,6 +2343,7 @@ section .section-title:first-child {
 
 	top: 0px;
 
+	
 	pointer-events: none;
 }
 
@@ -2363,7 +2364,7 @@ section .section-title:first-child {
 	box-shadow:
 		0 0 12px rgba(212,175,55,0.6),
 		0 0 30px rgba(212,175,55,0.3);
-	animation: sectionDotSquash var(--section-indicator-bounce-duration) cubic-bezier(0.25, 0.9, 0.3, 1) infinite;
+	animation: sectionDotSquash var(--section-indicator-bounce-duration) ease-in-out infinite;
 }
 
 .section-scroll-line {
