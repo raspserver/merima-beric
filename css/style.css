@@ -2378,7 +2378,10 @@ section .section-title:first-child {
 
 .section-scroll-dot-motion {
 	transform: translateX(-50%);
+/*
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
+*/
+	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) cubic-bezier(0.33, 1, 0.68, 1) infinite;
 }
 
 
