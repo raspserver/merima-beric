@@ -2400,7 +2400,7 @@ section .section-title:first-child {
 /* STRICH */
 .section-scroll-line-motion {
 	transform: translateX(-50%);
-	top: calc(var(--section-indicator-dot-size) + 16px);
+	top: calc(var(--section-indicator-dot-size) + 8px);
 
 	animation: sectionLiquidScroll var(--section-indicator-bounce-duration) ease-in-out infinite;
 	animation-delay: var(--section-indicator-phase-shift);
@@ -2421,7 +2421,7 @@ section .section-title:first-child {
 /* Bewegung */
 @keyframes sectionLiquidScroll {
 	0%   { transform: translateX(-50%) translateY(0); }
-	40%  { transform: translateX(-50%) translateY(20px); }
+	40%  { transform: translateX(-50%) translateY(16px); }
 	60%  { transform: translateX(-50%) translateY(var(--section-indicator-bounce-max-y)); }
 	100% { transform: translateX(-50%) translateY(0); }
 }
