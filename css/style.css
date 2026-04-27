@@ -1793,7 +1793,7 @@ section .section-title:first-child {
   transform: translateX(-50%);
 
   height: calc(100svh
-			- 135px
+			- 110px
 			- var(--nav-height-min)
 			- var(--section-scroll-hit-offset)
 			- 2rem
