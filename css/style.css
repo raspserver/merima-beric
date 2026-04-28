@@ -954,62 +954,56 @@ html.hero-calendar-animating body,
   transform: translateY(0);
 }
 
-
-/*
-.fc .fc-header-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 1rem;
-}
-*/
-
-
-
-
 .fc {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-/* Kalenderfläche */
+/* Monatskalender */
 .fc .fc-view-harness {
   order: 1;
 }
 
-/* Toolbar nach unten */
+/* Toolbar unten */
 .fc .fc-header-toolbar {
   order: 2;
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 
-  gap: 1rem;
+  width: 100%;
 
-  margin-top: 1.25rem;
+  margin-top: 1.5rem;
   margin-bottom: 0 !important;
+
   padding-top: 1rem;
 }
 
-/* Navigation + Datum */
+/* gesamter Toolbar-Block */
 .fc .fc-toolbar-chunk {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+
+  width: 100%;
 }
 
-.fc .fc-toolbar-title {
-  margin: 0;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-/* Buttons */
+/* Navigation links */
 .fc .fc-button-group {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+}
+
+/* Datum rechts */
+.fc .fc-toolbar-title {
+  margin: 0 0 0 auto;
+
+  line-height: 1;
+  white-space: nowrap;
+
+  text-align: right;
 }
 
 .cta-button {
