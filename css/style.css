@@ -23,8 +23,8 @@
 	--font-size-xs: clamp(0.6rem, 2.92svw, 0.8rem);		/* 0.7rem */
 	--font-size-s: clamp(0.8rem, 3.75svw, 1.0rem);		/* 0.9rem */
 	--font-size-m: clamp(1.0rem, 4.58svw, 1.2rem);		/* 1.1rem */
-	--font-size-l: clamp(1.2rem, 5.42svw, 1.4rem);		/* 1.3rem */
-	--font-size-xl: clamp(1.4rem, 6.25svw, 1.6rem);		/* 1.5rem */
+	--font-size-l: clamp(1.4rem, 6.25svw, 1.6rem);		/* 1.5rem */
+	--font-size-xl: clamp(1.9rem, 8.33svw, 2.1rem);		/* 2.0rem */
 
 	--hero-subtitle-font-size: var(--font-size-m);
 	--hero-description-font-size: var(--font-size-m);
