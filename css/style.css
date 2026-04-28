@@ -37,11 +37,11 @@
 	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
 	/* ------------------------------------------------------------------------------------------------ */
 
-	--fontSizeSectionTitle: var(--font-size-xl);
+	--fontSizeSectionTitle: var(--font-size-l);
 /*
 	--fontSizeSectionSubTitle: clamp(0.7rem, 3.9vw, 1.1rem);
 */
-	--fontSizeSectionSubTitle: var(--font-size-l);
+	--fontSizeSectionSubTitle: var(--font-size-m);
 
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
