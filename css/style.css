@@ -39,7 +39,7 @@
 /*
 	--hero-description-font-size: 1.1rem;
 */
-	--hero-description-font-size: clamp(0.7rem, 3.9vw, 1.1rem);
+	--hero-description-font-size: clamp(1.0rem, 4.5vw, 1.3rem);
 
 	--hero-calendar-gap: 20px;
 
