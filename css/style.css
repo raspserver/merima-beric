@@ -40,6 +40,10 @@
 	--hero-description-font-size: 1.1rem;
 */
 	--hero-description-font-size: clamp(1.0rem, 4.5vw, 1.3rem);
+/*
+	--hero-subtitle-font-size:  clamp(1rem, 2vw, 1.5rem);
+*/
+	--hero-subtitle-font-size: 1.5rem;
 
 	--hero-calendar-gap: 20px;
 
@@ -710,7 +714,7 @@ html.hero-calendar-animating body,
 	justify-self: center;
 	align-self: start;
 
-	font-size: clamp(1rem, 2vw, 1.5rem);
+	font-size: --hero-subtitle-font-size;
 	color: var(--primary-color);
 	font-weight: 300;
 	letter-spacing: 0.2em;
