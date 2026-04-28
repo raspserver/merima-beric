@@ -56,7 +56,8 @@ export const heroCalendarModule = {
 	  weekends: true,
 	  navLinks: false,
 	  nowIndicator: true,
-	  expandRows: true,
+	  //~ expandRows: true,
+	  expandRows: false,
 	  
 	headerToolbar: {
 	  left: "prev",
