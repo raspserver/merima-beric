@@ -51,9 +51,7 @@ export const heroCalendarModule = {
 	  // 🔥 Standardansicht immer Monat
 	  initialView: "dayGridMonth",
 
-	  //~ height: "100%",
-	  height: "auto",
-	  
+	  height: "100%",
 	  firstDay: 1,
 	  weekends: true,
 	  navLinks: false,
