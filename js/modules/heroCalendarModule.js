@@ -57,34 +57,12 @@ export const heroCalendarModule = {
 	  navLinks: false,
 	  nowIndicator: true,
 	  expandRows: true,
-
-	  headerToolbar: {
-		// 🔥 kein HEUTE Button
-		left: "prev,next",
-
-		center: "title",
-
-		// 🔥 Reihenfolge: Monat, Woche, Tag, Liste
-		right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
-	  },
-
-	  // 🔥 keine Textbuttons mehr
-	  buttonText: {
-		month: "",
-		week: "",
-		day: "",
-		list: ""
-	  },
-
-	  // 🔥 Heroicons / Lucide / FontAwesome Icons
-	  buttonIcons: {
-		prev: "chevron-left",
-		next: "chevron-right",
-		dayGridMonth: "calendar",
-		timeGridWeek: "columns",
-		timeGridDay: "square",
-		listMonth: "list"
-	  },
+	  
+	headerToolbar: {
+		  left: "prev,next",
+		  center: "title",
+		  right: ""
+		},
 
 	  noEventsContent: "Keine Termine vorhanden",
 
