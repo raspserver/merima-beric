@@ -59,10 +59,10 @@ export const heroCalendarModule = {
 	  expandRows: true,
 	  
 	headerToolbar: {
-		  left: "prev,next",
-		  center: "title",
-		  right: ""
-		},
+	  left: "prev,next title",
+	  center: "",
+	  right: ""
+	},
 
 	  noEventsContent: "Keine Termine vorhanden",
 
