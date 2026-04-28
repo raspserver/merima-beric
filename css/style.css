@@ -714,7 +714,7 @@ html.hero-calendar-animating body,
 	justify-self: center;
 	align-self: start;
 
-	font-size: --hero-subtitle-font-size;
+	font-size: var(--hero-subtitle-font-size);
 	color: var(--primary-color);
 	font-weight: 300;
 	letter-spacing: 0.2em;
