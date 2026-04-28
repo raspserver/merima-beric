@@ -708,8 +708,10 @@ html.hero-calendar-animating body,
 
 	font-size: var(--hero-subtitle-font-size);
 	color: var(--primary-color);
+/*
 	font-weight: 300;
 	letter-spacing: 0.2em;
+*/
 	text-transform: uppercase;
 
 	margin: 0;
