@@ -964,7 +964,6 @@ html.hero-calendar-animating body,
 .fc .fc-view-harness {
   order: 1;
   flex: 1 1 auto;
-
   min-height: 0;
 }
 
@@ -982,34 +981,40 @@ html.hero-calendar-animating body,
   padding: 0 !important;
 }
 
-/* unnötigen Abstand entfernen */
+/* Abstand entfernen */
 .fc .fc-view-harness + .fc-header-toolbar {
   margin-top: 0 !important;
 }
 
-/* Toolbar-Inhalt */
+/* drei Bereiche */
 .fc .fc-toolbar-chunk {
   display: flex;
   align-items: center;
-
-  width: 100%;
+  flex: 1;
 }
 
-/* Navigation links */
-.fc .fc-button-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* Previous links */
+.fc .fc-toolbar-chunk:first-child {
+  justify-content: flex-start;
 }
 
-/* Datum rechts */
+/* Datum mittig */
+.fc .fc-toolbar-chunk:nth-child(2) {
+  justify-content: center;
+}
+
+/* Next rechts */
+.fc .fc-toolbar-chunk:last-child {
+  justify-content: flex-end;
+}
+
+/* Datum */
 .fc .fc-toolbar-title {
-  margin: 0 0 0 auto;
+  margin: 0;
 
   line-height: 1;
   white-space: nowrap;
-
-  text-align: right;
+  text-align: center;
 }
 
 .cta-button {
