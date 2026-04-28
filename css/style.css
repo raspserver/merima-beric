@@ -30,7 +30,7 @@
 	--hero-description-font-size: var(--font-size-m);
 
 	--fontSizeSectionTitle: var(--font-size-xl);
-	--fontSizeSectionSubTitle: var(--font-size-l);
+	--fontSizeSectionSubTitle: var(--font-size-m);
 
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
