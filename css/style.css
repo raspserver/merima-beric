@@ -954,13 +954,46 @@ html.hero-calendar-animating body,
   transform: translateY(0);
 }
 
+
+/*
 .fc .fc-header-toolbar {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 1rem;
 }
+*/
 
+
+
+
+.fc {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Kalenderfläche */
+.fc .fc-view-harness {
+  order: 1;
+}
+
+/* Toolbar nach unten */
+.fc .fc-header-toolbar {
+  order: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 1rem;
+
+  margin-top: 1.25rem;
+  margin-bottom: 0 !important;
+  padding-top: 1rem;
+}
+
+/* Navigation + Datum */
 .fc .fc-toolbar-chunk {
   display: flex;
   align-items: center;
@@ -973,6 +1006,7 @@ html.hero-calendar-animating body,
   white-space: nowrap;
 }
 
+/* Buttons */
 .fc .fc-button-group {
   display: flex;
   align-items: center;
