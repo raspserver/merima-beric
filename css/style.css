@@ -52,7 +52,7 @@
 /*
 	--hero-subtitle-font-size:  clamp(1rem, 2vw, 1.5rem);
 */
-	--hero-subtitle-font-size: var(--font-size-l);
+	--hero-subtitle-font-size: var(--font-size-m);
 
 	--hero-calendar-gap: 20px;
 
