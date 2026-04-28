@@ -42,51 +42,74 @@ export const heroCalendarModule = {
     if (state.ui.fullCalendarInstance || !this.heroCalendarEl) return;
 
     const { googleCalendarApiKey, calendarId } = this.getCalendarConfig();
-    const el = this.heroCalendarEl;
-
+    const el = this.heroCalendarEl;  
+    
     state.ui.fullCalendarInstance = new FullCalendar.Calendar(el, {
-      locale: "de",
-      timeZone: "Europe/Berlin",
-      initialView: window.innerWidth <= 768 ? "listMonth" : "dayGridMonth",
-      height: "100%",
-      firstDay: 1,
-      weekends: true,
-      navLinks: false,
-      nowIndicator: true,
-      expandRows: true,
-      headerToolbar: {
-        left: "prev,next today",
-        center: "title",
-        right: window.innerWidth <= 768
-          ? "listMonth,dayGridMonth"
-          : "dayGridMonth,timeGridWeek,listMonth"
-      },
-      buttonText: {
-        today: "Heute",
-        month: "Monat",
-        week: "Woche",
-        list: "Liste"
-      },
-      noEventsContent: "Keine Termine vorhanden",
-      eventTimeFormat: {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      },
-      googleCalendarApiKey,
-      events: {
-        googleCalendarId: calendarId
-      },
-      eventClick(info) {
-        if (info.event.url) {
-          info.jsEvent.preventDefault();
-          window.open(info.event.url, "_blank", "noopener");
-        }
-      },
-      loading(isLoading) {
-        el.classList.toggle("is-loading", isLoading);
-      }
-    });
+	  locale: "de",
+	  timeZone: "Europe/Berlin",
+
+	  // 🔥 Standardansicht immer Monat
+	  initialView: "dayGridMonth",
+
+	  height: "100%",
+	  firstDay: 1,
+	  weekends: true,
+	  navLinks: false,
+	  nowIndicator: true,
+	  expandRows: true,
+
+	  headerToolbar: {
+		// 🔥 kein HEUTE Button
+		left: "prev,next",
+
+		center: "title",
+
+		// 🔥 Reihenfolge: Monat, Woche, Tag, Liste
+		right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+	  },
+
+	  // 🔥 keine Textbuttons mehr
+	  buttonText: {
+		month: "",
+		week: "",
+		day: "",
+		list: ""
+	  },
+
+	  // 🔥 Heroicons / Lucide / FontAwesome Icons
+	  buttonIcons: {
+		prev: "chevron-left",
+		next: "chevron-right",
+		dayGridMonth: "calendar",
+		timeGridWeek: "columns",
+		timeGridDay: "square",
+		listMonth: "list"
+	  },
+
+	  noEventsContent: "Keine Termine vorhanden",
+
+	  eventTimeFormat: {
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false
+	  },
+
+	  googleCalendarApiKey,
+	  events: {
+		googleCalendarId: calendarId
+	  },
+
+	  eventClick(info) {
+		if (info.event.url) {
+		  info.jsEvent.preventDefault();
+		  window.open(info.event.url, "_blank", "noopener");
+		}
+	  },
+
+	  loading(isLoading) {
+		el.classList.toggle("is-loading", isLoading);
+	  }
+	});
 
     state.ui.fullCalendarInstance.render();
   },
@@ -101,20 +124,22 @@ export const heroCalendarModule = {
     if (!state.ui.fullCalendarInstance) return;
     state.ui.fullCalendarInstance.updateSize();
   },
-
+  
   refreshFullCalendarView() {
-    if (!state.ui.fullCalendarInstance) return;
+	  if (!state.ui.fullCalendarInstance) return;
 
-    const nextView = window.innerWidth <= 768 ? "listMonth" : "dayGridMonth";
-    const currentView = state.ui.fullCalendarInstance.view?.type;
+	  // 🔥 immer Monat als responsive default
+	  const nextView = "dayGridMonth";
 
-    if (currentView !== nextView) {
-      state.ui.fullCalendarInstance.changeView(nextView);
-    }
+	  const currentView = state.ui.fullCalendarInstance.view?.type;
 
-    state.ui.fullCalendarInstance.updateSize();
-  },
+	  if (currentView !== nextView) {
+		state.ui.fullCalendarInstance.changeView(nextView);
+	  }
 
+	  state.ui.fullCalendarInstance.updateSize();
+	},
+  
   getHomeAboutBoundaryEl() {
     return document.querySelector("#about");
   },
