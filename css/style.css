@@ -957,14 +957,21 @@ html.hero-calendar-animating body,
 .fc {
   display: flex;
   flex-direction: column;
+
   height: 100%;
+  min-height: 0;
+
+  overflow: hidden;
 }
 
 /* Monatskalender */
 .fc .fc-view-harness {
   order: 1;
+
   flex: 1 1 auto;
   min-height: 0;
+
+  overflow: hidden;
 }
 
 /* Toolbar unten */
@@ -980,8 +987,12 @@ html.hero-calendar-animating body,
 
   width: 100%;
 
+  flex: 0 0 auto;
+
+  min-height: 48px;
+
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 0.5rem 0 0 0 !important;
 }
 
 /* Abstand entfernen */
@@ -1018,6 +1029,7 @@ html.hero-calendar-animating body,
 
   line-height: 1;
   white-space: nowrap;
+
   text-align: center;
 }
 
