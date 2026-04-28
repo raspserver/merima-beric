@@ -1427,10 +1427,14 @@ section .section-title:first-child {
 	text-align: center;
 	color: var(--primary-color);
 	font-size: var(--fontSizeSectionSubTitle);
+/*
 	letter-spacing: 0.3em;
+*/
 	text-transform: uppercase;
 	margin: 0;
+/*
 	font-weight: 500;
+*/
 }
 
 .section-header {
