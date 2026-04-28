@@ -31,15 +31,15 @@
 	/* ------------------------------------------------------------------------------------------------ */
 
 	--fontSizeSectionTitle: clamp(1.5rem, 9.0vw, 2.5rem);
-/*
 	--fontSizeSectionSubTitle: clamp(0.7rem, 3.9vw, 1.1rem);
-*/
-	
-	--fontSizeSectionSubTitle:  1.1rem;
+
 
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
+/*
 	--hero-description-font-size: 1.1rem;
+*/
+	--hero-description-font-size: clamp(0.7rem, 3.9vw, 1.1rem);
 
 	--hero-calendar-gap: 20px;
 
