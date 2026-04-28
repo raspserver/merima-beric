@@ -401,11 +401,7 @@ export const heroCalendarModule = {
     }
 
     const gap = this.getHeroCalendarGap();
-    
-    //~ const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
-    
-    const preferredCalendarHeight = this.getHeroCalendarPreferredHeight() + 0;
-    
+    const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
     const desiredBottomOffset = utils.cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
     const ctaHeight = this.cta.getBoundingClientRect().height || 64;
 
