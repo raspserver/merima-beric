@@ -971,7 +971,10 @@ html.hero-calendar-animating body,
 .fc .fc-header-toolbar {
   order: 2;
 
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+
   align-items: center;
   justify-content: space-between;
 
@@ -986,11 +989,12 @@ html.hero-calendar-animating body,
   margin-top: 0 !important;
 }
 
-/* drei Bereiche */
+/* drei horizontale Bereiche */
 .fc .fc-toolbar-chunk {
   display: flex;
   align-items: center;
-  flex: 1;
+
+  flex: 1 1 0;
 }
 
 /* Previous links */
