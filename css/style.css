@@ -1405,6 +1405,9 @@ section {
 
 .section-title {
 	font-size: var(--fontSizeSectionTitle);
+	
+	font-weight: 300;
+	letter-spacing: 0.2em;
 
 /*
 	font-weight: 400;
