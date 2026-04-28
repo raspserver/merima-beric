@@ -26,33 +26,16 @@
 	--font-size-l: clamp(1.2rem, 5.42svw, 1.4rem);		/* 1.3rem */
 	--font-size-xl: clamp(1.4rem, 6.25svw, 1.6rem);		/* 1.5rem */
 
-
-/*
-	--section-stack-gap: clamp(0.8rem, 2.4vh, 1.4rem);
-*/
-	/* ------------------------------------------------------------------------------------------------ */
-	/* clamp(MIN, BEVORZUGT, MAX);		min						bevorzugt				max				*/
-	/* viewport 952 × 442 (Desktop):	x16px = px		x442x0.01 = px	x16px = px	*/
-	/* viewport 375 x 552 (iPhone7):	x16px = px		x552x0.01 = px	x16px = px	*/
-	/* viewport 384 × 701 (Galaxy A34):	x16px = px		x701x0.01 = px	x16px = px	*/
-	/* ------------------------------------------------------------------------------------------------ */
+	--hero-subtitle-font-size: var(--font-size-m);
+	--hero-description-font-size: var(--font-size-m);
 
 	--fontSizeSectionTitle: var(--font-size-l);
-/*
-	--fontSizeSectionSubTitle: clamp(0.7rem, 3.9vw, 1.1rem);
-*/
 	--fontSizeSectionSubTitle: var(--font-size-m);
 
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
-/*
-	--hero-description-font-size: 1.1rem;
-*/
-	--hero-description-font-size: var(--font-size-m);
-/*
-	--hero-subtitle-font-size:  clamp(1rem, 2vw, 1.5rem);
-*/
-	--hero-subtitle-font-size: var(--font-size-m);
+
+
 
 	--hero-calendar-gap: 20px;
 
