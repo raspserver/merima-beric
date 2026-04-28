@@ -52,7 +52,7 @@ export const heroCalendarModule = {
 	  initialView: "dayGridMonth",
 
 	  //~ height: "100%",
-	  contentHeight: "auto",
+	  height: "auto",
 	  firstDay: 1,
 	  weekends: true,
 	  navLinks: false,
