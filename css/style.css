@@ -32,10 +32,12 @@
 	--fontSizeSectionTitle: var(--font-size-xl);
 	--fontSizeSectionSubTitle: var(--font-size-m);
 
+
+
+
+
 	--hero-cta-gap-to-boundary: 90px;
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
-
-
 
 	--hero-calendar-gap: 20px;
 
