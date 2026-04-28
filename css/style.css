@@ -955,8 +955,10 @@ html.hero-calendar-animating body,
 }
 
 .fc {
+/*
   display: flex;
   flex-direction: column;
+*/
 
   height: 100%;
   min-height: 0;
@@ -966,7 +968,9 @@ html.hero-calendar-animating body,
 
 /* Monatskalender */
 .fc .fc-view-harness {
+/*
   order: 1;
+*/
 
   flex: 1 1 auto;
   min-height: 0;
