@@ -48,7 +48,7 @@
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
 */
 	
-	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.6);
+	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.8);
 
 	--hero-calendar-gap: 20px;
 
