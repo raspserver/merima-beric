@@ -456,10 +456,35 @@ export const scrollEngine = {
     if (state.ui.heroCalendarOpen) {
       clearTimeout(state.ui.fullCalendarResizeTimer);
       state.ui.fullCalendarResizeTimer = setTimeout(() => {
-        heroCalendarModule.positionHeroCalendar();
+		       
         heroCalendarModule.refreshFullCalendarView();
-        heroCalendarModule.applyMeasuredHeroCalendarBox();
-        heroCalendarModule.setHeroCalendarExtraHeight(state.ui.heroCalendarMeasuredExtra);
+		heroCalendarModule.applyMeasuredHeroCalendarBox();
+
+		heroCalendarModule.setHeroCalendarExtraHeight(
+		  state.ui.frozenHeroCalendarExtraHeight ??
+		  state.ui.heroCalendarMeasuredExtra
+		);
+
+		requestAnimationFrame(() => {
+		  heroCalendarModule.applyMeasuredHeroCalendarBox();
+		  heroCalendarModule.updateFullCalendarSize();
+		});
+        
+        heroCalendarModule.refreshFullCalendarView();
+		heroCalendarModule.applyMeasuredHeroCalendarBox();
+
+		heroCalendarModule.setHeroCalendarExtraHeight(
+		  state.ui.frozenHeroCalendarExtraHeight ??
+		  state.ui.heroCalendarMeasuredExtra
+		);
+
+		requestAnimationFrame(() => {
+		  heroCalendarModule.applyMeasuredHeroCalendarBox();
+		  heroCalendarModule.updateFullCalendarSize();
+		});
+        
+        
+        
 
         requestAnimationFrame(() => {
           heroCalendarModule.applyMeasuredHeroCalendarBox();

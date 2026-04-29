@@ -158,6 +158,8 @@ export const heroCalendarModule = {
 
 	  this.ensureFullCalendar();
 	  this.positionHeroCalendar();
+	  
+		state.ui.frozenHeroCalendarExtraHeight = state.ui.heroCalendarMeasuredExtra;
 
 	  /* CTA State */
 	  this.cta.classList.remove("is-closed");
@@ -176,8 +178,8 @@ export const heroCalendarModule = {
 	  this.applyMeasuredHeroCalendarBox();
 	  this.freezeNavbarForHeroCalendar();
 
-	  /* 🔥 Layout startet sofort */
-	  this.animateHeroCalendarLayout(0, state.ui.heroCalendarMeasuredExtra, {
+	  /* 🔥 Layout startet sofort */ 
+	  this.animateHeroCalendarLayout(0, state.ui.frozenHeroCalendarExtraHeight, {
 		mode: "open",
 		onComplete: () => {
 		  state.ui.heroCalendarOpen = true;
@@ -270,6 +272,8 @@ export const heroCalendarModule = {
 			/* 🔥 finaler CTA Zustand */
 			this.cta.classList.remove("is-transitioning-close");
 			this.cta.classList.add("is-closed");
+			
+			state.ui.frozenHeroCalendarExtraHeight = null;
 
 			onComplete?.();
 		  },
