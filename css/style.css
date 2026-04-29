@@ -42,7 +42,7 @@
 	
 	--hero-cta-gap-to-boundary: 50px;
 	
-	
+	--hero-subtitle-padding-top: 60px;
 	
 /*
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 0.5);
@@ -687,7 +687,7 @@ html.hero-calendar-animating body,
 	width: 100%;
 	margin: 0 auto;
 
-	padding-top: var(--hero-cta-gap-to-boundary);
+	padding-top: var(--hero-subtitle-padding-top);
 	padding-bottom: calc( var(--hero-cta-gap-to-boundary) + var(--cta-height-live, 0px) );
 
 	height: 100%;
