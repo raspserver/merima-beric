@@ -30,6 +30,78 @@ export const heroCalendarModule = {
     this.cta = document.querySelector(".cta-button");
     this.ctaLabel = document.querySelector(".cta-button .cta-label");
   },
+  
+  showCalendarActionBar(event) {
+	  state.ui.selectedCalendarEvent = event;
+
+	  const toolbar = this.heroCalendarEl?.querySelector(".fc-header-toolbar");
+	  if (!toolbar) return;
+
+	  toolbar.classList.add("is-event-selected");
+
+	  let actionBar = toolbar.querySelector(".fc-action-toolbar");
+
+	  if (!actionBar) {
+		actionBar = document.createElement("div");
+		actionBar.className = "fc-action-toolbar";
+
+		actionBar.innerHTML = `
+		  <button class="fc-action-cancel">Abbruch</button>
+		  <button class="fc-action-whatsapp">WhatsApp</button>
+		`;
+
+		toolbar.appendChild(actionBar);
+
+		actionBar
+		  .querySelector(".fc-action-cancel")
+		  ?.addEventListener("click", () => {
+			this.hideCalendarActionBar();
+		  });
+
+		actionBar
+		  .querySelector(".fc-action-whatsapp")
+		  ?.addEventListener("click", () => {
+			this.openWhatsAppForEvent();
+		  });
+	  }
+	},
+
+	hideCalendarActionBar() {
+	  state.ui.selectedCalendarEvent = null;
+
+	  const toolbar =
+		this.heroCalendarEl?.querySelector(".fc-header-toolbar");
+
+	  toolbar?.classList.remove("is-event-selected");
+	},
+
+	openWhatsAppForEvent() {
+	  const event = state.ui.selectedCalendarEvent;
+
+	  if (!event) return;
+
+	  const start = event.start;
+
+	  const formattedDate = start?.toLocaleDateString("de-DE", {
+		weekday: "long",
+		day: "2-digit",
+		month: "2-digit",
+		year: "numeric",
+	  });
+
+	  const formattedTime = start?.toLocaleTimeString("de-DE", {
+		hour: "2-digit",
+		minute: "2-digit",
+	  });
+
+	  const text =
+		`Liebe Merima, ich hätte gerne einen Termin am ${formattedDate} um ${formattedTime} für `;
+
+	  const url =
+		`https://wa.me/?text=${encodeURIComponent(text)}`;
+
+	  window.open(url, "_blank", "noopener");
+	},
 
   getCalendarConfig() {
     return {
@@ -76,14 +148,13 @@ export const heroCalendarModule = {
 	  events: {
 		googleCalendarId: calendarId
 	  },
-
-	  eventClick(info) {
-		if (info.event.url) {
+	  
+	  eventClick: (info) => {
 		  info.jsEvent.preventDefault();
-		  window.open(info.event.url, "_blank", "noopener");
-		}
-	  },
 
+		  this.showCalendarActionBar(info.event);
+		},
+	  
 	  loading(isLoading) {
 		el.classList.toggle("is-loading", isLoading);
 	  }

@@ -53,6 +53,8 @@ export const state = {
 
     fullCalendarInstance: null,
     fullCalendarResizeTimer: null,
+    
+    selectedCalendarEvent: null,
 
     heroCalendarOpen: false,
     heroCalendarExtraHeight: 0,

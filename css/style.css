@@ -46,6 +46,7 @@
 	--cta-label-duration: var(--hero-calendar-layout-duration);
 	--hero-calendar-reveal-delay: -0.20s;
 	
+	
 	--hero-calendar-preferred-height: 470px;
 	
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
@@ -984,6 +985,8 @@ html.hero-calendar-animating body,
 /* Toolbar unten */
 .fc .fc-header-toolbar {
   order: 2;
+  
+  position: relative;
 
   display: flex !important;
   flex-direction: row !important;
@@ -1002,6 +1005,58 @@ html.hero-calendar-animating body,
   padding-bottom: env(safe-area-inset-bottom, 0px);
 
   min-height: 56px;
+}
+
+/* Original Toolbar verstecken */
+.fc .fc-header-toolbar.is-event-selected .fc-toolbar-chunk {
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.2s ease;
+}
+
+/* Action Toolbar */
+.fc-action-toolbar {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.25s ease;
+
+  padding-top: 0.75rem;
+}
+
+/* sichtbar */
+.fc .fc-header-toolbar.is-event-selected .fc-action-toolbar {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fc-action-cancel,
+.fc-action-whatsapp {
+  border: 0;
+  background: transparent;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  padding: 0.5rem 0;
+}
+
+.fc-action-cancel {
+  color: rgba(0,0,0,0.65);
+}
+
+.fc-action-whatsapp {
+  color: #25D366;
 }
 
 /* Abstand entfernen */
