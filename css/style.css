@@ -49,7 +49,7 @@
 	--hero-calendar-preferred-height: clamp(420px, 56vh, 620px);
 */
 	
-	--hero-calendar-preferred-height: 490px;
+	--hero-calendar-preferred-height: 480px;
 	
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
