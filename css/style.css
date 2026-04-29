@@ -44,7 +44,13 @@
 	--hero-calendar-layout-duration: 0.75s;
 	--cta-label-duration: var(--hero-calendar-layout-duration);
 	--hero-calendar-reveal-delay: -0.20s;
+	
+/*
 	--hero-calendar-preferred-height: clamp(420px, 56vh, 620px);
+*/
+	
+	--hero-calendar-preferred-height: clamp(450px, 56vh, 620px);
+	
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
 	--hero-calendar-prewarm-about-ratio: 0.2;
