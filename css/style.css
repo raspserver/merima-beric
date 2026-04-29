@@ -1040,7 +1040,7 @@ html.hero-calendar-animating body,
 }
 
 .fc .fc-daygrid-day-frame {
-  min-height: 72px;
+  min-height: 56px;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }
