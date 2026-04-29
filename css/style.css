@@ -1039,6 +1039,12 @@ html.hero-calendar-animating body,
   text-align: center;
 }
 
+.fc .fc-daygrid-day-frame {
+  min-height: 72px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
 .cta-button {
 	position: absolute;
 	left: 50%;
