@@ -1039,21 +1039,6 @@ html.hero-calendar-animating body,
   text-align: center;
 }
 
-.fc .fc-daygrid-day-frame {
-  min-height: 56px;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-.fc .fc-daygrid-body-natural .fc-daygrid-day-events {
-  margin-bottom: 0;
-}
-
-.fc .fc-daygrid-event {
-  margin-top: 1px;
-  margin-bottom: 1px;
-}
-
 .cta-button {
 	position: absolute;
 	left: 50%;
