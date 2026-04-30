@@ -40,14 +40,14 @@
 	
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 1.0);
 
-	--hero-calendar-gap: 10px;
+	--hero-calendar-gap: 20px;
 
 	--hero-calendar-layout-duration: 0.75s;
 	--cta-label-duration: var(--hero-calendar-layout-duration);
 	--hero-calendar-reveal-delay: -0.20s;
 	
 	
-	--hero-calendar-preferred-height: 470px;
+	--hero-calendar-preferred-height: 480px;
 	
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
