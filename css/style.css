@@ -55,7 +55,7 @@
 											var(--hero-cta-gap-to-boundary) -
 
 											var(--cta-height-live) -
-											var(--hero-description-font-size) -
+											16px -
 
 											var(--nav-height-min)
 										);
