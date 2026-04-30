@@ -53,7 +53,6 @@
 	
 	--hero-calendar-preferred-height: calc(100svh -
 											var(--hero-cta-gap-to-boundary) -
-											var(--hero-cta-gap-to-boundary) -
 											var(--hero-calendar-gap) -
 											300px
 										);
