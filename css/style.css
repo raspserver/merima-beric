@@ -55,7 +55,7 @@
 											var(--hero-cta-gap-to-boundary) -
 											var(--cta-height-live) -
 											var(--nav-height-min) -
-											50px
+											50
 										);
 	
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
