@@ -509,6 +509,7 @@ export const heroCalendarModule = {
       Math.ceil(requiredSpaceBelowCalendarTop - availableSpaceBelowCalendarTop)
     );
 
+/*
     const requiredExtraForDescriptionToLeaveViewport =
       Math.max(0, Math.ceil(descRect.bottom));
 
@@ -516,6 +517,7 @@ export const heroCalendarModule = {
       extraHeight,
       requiredExtraForDescriptionToLeaveViewport
     );
+*/
 
     this.setHeroCalendarExtraHeight(extraHeight);
 
