@@ -40,7 +40,7 @@
 	
 	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 1.0);
 
-	--hero-calendar-gap: 40px;
+	--hero-calendar-gap: 20px;
 
 	--hero-calendar-layout-duration: 0.75s;
 	--cta-label-duration: var(--hero-calendar-layout-duration);
