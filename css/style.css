@@ -54,7 +54,6 @@
 	--hero-calendar-preferred-height: calc(svh -
 											var(--hero-cta-gap-to-boundary) -
 											var(--cta-height-live) -
-											var(--hero-calendar-gap) -
 											var(--nav-height-min)
 										);
 	
