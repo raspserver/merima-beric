@@ -47,7 +47,17 @@
 	--hero-calendar-reveal-delay: -0.20s;
 	
 	
+/*
 	--hero-calendar-preferred-height: 400px;
+*/
+	
+	--hero-calendar-preferred-height: calc(svh -
+											var(--hero-cta-gap-to-boundary) -
+											var(--cta-height-live) -
+											var(--hero-calendar-gap) -
+											var(--nav-height-min) -
+											var(--hero-description-font-size)
+										);
 	
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
 	
