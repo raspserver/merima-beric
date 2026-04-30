@@ -55,8 +55,7 @@
 											var(--hero-cta-gap-to-boundary) -
 
 											var(--cta-height-live) -
-											2rem -
-
+											var(--cta-height-live) -
 											var(--nav-height-min)
 										);
 	
