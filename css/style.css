@@ -54,7 +54,8 @@
 	--hero-calendar-preferred-height: calc(100svh -
 											var(--hero-cta-gap-to-boundary) -
 											var(--hero-cta-gap-to-boundary) -
-											400px
+											var(--hero-calendar-gap) -
+											300px
 										);
 	
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
