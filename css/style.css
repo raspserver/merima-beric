@@ -938,7 +938,7 @@ html.hero-calendar-animating body,
   text-align: center;
   font-size: var(--hero-description-font-size, 1.1rem);
   color: rgba(255, 255, 255, 0.8);
-  line-height: 1.4;
+  line-height: 1.0;
   font-weight: 400;
 
   grid-row: 7; 
