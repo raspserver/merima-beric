@@ -31,6 +31,8 @@
 
 	--fontSizeSectionTitle: var(--font-size-xl);
 	--fontSizeSectionSubTitle: var(--font-size-m);
+	
+	--cta-height: 60px;
 
 
 	
@@ -53,10 +55,8 @@
 	
 	--hero-calendar-preferred-height: calc(100svh -
 											var(--hero-cta-gap-to-boundary) -
-											var(--hero-cta-gap-to-boundary) -
 											var(--hero-calendar-gap) -
-											var(--hero-calendar-gap) -
-											var(--cta-height-live)
+											var(--cta-height: 60px;)
 										);
 	
 	--hero-calendar-layout-ease: cubic-bezier(.16,.84,.44,1);
@@ -685,7 +685,7 @@ html.hero-calendar-animating body,
 	margin: 0 auto;
 
 	padding-top: var(--hero-subtitle-padding-top);
-	padding-bottom: calc( var(--hero-cta-gap-to-boundary) + var(--cta-height-live, 0px) );
+	padding-bottom: calc(var(--hero-cta-gap-to-boundary) + var(--cta-height));
 
 	height: 100%;
 	min-height: 100svh;
@@ -1108,6 +1108,7 @@ html.hero-calendar-animating body,
 }
 
 .cta-button {
+	height: var(--cta-height);
 	position: absolute;
 	left: 50%;
 	bottom: var(--hero-cta-gap-to-boundary);

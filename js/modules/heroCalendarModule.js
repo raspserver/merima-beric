@@ -478,12 +478,8 @@ export const heroCalendarModule = {
     const gap = this.getHeroCalendarGap();
     const preferredCalendarHeight = this.getHeroCalendarPreferredHeight();
     const desiredBottomOffset = utils.cssVar.lengthPx("--hero-cta-gap-to-boundary", 90);
-    const ctaHeight = this.cta.getBoundingClientRect().height || 64;
-
-    this.heroContent?.style.setProperty(
-      "--cta-height-live",
-      `${ctaHeight}px`
-    );
+    
+    const ctaHeight = utils.cssVar.lengthPx("--cta-height", 60);
 
     const compactNavHeight = utils.cssVar.lengthPx("--nav-height-min", 58);
 
