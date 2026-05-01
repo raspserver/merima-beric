@@ -40,7 +40,7 @@
 	
 	--hero-subtitle-padding-top: 60px;
 	
-	--hero-stack-gap: calc(var(--hero-cta-gap-to-boundary) * 1.0);
+	--hero-stack-gap: 40px;
 
 	--hero-calendar-gap: 20px;
 
