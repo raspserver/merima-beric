@@ -34,24 +34,17 @@
 	
 	--cta-height: 60px;
 
-
-	
 	--hero-cta-gap-to-boundary: 75px;
 	
 	--hero-subtitle-padding-top: 60px;
 	
-	--hero-stack-gap: 40px;
+	--hero-stack-gap: 60px;
 
 	--hero-calendar-gap: 20px;
 
 	--hero-calendar-layout-duration: 0.75s;
 	--cta-label-duration: var(--hero-calendar-layout-duration);
 	--hero-calendar-reveal-delay: -0.20s;
-	
-	
-/*
-	--hero-calendar-preferred-height: 400px;
-*/
 	
 	--hero-calendar-preferred-height: calc(100svh -
 											var(--hero-cta-gap-to-boundary) -
