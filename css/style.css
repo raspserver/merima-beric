@@ -1016,7 +1016,7 @@ html.hero-calendar-animating body,
 }
 
 #fc-action-toolbar {
-	position: relative;
+  position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
