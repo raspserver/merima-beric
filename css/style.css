@@ -489,7 +489,6 @@ html.hero-calendar-animating body,
 }
 
 #hero-calendar {
-	position: relative;
   opacity: 0;
   pointer-events: none;
 
@@ -965,6 +964,11 @@ html.hero-calendar-animating body,
 }
 
 .fc {
+/*
+  display: flex;
+  flex-direction: column;
+*/
+
   height: 100%;
   min-height: 0;
 
@@ -973,6 +977,10 @@ html.hero-calendar-animating body,
 
 /* Monatskalender */
 .fc .fc-view-harness {
+/*
+  order: 1;
+*/
+
   flex: 1 1 auto;
   min-height: 0;
 
@@ -1008,28 +1016,25 @@ html.hero-calendar-animating body,
 }
 
 #fc-action-toolbar {
-  position: absolute; /* 🔥 FIX */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+	position: relative;
+	
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 
-  width: 100%;
+	width: 100%;
 
-  padding: 0 0.75rem;
-  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+	margin: 0;
 
-  min-height: 56px;
-  
-  opacity: 0;
-  pointer-events: none;
+	padding-top: 0.75rem;
+	padding-bottom: env(safe-area-inset-bottom);
 
-  transition: opacity 0.18s ease;
+	min-height: 56px;
+	
+	opacity: 0;
+	pointer-events: none;
 
-  z-index: 10; /* 🔥 WICHTIG */
+	transition: opacity 0.18s ease;
 }
 
 /* NUR sichtbar wenn wirklich selektiert */
@@ -1099,6 +1104,19 @@ html.hero-calendar-animating body,
 .fc-action-cancel:active,
 .fc-action-whatsapp:active {
   transform: translateY(0);
+}
+
+.fc-action-toolbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  justify-content: space-between;
+
+  padding: 0 0.75rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 /* 🔥 Buttons wie FullCalendar */
