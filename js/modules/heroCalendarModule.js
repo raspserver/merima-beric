@@ -43,25 +43,29 @@ export const heroCalendarModule = {
 	showCalendarActionBar(event) {
 	  state.ui.selectedCalendarEvent = event;
 
-	  // Phase 1 → Toolbar ausblenden
+	  // Phase 1: normale Toolbar fade out
 	  this.heroCalendar.classList.add("is-switching");
 
 	  setTimeout(() => {
-		// Phase 2 → Action Toolbar einblenden
-		this.heroCalendar.classList.remove("is-switching");
+		// Phase 2: erst DANN Actionbar aktivieren
 		this.heroCalendar.classList.add("is-event-selected");
-	  }, 180); // muss zu CSS passen
+
+		requestAnimationFrame(() => {
+		  this.heroCalendar.classList.remove("is-switching");
+		});
+
+	  }, 180);
 	},
 	
 	hideCalendarActionBar() {
 	  state.ui.selectedCalendarEvent = null;
 
-	  // Phase 1 → Action ausblenden
-	  this.heroCalendar.classList.remove("is-event-selected");
+	  // Phase 1: Actionbar raus
 	  this.heroCalendar.classList.add("is-switching");
+	  this.heroCalendar.classList.remove("is-event-selected");
 
 	  setTimeout(() => {
-		// Phase 2 → normale Toolbar wieder anzeigen
+		// Phase 2: normale Toolbar wieder rein
 		this.heroCalendar.classList.remove("is-switching");
 	  }, 180);
 	},

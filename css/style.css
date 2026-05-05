@@ -1023,10 +1023,6 @@ html.hero-calendar-animating body,
   pointer-events: none;
 }
 
-
-
-/* 🔥 Action Toolbar initial unsichtbar */
-/*
 #fc-action-toolbar {
   position: absolute;
   left: 0;
@@ -1034,16 +1030,18 @@ html.hero-calendar-animating body,
   bottom: 0;
 
   display: flex;
-  gap: 0.5rem;
+  justify-content: space-between;
+
+  padding: 0 0.75rem;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 
   opacity: 0;
   pointer-events: none;
 
   transition: opacity 0.18s ease;
 }
-*/
 
-/* 🔥 FADE IN (erst nach switching) */
+/* NUR sichtbar wenn wirklich selektiert */
 #hero-calendar.is-event-selected #fc-action-toolbar {
   opacity: 1;
   pointer-events: auto;
@@ -1110,7 +1108,7 @@ html.hero-calendar-animating body,
   justify-content: space-between;
 
   padding: 0 0.75rem;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 /* 🔥 Buttons wie FullCalendar */
@@ -1120,7 +1118,7 @@ html.hero-calendar-animating body,
 
   padding: 0 0.75rem;
 
-  border-radius: 6px; /* eckig statt pill */
+  border-radius: 6px !important;
   border: 1px solid transparent;
 
   font-size: 0.9rem;
@@ -1137,13 +1135,11 @@ html.hero-calendar-animating body,
 
 /* Abstände exakt wie prev/next */
 .fc-action-cancel {
-  margin-right: auto;
   background: #e53935;
   color: #fff;
 }
 
 .fc-action-whatsapp {
-  margin-left: auto;
   background: #25D366;
   color: #fff;
 }
