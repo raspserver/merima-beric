@@ -40,32 +40,16 @@ export const heroCalendarModule = {
 	this.whatsappBtn = this.actionBar?.querySelector(".fc-action-whatsapp");
   },
   
-	async showCalendarActionBar(event) {
+	showCalendarActionBar(event) {
 	  state.ui.selectedCalendarEvent = event;
 
-	  const toolbar = this.heroCalendar.querySelector(".fc-header-toolbar");
-
-	  // Crossfade starten
 	  this.heroCalendar.classList.add("is-event-selected");
-
-	  // Warten bis normale Toolbar ausgefadet ist
-	  if (toolbar) {
-		await this.waitForTransitionEnd(toolbar);
-	  }
 	},
-	
-	async hideCalendarActionBar() {
+
+	hideCalendarActionBar() {
 	  state.ui.selectedCalendarEvent = null;
 
-	  const actionBar = this.actionBar;
-
-	  // Crossfade zurück
 	  this.heroCalendar.classList.remove("is-event-selected");
-
-	  // Warten bis Actionbar ausgefadet ist
-	  if (actionBar) {
-		await this.waitForTransitionEnd(actionBar);
-	  }
 	},
 
 	openWhatsAppForEvent() {
@@ -749,19 +733,6 @@ export const heroCalendarModule = {
       this.openHeroCalendar();
     }
   },
-  
-  waitForTransitionEnd(element) {
-	  return new Promise((resolve) => {
-		const handler = (e) => {
-		  if (e.target === element) {
-			element.removeEventListener("transitionend", handler);
-			resolve();
-		  }
-		};
-
-		element.addEventListener("transitionend", handler);
-	  });
-	},
 
   stopPropagation(e) {
     e.stopPropagation();
