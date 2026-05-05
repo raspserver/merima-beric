@@ -1017,24 +1017,20 @@ html.hero-calendar-animating body,
 
 #fc-action-toolbar {
 	position: relative;
-	
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+  left: 0;
+  right: 0;
+  bottom: 0;
 
-	width: 100%;
+  display: flex;
+  justify-content: space-between;
 
-	margin: 0;
+  padding: 0 0.75rem;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 
-	padding-top: 0.75rem;
-	padding-bottom: env(safe-area-inset-bottom);
+  opacity: 0;
+  pointer-events: none;
 
-	min-height: 56px;
-	
-	opacity: 0;
-	pointer-events: none;
-
-	transition: opacity 0.18s ease;
+  transition: opacity 0.18s ease;
 }
 
 /* NUR sichtbar wenn wirklich selektiert */
