@@ -1010,17 +1010,9 @@ html.hero-calendar-animating body,
   padding-bottom: env(safe-area-inset-bottom, 0px);
 
   min-height: 56px;
-}
-
-/* Phase 1: normale Toolbar sichtbar */
-.fc .fc-header-toolbar {
+  
+  opacity: 1;
   transition: opacity 0.18s ease;
-}
-
-/* 🔥 FADE OUT */
-#hero-calendar.is-switching .fc-header-toolbar {
-  opacity: 0;
-  pointer-events: none;
 }
 
 #fc-action-toolbar {
@@ -1045,6 +1037,18 @@ html.hero-calendar-animating body,
 #hero-calendar.is-event-selected #fc-action-toolbar {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Beide Toolbars können überlappen */
+.fc .fc-header-toolbar,
+#fc-action-toolbar {
+  transition: opacity 0.18s ease;
+}
+
+/* 🔥 Crossfade State */
+#hero-calendar.is-event-selected .fc-header-toolbar {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Abstand entfernen */
@@ -1143,7 +1147,6 @@ html.hero-calendar-animating body,
   background: #25D366;
   color: #fff;
 }
-
 
 .cta-button {
 	height: var(--cta-height);

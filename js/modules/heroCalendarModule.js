@@ -40,34 +40,32 @@ export const heroCalendarModule = {
 	this.whatsappBtn = this.actionBar?.querySelector(".fc-action-whatsapp");
   },
   
-	showCalendarActionBar(event) {
+	async showCalendarActionBar(event) {
 	  state.ui.selectedCalendarEvent = event;
 
-	  // Phase 1: normale Toolbar fade out
-	  this.heroCalendar.classList.add("is-switching");
+	  const toolbar = this.heroCalendar.querySelector(".fc-header-toolbar");
 
-	  setTimeout(() => {
-		// Phase 2: erst DANN Actionbar aktivieren
-		this.heroCalendar.classList.add("is-event-selected");
+	  // Crossfade starten
+	  this.heroCalendar.classList.add("is-event-selected");
 
-		requestAnimationFrame(() => {
-		  this.heroCalendar.classList.remove("is-switching");
-		});
-
-	  }, 180);
+	  // Warten bis normale Toolbar ausgefadet ist
+	  if (toolbar) {
+		await this.waitForTransitionEnd(toolbar);
+	  }
 	},
 	
-	hideCalendarActionBar() {
+	async hideCalendarActionBar() {
 	  state.ui.selectedCalendarEvent = null;
 
-	  // Phase 1: Actionbar raus
-	  this.heroCalendar.classList.add("is-switching");
+	  const actionBar = this.actionBar;
+
+	  // Crossfade zurück
 	  this.heroCalendar.classList.remove("is-event-selected");
 
-	  setTimeout(() => {
-		// Phase 2: normale Toolbar wieder rein
-		this.heroCalendar.classList.remove("is-switching");
-	  }, 180);
+	  // Warten bis Actionbar ausgefadet ist
+	  if (actionBar) {
+		await this.waitForTransitionEnd(actionBar);
+	  }
 	},
 
 	openWhatsAppForEvent() {
@@ -206,7 +204,7 @@ export const heroCalendarModule = {
 	
 	openHeroCalendar() {
 	  // 🔥 sicherstellen dass kein alter State existiert
-	  this.heroCalendar.classList.remove("is-event-selected", "is-switching");
+	  this.heroCalendar.classList.remove("is-event-selected");
 	  state.ui.selectedCalendarEvent = null;
 		
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
@@ -751,6 +749,19 @@ export const heroCalendarModule = {
       this.openHeroCalendar();
     }
   },
+  
+  waitForTransitionEnd(element) {
+	  return new Promise((resolve) => {
+		const handler = (e) => {
+		  if (e.target === element) {
+			element.removeEventListener("transitionend", handler);
+			resolve();
+		  }
+		};
+
+		element.addEventListener("transitionend", handler);
+	  });
+	},
 
   stopPropagation(e) {
     e.stopPropagation();
