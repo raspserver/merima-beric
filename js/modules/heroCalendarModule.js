@@ -21,6 +21,12 @@ export const heroCalendarModule = {
     this.cacheDOM();
     this.bindEvents();
     this.prewarmHeroCalendar();
+    this.cancelBtn?.addEventListener("click", () => {
+	  this.hideCalendarActionBar();
+	});
+	this.whatsappBtn?.addEventListener("click", () => {
+	  this.openWhatsAppForEvent();
+	});
   },
 
   cacheDOM() {
@@ -29,74 +35,22 @@ export const heroCalendarModule = {
     this.heroCalendarEl = document.getElementById("hero-fullcalendar");
     this.cta = document.querySelector(".cta-button");
     this.ctaLabel = document.querySelector(".cta-button .cta-label");
+    this.actionBar = document.getElementById("fc-action-toolbar");
+	this.cancelBtn = this.actionBar?.querySelector(".fc-action-cancel");
+	this.whatsappBtn = this.actionBar?.querySelector(".fc-action-whatsapp");
   },
   
   showCalendarActionBar(event) {
 	  state.ui.selectedCalendarEvent = event;
 
-	  const toolbar = this.heroCalendarEl?.querySelector(".fc-header-toolbar");
-	  if (!toolbar) return;
-
-	  toolbar.classList.add("is-event-selected");
-
-	  let actionBar = toolbar.querySelector(".fc-action-toolbar");
-
-	  if (!actionBar) {
-		actionBar = document.createElement("div");
-		actionBar.className = "fc-action-toolbar";
-
-		actionBar.innerHTML = `
-		  <button class="fc-action-cancel">Abbruch</button>
-		  <button class="fc-action-whatsapp">WhatsApp</button>
-		`;
-
-		toolbar.appendChild(actionBar);
-
-		actionBar
-		  .querySelector(".fc-action-cancel")
-		  ?.addEventListener("click", () => {
-			this.hideCalendarActionBar();
-		  });
-
-		actionBar
-		  .querySelector(".fc-action-whatsapp")
-		  ?.addEventListener("click", () => {
-			this.openWhatsAppForEvent();
-		  });
-	  }
+	  this.heroCalendar?.classList.add("is-event-selected");
 	},
-
-	hideCalendarActionBar() {
-	  // 🔥 aktuell ausgewähltes Kalender-Event zurücksetzen
-	  // Wird verwendet für:
-	  // - WhatsApp-Terminübergabe
-	  // - Action Toolbar State
-	  // - aktive Kalender-Selektion
+	
+	
+  hideCalendarActionBar() {
 	  state.ui.selectedCalendarEvent = null;
 
-	  const toolbar =
-		this.heroCalendarEl?.querySelector(".fc-header-toolbar");
-
-	  if (!toolbar) return;
-
-	  // 🔥 Selection-State entfernen
-	  toolbar.classList.remove("is-event-selected");
-
-	  // 🔥 temporäre Action Toolbar vollständig entfernen,
-	  // damit FullCalendar seine originale Toolbar-Breite
-	  // wieder korrekt berechnen kann
-	  const actionBar =
-		toolbar.querySelector(".fc-action-toolbar");
-
-	  if (actionBar) {
-		actionBar.remove();
-	  }
-
-	  // 🔥 FullCalendar zu neuem Layout/Reflow zwingen,
-	  // damit der "next"-Button wieder rechtsbündig sitzt
-	  requestAnimationFrame(() => {
-		state.ui.fullCalendarInstance?.updateSize();
-	  });
+	  this.heroCalendar?.classList.remove("is-event-selected");
 	},
 
 	openWhatsAppForEvent() {

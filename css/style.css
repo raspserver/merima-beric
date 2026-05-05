@@ -1012,29 +1012,24 @@ html.hero-calendar-animating body,
   min-height: 56px;
 }
 
-/* Original Toolbar verstecken */
-.fc .fc-header-toolbar.is-event-selected .fc-toolbar-chunk {
-  opacity: 0;
-  pointer-events: none;
-
-  transition: opacity 0.2s ease;
-}
-
-/* Action Toolbar */
-.fc-action-toolbar {
+#fc-action-toolbar {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 
   display: flex;
-  align-items: stretch;
   gap: 0.5rem;
 
   opacity: 0;
   pointer-events: none;
 
   transition: opacity 0.25s ease;
+}
 
-  padding-top: 0.75rem;
+#hero-calendar.is-event-selected #fc-action-toolbar {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Abstand entfernen */
@@ -1073,12 +1068,6 @@ html.hero-calendar-animating body,
   white-space: nowrap;
 
   text-align: center;
-}
-
-/* sichtbar */
-.fc .fc-header-toolbar.is-event-selected .fc-action-toolbar {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 /* beide Buttons */
