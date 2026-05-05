@@ -1016,21 +1016,25 @@ html.hero-calendar-animating body,
 }
 
 #fc-action-toolbar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+	position: relative;
+	
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 
-  display: flex;
-  justify-content: space-between;
+	width: 100%;
 
-  padding: 0 0.75rem;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+	margin: 0;
 
-  opacity: 0;
-  pointer-events: none;
+	padding-top: 0.75rem;
+	padding-bottom: env(safe-area-inset-bottom);
 
-  transition: opacity 0.18s ease;
+	min-height: 56px;
+	
+	opacity: 0;
+	pointer-events: none;
+
+	transition: opacity 0.18s ease;
 }
 
 /* NUR sichtbar wenn wirklich selektiert */
