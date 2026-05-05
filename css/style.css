@@ -1012,6 +1012,21 @@ html.hero-calendar-animating body,
   min-height: 56px;
 }
 
+/* Phase 1: normale Toolbar sichtbar */
+.fc .fc-header-toolbar {
+  transition: opacity 0.18s ease;
+}
+
+/* 🔥 FADE OUT */
+#hero-calendar.is-switching .fc-header-toolbar {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+
+/* 🔥 Action Toolbar initial unsichtbar */
+/*
 #fc-action-toolbar {
   position: absolute;
   left: 0;
@@ -1024,9 +1039,11 @@ html.hero-calendar-animating body,
   opacity: 0;
   pointer-events: none;
 
-  transition: opacity 0.25s ease;
+  transition: opacity 0.18s ease;
 }
+*/
 
+/* 🔥 FADE IN (erst nach switching) */
 #hero-calendar.is-event-selected #fc-action-toolbar {
   opacity: 1;
   pointer-events: auto;
@@ -1070,34 +1087,6 @@ html.hero-calendar-animating body,
   text-align: center;
 }
 
-/* beide Buttons */
-.fc-action-cancel,
-.fc-action-whatsapp {
-  flex: 1 1 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 42px;
-
-  border: 0;
-  border-radius: 999px;
-
-  cursor: pointer;
-
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1;
-
-  padding: 0 1rem;
-
-  transition:
-    transform 0.18s ease,
-    opacity 0.18s ease,
-    filter 0.18s ease;
-}
-
 /* Hover */
 .fc-action-cancel:hover,
 .fc-action-whatsapp:hover {
@@ -1111,17 +1100,54 @@ html.hero-calendar-animating body,
   transform: translateY(0);
 }
 
-/* Abbruch */
-.fc-action-cancel {
-  background: #e53935;
-  color: #ffffff;
+.fc-action-toolbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  justify-content: space-between;
+
+  padding: 0 0.75rem;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* WhatsApp */
+/* 🔥 Buttons wie FullCalendar */
+.fc-action-cancel,
 .fc-action-whatsapp {
-  background: #25D366;
-  color: #ffffff;
+  height: 36px; /* entspricht fc-button */
+
+  padding: 0 0.75rem;
+
+  border-radius: 6px; /* eckig statt pill */
+  border: 1px solid transparent;
+
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: background 0.15s ease, transform 0.1s ease;
 }
+
+/* Abstände exakt wie prev/next */
+.fc-action-cancel {
+  margin-right: auto;
+  background: #e53935;
+  color: #fff;
+}
+
+.fc-action-whatsapp {
+  margin-left: auto;
+  background: #25D366;
+  color: #fff;
+}
+
 
 .cta-button {
 	height: var(--cta-height);

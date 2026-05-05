@@ -40,17 +40,30 @@ export const heroCalendarModule = {
 	this.whatsappBtn = this.actionBar?.querySelector(".fc-action-whatsapp");
   },
   
-  showCalendarActionBar(event) {
+	showCalendarActionBar(event) {
 	  state.ui.selectedCalendarEvent = event;
 
-	  this.heroCalendar?.classList.add("is-event-selected");
+	  // Phase 1 → Toolbar ausblenden
+	  this.heroCalendar.classList.add("is-switching");
+
+	  setTimeout(() => {
+		// Phase 2 → Action Toolbar einblenden
+		this.heroCalendar.classList.remove("is-switching");
+		this.heroCalendar.classList.add("is-event-selected");
+	  }, 180); // muss zu CSS passen
 	},
 	
-	
-  hideCalendarActionBar() {
+	hideCalendarActionBar() {
 	  state.ui.selectedCalendarEvent = null;
 
-	  this.heroCalendar?.classList.remove("is-event-selected");
+	  // Phase 1 → Action ausblenden
+	  this.heroCalendar.classList.remove("is-event-selected");
+	  this.heroCalendar.classList.add("is-switching");
+
+	  setTimeout(() => {
+		// Phase 2 → normale Toolbar wieder anzeigen
+		this.heroCalendar.classList.remove("is-switching");
+	  }, 180);
 	},
 
 	openWhatsAppForEvent() {
@@ -188,6 +201,10 @@ export const heroCalendarModule = {
   },
 	
 	openHeroCalendar() {
+	  // 🔥 sicherstellen dass kein alter State existiert
+	  this.heroCalendar.classList.remove("is-event-selected", "is-switching");
+	  state.ui.selectedCalendarEvent = null;
+		
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 	  if (state.ui.heroCalendarAnimating || state.ui.heroCalendarOpen) return;
 
@@ -261,6 +278,8 @@ export const heroCalendarModule = {
 	},
 
 	closeHeroCalendar({ preserveAboutBoundaryAtTop = false, onComplete = null } = {}) {	
+	  this.hideCalendarActionBar();
+	  
 	  if (!this.cta || !this.heroCalendar || !this.hero) return;
 
 	  if (!state.ui.heroCalendarOpen && !state.ui.heroCalendarAnimating) {
