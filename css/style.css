@@ -1204,6 +1204,11 @@ html.hero-calendar-animating body,
   display: none;
 }
 
+/* Kein zusätzlicher Einzug mehr */
+.fc .fc-daygrid-event-harness .fc-daygrid-event {
+  margin-left: 0;
+}
+
 .cta-button {
 	height: var(--cta-height);
 	position: absolute;
