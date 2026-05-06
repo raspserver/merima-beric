@@ -45,10 +45,24 @@ export const heroCalendarModule = {
 
 	  const toolbar = this.heroCalendar.querySelector(".fc-header-toolbar");
 
+	  // 🔥 Datum formatieren (kurz & elegant)
+	  const start = event.start;
+
+	  const formattedShortDate = start?.toLocaleDateString("de-DE", {
+		weekday: "short",
+		day: "2-digit",
+		month: "2-digit"
+	  });
+
+	  // 🔥 Label setzen
+	  const subLabel = this.whatsappBtn?.querySelector(".fc-btn-sub");
+	  if (subLabel) {
+		subLabel.textContent = `(${formattedShortDate})`;
+	  }
+
 	  // Crossfade starten
 	  this.heroCalendar.classList.add("is-event-selected");
 
-	  // Warten bis normale Toolbar ausgefadet ist
 	  if (toolbar) {
 		await this.waitForTransitionEnd(toolbar);
 	  }
@@ -57,12 +71,16 @@ export const heroCalendarModule = {
 	async hideCalendarActionBar() {
 	  state.ui.selectedCalendarEvent = null;
 
+	  // 🔥 Label zurücksetzen
+	  const subLabel = this.whatsappBtn?.querySelector(".fc-btn-sub");
+	  if (subLabel) {
+		subLabel.textContent = "";
+	  }
+
 	  const actionBar = this.actionBar;
 
-	  // Crossfade zurück
 	  this.heroCalendar.classList.remove("is-event-selected");
 
-	  // Warten bis Actionbar ausgefadet ist
 	  if (actionBar) {
 		await this.waitForTransitionEnd(actionBar);
 	  }

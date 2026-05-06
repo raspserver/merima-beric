@@ -965,11 +965,6 @@ html.hero-calendar-animating body,
 }
 
 .fc {
-/*
-  display: flex;
-  flex-direction: column;
-*/
-
   height: 100%;
   min-height: 0;
 
@@ -978,10 +973,6 @@ html.hero-calendar-animating body,
 
 /* Monatskalender */
 .fc .fc-view-harness {
-/*
-  order: 1;
-*/
-
   flex: 1 1 auto;
   min-height: 0;
 
@@ -1162,6 +1153,32 @@ html.hero-calendar-animating body,
 .fc-action-whatsapp {
   background: #25D366;
   color: #fff;
+  height: 36px;
+  padding: 4px 12px; /* leicht mehr Platz für 2 Zeilen */
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fc-btn-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.fc-btn-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fc-btn-sub {
+  font-size: 0.7rem;
+  opacity: 0.85;
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
 .fc-action-whatsapp i {
