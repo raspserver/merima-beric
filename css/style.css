@@ -1215,6 +1215,37 @@ html.hero-calendar-animating body,
   padding-left: 0;
 }
 
+/* Gesamter Kalender transparent */
+.fc,
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-scrollgrid,
+.fc-scrollgrid-section,
+.fc-scrollgrid-section table,
+.fc-daygrid-body,
+.fc-daygrid-body table {
+  background: transparent !important;
+}
+
+/* Dezente Linien statt harter weißer Flächen */
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-scrollgrid {
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* Tageszellen transparent */
+.fc .fc-daygrid-day-frame,
+.fc .fc-daygrid-day,
+.fc .fc-daygrid-day-top {
+  background: transparent !important;
+}
+
+
+
+
+
+
 .cta-button {
 	height: var(--cta-height);
 	position: absolute;
