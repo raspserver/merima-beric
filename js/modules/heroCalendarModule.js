@@ -70,10 +70,10 @@ export const heroCalendarModule = {
 	  const subLabel = this.whatsappBtn?.querySelector(".fc-btn-sub");
 	  if (subLabel) {
 		if (formattedEndTime) {
-		  subLabel.textContent = `(${formattedShortDate} • ${formattedStartTime}–${formattedEndTime})`;
+		  subLabel.textContent = `(${formattedShortDate} ${formattedStartTime}–${formattedEndTime})`;
 		} else {
 		  // Fallback falls kein Enddatum vorhanden
-		  subLabel.textContent = `(${formattedShortDate} • ${formattedStartTime})`;
+		  subLabel.textContent = `(${formattedShortDate} ${formattedStartTime})`;
 		}
 	  }
 
