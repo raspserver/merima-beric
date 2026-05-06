@@ -46,8 +46,7 @@ export const heroCalendarModule = {
 	  const toolbar = this.heroCalendar.querySelector(".fc-header-toolbar");
 	  
 	  const start = new Date(event.startStr);
-	  const start = event.startStr ? new Date(event.startStr) : event.start;
-	  
+
 	  const end = event.end;
 	  
 	  // 🔥 Datum ausgeschrieben (z.B. Mittwoch, 13. Mai)
