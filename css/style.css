@@ -1121,7 +1121,8 @@ html.hero-calendar-animating body,
 
 .fc-action-cancel,
 .fc-action-whatsapp {
-  height: 36px;
+	height: auto;          /* 🔥 statt 36px */
+	min-height: 36px;      /* behält deine Mindestgröße */
 
   padding: 0 12px;
 
@@ -1153,9 +1154,11 @@ html.hero-calendar-animating body,
 .fc-action-whatsapp {
   background: #25D366;
   color: #fff;
-  height: 36px;
-  padding: 4px 12px; /* leicht mehr Platz für 2 Zeilen */
-
+  
+  height: auto;          /* 🔥 statt 36px */
+  min-height: 36px;      /* behält deine Mindestgröße */
+  padding: 6px 12px;     /* etwas mehr Luft für 2 Zeilen */
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1164,32 +1167,40 @@ html.hero-calendar-animating body,
 .fc-btn-inner {
   display: flex;
   flex-direction: column;
-  justify-content: center;   /* 🔥 wichtig */
   align-items: center;
+  justify-content: center;
+
   height: 100%;
+  text-align: center;
   line-height: 1;
 }
 
 .fc-btn-main {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+
+  line-height: 1.2;   /* 🔥 wichtig für optisches Centering */
 }
 
 .fc-btn-sub {
   font-size: 0.7rem;
   opacity: 0.85;
+
   margin-top: 2px;
+  line-height: 1.2;   /* 🔥 verhindert "nach oben gedrückt" Effekt */
+
   white-space: nowrap;
 }
 
 .fc-action-whatsapp i {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+
   line-height: 1;
-  margin-right: 6px;
-  font-size: 1em;
+  margin-right: 4px;  /* kleiner als vorher → wirkt zentrierter */
 }
 
 .cta-button {
