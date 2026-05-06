@@ -40,34 +40,50 @@ export const heroCalendarModule = {
 	this.whatsappBtn = this.actionBar?.querySelector(".fc-action-whatsapp");
   },
   
-	async showCalendarActionBar(event) {
+  async showCalendarActionBar(event) {
 	  state.ui.selectedCalendarEvent = event;
 
 	  const toolbar = this.heroCalendar.querySelector(".fc-header-toolbar");
 
-	  // 🔥 Datum formatieren (kurz & elegant)
 	  const start = event.start;
+	  const end = event.end;
 
+	  // Datum (kurz)
 	  const formattedShortDate = start?.toLocaleDateString("de-DE", {
 		weekday: "short",
 		day: "2-digit",
 		month: "2-digit"
 	  });
 
-	  // 🔥 Label setzen
+	  // 🔥 Zeit von / bis
+	  const formattedStartTime = start?.toLocaleTimeString("de-DE", {
+		hour: "2-digit",
+		minute: "2-digit",
+	  });
+
+	  const formattedEndTime = end?.toLocaleTimeString("de-DE", {
+		hour: "2-digit",
+		minute: "2-digit",
+	  });
+
+	  // 🔥 Label setzen (Datum + Zeitspanne)
 	  const subLabel = this.whatsappBtn?.querySelector(".fc-btn-sub");
 	  if (subLabel) {
-		subLabel.textContent = `(${formattedShortDate})`;
+		if (formattedEndTime) {
+		  subLabel.textContent = `(${formattedShortDate} • ${formattedStartTime}–${formattedEndTime})`;
+		} else {
+		  // Fallback falls kein Enddatum vorhanden
+		  subLabel.textContent = `(${formattedShortDate} • ${formattedStartTime})`;
+		}
 	  }
 
-	  // Crossfade starten
 	  this.heroCalendar.classList.add("is-event-selected");
 
 	  if (toolbar) {
 		await this.waitForTransitionEnd(toolbar);
 	  }
 	},
-	
+
 	async hideCalendarActionBar() {
 	  state.ui.selectedCalendarEvent = null;
 
