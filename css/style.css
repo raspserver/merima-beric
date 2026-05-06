@@ -598,7 +598,8 @@ html.hero-calendar-animating body,
 	background: #fff;
 	border: 1px solid rgba(212, 175, 55, 0.18);
 	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-	padding: 1rem;
+	padding-left: 0.75rem;
+	padding-right: 0.75rem;
 }
 
 .hero-inner {
@@ -1022,15 +1023,44 @@ html.hero-calendar-animating body,
   bottom: 0;
 
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  align-items: center;
   justify-content: space-between;
 
-  padding: 0 0.75rem;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  width: 100%;
+
+  /* 🔥 exakt wie FullCalendar */
+  padding: 0.75rem 0.75rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+
+  min-height: 56px;
+
+  box-sizing: border-box;
 
   opacity: 0;
   pointer-events: none;
 
   transition: opacity 0.18s ease;
+}
+
+#fc-action-toolbar .fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;
+}
+
+#fc-action-toolbar .fc-toolbar-chunk:first-child {
+  justify-content: flex-start;
+}
+
+#fc-action-toolbar .fc-toolbar-chunk:nth-child(2) {
+  justify-content: center;
+}
+
+#fc-action-toolbar .fc-toolbar-chunk:last-child {
+  justify-content: flex-end;
 }
 
 /* NUR sichtbar wenn wirklich selektiert */
@@ -1042,13 +1072,8 @@ html.hero-calendar-animating body,
 /* Beide Toolbars können überlappen */
 .fc .fc-header-toolbar,
 #fc-action-toolbar {
-  transition: opacity 0.18s ease;
-}
-
-/* 🔥 Crossfade State */
-#hero-calendar.is-event-selected .fc-header-toolbar {
-  opacity: 0;
-  pointer-events: none;
+	will-change: opacity;
+	transition: opacity 0.18s ease;
 }
 
 /* Abstand entfernen */
@@ -1056,27 +1081,15 @@ html.hero-calendar-animating body,
   margin-top: 0 !important;
 }
 
-/* drei horizontale Bereiche */
-.fc .fc-toolbar-chunk {
-  display: flex;
-  align-items: center;
-
-  flex: 1 1 0;
+/* 🔥 wichtig: beide exakt gleich behandeln */
+#hero-calendar.is-event-selected .fc-header-toolbar {
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* Previous links */
-.fc .fc-toolbar-chunk:first-child {
-  justify-content: flex-start;
-}
-
-/* Datum mittig */
-.fc .fc-toolbar-chunk:nth-child(2) {
-  justify-content: center;
-}
-
-/* Next rechts */
-.fc .fc-toolbar-chunk:last-child {
-  justify-content: flex-end;
+#hero-calendar.is-event-selected #fc-action-toolbar {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Datum */
@@ -1115,18 +1128,19 @@ html.hero-calendar-animating body,
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
-/* 🔥 Buttons wie FullCalendar */
 .fc-action-cancel,
 .fc-action-whatsapp {
-  height: 36px; /* entspricht fc-button */
+  height: 36px;
 
-  padding: 0 0.75rem;
+  padding: 0 12px;
 
-  border-radius: 0px;
+  border-radius: 0;
   border: 1px solid transparent;
 
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
+
+  line-height: 1;
 
   display: inline-flex;
   align-items: center;
@@ -1134,10 +1148,12 @@ html.hero-calendar-animating body,
 
   cursor: pointer;
 
+  /* 🔥 wichtig für native feel */
+  box-sizing: border-box;
+  
   transition: background 0.15s ease, transform 0.1s ease;
 }
 
-/* Abstände exakt wie prev/next */
 .fc-action-cancel {
   background: #e53935;
   color: #fff;
@@ -1146,6 +1162,12 @@ html.hero-calendar-animating body,
 .fc-action-whatsapp {
   background: #25D366;
   color: #fff;
+}
+
+.fc-action-whatsapp i {
+  margin-right: 6px;
+  font-size: 1em;
+  line-height: 0;
 }
 
 .cta-button {
