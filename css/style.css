@@ -969,6 +969,8 @@ html.hero-calendar-animating body,
   min-height: 0;
 
   overflow: visible;
+  
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* Monatskalender */
