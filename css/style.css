@@ -1121,27 +1121,22 @@ html.hero-calendar-animating body,
 
 .fc-action-cancel,
 .fc-action-whatsapp {
-	height: auto;          /* 🔥 statt 36px */
-	min-height: 36px;      /* behält deine Mindestgröße */
-
-  padding: 0 12px;
-
-  border-radius: 0;
-  border: 1px solid transparent;
-
-  font-size: 0.875rem;
-  font-weight: 500;
-
-  line-height: 1;
-
+  height: 36px;                 /* 🔥 exakt gleich wie FC */
+  padding: 0 0.75em;            /* 🔥 exakt gleich */
+  
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
 
-  /* 🔥 wichtig für native feel */
+  border: 1px solid transparent;
+  border-radius: 0;
   box-sizing: border-box;
+
+  cursor: pointer;
   
   transition: background 0.15s ease, transform 0.1s ease;
 }
@@ -1154,10 +1149,9 @@ html.hero-calendar-animating body,
 .fc-action-whatsapp {
   background: #25D366;
   color: #fff;
-  
-  height: auto;          /* 🔥 statt 36px */
-  min-height: 36px;      /* behält deine Mindestgröße */
-  padding: 6px 12px;     /* etwas mehr Luft für 2 Zeilen */
+
+  flex-direction: column;   /* 🔥 erlaubt 2 Zeilen */
+  gap: 1px;                 /* 🔥 minimaler Abstand */
   
   display: flex;
   align-items: center;
@@ -1179,17 +1173,16 @@ html.hero-calendar-animating body,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
 
-  line-height: 1.2;   /* 🔥 wichtig für optisches Centering */
+  font-size: 0.8rem;   /* 🔥 leicht kleiner → passt in 36px */
+  line-height: 1;
 }
 
 .fc-btn-sub {
-  font-size: 0.7rem;
+  font-size: 0.65rem;   /* 🔥 kleiner machen ist der Schlüssel */
+  line-height: 1;
   opacity: 0.85;
-
-  margin-top: 2px;
-  line-height: 1.2;   /* 🔥 verhindert "nach oben gedrückt" Effekt */
 
   white-space: nowrap;
 }
@@ -1199,7 +1192,9 @@ html.hero-calendar-animating body,
   align-items: center;
   justify-content: center;
 
+  font-size: 0.9em;
   line-height: 1;
+  
   margin-right: 4px;  /* kleiner als vorher → wirkt zentrierter */
 }
 
