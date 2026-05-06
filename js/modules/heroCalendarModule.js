@@ -47,35 +47,26 @@ export const heroCalendarModule = {
 
 	  const start = event.start;
 	  const end = event.end;
+	  
+	  // 🔥 Datum ausgeschrieben (z.B. Mittwoch, 13. Mai)
+		const formattedDate = start?.toLocaleDateString("de-DE", {
+		  weekday: "long",
+		  day: "numeric",
+		  month: "long"
+		});
 
-	  // Datum (kurz)
-	  const formattedShortDate = start?.toLocaleDateString("de-DE", {
-		weekday: "short",
-		day: "2-digit",
-		month: "2-digit"
-	  });
-
-	  // 🔥 Zeit von / bis
-	  const formattedStartTime = start?.toLocaleTimeString("de-DE", {
-		hour: "2-digit",
-		minute: "2-digit",
-	  });
-
-	  const formattedEndTime = end?.toLocaleTimeString("de-DE", {
-		hour: "2-digit",
-		minute: "2-digit",
-	  });
+		// 🔥 Nur Startzeit
+		const formattedTime = start?.toLocaleTimeString("de-DE", {
+		  hour: "2-digit",
+		  minute: "2-digit",
+		});
 
 	  // 🔥 Label setzen (Datum + Zeitspanne)
 	  const subLabel = this.whatsappBtn?.querySelector(".fc-btn-sub");
+
 	  if (subLabel) {
-		if (formattedEndTime) {
-		  subLabel.textContent = `(${formattedShortDate}, ${formattedStartTime} - ${formattedEndTime})`;
-		} else {
-		  // Fallback falls kein Enddatum vorhanden
-		  subLabel.textContent = `(${formattedShortDate}, ${formattedStartTime})`;
+		  subLabel.textContent = `(${formattedDate}, ${formattedTime} Uhr)`;
 		}
-	  }
 
 	  this.heroCalendar.classList.add("is-event-selected");
 
