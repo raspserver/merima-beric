@@ -1241,10 +1241,50 @@ html.hero-calendar-animating body,
   background: transparent !important;
 }
 
+/* =========================================
+   WEISSE SCHRIFT IM GESAMTEN KALENDER
+========================================= */
 
+/* Monats-/Jahresdatum oben */
+.fc .fc-toolbar-title {
+  color: #fff;
+}
 
+/* Wochentage (Mo, Di, Mi ...) */
+.fc .fc-col-header-cell-cushion {
+  color: #fff;
+}
 
+/* Tageszahlen im Kalender */
+.fc .fc-daygrid-day-number {
+  color: #fff;
+}
 
+/* Termine */
+.fc .fc-event,
+.fc .fc-event-title,
+.fc .fc-event-time {
+  color: #fff;
+}
+
+/* Prev / Next Buttons */
+.fc .fc-button {
+  color: #fff !important;
+}
+
+/* Auch deaktivierte Tage leicht sichtbar */
+.fc .fc-day-disabled .fc-daygrid-day-number {
+  color: rgba(255,255,255,0.35);
+}
+
+/* Leichter Glow für bessere Lesbarkeit */
+.fc .fc-toolbar-title,
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number,
+.fc .fc-event-time,
+.fc .fc-event-title {
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+}
 
 .cta-button {
 	height: var(--cta-height);
