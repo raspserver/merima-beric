@@ -1024,14 +1024,11 @@ html.hero-calendar-animating body,
 
   /* 🔥 exakt wie FullCalendar */
   padding: 0.75rem 0.55rem;
-/*
-  padding-bottom: calc(0.95rem + env(safe-area-inset-bottom, 0px));
-*/
 
 /*
   min-height: 56px;
 */
-  min-height: 65px;
+  min-height: 62px;
 
   box-sizing: border-box;
 
