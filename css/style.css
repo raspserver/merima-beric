@@ -1209,6 +1209,10 @@ html.hero-calendar-animating body,
   margin-left: 0;
 }
 
+.fc .fc-daygrid-dot-event .fc-event-time {
+  padding-left: 0;
+}
+
 .cta-button {
 	height: var(--cta-height);
 	position: absolute;
