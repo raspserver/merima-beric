@@ -1172,7 +1172,9 @@ html.hero-calendar-animating body,
   display: inline-flex;
   align-items: center;
   justify-content: center;
+/*
   gap: 4px;
+*/
 
   font-size: 0.8rem;   /* 🔥 leicht kleiner → passt in 36px */
   line-height: 1;
