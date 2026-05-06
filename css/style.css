@@ -1028,7 +1028,7 @@ html.hero-calendar-animating body,
 /*
   min-height: 56px;
 */
-  min-height: 62px;
+  min-height: 60px;
 
   box-sizing: border-box;
 
@@ -1122,7 +1122,7 @@ html.hero-calendar-animating body,
 
 .fc-action-cancel,
 .fc-action-whatsapp {
-  height: 40px;                 /* 🔥 exakt gleich wie FC */
+  height: 44px;                 /* 🔥 exakt gleich wie FC */
   padding: 0 0.75em;             🔥 exakt gleich 
   
   display: inline-flex;
