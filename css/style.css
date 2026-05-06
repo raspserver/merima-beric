@@ -1199,6 +1199,11 @@ html.hero-calendar-animating body,
   margin-right: 4px;  /* kleiner als vorher → wirkt zentrierter */
 }
 
+/* Punkt vor Termin entfernen */
+.fc .fc-daygrid-event-dot {
+  display: none;
+}
+
 .cta-button {
 	height: var(--cta-height);
 	position: absolute;
