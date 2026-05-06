@@ -1121,8 +1121,8 @@ html.hero-calendar-animating body,
 
 .fc-action-cancel,
 .fc-action-whatsapp {
-  height: 37px;                 /* 🔥 exakt gleich wie FC */
-  padding: 0 0.30em;            /* 🔥 exakt gleich */
+  height: 36px;                 /* 🔥 exakt gleich wie FC */
+  padding: 0 0.75em;            /* 🔥 exakt gleich */
   
   display: inline-flex;
   align-items: center;
