@@ -1156,7 +1156,7 @@ html.hero-calendar-animating body,
   height: 36px;
   padding: 4px 12px; /* leicht mehr Platz für 2 Zeilen */
 
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -1164,13 +1164,16 @@ html.hero-calendar-animating body,
 .fc-btn-inner {
   display: flex;
   flex-direction: column;
+  justify-content: center;   /* 🔥 wichtig */
   align-items: center;
+  height: 100%;
   line-height: 1;
 }
 
 .fc-btn-main {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 
@@ -1181,10 +1184,14 @@ html.hero-calendar-animating body,
   white-space: nowrap;
 }
 
+
+
 .fc-action-whatsapp i {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
   margin-right: 6px;
   font-size: 1em;
-  line-height: 0;
 }
 
 .cta-button {
