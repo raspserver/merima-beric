@@ -1027,9 +1027,7 @@ html.hero-calendar-animating body,
   width: 100%;
 
   /* 🔥 exakt wie FullCalendar */
-/*
   padding: 0.75rem 0.55rem;
-*/
 
 
 /*
@@ -1077,7 +1075,9 @@ html.hero-calendar-animating body,
 
 /* Abstand entfernen */
 .fc .fc-view-harness + .fc-header-toolbar {
+/*
   margin-top: 0 !important;
+*/
 }
 
 /* 🔥 wichtig: beide exakt gleich behandeln */
