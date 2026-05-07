@@ -1291,6 +1291,7 @@ html.hero-calendar-animating body,
 */
   
   border: none !important;
+  border-radius: 0;
 
   font-family: 'Montserrat', sans-serif !important;
   font-size: 0.875rem !important;
