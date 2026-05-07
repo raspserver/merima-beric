@@ -1001,7 +1001,7 @@ html.hero-calendar-animating body,
   margin: 0 !important;
 
   padding-top: 0.50rem;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: 0; /* env(safe-area-inset-bottom, 0px); */
   
   opacity: 1;
   transition: opacity 0.18s ease;
