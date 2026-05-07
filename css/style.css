@@ -1000,7 +1000,9 @@ html.hero-calendar-animating body,
 
   margin: 0 !important;
 
+/*
   padding-top: 0.75rem !important;
+*/
   padding-bottom: env(safe-area-inset-bottom, 0px);
 
 /*
@@ -1128,7 +1130,6 @@ html.hero-calendar-animating body,
 .fc-action-whatsapp {
   height: 40px;
   padding: 0 0.75em;
-  padding-top: 0.75rem !important;
   
   display: inline-flex;
   align-items: center;
