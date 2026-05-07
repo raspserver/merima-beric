@@ -1268,13 +1268,6 @@ html.hero-calendar-animating body,
 }
 
 /* Prev / Next Buttons */
-/*
-.fc .fc-button {
-  color: #fff !important;
-}
-*/
-
-/* Prev / Next Buttons */
 .fc .fc-button {
   color: var(--primary-color) !important;
 }
@@ -1335,12 +1328,11 @@ html.hero-calendar-animating body,
 }
 
 /* Hover */
+/*
 .fc .fc-button-primary:hover {
   background: rgba(212, 175, 55, 0.08) !important;
 
-/*
-  color: #fff !important;
-*/
+
 
   border-color: rgba(212, 175, 55, 0.65) !important;
 
@@ -1349,6 +1341,7 @@ html.hero-calendar-animating body,
   box-shadow:
     0 6px 18px rgba(212, 175, 55, 0.18);
 }
+*/
 
 /* Active */
 .fc .fc-button-primary:active {
