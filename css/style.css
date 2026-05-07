@@ -1277,6 +1277,79 @@ html.hero-calendar-animating body,
   color: rgba(255,255,255,0.35);
 }
 
+/* =========================================
+   Monatsname "Mai 2026" weiß
+========================================= */
+
+.fc .fc-toolbar-title {
+  color: #fff !important;
+}
+
+/* =========================================
+   Prev / Next Buttons wie CTA Button
+========================================= */
+
+.fc .fc-button-primary {
+  background: transparent !important;
+  color: var(--secondary-color) !important;
+
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+
+  border-radius: 0 !important;
+
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+
+  height: 40px !important;
+  min-height: 40px !important;
+
+  padding: 0 0.9rem !important;
+
+  box-shadow:
+    0 0 18px rgba(212, 175, 55, 0.08);
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.12s ease,
+    box-shadow 0.18s ease !important;
+}
+
+/* Hover */
+.fc .fc-button-primary:hover {
+  background: rgba(212, 175, 55, 0.08) !important;
+
+  color: #fff !important;
+
+  border-color: rgba(212, 175, 55, 0.65) !important;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 18px rgba(212, 175, 55, 0.18);
+}
+
+/* Active */
+.fc .fc-button-primary:active {
+  transform: translateY(0);
+
+  background: rgba(212, 175, 55, 0.14) !important;
+}
+
+/* Focus entfernen */
+.fc .fc-button-primary:focus,
+.fc .fc-button-primary.fc-button-active:focus {
+  box-shadow: none !important;
+}
+
+/* Pfeil-Icons */
+.fc .fc-icon {
+  color: inherit !important;
+  font-size: 1rem !important;
+}
+
 /* Leichter Glow für bessere Lesbarkeit */
 .fc .fc-toolbar-title,
 .fc .fc-col-header-cell-cushion,
