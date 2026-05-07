@@ -1208,7 +1208,9 @@ html.hero-calendar-animating body,
 .fc-theme-standard td,
 .fc-theme-standard th,
 .fc-scrollgrid {
+/*
   border-color: rgba(255,255,255,0.12) !important;
+*/
 }
 
 /* Tageszellen transparent */
