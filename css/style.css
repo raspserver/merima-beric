@@ -1121,6 +1121,7 @@ html.hero-calendar-animating body,
   display: flex;
   justify-content: space-between;
 
+padding-top: 0.75rem !important;
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
