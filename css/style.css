@@ -987,9 +987,9 @@ html.hero-calendar-animating body,
   
   position: relative;
 
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
 
   align-items: center;
   justify-content: space-between;
@@ -1002,10 +1002,6 @@ html.hero-calendar-animating body,
 
   padding-top: 0.50rem !important;
   padding-bottom: env(safe-area-inset-bottom, 0px);
-
-/*
-  min-height: 60px;
-*/
   
   opacity: 1;
   transition: opacity 0.18s ease;
@@ -1028,12 +1024,6 @@ html.hero-calendar-animating body,
 
   /* 🔥 exakt wie FullCalendar */
   padding: 0.45rem 0.55rem;
-
-
-
-/*
-  min-height: 60px;
-*/
 
   box-sizing: border-box;
 
