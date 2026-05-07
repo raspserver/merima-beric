@@ -1027,11 +1027,8 @@ html.hero-calendar-animating body,
   width: 100%;
 
   /* 🔥 exakt wie FullCalendar */
-/*
   padding: 1.00rem 0.55rem;
-*/
-  padding-bottom: 0.75rem !important;
-  padding-left: 0.55rem !important;
+
 
 
 /*
