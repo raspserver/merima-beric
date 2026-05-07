@@ -1033,6 +1033,7 @@ html.hero-calendar-animating body,
   transition: opacity 0.18s ease;
 }
 
+/*
 .fc-action-toolbar {
   position: absolute;
   left: 0;
@@ -1044,6 +1045,7 @@ html.hero-calendar-animating body,
 
   padding-bottom: 0;
 }
+*/
 
 #fc-action-toolbar .fc-toolbar-chunk {
   display: flex;
