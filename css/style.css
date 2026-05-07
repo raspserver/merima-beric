@@ -1274,6 +1274,11 @@ html.hero-calendar-animating body,
 }
 */
 
+/* Prev / Next Buttons */
+.fc .fc-button {
+  color: var(--secondary-color) !important;
+}
+
 /* Auch deaktivierte Tage leicht sichtbar */
 .fc .fc-day-disabled .fc-daygrid-day-number {
   color: rgba(255,255,255,0.35);
