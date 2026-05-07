@@ -591,19 +591,6 @@ html.hero-calendar-animating body,
 		visibility 0s linear 0s;
 }
 
-#hero-fullcalendar {
-	width: 100%;
-	height: 100%;
-	min-height: 0;
-	background: #fff;
-/*
-	border: 1px solid rgba(212, 175, 55, 0.18);
-*/
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-	padding-left: 0.50rem;
-	padding-right: 0.50rem;
-}
-
 .hero-inner {
 	width: 100%;
 	height: 100%;
@@ -964,6 +951,19 @@ html.hero-calendar-animating body,
 .hero.hero-calendar-title-visible .hero-calendar-title {
   opacity: 1;
   transform: translateY(0);
+}
+
+#hero-fullcalendar {
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	background: #fff;
+/*
+	border: 1px solid rgba(212, 175, 55, 0.18);
+*/
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+	padding-left: 0.50rem;
+	padding-right: 0.50rem;
 }
 
 .fc {
@@ -1343,7 +1343,9 @@ html.hero-calendar-animating body,
 /* Focus entfernen */
 .fc .fc-button-primary:focus,
 .fc .fc-button-primary.fc-button-active:focus {
+/*
   box-shadow: none !important;
+*/
 }
 
 /* Pfeil-Icons */
