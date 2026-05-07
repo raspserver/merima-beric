@@ -1030,7 +1030,7 @@ html.hero-calendar-animating body,
 /*
   padding: 1.00rem 0.55rem;
 */
-  padding-top: 1.50rem !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   padding-left: 0.55rem !important;
 
 
