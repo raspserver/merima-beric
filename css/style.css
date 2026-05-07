@@ -1225,11 +1225,6 @@ html.hero-calendar-animating body,
    WEISSE SCHRIFT IM GESAMTEN KALENDER
 ========================================= */
 
-/* Monats-/Jahresdatum oben */
-.fc .fc-toolbar-title {
-  color: #fff;
-}
-
 /* Wochentage (Mo, Di, Mi ...) */
 .fc .fc-col-header-cell-cushion {
   color: #fff;
@@ -1304,7 +1299,7 @@ html.hero-calendar-animating body,
   height: 40px !important;
   min-height: 40px !important;
 
-  padding: 0 0.9rem !important;
+  padding: 0.9rem 0.9rem !important;
 
   box-shadow:
     0 0 18px rgba(212, 175, 55, 0.08);
