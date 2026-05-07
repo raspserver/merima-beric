@@ -1343,9 +1343,7 @@ html.hero-calendar-animating body,
 /* Focus entfernen */
 .fc .fc-button-primary:focus,
 .fc .fc-button-primary.fc-button-active:focus {
-/*
   box-shadow: none !important;
-*/
 }
 
 /* Pfeil-Icons */
