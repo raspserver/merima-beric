@@ -1300,7 +1300,9 @@ html.hero-calendar-animating body,
 /*
   background-color: transparent !important;
 */
+/*
   background-image: none !important;
+*/
 
   --fc-button-bg-color: transparent;
   --fc-button-border-color: rgba(212, 175, 55, 0.35);
