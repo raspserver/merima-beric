@@ -1297,9 +1297,7 @@ html.hero-calendar-animating body,
 ========================================= */
 
 .fc .fc-button-primary {
-/*
   background-color: transparent !important;
-*/
   background-image: none !important;
 
   --fc-button-bg-color: transparent;
