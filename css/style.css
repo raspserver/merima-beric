@@ -1077,7 +1077,9 @@ html.hero-calendar-animating body,
 
 /* Abstand entfernen */
 .fc .fc-view-harness + .fc-header-toolbar {
+/*
   margin-top: 0 !important;
+*/
 }
 
 /* 🔥 wichtig: beide exakt gleich behandeln */
