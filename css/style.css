@@ -1703,6 +1703,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 }
 
 /* FullCalendar an dein Design anpassen */
+/*
 #hero-fullcalendar .fc {
 	--fc-border-color: rgba(212, 175, 55, 0.18);
 	--fc-button-bg-color: #d4af37;
@@ -1761,6 +1762,7 @@ body.nav-menu-open .cta-button:focus .cta-label {
 		text-align: center;
 	}
 }
+*/
 
 .cta-button.calendar-open,
 .cta-button.calendar-open.is-hovered,
