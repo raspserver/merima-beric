@@ -1033,20 +1033,6 @@ html.hero-calendar-animating body,
   transition: opacity 0.18s ease;
 }
 
-/*
-.fc-action-toolbar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  display: flex;
-  justify-content: space-between;
-
-  padding-bottom: 0;
-}
-*/
-
 #fc-action-toolbar .fc-toolbar-chunk {
   display: flex;
   align-items: center;
@@ -1076,13 +1062,6 @@ html.hero-calendar-animating body,
 #fc-action-toolbar {
 	will-change: opacity;
 	transition: opacity 0.18s ease;
-}
-
-/* Abstand entfernen */
-.fc .fc-view-harness + .fc-header-toolbar {
-/*
-  margin-top: 0 !important;
-*/
 }
 
 /* 🔥 wichtig: beide exakt gleich behandeln */
