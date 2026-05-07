@@ -1344,11 +1344,13 @@ html.hero-calendar-animating body,
 */
 
 /* Active */
+/*
 .fc .fc-button-primary:active {
   transform: translateY(0);
 
   background: rgba(212, 175, 55, 0.14) !important;
 }
+*/
 
 /* Focus entfernen */
 .fc .fc-button-primary:focus,
