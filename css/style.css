@@ -1128,6 +1128,7 @@ html.hero-calendar-animating body,
 .fc-action-whatsapp {
   height: 40px;
   padding: 0 0.75em;
+  margin-top: 10px;
   
   display: inline-flex;
   align-items: center;
