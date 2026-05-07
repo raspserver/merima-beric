@@ -987,9 +987,9 @@ html.hero-calendar-animating body,
   
   position: relative;
 
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
 
   align-items: center;
   justify-content: space-between;
