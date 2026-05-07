@@ -1114,7 +1114,7 @@ html.hero-calendar-animating body,
   display: flex;
   justify-content: space-between;
 
-  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 0; /* calc(0.75rem + env(safe-area-inset-bottom, 0px)); */
 }
 
 .fc-action-cancel,
