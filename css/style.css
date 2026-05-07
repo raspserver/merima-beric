@@ -1154,7 +1154,6 @@ html.hero-calendar-animating body,
   flex-direction: column;   /* 🔥 erlaubt 2 Zeilen */
 
   gap: 1px;                 /* 🔥 minimaler Abstand */
-
   
   display: flex;
   align-items: center;
