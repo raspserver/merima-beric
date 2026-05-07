@@ -1273,7 +1273,10 @@ html.hero-calendar-animating body,
 /*
   background-color: rgba(212, 175, 55, 0.35) !important;
 */
+/*
   background-color: rgba(212, 175, 55, 1.00) !important;
+*/
+  background-color: transparent !important;
   background-image: none !important;
 
 /*
