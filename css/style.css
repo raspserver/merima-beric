@@ -1276,7 +1276,7 @@ html.hero-calendar-animating body,
 
 /* Prev / Next Buttons */
 .fc .fc-button {
-  color: var(--secondary-color) !important;
+  color: var(--primary-color) !important;
 }
 
 /* Auch deaktivierte Tage leicht sichtbar */
@@ -1297,7 +1297,9 @@ html.hero-calendar-animating body,
 ========================================= */
 
 .fc .fc-button-primary {
+/*
   background-color: transparent !important;
+*/
   background-image: none !important;
 
   --fc-button-bg-color: transparent;
@@ -1336,7 +1338,9 @@ html.hero-calendar-animating body,
 .fc .fc-button-primary:hover {
   background: rgba(212, 175, 55, 0.08) !important;
 
+/*
   color: #fff !important;
+*/
 
   border-color: rgba(212, 175, 55, 0.65) !important;
 
