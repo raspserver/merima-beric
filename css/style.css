@@ -1280,8 +1280,12 @@ html.hero-calendar-animating body,
 
   color: var(--secondary-color) !important;
 
+/*
   border: 1px solid rgba(212, 175, 55, 0.35) !important;
   border-radius: 0 !important;
+*/
+  
+  border: none !important;
 
   font-family: 'Montserrat', sans-serif !important;
   font-size: 0.875rem !important;
