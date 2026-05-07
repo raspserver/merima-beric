@@ -596,7 +596,9 @@ html.hero-calendar-animating body,
 	height: 100%;
 	min-height: 0;
 	background: #fff;
+/*
 	border: 1px solid rgba(212, 175, 55, 0.18);
+*/
 	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
 	padding-left: 0.50rem;
 	padding-right: 0.50rem;
