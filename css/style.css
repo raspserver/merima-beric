@@ -40,7 +40,7 @@
 
 	--week-days-font-color: var(--text-light);
 	--week-days-font-size: var(--font-size-m);
-	--week-days-font-weight: 600;
+	--week-days-font-weight: normal;	/* 600; */
 	--week-days-opacity: 0.8;
 	--week-days-line-height: 1.2;
 	--week-days-font-style: normal;
