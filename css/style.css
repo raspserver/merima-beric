@@ -55,13 +55,13 @@
 	   LAYOUT KALENDER
 	========================= */
 
-	--week-days-font-color: var(--text-light);
-	--week-days-font-size: var(--font-size-m);
-	--week-days-font-weight: normal;			/*normal: 400, fett: 700 */
-	--week-days-font-opacity: 0.9;
-	--week-days-font-style: normal;
-	--week-days-line-height: 1.2;
-	--week-days-letter-spacing: normal;
+	--hero-calendar-week-days-font-color: var(--text-light);
+	--hero-calendar-week-days-font-opacity: 0.9;
+	--hero-calendar-week-days-font-size: var(--font-size-m);
+	--hero-calendar-week-days-font-weight: normal;				/*normal: 400, fett: 700 */
+	--hero-calendar-week-days-font-style: normal;
+	--hero-calendar-week-days-line-height: 1.2;
+	--hero-calendar-week-days-letter-spacing: normal;
 
 	/* =========================
 	   LAYOUT / SPACING
@@ -1446,12 +1446,12 @@ html.hero-calendar-animating body,
 ========================================= */
 
 .fc .fc-col-header-cell-cushion {
-  color: var(--week-days-font-color);
-  font-size: var(--week-days-font-size);
-  font-weight: var(--week-days-font-weight);
-  opacity: var(--week-days-font-opacity);
-  line-height:var(--week-days-line-height);
-  font-style: var(--week-days-font-style);
+	color:			rgba(var(--hero-calendar-week-days-font-color), var(--hero-calendar-week-days-font-opacity));
+	font-size: 		var(--hero-calendar-week-days-font-size);
+	font-weight: 	var(--hero-calendar-week-days-font-weight);
+	font-style: 	var(--hero-calendar-week-days-font-style);
+	line-height: 	var(--hero-calendar-week-days-line-height);
+	letter-spacing: var(--hero-calendar-week-days-letter-spacing);
 }
 
 
