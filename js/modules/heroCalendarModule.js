@@ -143,6 +143,7 @@ export const heroCalendarModule = {
 	  initialView: "dayGridMonth",
 
 	  dayMaxEvents: true,
+	  //~ dayMaxEventRows: 2,
 	  height: "100%",
 	  firstDay: 1,
 	  weekends: true,
