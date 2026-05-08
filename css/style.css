@@ -7,6 +7,7 @@
 	--accent-color: #f5e6d3;	/* https://encycolorpedia.de/f5e6d3 : sehr hell Farbton von Braun */
 	--text-dark: #2d2d2d;		/* https://encycolorpedia.de/2d2d2d : ein dunkel Farbton von Grau */
 	--text-light: #ffffff;		/* https://encycolorpedia.de/ffffff : ein sehr hell Farbton von Grau */
+	--text-light-rgb: 255, 255, 255;
 	--bg-light: #fafaf8;		/* https://encycolorpedia.de/fafaf8 : ein sehr hell Farbton von Gelb-grün */
 
 	/* =========================
@@ -29,7 +30,7 @@
 	   LAYOUT HERO/HOME
 	========================= */
 	
-	--hero-description-font-color: var(--text-light);
+	--hero-description-font-color-rgb: var(--text-light-rgb);
 	--hero-description-font-size: var(--font-size-m);
 	--hero-description-font-opacity: 0.5;
 
@@ -754,10 +755,7 @@ html.hero-calendar-animating body,
 	align-self: start;
 
 	font-size: var(--hero-description-font-size);
-	color: rgba(255,255,255,var(--hero-description-font-opacity));
-/*
-	opacity: 0.5;
-*/
+	color: rgba(var(--hero-description-font-color-rgb),var(--hero-description-font-opacity));
 	max-width: 600px;
 	margin: 0;
 	animation: fadeIn 1.5s ease-out 0.6s both;
