@@ -40,11 +40,11 @@
 
 	--week-days-font-color: var(--text-light);
 	--week-days-font-size: var(--font-size-m);
-	--week-days-font-weight: normal;	/* 600; 400: normal: 700: fett */
-	--week-days-opacity: 0.9;
+	--week-days-font-weight: normal;			/*normal: 400, fett: 700 */
+	--week-days-font-opacity: 0.9;
+	--week-days-font-style: normal;
 	--week-days-line-height: 1.2;
 	--week-days-letter-spacing: normal;
-	--week-days-font-style: normal;
 
 	/* =========================
 	   LAYOUT / SPACING
@@ -1422,7 +1422,7 @@ html.hero-calendar-animating body,
   color: var(--week-days-font-color);
   font-size: var(--week-days-font-size);
   font-weight: var(--week-days-font-weight);
-  opacity: var(--week-days-opacity);
+  opacity: var(--week-days-font-opacity);
   line-height:var(--week-days-line-height);
   font-style: var(--week-days-font-style);
 }
