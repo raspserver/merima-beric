@@ -40,7 +40,7 @@
 	--hero-description-font-size: var(--font-size-m);
 	--hero-description-font-weight: normal;
 	--hero-description-font-style: normal;
-	--hero-description-line-height: 1.2;
+	--hero-description-line-height: 1.6;
 	--hero-description-letter-spacing: normal;
 	
 	--hero-calendar-title-font-color-rgb: var(--text-light-rgb);
@@ -772,9 +772,7 @@ html.hero-calendar-animating body,
 	font-size: 		var(--hero-description-font-size);
 	font-weight: 	var(--hero-description-font-weight);
 	font-style: 	var(--hero-description-font-style);
-/*
 	line-height: 	var(--hero-description-line-height);
-*/
 	letter-spacing: var(--hero-description-letter-spacing);
 
 	grid-row: 5;
