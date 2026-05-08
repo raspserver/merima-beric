@@ -2,12 +2,12 @@
 	/* =========================
 	   COLORS / SURFACES / TEXT
 	========================= */
-	--primary-color: #d4af37;
-	--secondary-color: #1a1a1a;
-	--accent-color: #f5e6d3;
-	--text-dark: #2d2d2d;
-	--text-light: #ffffff;
-	--bg-light: #fafaf8;
+	--primary-color: #d4af37;	/* https://encycolorpedia.de/d4af37 : ein Farbton von Gelb */
+	--secondary-color: #1a1a1a;	/* https://encycolorpedia.de/1a1a1a : ein sehr dunkel Farbton von Grau */
+	--accent-color: #f5e6d3;	/* https://encycolorpedia.de/f5e6d3 : sehr hell Farbton von Braun */
+	--text-dark: #2d2d2d;		/* https://encycolorpedia.de/2d2d2d : ein dunkel Farbton von Grau */
+	--text-light: #ffffff;		/* https://encycolorpedia.de/ffffff : ein sehr hell Farbton von Grau */
+	--bg-light: #fafaf8;		/* https://encycolorpedia.de/fafaf8 : ein sehr hell Farbton von Gelb-grün */
 
 	/* =========================
 	   GLOBAL TRANSITIONS
@@ -1385,6 +1385,148 @@ html.hero-calendar-animating body,
 .fc .fc-daygrid-event-harness {
 	margin-top: 1px !important;
 	margin-bottom: 1px !important;
+}
+
+/* =========================================
+   1. WOCHENTAGE (Mo, Di, Mi ...)
+========================================= */
+
+.fc .fc-col-header-cell-cushion {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  font-style: normal;
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   2. TAGESZAHLEN (1,2,3 ... 31)
+========================================= */
+
+.fc .fc-daygrid-day-number {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1;
+  font-style: normal;
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   3. MONATSNAME ("Mai 2026")
+========================================= */
+
+.fc .fc-toolbar-title {
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  font-weight: 600;
+  line-height: 1;
+  font-style: normal;
+
+  color: #ffffff !important;
+}
+
+
+/* =========================================
+   4. PREV / NEXT ("<" ">")
+========================================= */
+
+/* kompletter Button */
+.fc .fc-button-primary {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  font-style: normal;
+
+  color: #ffffff !important;
+}
+
+/* nur das Pfeil-Icon */
+.fc .fc-icon {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  font-style: normal;
+
+  color: inherit !important;
+}
+
+
+/* =========================================
+   5. TERMINEINTRAG ("07:00 frei")
+========================================= */
+
+/* gesamter Event-Text */
+.fc .fc-event,
+.fc .fc-event-title,
+.fc .fc-event-time {
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.15;
+  font-style: normal;
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   6. "+5 more"
+========================================= */
+
+.fc .fc-daygrid-more-link {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  font-style: normal;
+
+  color: #d4af37;
+}
+
+
+/* =========================================
+   7. DATUM IM POPUP ("13. Mai 2026")
+========================================= */
+
+.fc .fc-popover-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  font-style: normal;
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   8. TERMINE IM POPUP ("07:30 frei")
+========================================= */
+
+.fc .fc-popover .fc-event-title,
+.fc .fc-popover .fc-event-time {
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.2;
+  font-style: normal;
+
+  color: #ffffff;
+}
+
+/* Popup Hintergrund */
+.fc .fc-popover {
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 0;
+
+  box-shadow:
+    0 12px 40px rgba(0,0,0,0.35);
+}
+
+/* Popup Header */
+.fc .fc-popover-header {
+  background: rgba(255,255,255,0.04);
 }
 
 .cta-button {
