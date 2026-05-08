@@ -36,9 +36,9 @@
 	========================= */
 
 	--week-days-color: var(--text-light);
-	--week-days-font-size: var(--font-size-s);
+	--week-days-font-size: var(--font-size-m);
 	--week-days-font-weight: 600;
-	--week-days-opacity: 1.0;
+	--week-days-opacity: 0.8;
 	--week-days-line-height: 1.2;
 	--week-days-font-style: normal;
 
