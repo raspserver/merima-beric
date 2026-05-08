@@ -964,7 +964,7 @@ html.hero-calendar-animating body,
 	padding-left: 0.50rem;
 	padding-right: 0.50rem;
 */
-	padding: 0 0.50rem;
+	padding: 0.50rem 0.50rem;
 }
 
 .fc {
