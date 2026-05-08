@@ -16,6 +16,16 @@
 	--transition: all 0.4s cubic-bezier(.4,0,.2,1);
 
 	/* =========================
+	   LAYOUT KALENDER
+	========================= */
+
+	--week-days-color: #ffffff;
+	--week-days-font-size: 1.9rem;
+	--week-days-font-weight: 600;
+	--week-days-line-height: 1.2;
+	--week-days-font-style: normal;
+
+	/* =========================
 	   LAYOUT / SPACING
 	========================= */
 	--brand-sub-ratio: 0.25;
@@ -1392,12 +1402,12 @@ html.hero-calendar-animating body,
 ========================================= */
 
 .fc .fc-col-header-cell-cushion {
-  font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1.2;
-  font-style: normal;
+  font-size: var(--week-days-font-size);
+  font-weight: var(--week-days-font-weight);
+  line-height:var(--week-days-line-height);
+  font-style: var(--week-days-font-style);
 
-  color: #ffffff;
+  color: var(--week-days-color);
 }
 
 
