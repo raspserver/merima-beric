@@ -149,7 +149,6 @@ export const heroCalendarModule = {
 	  navLinks: false,
 	  nowIndicator: true,
 	  expandRows: true,
-	  contentHeight: "auto",
 	  
 	headerToolbar: {
 	  left: "prev",
