@@ -772,7 +772,9 @@ html.hero-calendar-animating body,
 	font-size: 		var(--hero-description-font-size);
 	font-weight: 	var(--hero-description-font-weight);
 	font-style: 	var(--hero-description-font-style);
+/*
 	line-height: 	var(--hero-description-line-height);
+*/
 	letter-spacing: var(--hero-description-letter-spacing);
 
 	grid-row: 5;
