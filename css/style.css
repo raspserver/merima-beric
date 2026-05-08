@@ -15,13 +15,30 @@
 	--transition-fast: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
 	--transition: all 0.4s cubic-bezier(.4,0,.2,1);
 
+
+	/* =========================
+	   FONT SIZES
+	========================= */
+	--font-size-xs: clamp(0.6rem, 2.92svw, 0.8rem);		/* 0.7rem */
+	--font-size-s: clamp(0.8rem, 3.75svw, 1.0rem);		/* 0.9rem */
+	--font-size-m: clamp(1.0rem, 4.58svw, 1.2rem);		/* 1.1rem */
+	--font-size-l: clamp(1.4rem, 6.25svw, 1.6rem);		/* 1.5rem */
+	--font-size-xl: clamp(1.9rem, 8.33svw, 2.1rem);		/* 2.0rem */
+
+	/* =========================
+	   LAYOUT HERO/HOME
+	========================= */
+	
+	
+
 	/* =========================
 	   LAYOUT KALENDER
 	========================= */
 
-	--week-days-color: #ffffff;
-	--week-days-font-size: 1.9rem;
+	--week-days-color: var(--text-light);
+	--week-days-font-size: var(--font-size-s);
 	--week-days-font-weight: 600;
+	--week-days-opacity: 1.0;
 	--week-days-line-height: 1.2;
 	--week-days-font-style: normal;
 
@@ -30,11 +47,7 @@
 	========================= */
 	--brand-sub-ratio: 0.25;
 	
-	--font-size-xs: clamp(0.6rem, 2.92svw, 0.8rem);		/* 0.7rem */
-	--font-size-s: clamp(0.8rem, 3.75svw, 1.0rem);		/* 0.9rem */
-	--font-size-m: clamp(1.0rem, 4.58svw, 1.2rem);		/* 1.1rem */
-	--font-size-l: clamp(1.4rem, 6.25svw, 1.6rem);		/* 1.5rem */
-	--font-size-xl: clamp(1.9rem, 8.33svw, 2.1rem);		/* 2.0rem */
+	
 
 	--hero-subtitle-font-size: var(--font-size-m);
 	--hero-description-font-size: var(--font-size-m);
@@ -1404,6 +1417,7 @@ html.hero-calendar-animating body,
 .fc .fc-col-header-cell-cushion {
   font-size: var(--week-days-font-size);
   font-weight: var(--week-days-font-weight);
+  opacity: var(--week-days-opacity);
   line-height:var(--week-days-line-height);
   font-style: var(--week-days-font-style);
 
