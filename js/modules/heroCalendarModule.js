@@ -142,12 +142,14 @@ export const heroCalendarModule = {
 	  // 🔥 Standardansicht immer Monat
 	  initialView: "dayGridMonth",
 
+	  dayMaxEvents: true,
 	  height: "100%",
 	  firstDay: 1,
 	  weekends: true,
 	  navLinks: false,
 	  nowIndicator: true,
 	  expandRows: true,
+	  contentHeight: "auto",
 	  
 	headerToolbar: {
 	  left: "prev",
