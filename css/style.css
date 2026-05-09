@@ -1255,7 +1255,7 @@ html.hero-calendar-animating body,
 
 /* Kein zusätzlicher Einzug mehr */
 .fc .fc-daygrid-event-harness .fc-daygrid-event {
-  margin-left: 0;
+  margin-left: 3px;
 }
 
 .fc .fc-daygrid-dot-event .fc-event-time {
@@ -1464,7 +1464,7 @@ html.hero-calendar-animating body,
 
 
 /* =========================================
-   2. TAGESZAHLEN (1,2,3 ... 31)
+   2. TAGESZAHLEN (1,2,3 ... 31) AKTIVER MONAT
 ========================================= */
 
 .fc .fc-daygrid-day-number {
@@ -1474,16 +1474,15 @@ html.hero-calendar-animating body,
 	font-style: 	var(--hero-calendar-day-number-font-style);
 	line-height: 	var(--hero-calendar-day-number-line-height);
 	letter-spacing: var(--hero-calendar-day-number-letter-spacing);
-
-/*
-  font-size: 0.95rem;
-  font-weight: 500;
-  line-height: 1;
-  font-style: normal;
-  color: #ffffff;
-*/
 }
 
+/* =========================================
+      TAGESZAHLEN (1,2,3 ... 31) VORHERIGER / NÄCHSTER MONAT (ausgegraute Tage)
+========================================= */
+
+.fc .fc-day-other .fc-daygrid-day-number {
+	
+}
 
 /* =========================================
    3. MONATSNAME ("Mai 2026")
