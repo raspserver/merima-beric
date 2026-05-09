@@ -35,6 +35,7 @@
 	   LAYOUT HERO/HOME
 	========================= */
 	
+	/* "Ihr Premium-Kosmetiksalon ..." */
 	--hero-description-font-color-rgb: var(--text-light-rgb);
 	--hero-description-font-opacity: 0.3;
 	--hero-description-font-size: var(--font-size-m);
@@ -43,6 +44,7 @@
 	--hero-description-line-height: 1.6;
 	--hero-description-letter-spacing: normal;
 	
+	/* "Merima's freie Termine" */
 	--hero-calendar-title-font-color-rgb: var(--text-light-rgb);
 	--hero-calendar-title-font-opacity: 0.3;
 	--hero-calendar-title-font-size: var(--font-size-m);
@@ -51,7 +53,7 @@
 	--hero-calendar-title-line-height: 1.2;
 	--hero-calendar-title-letter-spacing: normal;
 
-	--hero-calendar-week-days-font-color: var(--text-light);
+	--hero-calendar-week-days-font-color: var(--text-light-rgb);
 	--hero-calendar-week-days-font-opacity: 0.9;
 	--hero-calendar-week-days-font-size: var(--font-size-m);
 	--hero-calendar-week-days-font-weight: normal;
