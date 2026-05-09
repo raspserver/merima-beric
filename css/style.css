@@ -56,7 +56,7 @@
 	/* "Mo, Di, Mi, ..." */
 	--hero-calendar-week-days-font-color: var(--text-light-rgb);
 	--hero-calendar-week-days-font-opacity: 0.9;
-	--hero-calendar-week-days-font-size: var(--font-size-l);
+	--hero-calendar-week-days-font-size: var(--font-size-m);
 	--hero-calendar-week-days-font-weight: normal;
 	--hero-calendar-week-days-font-style: normal;
 	--hero-calendar-week-days-line-height: 1.2;
