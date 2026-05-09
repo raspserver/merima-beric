@@ -1468,12 +1468,20 @@ html.hero-calendar-animating body,
 ========================================= */
 
 .fc .fc-daygrid-day-number {
+	color:			rgba(var(--hero-calendar-day-number-font-color), var(--hero-calendar-day-number-font-opacity));
+	font-size: 		var(--hero-calendar-day-number-font-size);
+	font-weight: 	var(--hero-calendar-day-number-font-weight);
+	font-style: 	var(--hero-calendar-day-number-font-style);
+	line-height: 	var(--hero-calendar-day-number-line-height);
+	letter-spacing: var(--hero-calendar-day-number-letter-spacing);
+
+/*
   font-size: 0.95rem;
   font-weight: 500;
   line-height: 1;
   font-style: normal;
-
   color: #ffffff;
+*/
 }
 
 
