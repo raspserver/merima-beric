@@ -99,6 +99,15 @@
 	--hero-calendar-event-time-font-style: normal;
 	--hero-calendar-event-time-line-height: 1.2;
 	--hero-calendar-event-time-letter-spacing: normal;
+	
+	/* "+5 more" */
+	--hero-calendar-more-link-font-color: var(--primary-color-rgb);
+	--hero-calendar-more-link-font-opacity: 0.9;
+	--hero-calendar-more-link-font-size: var(--font-size-s);
+	--hero-calendar-more-link-font-weight: normal;
+	--hero-calendar-more-link-font-style: normal;
+	--hero-calendar-more-link-line-height: 1.2;
+	--hero-calendar-more-link-letter-spacing: normal;
 
 	/* =========================
 	   LAYOUT / SPACING
@@ -1578,32 +1587,17 @@ html.hero-calendar-animating body,
 	letter-spacing: var(--hero-calendar-event-time-letter-spacing);
 }
 
-/* gesamter Event-Text */
-/*
-.fc .fc-event,
-.fc .fc-event-title,
-.fc .fc-event-time {
-  font-size: 0.72rem;
-  font-weight: 500;
-  line-height: 1.15;
-  font-style: normal;
-
-  color: #ffffff;
-}
-*/
-
-
 /* =========================================
    6. "+5 more"
 ========================================= */
 
 .fc .fc-daygrid-more-link {
-  font-size: 0.72rem;
-  font-weight: 600;
-  line-height: 1;
-  font-style: normal;
-
-  color: #d4af37;
+	color:			rgba(var(--hero-calendar-more-link-font-color), var(--hero-calendar-more-link-font-opacity));
+	font-size: 		var(--hero-calendar-more-link-font-size);
+	font-weight: 	var(--hero-calendar-more-link-font-weight);
+	font-style: 	var(--hero-calendar-more-link-font-style);
+	line-height: 	var(--hero-calendar-more-link-line-height);
+	letter-spacing: var(--hero-calendar-more-link-letter-spacing);
 }
 
 
