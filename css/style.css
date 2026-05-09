@@ -1533,12 +1533,7 @@ html.hero-calendar-animating body,
 
 /* kompletter Button */
 .fc .fc-button-primary {
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1;
-  font-style: normal;
 
-  color: #ffffff !important;
 }
 
 /* nur das Pfeil-Icon */
