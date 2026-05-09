@@ -56,7 +56,7 @@
 	/* "Mo, Di, Mi, ..." */
 	--hero-calendar-week-days-font-color: var(--text-light-rgb);
 	--hero-calendar-week-days-font-opacity: 0.9;
-	--hero-calendar-week-days-font-size: var(--font-size-l);
+	--hero-calendar-week-days-font-size: var(--font-size-m);
 	--hero-calendar-week-days-font-weight: 600;
 	--hero-calendar-week-days-font-style: normal;
 	--hero-calendar-week-days-line-height: 1.2;
@@ -65,7 +65,7 @@
 	/* "1, 2, 3, ..." */
 	--hero-calendar-day-number-font-color: var(--text-light-rgb);
 	--hero-calendar-day-number-font-opacity: 0.9;
-	--hero-calendar-day-number-font-size: var(--font-size-l);
+	--hero-calendar-day-number-font-size: var(--font-size-m);
 	--hero-calendar-day-number-font-weight: normal;
 	--hero-calendar-day-number-font-style: normal;
 	--hero-calendar-day-number-line-height: 1.2;
