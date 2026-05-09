@@ -70,6 +70,15 @@
 	--hero-calendar-day-number-font-style: normal;
 	--hero-calendar-day-number-line-height: 1.2;
 	--hero-calendar-day-number-letter-spacing: normal;
+	
+	/* "Mai 2026" */
+	--hero-calendar-toolbar-title-font-color: var(--text-light-rgb);
+	--hero-calendar-toolbar-title-font-opacity: 0.9;
+	--hero-calendar-toolbar-title-font-size: var(--font-size-m);
+	--hero-calendar-toolbar-title-font-weight: normal;
+	--hero-calendar-toolbar-title-font-style: normal;
+	--hero-calendar-toolbar-title-line-height: 1.2;
+	--hero-calendar-toolbar-title-letter-spacing: normal;
 
 	/* =========================
 	   LAYOUT / SPACING
@@ -1499,12 +1508,12 @@ html.hero-calendar-animating body,
 ========================================= */
 
 .fc .fc-toolbar-title {
-  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
-  font-weight: 600;
-  line-height: 1;
-  font-style: normal;
-
-  color: #ffffff !important;
+	color:			rgba(var(--hero-calendar-toolbar-title-font-color), var(--hero-calendar-toolbar-title-font-opacity));
+	font-size: 		var(--hero-calendar-toolbar-title-font-size);
+	font-weight: 	var(--hero-calendar-toolbar-title-font-weight);
+	font-style: 	var(--hero-calendar-toolbar-title-font-style);
+	line-height: 	var(--hero-calendar-toolbar-title-line-height);
+	letter-spacing: var(--hero-calendar-toolbar-title-letter-spacing);
 }
 
 
