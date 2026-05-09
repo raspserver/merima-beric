@@ -79,6 +79,16 @@
 	--hero-calendar-toolbar-title-font-style: normal;
 	--hero-calendar-toolbar-title-line-height: 1.2;
 	--hero-calendar-toolbar-title-letter-spacing: normal;
+	
+	/* Pfeil */
+	
+	--hero-calendar-arrow-font-color: var(--text-light-rgb);
+	--hero-calendar-arrow-font-opacity: 0.9;
+	--hero-calendar-arrow-font-size: var(--font-size-m);
+	--hero-calendar-arrow-font-weight: normal;
+	--hero-calendar-arrow-font-style: normal;
+	--hero-calendar-arrow-line-height: 1.2;
+	--hero-calendar-arrow-letter-spacing: normal;
 
 	/* =========================
 	   LAYOUT / SPACING
@@ -1533,12 +1543,12 @@ html.hero-calendar-animating body,
 
 /* nur das Pfeil-Icon */
 .fc .fc-icon {
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1;
-  font-style: normal;
-
-  color: inherit !important;
+	color:			rgba(var(--hero-calendar-arrow-font-color), var(--hero-calendar-arrow-font-opacity));
+	font-size: 		var(--hero-calendar-arrow-font-size);
+	font-weight: 	var(--hero-calendar-arrow-font-weight);
+	font-style: 	var(--hero-calendar-arrow-font-style);
+	line-height: 	var(--hero-calendar-arrow-line-height);
+	letter-spacing: var(--hero-calendar-arrow-letter-spacing);
 }
 
 
