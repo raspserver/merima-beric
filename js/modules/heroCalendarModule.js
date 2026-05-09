@@ -151,6 +151,11 @@ export const heroCalendarModule = {
 	  nowIndicator: true,
 	  expandRows: true,
 	  
+	  // "+5" statt "+5 more"
+	  moreLinkContent(arg) {
+		return `+${arg.num}`;
+	  },
+	  
 	headerToolbar: {
 	  left: "prev",
 	  center: "title",
