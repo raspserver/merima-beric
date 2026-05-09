@@ -1256,6 +1256,7 @@ html.hero-calendar-animating body,
 /* Kein zusätzlicher Einzug mehr */
 .fc .fc-daygrid-event-harness .fc-daygrid-event {
   margin-left: 3px;
+  margin-right: 3px;
 }
 
 .fc .fc-daygrid-dot-event .fc-event-time {
