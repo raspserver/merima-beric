@@ -3,6 +3,7 @@
 	   COLORS / SURFACES / TEXT
 	========================= */
 	--primary-color: #d4af37;	/* https://encycolorpedia.de/d4af37 : ein Farbton von Gelb */
+	--primary-color-rgb: 212, 175, 55;
 	--secondary-color: #1a1a1a;	/* https://encycolorpedia.de/1a1a1a : ein sehr dunkel Farbton von Grau */
 	--accent-color: #f5e6d3;	/* https://encycolorpedia.de/f5e6d3 : sehr hell Farbton von Braun */
 	--text-dark: #2d2d2d;		/* https://encycolorpedia.de/2d2d2d : ein dunkel Farbton von Grau */
@@ -89,6 +90,15 @@
 	--hero-calendar-arrow-font-style: normal;
 	--hero-calendar-arrow-line-height: 1.2;
 	--hero-calendar-arrow-letter-spacing: normal;
+	
+
+	--hero-calendar-event-time-font-color: var(--primary-color-rgb);
+	--hero-calendar-event-time-font-opacity: 0.9;
+	--hero-calendar-event-time-font-size: var(--font-size-s);
+	--hero-calendar-event-time-font-weight: normal;
+	--hero-calendar-event-time-font-style: normal;
+	--hero-calendar-event-time-line-height: 1.2;
+	--hero-calendar-event-time-letter-spacing: normal;
 
 	/* =========================
 	   LAYOUT / SPACING
@@ -1556,10 +1566,20 @@ html.hero-calendar-animating body,
 }
 
 /* =========================================
-   5. TERMINEINTRAG ("07:00 frei")
+   5. TERMINEINTRAG ("07:00")
 ========================================= */
 
+.fc .fc-event-time {
+	color:			rgba(var(--hero-calendar-event-time-font-color), var(--hero-calendar-event-time-font-opacity));
+	font-size: 		var(--hero-calendar-event-time-font-size);
+	font-weight: 	var(--hero-calendar-event-time-font-weight);
+	font-style: 	var(--hero-calendar-event-time-font-style);
+	line-height: 	var(--hero-calendar-event-time-line-height);
+	letter-spacing: var(--hero-calendar-event-time-letter-spacing);
+}
+
 /* gesamter Event-Text */
+/*
 .fc .fc-event,
 .fc .fc-event-title,
 .fc .fc-event-time {
@@ -1570,6 +1590,7 @@ html.hero-calendar-animating body,
 
   color: #ffffff;
 }
+*/
 
 
 /* =========================================
