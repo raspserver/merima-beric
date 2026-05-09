@@ -1551,6 +1551,10 @@ html.hero-calendar-animating body,
   display: none;
 }
 
+.fc .fc-popover .fc-event-title {
+  display: none;
+}
+
 /* =========================================
    5. TERMINEINTRAG ("07:00 frei")
 ========================================= */
