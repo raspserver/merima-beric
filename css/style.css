@@ -80,7 +80,7 @@
 	--hero-calendar-toolbar-title-line-height: 1.2;
 	--hero-calendar-toolbar-title-letter-spacing: normal;
 	
-	/* Pfeil */
+	/* "<" ">" */
 	
 	--hero-calendar-arrow-font-color: var(--text-light-rgb);
 	--hero-calendar-arrow-font-opacity: 0.9;
