@@ -1546,6 +1546,10 @@ html.hero-calendar-animating body,
 	letter-spacing: var(--hero-calendar-arrow-letter-spacing);
 }
 
+/* Event-Titel komplett ausblenden */
+.fc .fc-event-title {
+  display: none;
+}
 
 /* =========================================
    5. TERMINEINTRAG ("07:00 frei")
