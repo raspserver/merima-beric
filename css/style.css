@@ -47,7 +47,7 @@
 	/* "Merima's freie Termine" */
 	--hero-calendar-title-font-color-rgb: var(--text-light-rgb);
 	--hero-calendar-title-font-opacity: 0.9;
-	--hero-calendar-title-font-size: var(--font-size-l);
+	--hero-calendar-title-font-size: var(--font-size-m);
 	--hero-calendar-title-font-weight: normal;
 	--hero-calendar-title-font-style: normal;
 	--hero-calendar-title-line-height: 1.2;
