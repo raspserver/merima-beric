@@ -1254,13 +1254,22 @@ html.hero-calendar-animating body,
 }
 
 /* Kein zusätzlicher Einzug mehr */
+/*
 .fc .fc-daygrid-event-harness .fc-daygrid-event {
-  margin-left: 3px;
-  margin-right: 3px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
+*/
 
+/*
 .fc .fc-daygrid-dot-event .fc-event-time {
   padding-left: 0;
+}
+*/
+
+.fc .fc-event-time {
+  margin-left: 3px;
+  margin-right: 3px;
 }
 
 /* Gesamter Kalender transparent */
