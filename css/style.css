@@ -65,7 +65,7 @@
 	/* "1, 2, 3, ..." */
 	--hero-calendar-day-number-font-color: var(--text-light-rgb);
 	--hero-calendar-day-number-font-opacity: 0.9;
-	--hero-calendar-day-number-font-size: var(--font-size-m);
+	--hero-calendar-day-number-font-size: var(--font-size-l);
 	--hero-calendar-day-number-font-weight: normal;
 	--hero-calendar-day-number-font-style: normal;
 	--hero-calendar-day-number-line-height: 1.2;
