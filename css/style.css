@@ -91,7 +91,7 @@
 	--hero-calendar-arrow-line-height: 1.2;
 	--hero-calendar-arrow-letter-spacing: normal;
 	
-
+	/* "10:00" */
 	--hero-calendar-event-time-font-color: var(--primary-color-rgb);
 	--hero-calendar-event-time-font-opacity: 0.9;
 	--hero-calendar-event-time-font-size: var(--font-size-s);
