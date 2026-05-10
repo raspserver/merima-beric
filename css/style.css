@@ -1656,7 +1656,7 @@ html.hero-calendar-animating body,
 .fc .fc-popover {
   background: var(--popover-background);
   
-  border: 1px solid rgba(--secondary-color-rgb,0.08);
+  border: 1px solid rgba(var(--secondary-color-rgb),0.08);
 
   border-radius: 0;
 
