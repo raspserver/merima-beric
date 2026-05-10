@@ -113,6 +113,17 @@
 	--popover-header-background: var(--secondary-color);
 	--popover-background: var(--primary-color);
 	
+	
+	
+	--hero-calendar-popover-title-font-color: var(--secondary-color-rgb);
+	--hero-calendar-popover-title-font-opacity: 0.9;
+	--hero-calendar-popover-title-font-size: var(--font-size-m);
+	--hero-calendar-popover-title-font-weight: normal;
+	--hero-calendar-popover-title-font-style: normal;
+	--hero-calendar-popover-title-line-height: 1.2;
+	--hero-calendar-popover-title-letter-spacing: normal;
+	
+	
 	/* "10:00" */
 	--hero-calendar-popover-event-time-font-color: var(--text-dark-rgb);
 	--hero-calendar-popover-event-time-font-opacity: 0.9;
@@ -1619,12 +1630,12 @@ html.hero-calendar-animating body,
 ========================================= */
 
 .fc .fc-popover-title {
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.2;
-  font-style: normal;
-
-  color: #ffffff;
+	color:			rgba(var(--hero-calendar-popover-title-font-color), var(--hero-calendar-popover-title-font-opacity));
+	font-size: 		var(--hero-calendar-popover-title-font-size);
+	font-weight: 	var(--hero-calendar-popover-title-font-weight);
+	font-style: 	var(--hero-calendar-popover-title-font-style);
+	line-height: 	var(--hero-calendar-popover-title-line-height);
+	letter-spacing: var(--hero-calendar-popover-title-letter-spacing);
 }
 
 
