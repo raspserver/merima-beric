@@ -5,6 +5,7 @@
 	--primary-color: #d4af37;	/* https://encycolorpedia.de/d4af37 : ein Farbton von Gelb */
 	--primary-color-rgb: 212, 175, 55;
 	--secondary-color: #1a1a1a;	/* https://encycolorpedia.de/1a1a1a : ein sehr dunkel Farbton von Grau */
+	--secondary-color-rgb: 26, 26, 26;
 	--accent-color: #f5e6d3;	/* https://encycolorpedia.de/f5e6d3 : sehr hell Farbton von Braun */
 	--text-dark: #2d2d2d;		/* https://encycolorpedia.de/2d2d2d : ein dunkel Farbton von Grau */
 	--text-dark-rgb: 45, 45, 45;
@@ -109,6 +110,7 @@
 	--hero-calendar-more-link-line-height: 1.2;
 	--hero-calendar-more-link-letter-spacing: normal;
 
+	--popover-header-background: var(--secondary-color);
 	--popover-background: var(--primary-color);
 	
 	/* "10:00" */
@@ -1641,7 +1643,7 @@ html.hero-calendar-animating body,
 
 /* Popup Hintergrund */
 .fc .fc-popover {
-  background: var(--popover-background);;
+  background: var(--popover-background);
   
   border: 1px solid rgba(255,255,255,0.08);
 
@@ -1653,7 +1655,7 @@ html.hero-calendar-animating body,
 
 /* Popup Header */
 .fc .fc-popover-header {
-  background: rgba(255,255,255,0.04);
+  background: var(--popover-header-background);
 }
 
 .cta-button {
