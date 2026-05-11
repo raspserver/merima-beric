@@ -110,8 +110,11 @@
 	--hero-calendar-more-link-line-height: 1.2;
 	--hero-calendar-more-link-letter-spacing: normal;
 
-	--popover-header-background: var(--secondary-color);
+	
 	--popover-background: var(--primary-color);
+	--popover-border-color: var(--secondary-color-rgb);
+	
+	--popover-header-background: var(--secondary-color);
 	
 	
 	
@@ -1656,14 +1659,8 @@ html.hero-calendar-animating body,
 .fc .fc-popover {
   background: var(--popover-background);
   
-  border: 1px solid rgba(var(--secondary-color-rgb),1.00);
+  border: 1px solid rgba(var(--popover-border-color),1.00);
 
-/*
-  border-radius: 0;
-
-  box-shadow:
-    0 12px 40px rgba(0,0,0,0.35);
-*/
 }
 
 /* Popup Header */
