@@ -1095,11 +1095,14 @@ html.hero-calendar-animating body,
 .hero-calendar,
 #hero-fullcalendar,
 .fc,
-.fc-view-harness,
-.fc-scroller,
-.fc-scroller-liquid-absolute {
+.fc-view-harness {
 	overflow: visible !important;
 }
+
+/*
+ *  ,
+.fc-scroller,
+.fc-scroller-liquid-absolute */
 
 .fc {
   height: 100%;
