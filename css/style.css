@@ -1095,8 +1095,7 @@ html.hero-calendar-animating body,
 .hero-calendar,
 #hero-fullcalendar,
 .fc,
-.fc-view-harness,
-.fc-button-primary {
+.fc-view-harness {
 	overflow: visible !important;
 }
 
