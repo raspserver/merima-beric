@@ -1090,7 +1090,14 @@ html.hero-calendar-animating body,
 */
 	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
 	padding: 0 0;
-	
+}
+
+.hero-calendar,
+#hero-fullcalendar,
+.fc,
+.fc-view-harness,
+.fc-scroller,
+.fc-scroller-liquid-absolute {
 	overflow: visible !important;
 }
 
