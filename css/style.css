@@ -7,11 +7,13 @@
 	--secondary-color: #1a1a1a;	/* https://encycolorpedia.de/1a1a1a : ein sehr dunkel Farbton von Grau */
 	--secondary-color-rgb: 26, 26, 26;
 	--accent-color: #f5e6d3;	/* https://encycolorpedia.de/f5e6d3 : sehr hell Farbton von Braun */
+	--accent-color-rgb: 245, 230, 211;
 	--text-dark: #2d2d2d;		/* https://encycolorpedia.de/2d2d2d : ein dunkel Farbton von Grau */
 	--text-dark-rgb: 45, 45, 45;
 	--text-light: #ffffff;		/* https://encycolorpedia.de/ffffff : ein sehr hell Farbton von Grau */
 	--text-light-rgb: 255, 255, 255;
 	--bg-light: #fafaf8;		/* https://encycolorpedia.de/fafaf8 : ein sehr hell Farbton von Gelb-grün */
+	--bg-light-rgb:: 250, 250, 248;
 
 	/* =========================
 	   GLOBAL TRANSITIONS
