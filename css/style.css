@@ -1090,7 +1090,10 @@ html.hero-calendar-animating body,
 /*
 	border: 1px solid rgba(212, 175, 55, 0.18);
 */
+/*
 	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+*/
+	box-shadow: none;
 	padding: 0 0;
 }
 
