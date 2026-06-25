@@ -1432,8 +1432,17 @@ html.hero-calendar-animating body,
 
   padding: 0 0.9rem !important;
 
+/*
   box-shadow:
     0 0 18px rgba(212, 175, 55, 0.08);
+*/
+
+    box-shadow:
+        0 0 20px rgba(212,175,55,0.12),
+        0 0 40px rgba(212,175,55,0.10),
+        0 0 80px rgba(212,175,55,0.06);
+
+
 
   transition:
     background 0.18s ease,
